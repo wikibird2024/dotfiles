@@ -1,0 +1,27 @@
+
+# History, shell runtime
+*.history
+*.bak
+*.swp
+*.tmp
+*.old
+
+# Cache, logs, runtime
+*.log
+.cache/
+.local/
+.vscode/
+.idea/
+__pycache__/
+
+# Plugin hoặc thư mục build (ví dụ Vim, Zsh)
+vim/bundle/
+vim/plugged/
+zsh/custom/plugins/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Ignore anything Stow shouldn't track
+stow-*
