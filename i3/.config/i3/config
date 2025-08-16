@@ -1,0 +1,8 @@
+include ui.conf
+include bindings.conf
+include rules.conf
+include bar.conf
+include workspace.conf
+include apps.conf
+exec --no-startup-id "$HOME/.config/i3/startup_layout.sh"
+exec --no-startup-id "$HOME/.config/i3/touchpad.sh"
