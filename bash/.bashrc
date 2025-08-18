@@ -58,4 +58,14 @@ fi
 # ─── Load Local Overrides ─────────────────────────────────────────────────────
 [ -f ~/.bash_local ] && . ~/.bash_local
 
-#------------- echo ----------------
+#------------- echo / nvm / cargo ----------------
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+. "$HOME/.cargo/env"
+
+# Only run setterm --blength on real consoles, not GUI terminals
+if [[ $(tty) == /dev/tty* ]]; then
+    setterm --blength 0
+fi
