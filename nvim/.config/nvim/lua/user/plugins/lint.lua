@@ -1,24 +1,33 @@
-
 -- ~/.config/nvim/lua/user/plugins/lint.lua
 
 return {
   {
     "mfussenegger/nvim-lint",
-    event = { "BufWritePost", "BufReadPost", "InsertLeave" },
+    -- The events you want to trigger linting.
+    -- These are the events that will cause the plugin to load.
+    event = { "BufReadPost", "BufWritePost", "InsertLeave" },
     config = function()
       local lint = require("lint")
 
+      -- Define your linters for each filetype.
       lint.linters_by_ft = {
         python = { "flake8" },
         sh = { "shellcheck" },
-        -- Add more filetypes and linters as needed
+        -- Add more linters as needed.
       }
 
-      vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
-        callback = function()
-          lint.try_lint()
-        end,
-      })
+      -- Create an autocommand to trigger linting.
+      -- A single autocommand group is a clean way to manage this.
+      vim.api.nvim_create_autocmd(
+        { "BufReadPost", "BufWritePost", "InsertLeave" },
+        {
+          group = vim.api.nvim_create_augroup("nvim-lint-group", { clear = true }),
+          callback = function()
+            -- lint.try_lint() runs the linters for the current filetype.
+            lint.try_lint()
+          end,
+        }
+      )
     end,
   },
 }
