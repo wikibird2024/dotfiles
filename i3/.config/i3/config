@@ -1,8 +1,16 @@
-include ui.conf
-include bindings.conf
-include rules.conf
-include bar.conf
-include workspace.conf
-include apps.conf
-exec --no-startup-id "$HOME/.config/i3/startup_layout.sh"
-exec --no-startup-id "$HOME/.config/i3/touchpad.sh"
+
+# =============================
+# i3 Config — Modular Includes
+# =============================
+include ~/.config/i3/ui.conf
+include ~/.config/i3/bindings.conf
+include ~/.config/i3/rules.conf
+include ~/.config/i3/bar.conf
+include ~/.config/i3/workspace.conf
+include ~/.config/i3/apps.conf
+
+# =============================
+# Startup Scripts
+# =============================
+exec --no-startup-id ~/.config/i3/startup_layout.sh
+exec_always --no-startup-id ~/.config/i3/touchpad.sh
