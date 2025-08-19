@@ -69,3 +69,6 @@ export NVM_DIR="$HOME/.nvm"
 if [[ $(tty) == /dev/tty* ]]; then
     setterm --blength 0
 fi
+
+#------------------latexmk------------------
+export PATH=/usr/local/texlive/2025/bin/x86_64-linux:$PATH
