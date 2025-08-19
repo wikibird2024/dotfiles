@@ -1,5 +1,3 @@
-
-
 # ============================ BASIC SHORTCUTS ============================
 alias ll='ls -alF --color=auto'
 alias la='ls -A'
@@ -8,6 +6,7 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias config='cd ~/.config/'
+alias dotfiles='cd ~/dotfiles/'
 alias plugin.='cd ~/dotfiles/nvim/.config/nvim/lua/user/plugins/'
 alias sudo_asterisk='sudo -u asterisk asterisk -rvvvvv'
 alias aliasesedit='nvim ~/.bash_aliases'
@@ -27,6 +26,7 @@ alias xe='xelatex main.tex && biber main && xelatex main.tex && xelatex main.tex
 alias cl='./clean.sh'
 alias b='./build.sh'
 alias qute='qutebrowser'
+
 # ============================  SYS CTL SHORTCUTS ============================
 
 alias sctl='sudo systemctl'
@@ -214,6 +214,7 @@ alias td='tree -d -C'                   # Directories only
 alias t1='tree -L 1 -C'                 # Depth 1
 alias t2='tree -L 2 -C'                 # Depth 2
 alias t3='tree -L 3 -C'                 # Depth 3
+alias t4='tree -L 4 -C'                 # Depth 4
 
 # --- Filtered trees ---
 alias tg='tree -C -I ".git|__pycache__|.vscode"'
