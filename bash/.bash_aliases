@@ -8,7 +8,6 @@ alias ....='cd ../../..'
 alias config='cd ~/.config/'
 alias dotfiles='cd ~/dotfiles/'
 alias plugin.='cd ~/dotfiles/nvim/.config/nvim/lua/user/plugins/'
-alias sudo_asterisk='sudo -u asterisk asterisk -rvvvvv'
 alias aliasesedit='nvim ~/.bash_aliases'
 alias functionsedit='nvim ~/.bash_functions'
 alias bashrcedit='nvim ~/.bashrc'
@@ -79,6 +78,9 @@ alias connectwifi='nmtui'
 # ============================ ASTERISK MANAGEMENT ======================
 
 # === ASTERISK CORE ===
+alias dis_ast='sudo systemctl stop asterisk'
+alias e_ast='sudo systemctl start asterisk'
+alias sudo_ast='sudo -u asterisk asterisk -rvvvvv'
 alias astcli='sudo asterisk -rvvvvv'                          # Enter Asterisk CLI interactively
 alias ast.corereload='sudo asterisk -rx "core reload"'             # Reload full core
 alias ast.coreshowuptime='sudo asterisk -rx "core show uptime"'        # Show system uptime
