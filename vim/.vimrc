@@ -73,6 +73,25 @@ let g:airline_powerline_fonts = 1
 let g:airline_theme='onedark'
 let g:airline#extensions#tabline#enabled = 1
 
+" BẮT ĐẦU: Các cấu hình Tùy chỉnh Nâng cao (THÊM VÀO ĐÂY)
+" -----------------------------------------------------
+
+" Hiển thị thông tin Git và Linter/ALE
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#fugitiveline#enabled = 1
+let g:airline#extensions#ale#enabled = 1
+
+" Hiển thị các Buffer đang mở trên Tabline
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+
+" Tùy chỉnh Các Section (Phần)
+let g:airline_section_y = '%3l:%c'
+let g:airline_section_z = '%P'
+
+" Tùy chỉnh Giao diện: Mức độ tương phản
+let g:airline_inactive_mode_disable_mode = 1
+
+" KẾT THÚC: Các cấu hình Tùy chỉnh Nâng cao
 " FZF mappings
 nnoremap <leader>f :Files<CR>
 nnoremap <leader>b :Buffers<CR>
