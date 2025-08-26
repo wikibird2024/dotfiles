@@ -1,61 +1,71 @@
 #!/bin/bash
-# layout_workspace.sh
-# Open Alacritty on workspace 1.
-# Open xfce4-terminal and Firefox side-by-side on workspace 2 with a specific layout.
+# setup.sh
+# An improved setup script for my work environment
 
 set -euo pipefail
 
-# Define application commands and titles
-TERMINAL_CMD="xfce4-terminal"
-TERMINAL_TITLE="terminal_left"
-BROWSER_CMD="firefox"
-BROWSER_CLASS="firefox"
+# Check for sudo and request password upfront
+if ! sudo -n true 2>/dev/null; then
+    sudo echo "Sudo password cached."
+fi
 
-# Reusable function to wait for a window by title and return its ID
-wait_for_window_id() {
-    local title="$1"
-    local timeout=${2:-50}
-    local id=""
-    for ((i=0; i<timeout; i++)); do
-        id=$(i3-msg -t get_tree | jq -r '.. | select(.name? == "'"$title"'") | .id' | head -n1 || true)
-        if [[ -n "$id" && "$id" != "null" ]]; then
-            echo "$id"
-            return 0
-        fi
-        sleep 0.1
-    done
-    return 1
+# --- Main functions ---
+
+function setup_system() {
+    echo "Updating and upgrading system packages..."
+    sudo apt update
+    sudo apt -y upgrade
 }
 
-# ---
-# Workspace 1: Open Alacritty
-i3-msg 'workspace 1; exec alacritty'
-
-# ---
-# Workspace 2: Open terminal and Firefox with layout
-i3-msg 'workspace 2; layout splith'
-
-# Open xfce4-terminal with a specific title
-i3-msg "exec $TERMINAL_CMD --title=$TERMINAL_TITLE"
-
-# Wait for the terminal to appear and get its container ID
-term_id=$(wait_for_window_id "$TERMINAL_TITLE") || {
-    echo "Error: $TERMINAL_TITLE window not found" >&2
-    exit 1
+function install_packages() {
+    echo "Installing required packages..."
+    # Add your list of packages here
+    # Example: sudo apt install -y vim git build-essential
+    sudo apt install -y vim git tmux alacritty xfce4-terminal firefox
 }
 
-# Explicitly resize the terminal container to 33% width
-i3-msg "[con_id=$term_id] resize set width 33 ppt"
+function setup_dotfiles() {
+    echo "Setting up dotfiles..."
+    # Clone your dotfiles repository
+    # Example: git clone https://github.com/hx/dotfiles.git ~/dotfiles
 
-# Open Firefox. i3 automatically places it in the new split.
-i3-msg "exec $BROWSER_CMD"
-
-# Wait for the Firefox window to appear (using its title) and get its container ID
-# Note: Using class could also be an option for more generic applications
-firefox_id=$(wait_for_window_id "Mozilla Firefox") || {
-    echo "Error: $BROWSER_CMD window not found" >&2
-    exit 1
+    # Create symbolic links for configs
+    echo "Creating symbolic links..."
+    ln -sf ~/dotfiles/.vimrc ~/.vimrc
+    ln -sf ~/dotfiles/.bashrc ~/.bashrc
+    ln -sf ~/dotfiles/.config/tmux/tmux.conf ~/.tmux.conf
+    ln -sf ~/dotfiles/.config/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml
+    ln -sf ~/dotfiles/.config/i3/config ~/.config/i3/config
 }
 
-# Focus Firefox explicitly to ensure it's the active window
-i3-msg "[con_id=$firefox_id] focus"
+function configure_i3() {
+    echo "Configuring i3 workspace layout..."
+    # Ensure i3 is running
+    if ! pgrep -x "i3" > /dev/null; then
+        echo "i3 is not running. Please start i3 first."
+        exit 1
+    fi
+    
+    # Send commands to i3 to set up workspaces
+    i3-msg 'workspace 1; exec alacritty'
+    sleep 0.5
+    i3-msg 'workspace 2'
+    sleep 0.5
+    i3-msg 'layout splith'
+    sleep 0.5
+    i3-msg 'exec xfce4-terminal --title="terminal_left"'
+    sleep 0.5
+    i3-msg 'exec firefox'
+    sleep 1
+    i3-msg '[title="terminal_left"] resize set width 33 ppt'
+}
+
+# --- Main script logic ---
+
+echo "Starting system setup script..."
+setup_system
+install_packages
+setup_dotfiles
+configure_i3
+
+echo "Setup complete!"

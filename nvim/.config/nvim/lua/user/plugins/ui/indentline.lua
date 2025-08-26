@@ -20,7 +20,7 @@ return {
       -- 2. Define highlight group for the active Scope Line (Prominent accent color)
       local scope_highlight = "CurrentScopeHighlight"
       -- Accent color (e.g., bright green, blue, or yellow) for the current block
-      vim.api.nvim_set_hl(0, scope_highlight, { fg = "#00BFFF", nocombine = true }) 
+      vim.api.nvim_set_hl(0, scope_highlight, { fg = "#FFFF00", nocombine = true }) 
 
       ibl.setup({
         indent = {
