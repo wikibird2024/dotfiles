@@ -1,0 +1,26 @@
+
+# --- Appearance ---
+set font "Monospace 12"
+set recolor-keephue true
+set highlight-color "#bd93f9"
+set highlight-active-color "#ff79c6"
+
+# --- Keybindings ---
+map j scroll down
+map k scroll up
+map h scroll left
+map l scroll right
+map H scroll left
+map L scroll right
+
+map <C-f> scroll down-page
+map <C-b> scroll up-page
+
+map z zoom in
+map x zoom out
+set zoom-step 1.2
+
+map <C-r> recolor
+
+map / search
+# n / N dùng mặc định trong search mode
