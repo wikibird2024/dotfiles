@@ -15,12 +15,10 @@ alias bashrcedit='nvim ~/.bashrc'
 alias c='clear'
 alias s='source ~/.bashrc'
 alias sz='source ~/.zshrc'
-alias cdpy='cd ~/python'
 alias thesis='cd ~/Documents/thesis_latex' 
 alias zbm='zathura build/main.pdf'
 alias zm='zathura main.pdf'
 alias za='zathura'
-alias ol='nvim build/main.log'
 alias fondlist='fc-list --format='%{family}\n' | sort -u'
 alias xe='xelatex main.tex && biber main && xelatex main.tex && xelatex main.tex && zathura main.pdf'
 alias cl='./clean.sh'
@@ -40,6 +38,8 @@ alias getlocation='curl -s https://ipinfo.io/loc'
 # ============================  PYTHON ================================
 #
 alias py='python'
+alias miniterm='python -m serial.tools.miniterm'
+alias cdpy='cd ~/python'
 
 # ============================ TMUX MANAGEMENT ================================
 alias tmls='tmux ls'                 # list all sessions
@@ -175,7 +175,6 @@ alias snv='sudo nvim'
 alias v='nvim .'
 
 # ============================ EMBEDDED & SERIAL ===========================
-alias miniterm='python -m serial.tools.miniterm'
 alias tty='ls /dev/tty*'
 alias ttyusb='ls /dev/ttyUSB*'
 alias ttyacm='ls /dev/ttyACM*'
