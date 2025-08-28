@@ -18,12 +18,13 @@ alias sz='source ~/.zshrc'
 alias thesis='cd ~/Documents/thesis_latex' 
 alias zbm='zathura build/main.pdf'
 alias zm='zathura main.pdf'
-alias za='zathura'
 alias fondlist='fc-list --format='%{family}\n' | sort -u'
 alias xe='xelatex main.tex && biber main && xelatex main.tex && xelatex main.tex && zathura main.pdf'
 alias cl='./clean.sh'
 alias b='./build.sh'
 alias qute='qutebrowser'
+alias pdf='xreader'
+alias image='feh'
 
 # ============================  SYS CTL SHORTCUTS ============================
 
