@@ -1,41 +1,76 @@
 
 [Configuration]
+# Màu sắc - giữ nguyên theo yêu cầu
 ColorForeground=#FFD700
 ColorBackground=#000000
 ColorBold=#FFD700
 ColorCursor=#FF0000
 ColorBoldUseDefault=FALSE
-MiscCursorBlinks=FALSE
-MiscCursorShape=TERMINAL_CURSOR_SHAPE_BLOCK
 ColorPalette=#000000;#FF0000;#50fa7b;#FFD700;#bd93f9;#FF79c6;#8be9fd;#bbbbbb;#555555;#FF5555;#50fa7b;#FFD700;#bd93f9;#FF79c6;#8be9fd;#ffffff
 ColorPaletteUseDefault=FALSE
-FontName=DejaVu Sans Mono 10.5
-ScrollingLines=10000
-MiscMenubarDefault=FALSE
+
+# Font - sử dụng JetBrains Mono Nerd Font để hỗ trợ icon tối ưu
+FontName=JetBrainsMono Nerd Font Thin 10
+
+# Encoding và hiển thị ký tự đặc biệt
+Encoding=UTF-8
+FontAllowBold=TRUE
+FontUseSystem=FALSE
+FontAntiAlias=TRUE
+
+# Con trô - cải thiện khả năng hiển thị
+MiscCursorBlinks=TRUE
+MiscCursorShape=TERMINAL_CURSOR_SHAPE_BLOCK
+
+# Scrolling - tăng buffer cho hiệu suất tốt hơn
+ScrollingLines=5000
+
+# Giao diện - cải thiện trải nghiệm người dùng
+MiscMenubarDefault=TRUE
 MiscToolbarDefault=FALSE
-MiscAlwaysShowTabs=TRUE
+MiscAlwaysShowTabs=FALSE
 MiscHighlightUrls=TRUE
+MiscBordersDefault=TRUE
+MiscDefaultGeometry=100x30
+MiscInheritGeometry=FALSE
+
+# An toàn và bảo mật
 MiscConfirmClose=TRUE
+MiscShowUnsafePasteDialog=TRUE
+MiscShowWarnings=TRUE
+MiscShowNotices=TRUE
+MiscShowRelaunchDialog=TRUE
+
+# Chuông và thông báo
 MiscBell=FALSE
 MiscBellUrgent=FALSE
-MiscBordersDefault=TRUE
-MiscDefaultGeometry=80x24
-MiscInheritGeometry=FALSE
-MiscMouseAutohide=FALSE
+
+# Tương tác chuột
+MiscMouseAutohide=TRUE
 MiscMouseWheelZoom=TRUE
+MiscMiddleClickOpensUri=TRUE
+MiscRightClickAction=TERMINAL_RIGHT_CLICK_ACTION_CONTEXT_MENU
+
+# Tab management
 MiscCycleTabs=TRUE
 MiscTabCloseButtons=TRUE
 MiscTabCloseMiddleClick=TRUE
 MiscTabPosition=GTK_POS_TOP
-MiscMiddleClickOpensUri=FALSE
-MiscCopyOnSelect=FALSE
-MiscShowRelaunchDialog=TRUE
+MiscSlimTabs=FALSE
+MiscNewTabAdjacent=TRUE
+
+# Copy/Paste và khác
+MiscCopyOnSelect=TRUE
 MiscRewrapOnResize=TRUE
 MiscUseShiftArrowsToScroll=FALSE
-MiscSlimTabs=FALSE
-MiscNewTabAdjacent=FALSE
 MiscSearchDialogOpacity=100
-MiscShowUnsafePasteDialog=FALSE
-MiscRightClickAction=TERMINAL_RIGHT_CLICK_ACTION_CONTEXT_MENU
-MiscShowWarnings=FALSE
-MiscShowNotices=FALSE
+
+# Cải thiện hiển thị ký tự đặc biệt và icon
+TextBlinkMode=TERMINAL_TEXT_BLINK_MODE_FOCUSED
+TextSelectByWord=-A-Za-z0-9,./?%&#:_
+BackgroundDarkness=1.000000
+BackgroundMode=TERMINAL_BACKGROUND_TRANSPARENT
+BackgroundImageFile=
+BackgroundImageStyle=TERMINAL_BACKGROUND_STYLE_TILED
+ScrollingOnOutput=FALSE
+ScrollingOnKeystroke=TRUE

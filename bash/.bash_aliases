@@ -98,8 +98,9 @@ alias sip.showusers='sudo asterisk -rx "sip show users"'       # Show SIP user a
 alias sip.showregistry='sudo asterisk -rx "sip show registry"' # Show SIP registration status
 
 # === CONFIG FILES QUICK EDIT ===
-alias ast.pj='sudo nvim /etc/asterisk/pjsip.conf'              # Edit SIP config
-alias ast.ext='sudo nvim /etc/asterisk/extensions.conf'       # Edit dialplan
+alias ast.pjsip='sudo vim /etc/asterisk/pjsip.conf'              # Edit SIP config
+alias ast.sip='sudo vim /etc/asterisk/sip.conf'              # Edit SIP config
+alias ast.ext='sudo vim /etc/asterisk/extensions.conf'       # Edit dialplan
 alias ast.voicemail='sudo nvim /etc/asyterisk/voicemail.conf'      # Edit voicemail
 alias ast.manager='sudo nvim /etc/asterisk/manager.conf'     #manager AMI 
 
