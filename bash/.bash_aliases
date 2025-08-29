@@ -52,14 +52,17 @@ alias tmd='tmux detach'              # detach current session (tmux d also works
 alias tmrws='tmux rename-window -t '  # rename a window in the current session
 alias tmrs='tmux rename-session -t ' # rename the current session
 alias tmkall='tmux kill-server'     # kill all session
+
 # ============================ SYSTEM CONTROL =============================
 alias shutdown='sudo shutdown -P now'
 alias reboot='sudo reboot'
+
 # ============================ SYSTEM OPS ================================
 alias update='sudo apt update && sudo apt upgrade -y'
 alias install='sudo apt install'
 alias remove='sudo apt remove'
 alias search='apt search'
+
 #============================= SOMETHING ELSE CAT.. ==============================
 alias df='df -h'
 alias du='du -h --max-depth=1'
@@ -187,8 +190,6 @@ alias sysr='sudo systemctl restart'
 alias sysl='systemctl list-units --type=service'
 
 # ============================ ESP-IDF SHORTCUTS ===========================
-
-
 alias cdesp='cd ~/esp/mainproject'
 alias idfb='idf.py build'
 alias idfst='idf.py set-target'
@@ -199,7 +200,6 @@ alias idfc='rm -rf build && idf.py fullclean'
 alias idfcb='rm -rf build && idf.py fullclean build'
 alias idffm='idf.py flash monitor'
 alias idfall='idf.py fullclean build flash monitor'
-# ==== ESP-IDF SHORTCUTS ====
 
 # ============================ MISC TOOLS ==================================
 alias please='sudo $(fc -ln -1)'    # Run last command with sudo

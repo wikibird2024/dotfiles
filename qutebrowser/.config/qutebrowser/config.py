@@ -12,10 +12,12 @@ config.load_autoconfig(False)
 # =============================
 # Fonts
 # =============================
+# Auto-fit web content to window width
+c.zoom.default = "85%"
 
 # UI & default font
 c.fonts.default_family = "Merriweather"    # Thanh lịch, rõ nét trên TN-HD
-c.fonts.default_size = "11pt"
+c.fonts.default_size = "10pt"
 
 # Web content fonts
 c.fonts.web.family.standard = "Merriweather"  # Text chuẩn, dễ đọc
@@ -78,4 +80,5 @@ c.url.searchengines = {
     "yt": "https://www.youtube.com/results?search_query={}",
     "rd": "https://www.reddit.com/search/?q={}",
     "so": "https://stackoverflow.com/search?q={}",
+    "gem": "https://gemini.google.com/app?q={}",
 }
