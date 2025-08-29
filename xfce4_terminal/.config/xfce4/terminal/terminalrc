@@ -1,19 +1,19 @@
 
 [Configuration]
-ColorForeground=#f8f8f2
-ColorBackground=#282a36
-ColorBold=#f8f8f2
-ColorCursor=#ff79c6
+ColorForeground=#FFD700
+ColorBackground=#000000
+ColorBold=#FFD700
+ColorCursor=#FF0000
 ColorBoldUseDefault=FALSE
 MiscCursorBlinks=FALSE
 MiscCursorShape=TERMINAL_CURSOR_SHAPE_BLOCK
-ColorPalette=#000000;#ff5555;#50fa7b;#f1fa8c;#bd93f9;#ff79c6;#8be9fd;#bbbbbb;#555555;#ff5555;#50fa7b;#f1fa8c;#bd93f9;#ff79c6;#8be9fd;#ffffff
+ColorPalette=#000000;#FF0000;#50fa7b;#FFD700;#bd93f9;#FF79c6;#8be9fd;#bbbbbb;#555555;#FF5555;#50fa7b;#FFD700;#bd93f9;#FF79c6;#8be9fd;#ffffff
 ColorPaletteUseDefault=FALSE
-FontName=JetBrainsMono Nerd Font 10.5
+FontName=DejaVu Sans Mono 10.5
 ScrollingLines=10000
 MiscMenubarDefault=FALSE
 MiscToolbarDefault=FALSE
-MiscAlwaysShowTabs=FALSE
+MiscAlwaysShowTabs=TRUE
 MiscHighlightUrls=TRUE
 MiscConfirmClose=TRUE
 MiscBell=FALSE
@@ -37,3 +37,5 @@ MiscNewTabAdjacent=FALSE
 MiscSearchDialogOpacity=100
 MiscShowUnsafePasteDialog=FALSE
 MiscRightClickAction=TERMINAL_RIGHT_CLICK_ACTION_CONTEXT_MENU
+MiscShowWarnings=FALSE
+MiscShowNotices=FALSE
