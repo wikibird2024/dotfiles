@@ -83,7 +83,7 @@ alias connectwifi='nmtui'
 # ============================ ASTERISK MANAGEMENT ======================
 
 # === ASTERISK CORE ===
-alias dis_ast='sudo systemctl stop asterisk'
+alias d_ast='sudo systemctl stop asterisk'
 alias e_ast='sudo systemctl start asterisk'
 alias sudo_ast='sudo -u asterisk asterisk -rvvvvv'
 alias astcli='sudo asterisk -rvvvvv'                          # Enter Asterisk CLI interactively
