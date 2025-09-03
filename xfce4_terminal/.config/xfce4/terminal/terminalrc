@@ -10,7 +10,7 @@ ColorPalette=#000000;#FF0000;#50fa7b;#FFD700;#bd93f9;#FF79c6;#8be9fd;#bbbbbb;#55
 ColorPaletteUseDefault=FALSE
 
 # Font - sử dụng JetBrains Mono Nerd Font để hỗ trợ icon tối ưu
-FontName=JetBrainsMono Nerd Font Thin 10
+FontName=JetBrainsMono Nerd Font Regular 10.5
 
 # Encoding và hiển thị ký tự đặc biệt
 Encoding=UTF-8
