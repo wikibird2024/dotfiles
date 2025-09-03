@@ -1,0 +1,42 @@
+! 1. Font chữ và kích thước
+
+URxvt.font: xft:JetBrainsMono Nerd Font:pixelsize=12
+URxvt.boldFont: xft:JetBrainsMono Nerd Font:pixelsize=12:bold
+URxvt.italicFont: xft:JetBrainsMono Nerd Font:pixelsize=12:italic
+URxvt.boldItalicFont: xft:JetBrainsMono Nerd Font:pixelsize=12:bold:italic
+
+
+! 2. Màu sắc cơ bản (Ví dụ: Chủ đề Dracula)
+URxvt.foreground: #f8f8f2
+URxvt.background: #282a36
+URxvt.cursorColor: #f8f8f2
+
+! Màu cho 16 dải màu chuẩn
+URxvt.color0: #21222c
+URxvt.color1: #ff5555
+URxvt.color2: #50fa7b
+URxvt.color3: #f1fa8c
+URxvt.color4: #bd93f9
+URxvt.color5: #ff79c6
+URxvt.color6: #8be9fd
+URxvt.color7: #f8f8f2
+URxvt.color8: #6272a4
+URxvt.color9: #ff6e6e
+URxvt.color10: #69ff94
+URxvt.color11: #ffffa5
+URxvt.color12: #d6acff
+URxvt.color13: #ff92df
+URxvt.color14: #a0f4ff
+URxvt.color15: #eff1f5
+
+! 3. Hành vi và tiện ích mở rộng
+URxvt.scrollBar: false
+URxvt.scrollTtyKeypress: true
+URxvt.scrollWithVisualBell: false
+URxvt.perl-ext-common: default,keyboard-select,url-select,clipboard,fullscreen
+
+! Đặt phím tắt cho các tiện ích mở rộng
+URxvt.keysym.Control-plus: perl:font-size:increase
+URxvt.keysym.Control-minus: perl:font-size:decrease
+URxvt.keysym.Control-equal: perl:font-size:reset
+
