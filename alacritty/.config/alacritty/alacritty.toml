@@ -1,7 +1,8 @@
 
+
 # =============================================
-# Alacritty config optimized for TN panel and gold font
-# Author: Ginko's AI Assistant (optimized)
+# Alacritty config optimized for TN panel + gold text
+# Author: Ginko's AI Assistant (refined)
 # =============================================
 
 [window]
@@ -14,7 +15,7 @@ x = 10
 y = 10
 
 [font]
-size = 10
+size = 11.0   # tăng nhẹ cho dễ nhìn
 
 [font.normal]
 family = "JetBrains Mono Nerd Font"
@@ -33,38 +34,38 @@ family = "JetBrains Mono Nerd Font"
 style = "Bold Italic"
 
 [font.offset]
-y = 2
+y = 3   # tăng line height giúp thoáng, dễ đọc
 
 [cursor]
 style = "Block"
 
 [colors.primary]
-background = "0x2B2B2B"
-foreground = "0xFFD700"
+background = "0x202020"   # đen xám dịu hơn cho TN panel
+foreground = "0xFFD700"   # vàng nhạt dịu, không quá chói
 
 [colors.cursor]
 text = "0x000000"
-cursor = "0xFFD700"
+cursor = "0xFFE866"
 
 [colors.normal]
-black = "0x1a1a1a"
-red = "0xff5555"
-green = "0x00ff00"
-yellow = "0xffff00"
-blue = "0x5f87ff"
-magenta = "0xff00ff"
-cyan = "0x00ffff"
-white = "0xe5e5e5"
+black   = "0x1a1a1a"
+red     = "0xff4c4c"
+green   = "0x55dd55"
+yellow  = "0xffd75f"
+blue    = "0x5f87d7"
+magenta = "0xd787ff"
+cyan    = "0x5fd7d7"
+white   = "0xd0d0d0"
 
 [colors.bright]
-black = "0x4d4d4d"
-red = "0xff6e6e"
-green = "0x5fff5f"
-yellow = "0xffff5f"
-blue = "0x87afff"
-magenta = "0xff87ff"
-cyan = "0x87ffff"
-white = "0xffffff"
+black   = "0x4d4d4d"
+red     = "0xff6666"
+green   = "0x88ff88"
+yellow  = "0xffff88"
+blue    = "0x87afff"
+magenta = "0xffaaff"
+cyan    = "0x87ffff"
+white   = "0xffffff"
 
 [scrolling]
 history = 10000

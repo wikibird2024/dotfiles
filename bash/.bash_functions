@@ -58,7 +58,7 @@ idf() {
         return 1
     fi
 
-    disable_pyenv
+    d_pyenv
 
     if [ ! -f "$espidf_dir/export.sh" ]; then
         echo "⚠️ export.sh not found in $espidf_dir"
