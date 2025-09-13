@@ -15,7 +15,7 @@ x = 10
 y = 10
 
 [font]
-size = 11.0   # tăng nhẹ cho dễ nhìn
+size = 10.0   # tăng nhẹ cho dễ nhìn
 
 [font.normal]
 family = "JetBrains Mono Nerd Font"
@@ -34,7 +34,7 @@ family = "JetBrains Mono Nerd Font"
 style = "Bold Italic"
 
 [font.offset]
-y = 3   # tăng line height giúp thoáng, dễ đọc
+y = 4   # tăng line height giúp thoáng, dễ đọc
 
 [cursor]
 style = "Block"

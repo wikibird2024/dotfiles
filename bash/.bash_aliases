@@ -18,6 +18,7 @@ alias sz='source ~/.zshrc'
 alias thesis='cd ~/Documents/thesis_latex' 
 alias zbm='zathura build/main.pdf'
 alias zm='zathura main.pdf'
+alias zth='zathura'
 alias fondlist='fc-list --format='%{family}\n' | sort -u'
 alias xe='xelatex main.tex && biber main && xelatex main.tex && xelatex main.tex && zathura main.pdf'
 alias cl='./clean.sh'
@@ -41,6 +42,7 @@ alias getlocation='curl -s https://ipinfo.io/loc'
 alias py='python'
 alias miniterm='python -m serial.tools.miniterm'
 alias cdpy='cd ~/python'
+alias rmp='py main.py'
 
 # ============================ TMUX MANAGEMENT ================================
 alias tmls='tmux ls'                 # list all sessions
