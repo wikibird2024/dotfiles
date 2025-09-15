@@ -15,3 +15,4 @@ include ~/.config/i3/apps.conf
 exec --no-startup-id ~/.config/i3/startup_layout.sh
 exec_always --no-startup-id ~/.config/i3/touchpad.sh
 exec_always --no-startup-id ~/.config/i3/set_wallpaper.sh
+exec_always --no-startup-id autorandr --change
