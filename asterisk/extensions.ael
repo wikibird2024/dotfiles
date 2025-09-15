@@ -1,0 +1,43 @@
+context internal {
+    6001 => {
+        Answer();
+        Dial(PJSIP/6001,20);
+        Hangup();
+    }
+
+    6002 => {
+        Answer();
+        Dial(PJSIP/6002,20);
+        Hangup();
+    }
+
+    6003 => {
+        Answer();
+        Dial(PJSIP/6003,20);
+        Hangup();
+    }
+
+    6000 => {
+        Dial(PJSIP/6001&PJSIP/6002&PJSIP/6003,20);
+        Hangup();
+    }
+}
+
+context messages {
+    _X. => {
+        NoOp(===> SIP MESSAGE from ${MESSAGE(from)} to ${MESSAGE(to)});
+        ; NoOp(Message body: ${MESSAGE(body)});
+        MessageSend(pjsip:${EXTEN},pjsip:server);
+        ; MessageSend(pjsip:${EXTEN},${CHANNEL(peername)});
+        NoOp(===> Send status: ${MESSAGE_SEND_STATUS});
+        Hangup();
+    }
+}
+
+context default {
+    _X. => {
+        NoOp(Incoming call to ${EXTEN});
+        Hangup();
+    }
+}
+
