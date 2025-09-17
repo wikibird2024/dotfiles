@@ -15,7 +15,7 @@ x = 10
 y = 10
 
 [font]
-size = 10.0   # tăng nhẹ cho dễ nhìn
+size = 9.00   # tăng nhẹ cho dễ nhìn
 
 [font.normal]
 family = "JetBrains Mono Nerd Font"
