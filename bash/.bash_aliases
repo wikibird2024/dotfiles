@@ -177,7 +177,7 @@ alias rgg='rp --hidden --smart-case'
 
 
 # ============================ (NEO)VIM ====================================
-alias nv='nvim'
+alias n='nvim'
 alias snv='sudo nvim'
 alias v='nvim .'
 
