@@ -9,7 +9,7 @@ alias config='cd ~/.config/'
 alias download='cd ~/Downloads/'
 alias dotfiles='cd ~/dotfiles/'
 alias plugin.='cd ~/dotfiles/nvim/.config/nvim/lua/user/plugins/'
-alias aliase='nvim ~/.bash_aliases'
+alias aliases.e='nvim ~/.bash_aliases'
 alias funce='nvim ~/.bash_functions'
 alias bashrce='nvim ~/.bashrc'
 alias c='clear'
@@ -18,10 +18,13 @@ alias sz='source ~/.zshrc'
 alias thesis='cd ~/Documents/thesis_latex' 
 alias slide='cd ~/Documents/Fall_Detection_System_Report' 
 
+alias lmkpvc='latexmk -xelatex -pdf -pvc main.tex'
+
+
+alias listfonts="fc-list : family style | awk -F: '{print \$2}' | sed 's/^[ \t]*//;s/[ \t]*$//' | sort -u"
 alias zbm='zathura build/main.pdf'
 alias zm='zathura main.pdf'
 alias zth='zathura'
-alias fondlist='fc-list --format='%{family}\n' | sort -u'
 alias xe='xelatex main.tex && biber main && xelatex main.tex && xelatex main.tex && zathura main.pdf'
 alias cl='./clean.sh'
 alias b='./build.sh'
@@ -179,7 +182,7 @@ alias rgg='rp --hidden --smart-case'
 
 
 # ============================ (NEO)VIM ====================================
-alias n='nvim'
+alias nv='nvim'
 alias snv='sudo nvim'
 alias v='nvim .'
 
