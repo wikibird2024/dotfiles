@@ -44,6 +44,7 @@ c.colors.completion.match.fg = "#ffcc00"                # Highlight match
 # =============================
 c.url.default_page = "https://duckduckgo.com"
 c.url.start_pages = ["https://duckduckgo.com"]
+c.auto_save.session = True
 
 # =============================
 # Privacy & Security

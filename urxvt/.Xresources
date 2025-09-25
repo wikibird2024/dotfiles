@@ -1,17 +1,24 @@
 
-! =========================================
-! Rxvt-unicode: Ubuntu-like colors + Nerd Font + Vietnamese
+! ========================================
+! URxvt optimized configuration
+! Nerd Font + Emoji + Vietnamese + Ubuntu colors
 ! =========================================
 
 ! ---------------------------
 ! 1. Font chữ
 ! ---------------------------
-URxvt.font: xft:JetBrainsMono Nerd Font:pixelsize=14
-URxvt.boldFont: xft:JetBrainsMono Nerd Font:pixelsize=14:bold
-URxvt.italicFont: xft:JetBrainsMono Nerd Font:pixelsize=14:italic
-URxvt.boldItalicFont: xft:JetBrainsMono Nerd Font:pixelsize=14:bold:italic
+! Bật Perl extensions để hỗ trợ nhiều font và tiện ích
+URxvt.perl-ext-common: default,font-ext,keyboard-select,url-select,clipboard,fullscreen
+
+! Font chính và fallback cho emoji
+URxvt.font: xft:JetBrainsMono Nerd Font:pixelsize=12,xft:Noto Color Emoji:pixelsize=12
+URxvt.boldFont: xft:JetBrainsMono Nerd Font:pixelsize=12:bold,xft:Noto Color Emoji:pixelsize=12
+URxvt.italicFont: xft:JetBrainsMono Nerd Font:pixelsize=12:italic,xft:Noto Color Emoji:pixelsize=12
+URxvt.boldItalicFont: xft:JetBrainsMono Nerd Font:pixelsize=12:bold:italic,xft:Noto Color Emoji:pixelsize=12
 
 URxvt.lineSpace: 2
+URxvt.locale: en_US.UTF-8
+URxvt.utf8: 1
 
 ! ---------------------------
 ! 2. Cursor
@@ -21,7 +28,7 @@ URxvt.cursorUnderline: false
 URxvt.cursorColor: #ffffff
 
 ! ---------------------------
-! 3. Colors (Ubuntu terminal / Yaru)
+! 3. Colors (Ubuntu / Yaru theme)
 ! ---------------------------
 URxvt.foreground: #eeeeec
 URxvt.background: #300a24
@@ -53,9 +60,8 @@ URxvt.scrollWithVisualBell: false
 URxvt.internalBorder: 10
 
 ! ---------------------------
-! 5. Perl extensions & keybinds
+! 5. Keybinds: font size control
 ! ---------------------------
-URxvt.perl-ext-common: default,keyboard-select,url-select,clipboard,fullscreen
 URxvt.keysym.Control-plus: perl:font-size:increase
 URxvt.keysym.Control-minus: perl:font-size:decrease
 URxvt.keysym.Control-equal: perl:font-size:reset
