@@ -18,8 +18,16 @@ alias sz='source ~/.zshrc'
 alias thesis='cd ~/Documents/thesis_latex' 
 alias slide='cd ~/Documents/Fall_Detection_System_Report' 
 
-alias lmkpvc='latexmk -xelatex -pdf -pvc main.tex'
+# ---- fd aliases ----
+alias fd='fdfind'  # Ubuntu/Mint gọi là fdfind
 
+# fd + fzf: chọn file rồi echo đường dẫn
+alias ffo='ff . | fzf'
+alias fho='fh . | fzf'
+alias fao='fa . | fzf'
+
+
+alias lmk.pvc='latexmk -xelatex -pdf -pvc main.tex'
 
 alias listfonts="fc-list : family style | awk -F: '{print \$2}' | sed 's/^[ \t]*//;s/[ \t]*$//' | sort -u"
 alias zbm='zathura build/main.pdf'
