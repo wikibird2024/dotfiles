@@ -1,15 +1,15 @@
-
 -- File: user/plugins/lsp/servers/pyright.lua
--- Purpose: LSP configuration for Python using Pyright
+-- Purpose: LSP configuration for Python using Pyright (modern Neovim API)
 
 local M = {}
 
 --- Setup the Pyright language server
--- @param lspconfig     The lspconfig module
 -- @param on_attach     Function that sets keymaps, etc.
 -- @param capabilities  Capabilities for completion and LSP features
-function M.setup(lspconfig, on_attach, capabilities)
-  lspconfig.pyright.setup({
+function M.setup(on_attach, capabilities)
+  local config = {
+    name = "pyright",
+    cmd = { "pyright-langserver", "--stdio" },
     on_attach = on_attach,
     capabilities = capabilities,
     settings = {
@@ -18,13 +18,17 @@ function M.setup(lspconfig, on_attach, capabilities)
           autoSearchPaths = true,
           useLibraryCodeForTypes = true,
           diagnosticMode = "workspace", -- or "openFilesOnly"
-          typeCheckingMode = "basic",   -- other options: "off", "strict"
+          typeCheckingMode = "basic",   -- "off" | "basic" | "strict"
         },
       },
     },
-    -- filetypes = { "python" }, -- Optional explicit filetype declaration
-    -- root_dir = lspconfig.util.root_pattern("pyproject.toml", "setup.py", ".git"),
-  })
+    -- filetypes = { "python" },
+    -- root_dir = vim.fs.dirname(vim.fs.find({ "pyproject.toml", "setup.py", ".git" }, { upward = true })[1]),
+  }
+
+  vim.lsp.config.pyright = config
+  vim.lsp.start(config)
 end
 
 return M
+

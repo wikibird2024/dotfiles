@@ -48,15 +48,28 @@ keymap("n", "<leader>do", "<cmd>lua require'dap'.step_over()<CR>", opts)
 keymap("n", "<leader>di", "<cmd>lua require'dap'.step_into()<CR>", opts)
 
 -- ╭────────────────────────────────────────────╮
--- │ <leader>t – TERMINAL / TOGGLE               │
+-- │ <leader>t – TERMINAL & TOGGLE              │
 -- ╰────────────────────────────────────────────╯
-keymap("n", "<leader>tt", "<cmd>ToggleTerm<CR>", opts)
-keymap("n", "<leader>tn", "<cmd>NvimTreeToggle<CR>", opts)
+local keymap = vim.keymap.set
+local opts = { noremap = true, silent = true }
 
--- IDF terminal integrations (build, flash, monitor)
-keymap("n", "<leader>ib", "<cmd>ToggleTerm<CR>idf.py build<CR>", opts)
-keymap("n", "<leader>if", "<cmd>ToggleTerm<CR>idf.py flash<CR>", opts)
-keymap("n", "<leader>im", "<cmd>ToggleTerm<CR>idf.py monitor<CR>", opts)
+-- Terminal toggle bình thường
+keymap("n", "<leader>tt", "<cmd>ToggleTerm<CR>", opts)
+
+-- Thoát terminal mode nhanh
+keymap("t", "<Esc>", [[<C-\><C-n>]], opts)
+keymap("t", "jk", [[<C-\><C-n>]], opts)
+
+-- NvimTree toggle
+keymap("n", "<leader>tn", "<cmd>NvimTreeToggle<CR>", opts)  -- đổi từ <leader>n để tránh trùng
+
+-- ╭────────────────────────────────────────────╮
+-- │ IDF Terminal Integrations (ESP32)          │
+-- ╰────────────────────────────────────────────╯
+-- Mỗi lệnh chạy trong terminal float riêng, tiện theo dõi log
+keymap("n", "<leader>tb", "<cmd>1ToggleTerm direction=float<CR>idf.py build<CR>", opts)
+keymap("n", "<leader>tf", "<cmd>2ToggleTerm direction=float<CR>idf.py flash<CR>", opts)
+keymap("n", "<leader>tm", "<cmd>3ToggleTerm direction=float<CR>idf.py monitor<CR>", opts)
 
 -- ╭────────────────────────────────────────────╮
 -- │ <leader>p – PLUGIN / PROJECT MANAGEMENT     │

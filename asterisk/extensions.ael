@@ -1,43 +1,52 @@
+/* ==================== INTERNAL CALLS AND ALERTS CONTEXT ==================== */
 context internal {
-    6001 => {
-        Answer();
-        Dial(PJSIP/6001,20);
-        Hangup();
-    }
 
-    6002 => {
-        Answer();
-        Dial(PJSIP/6002,20);
-        Hangup();
-    }
+    /* 🔑 FIX for 484 ERROR: match SIP URI like 6XXX@IP/DOMAIN */
+    _6XXX@_.+ => {
+        NoOp(--- ROUTING: Internal Call (Extended URI) to ${EXTEN} ---);
+        /* Cắt bỏ mọi thứ sau dấu @ */
+        Set(EXTEN_NUM=${CUT(EXTEN,@,1)});
+        Dial(PJSIP/${EXTEN_NUM},20);
+    };
 
-    6003 => {
-        Answer();
-        Dial(PJSIP/6003,20);
-        Hangup();
-    }
+    /* Standard Pattern: 6xxx Extensions calling each other by number */
+    _6XXX => {
+        NoOp(--- ROUTING: Internal Call (Standard) to ${EXTEN} ---);
+        Dial(PJSIP/${EXTEN},20);
+    };
 
+    /* Group Call (ALERT): Dial multiple extensions simultaneously */
     6000 => {
-        Dial(PJSIP/6001&PJSIP/6002&PJSIP/6003,20);
+        NoOp(--- GROUP ALERT CALL: Dialing 6001-6004 ---);
+        Dial(PJSIP/6001&PJSIP/6002&PJSIP/6003&PJSIP/6004,20);
+    };
+
+    /* Extension 9999: clean hangup endpoint */
+    9999 => {
+        NoOp(--- HANGUP POINT 9999 ---);
         Hangup();
-    }
+    };
 }
 
+/* ==================== SIP MESSAGE SEND CONTEXT ==================== */
 context messages {
+
+    /* Match any number/message destination */
     _X. => {
-        NoOp(===> SIP MESSAGE from ${MESSAGE(from)} to ${MESSAGE(to)});
-        ; NoOp(Message body: ${MESSAGE(body)});
-        MessageSend(pjsip:${EXTEN},pjsip:server);
-        ; MessageSend(pjsip:${EXTEN},${CHANNEL(peername)});
-        NoOp(===> Send status: ${MESSAGE_SEND_STATUS});
+        NoOp(===> SIP MESSAGE from ${MESSAGE(from)} to ${EXTEN} ===);
+        /* Gán message body vào biến trước khi gửi */
+        Set(MSG_BODY=${MESSAGE(body)});
+        /* Gửi message với "From" là server, hiển thị hợp lý */
+        MessageSend(PJSIP/${EXTEN},${MSG_BODY});
         Hangup();
-    }
+    };
 }
 
+/* ==================== DEFAULT CONTEXT ==================== */
 context default {
     _X. => {
         NoOp(Incoming call to ${EXTEN});
         Hangup();
-    }
+    };
 }
 
