@@ -26,14 +26,13 @@ alias ffo='ff . | fzf'
 alias fho='fh . | fzf'
 alias fao='fa . | fzf'
 
-
-alias lmk.pvc='latexmk -xelatex -pdf -pvc main.tex'
-
 alias listfonts="fc-list : family style | awk -F: '{print \$2}' | sed 's/^[ \t]*//;s/[ \t]*$//' | sort -u"
+
 alias zbm='zathura build/main.pdf'
 alias zm='zathura main.pdf'
 alias zth='zathura'
-alias xe='xelatex main.tex && biber main && xelatex main.tex && xelatex main.tex && zathura main.pdf'
+alias xe='latexmk -xelatex main.tex'
+alias pvc='latexmk -pvc main.tex'
 alias cl='./clean.sh'
 alias b='./build.sh'
 alias qute='qutebrowser'
@@ -90,7 +89,7 @@ alias bat='batcat'
 
 # ============================ NETWORKING ================================
 alias ports='sudo lsof -i -P -n'
-alias myip='curl ifconfig.me'
+alias myip="ip a | rg 'inet'"
 alias pingg='ping google.com'
 alias scanwifi='nmcli dev wifi list'
 alias connectwifi='nmtui'
@@ -191,6 +190,7 @@ alias rgg='rp --hidden --smart-case'
 
 # ============================ (NEO)VIM ====================================
 alias nv='nvim'
+alias n='nvim'
 alias snv='sudo nvim'
 alias v='nvim .'
 
