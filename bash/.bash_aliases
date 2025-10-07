@@ -17,7 +17,9 @@ alias s='source ~/.bashrc'
 alias sz='source ~/.zshrc'
 alias thesis='cd ~/Documents/thesis_latex' 
 alias slide='cd ~/Documents/Fall_Detection_System_Report' 
+alias mirror='xrandr --output HDMI-1-1 --mode 1024x768 --same-as LVDS-1'
 
+alias pro='pdfpc -1 LVDS-1 -2 HDMI-1-1'
 # ---- fd aliases ----
 alias fd='fdfind'  # Ubuntu/Mint gọi là fdfind
 
@@ -37,6 +39,7 @@ alias cl='./clean.sh'
 alias b='./build.sh'
 alias qute='qutebrowser'
 alias pdf='xreader'
+alias slide='pdfpc'
 alias image='feh'
 
 # ============================  SYS CTL SHORTCUTS ============================
