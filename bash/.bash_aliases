@@ -11,7 +11,7 @@ alias dotfiles='cd ~/dotfiles/'
 alias plugin.='cd ~/dotfiles/nvim/.config/nvim/lua/user/plugins/'
 alias aliases.e='nvim ~/.bash_aliases'
 alias func.e='nvim ~/.bash_functions'
-alias bashrce='nvim ~/.bashrc'
+alias bashrc.e='nvim ~/.bashrc'
 alias c='clear'
 alias s='source ~/.bashrc'
 alias sz='source ~/.zshrc'
@@ -42,6 +42,26 @@ alias pdf='xreader'
 alias slide='pdfpc'
 alias image='feh'
 
+# =============================
+# Aliases compress 
+# =============================
+alias tgz='tar -czvf'      # Nén tar.gz: tgz archive.tar.gz folder/
+alias tbz='tar -cjvf'      # Nén tar.bz2: tbz archive.tar.bz2 folder/
+alias txz='tar -cJvf'      # Nén tar.xz: txz archive.tar.xz folder/
+alias tz='tar -cZvf'       # Nén tar.Z: tz archive.tar.Z folder/
+alias zipf='zip -r'        # Nén zip: zipf archive.zip folder/
+alias rarf='rar a'         # Nén rar: rarf archive.rar folder/
+
+# =============================
+# Aliases unrar
+# =============================
+alias utgz='tar -xzvf'    # Giải tar.gz: untgz archive.tar.gz
+alias utbz='tar -xjvf'    # Giải tar.bz2: untbz archive.tar.bz2
+alias utxz='tar -xJvf'    # Giải tar.xz: untxz archive.tar.xz
+alias utz='tar -xZvf'     # Giải tar.Z: untz archive.tar.Z
+alias uzip='unzip'       # Giải zip: unzipf archive.zip
+alias urar='unrar x'     # Giải rar: unrarf archive.rar
+#
 # ============================  SYS CTL SHORTCUTS ============================
 
 alias sctl='sudo systemctl'
@@ -209,7 +229,6 @@ alias sysr='sudo systemctl restart'
 alias sysl='systemctl list-units --type=service'
 
 # ============================ ESP-IDF SHORTCUTS ===========================
-alias cdesp='cd ~/esp/mainproject'
 alias idfb='idf.py build'
 alias idfst='idf.py set-target'
 alias idfmc='idf.py menuconfig'
