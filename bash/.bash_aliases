@@ -2,24 +2,27 @@
 alias ll='ls -alF --color=auto'
 alias la='ls -A'
 alias l='ls -CF'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias config='cd ~/.config/'
-alias download='cd ~/Downloads/'
-alias dotfiles='cd ~/dotfiles/'
-alias plugin.='cd ~/dotfiles/nvim/.config/nvim/lua/user/plugins/'
 alias aliases.e='nvim ~/.bash_aliases'
 alias func.e='nvim ~/.bash_functions'
 alias bashrc.e='nvim ~/.bashrc'
 alias c='clear'
 alias s='source ~/.bashrc'
 alias sz='source ~/.zshrc'
-alias thesis='cd ~/Documents/thesis_latex' 
-alias slide='cd ~/Documents/Fall_Detection_System_Report' 
 alias mirror='xrandr --output HDMI-1-1 --mode 1024x768 --same-as LVDS-1'
 
-alias pro='pdfpc -1 LVDS-1 -2 HDMI-1-1'
+
+# ---- Change directory ----
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias config='cd ~/.config/'
+alias down='cd ~/Downloads/'
+alias dot.f='cd ~/dotfiles/'
+alias plugin.='cd ~/dotfiles/nvim/.config/nvim/lua/user/plugins/'
+alias cdpy='cd ~/python'
+alias doc='cd ~/Downloads/'
+alias pic='cd ~/Pictures/'
+
 # ---- fd aliases ----
 alias fd='fdfind'  # Ubuntu/Mint gọi là fdfind
 
@@ -30,6 +33,10 @@ alias fao='fa . | fzf'
 
 alias listfonts="fc-list : family style | awk -F: '{print \$2}' | sed 's/^[ \t]*//;s/[ \t]*$//' | sort -u"
 
+
+# =============================
+# ---- open app and run sh ----
+# =============================
 alias zbm='zathura build/main.pdf'
 alias zm='zathura main.pdf'
 alias zth='zathura'
@@ -61,9 +68,8 @@ alias utxz='tar -xJvf'    # Giải tar.xz: untxz archive.tar.xz
 alias utz='tar -xZvf'     # Giải tar.Z: untz archive.tar.Z
 alias uzip='unzip'       # Giải zip: unzipf archive.zip
 alias urar='unrar x'     # Giải rar: unrarf archive.rar
-#
-# ============================  SYS CTL SHORTCUTS ============================
 
+# ============================  SYS CTL SHORTCUTS ============================
 alias sctl='sudo systemctl'
 alias tctl='timedatectl'
 alias hctl='hostnamectl'
@@ -73,10 +79,9 @@ alias lcl='localectl'
 alias getlocation='curl -s https://ipinfo.io/loc'
 
 # ============================  PYTHON ================================
-#
+
 alias py='python'
 alias miniterm='python -m serial.tools.miniterm'
-alias cdpy='cd ~/python'
 alias rmp='py main.py'
 
 # ============================ TMUX MANAGEMENT ================================
@@ -94,7 +99,6 @@ alias tmkall='tmux kill-server'     # kill all session
 alias shutdown='sudo shutdown -P now'
 alias reboot='sudo reboot'
 
-# ============================ SYSTEM OPS ================================
 alias update='sudo apt update && sudo apt upgrade -y'
 alias install='sudo apt install'
 alias remove='sudo apt remove'
@@ -291,6 +295,3 @@ alias tc='tree -C -I "build|*.o|*.elf|*.bin|.git|.vscode|*.pyc|__pycache__"'
 alias tpj='tree -C -L 2 -I "node_modules|dist|.git|.vscode|*.lock"'
 alias tpy='tree -C -I "__pycache__|.venv|.git|*.pyc"'
 
-# Create and activate `.venv` in current directory
-alias .venv='source .venv/bin/activate'
-alias venv='source venv/bin/activate'
