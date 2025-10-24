@@ -14,7 +14,7 @@ URxvt.perl-ext-common: default,font-ext,keyboard-select,url-select,clipboard,ful
 URxvt.font: xft:JetBrainsMono Nerd Font:pixelsize=12,xft:Noto Color Emoji:pixelsize=12
 URxvt.boldFont: xft:JetBrainsMono Nerd Font:pixelsize=12:bold,xft:Noto Color Emoji:pixelsize=12
 URxvt.italicFont: xft:JetBrainsMono Nerd Font:pixelsize=12:italic,xft:Noto Color Emoji:pixelsize=12
-URxvt.boldItalicFont: xft:JetBrainsMono Nerd Font:pixelsize=12:bold:italic,xft:Noto Color Emoji:pixelsize=12
+URxvt.boldItalicFont: xft:JetBrainsMono Nerd Font:pixelsize=12:bold:italic,xft:Noto Color Emoji:pixelsize=13
 
 URxvt.lineSpace: 2
 URxvt.locale: en_US.UTF-8

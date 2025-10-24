@@ -15,13 +15,13 @@ alias mirror='xrandr --output HDMI-1-1 --mode 1024x768 --same-as LVDS-1'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
-alias config='cd ~/.config/'
-alias down='cd ~/Downloads/'
-alias dot.f='cd ~/dotfiles/'
-alias plugin.='cd ~/dotfiles/nvim/.config/nvim/lua/user/plugins/'
-alias cdpy='cd ~/python'
-alias doc='cd ~/Downloads/'
-alias pic='cd ~/Pictures/'
+alias fconfig='cd ~/.config/'
+alias fdot='cd ~/dotfiles/'
+alias fplugin.='cd ~/dotfiles/nvim/.config/nvim/lua/user/plugins/'
+alias fpy='cd ~/python'
+alias fdown='cd ~/Downloads/'
+alias fdoc='cd ~/Documents/'
+alias fpic='cd ~/Pictures/'
 
 # ---- fd aliases ----
 alias fd='fdfind'  # Ubuntu/Mint gọi là fdfind
@@ -30,24 +30,22 @@ alias fd='fdfind'  # Ubuntu/Mint gọi là fdfind
 alias ffo='ff . | fzf'
 alias fho='fh . | fzf'
 alias fao='fa . | fzf'
-
 alias listfonts="fc-list : family style | awk -F: '{print \$2}' | sed 's/^[ \t]*//;s/[ \t]*$//' | sort -u"
 
 
 # =============================
 # ---- open app and run sh ----
 # =============================
-alias zbm='zathura build/main.pdf'
 alias zm='zathura main.pdf'
 alias zth='zathura'
 alias xe='latexmk -xelatex main.tex'
 alias pvc='latexmk -pvc main.tex'
 alias cl='./clean.sh'
 alias b='./build.sh'
-alias qute='qutebrowser'
-alias pdf='xreader'
-alias slide='pdfpc'
-alias image='feh'
+alias rqute='qutebrowser'
+alias rpdf='xreader'
+alias rslide='pdfpc'
+alias rpic='feh'
 
 # =============================
 # Aliases compress 
