@@ -1,74 +1,72 @@
 
 #===========================================================
-# i3blocks Configuration
+# i3blocks Configuration — Dracula Pro Style
 # Author: Ginko
-# Theme: Dracula-style (match bar.conf)
 #===========================================================
 
-separator_block_width=15
+separator_block_width=20
 markup=pango
 interval=5
-align=center
 
 #-----------------------------------------------------------
-# CPU Usage
+# CPU
 #-----------------------------------------------------------
 [CPU]
-label=<span foreground="#50fa7b"> </span>
+label=
 command=awk -v cpu="$(grep 'cpu ' /proc/stat)" 'BEGIN{split(cpu,a);while(getline < "/proc/stat"){split($0,b);if(b[1]=="cpu"){printf("%.1f%%",100*(1-(b[4]-a[4])/(b[1]+b[2]+b[3]+b[4]-a[1]-a[2]-a[3]-a[4]))));exit}}}'
 interval=3
 color=#50fa7b
 
 #-----------------------------------------------------------
-# Memory Usage
+# Memory
 #-----------------------------------------------------------
 [Memory]
-label=<span foreground="#8be9fd"> </span>
+label=
 command=free -h | awk '/Mem/{print $3 "/" $2}'
 interval=10
 color=#8be9fd
 
 #-----------------------------------------------------------
-# Disk Space
+# Disk
 #-----------------------------------------------------------
 [Disk]
-label=<span foreground="#f1fa8c"> </span>
+label=
 command=df -h / | awk 'NR==2{print $3 "/" $2}'
 interval=30
 color=#f1fa8c
 
 #-----------------------------------------------------------
-# Volume (requires amixer)
+# Volume
 #-----------------------------------------------------------
 [Volume]
-label=<span foreground="#ffb86c"> </span>
+label=
 command=amixer get Master | grep -Po "[0-9]+(?=%)" | head -1 | awk '{print $1 "%"}'
 interval=2
 color=#ffb86c
 
 #-----------------------------------------------------------
-# Battery Status (requires acpi)
+# Battery
 #-----------------------------------------------------------
 [Battery]
-label=<span foreground="#bd93f9">🔋 </span>
+label=🔋
 command=acpi -b | awk '{print $4}' | tr -d ','
 interval=30
 color=#bd93f9
 
 #-----------------------------------------------------------
-# Network Status (requires nmcli)
+# Network
 #-----------------------------------------------------------
 [Network]
-label=<span foreground="#50fa7b"> </span>
+label=
 command=nmcli -t -f ACTIVE,SSID dev wifi | grep '^yes' | cut -d: -f2
 interval=10
 color=#50fa7b
 
 #-----------------------------------------------------------
-# Date and Time
+# Date & Time
 #-----------------------------------------------------------
 [Time]
-label=<span foreground="#ff79c6"> </span>
+label=
 command=date '+%a %d %b %H:%M'
 interval=60
 color=#ff79c6
