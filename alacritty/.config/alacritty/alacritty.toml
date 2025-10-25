@@ -1,21 +1,19 @@
-
-
-# =============================================
-# Alacritty config optimized for TN panel + gold text
-# Author: Ginko's AI Assistant (refined)
-# =============================================
+# =======================================================================
+# Alacritty config optimized for i3wm, TN panel, and minimal eye strain
+# Author: Ginko's AI Assistant (Refactored)
+# =======================================================================
 
 [window]
-opacity = 1.0
 decorations = "full"
 startup_mode = "windowed"
+opacity = 1.0
 
 [window.padding]
 x = 10
 y = 10
 
 [font]
-size = 9.00   # tăng nhẹ cho dễ nhìn
+size = 9.00  # Kích thước font dễ nhìn
 
 [font.normal]
 family = "JetBrains Mono Nerd Font"
@@ -34,19 +32,28 @@ family = "JetBrains Mono Nerd Font"
 style = "Bold Italic"
 
 [font.offset]
-y = 4   # tăng line height giúp thoáng, dễ đọc
+# Tăng line height giúp văn bản thoáng, giảm mỏi mắt khi đọc code dài.
+y = 4
 
 [cursor]
 style = "Block"
 
+# =======================================================================
+# COLOR SCHEME: Custom Dark Amber/Gold
+# =======================================================================
+
 [colors.primary]
-background = "0x202020"   # đen xám dịu hơn cho TN panel
-foreground = "0xFFD700"   # vàng nhạt dịu, không quá chói
+# Nền đen xám dịu (dễ chịu hơn #000000)
+background = "0x202020"
+# Chữ vàng hổ phách dịu (Soft Amber), giảm độ chói hơn so với vàng thuần (0xFFD700)
+foreground = "0xF5E0B3"
 
 [colors.cursor]
+# Con trỏ sáng hơn để nổi bật trên nền tối
 text = "0x000000"
 cursor = "0xFFE866"
 
+# Màu ANSI (Normal - Giữ nguyên các tông màu dịu của bạn)
 [colors.normal]
 black   = "0x1a1a1a"
 red     = "0xff4c4c"
@@ -57,6 +64,7 @@ magenta = "0xd787ff"
 cyan    = "0x5fd7d7"
 white   = "0xd0d0d0"
 
+# Màu ANSI (Bright - Giữ nguyên)
 [colors.bright]
 black   = "0x4d4d4d"
 red     = "0xff6666"

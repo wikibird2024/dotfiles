@@ -153,3 +153,4 @@ export VISUAL=vim
 if command -v zoxide >/dev/null 2>&1; then
     eval "$(zoxide init bash)"
 fi
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
