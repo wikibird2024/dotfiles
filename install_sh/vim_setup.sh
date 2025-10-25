@@ -1,33 +1,35 @@
-#!/bin/bash
 
-# Exit immediately if a command exits with a non-zero status.
+#!/usr/bin/env bash
+# ===============================================================
+# Comprehensive Vim setup script (No Python interference)
+# Author: Ginko
+# Purpose: Set up a professional Vim environment safely
+# ===============================================================
+
 set -e
 
-echo "--- Starting comprehensive Vim setup script ---"
+echo ">>> Starting Vim setup..."
 
-# --- 1. Install Vim and build tools ---
-echo "Installing Vim and essential build tools..."
-if [ -x "$(command -v apt-get)" ]; then
+# ─── 1. Install Vim and dependencies (No Python) ──────────────────────────────
+echo ">>> Installing Vim and essential build tools..."
+if command -v apt-get &>/dev/null; then
     sudo apt-get update
-    sudo apt-get install -y vim curl build-essential
-elif [ -x "$(command -v dnf)" ]; then
-    sudo dnf install -y vim curl make gcc
-elif [ -x "$(command -v brew)" ]; then
-    brew install vim curl
-    brew install make gcc
+    sudo apt-get install -y vim curl build-essential git
+elif command -v dnf &>/dev/null; then
+    sudo dnf install -y vim curl make gcc git
+elif command -v brew &>/dev/null; then
+    brew install vim curl git make gcc
 else
     echo "Warning: Package manager not found. Please install vim, curl, and build-essential manually."
 fi
 
-# --- 2. Create Vim directory structure ---
-echo "Creating Vim configuration directories..."
+# ─── 2. Create Vim directory structure ───────────────────────────────────────
+echo ">>> Creating Vim configuration directories..."
 VIM_DIR="$HOME/.vim"
-if [ ! -d "$VIM_DIR" ]; then
-    mkdir -p "$VIM_DIR/autoload"
-fi
+mkdir -p "$VIM_DIR/autoload"
 
-# --- 3. Install vim-plug plugin manager ---
-echo "Installing vim-plug..."
+# ─── 3. Install vim-plug ─────────────────────────────────────────────────────
+echo ">>> Installing vim-plug..."
 PLUG_URL="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 if [ ! -f "$VIM_DIR/autoload/plug.vim" ]; then
     curl -fLo "$VIM_DIR/autoload/plug.vim" --create-dirs "$PLUG_URL"
@@ -36,15 +38,15 @@ else
     echo "vim-plug is already installed."
 fi
 
-# --- 4. Create a comprehensive .vimrc file ---
-echo "Creating/updating ~/.vimrc with a comprehensive configuration..."
-cat << EOF > ~/.vimrc
+# ─── 4. Create or overwrite ~/.vimrc ─────────────────────────────────────────
+echo ">>> Writing professional ~/.vimrc configuration..."
+cat << 'EOF' > ~/.vimrc
 "=============================================================================
-" VIM-PLUG: Plugin Manager
+" VIM PROFESSIONAL SETUP — GINKO EDITION
 "=============================================================================
 call plug#begin('~/.vim/plugged')
 
-" The Essentials
+" ─── Essentials ───────────────────────────────────────────────────────────────
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'preservim/nerdtree'
@@ -54,20 +56,18 @@ Plug 'tpope/vim-surround'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-" Syntax and Formatting
+" ─── Syntax and Linting ──────────────────────────────────────────────────────
 Plug 'sheerun/vim-polyglot'
-"Plug 'ycm-core/YouCompleteMe' " Uncomment this and others if you need a specific completion engine
-Plug 'dense-analysis/ale'
+Plug 'dense-analysis/ale' " Async linting
 
-" Aesthetics
+" ─── Aesthetics ───────────────────────────────────────────────────────────────
 Plug 'joshdick/onedark.vim'
 
 call plug#end()
 
 "=============================================================================
-" General Settings
+" GENERAL SETTINGS
 "=============================================================================
 set nocompatible
 set number relativenumber
@@ -82,16 +82,19 @@ set smartcase
 set hlsearch
 set fileencoding=utf-8
 set wildmenu
+set ttyfast
+set ruler
+set cursorline
 
-" Set leader key to space
+" Leader Key
 let mapleader = ' '
 let g:mapleader = ' '
 
-" Recommended to set a color scheme after plugin-manager setup
+" Colorscheme
 colorscheme onedark
 
 "=============================================================================
-" Plugin-Specific Settings
+" PLUGIN-SPECIFIC SETTINGS
 "=============================================================================
 " NERDTree
 map <C-n> :NERDTreeToggle<CR>
@@ -109,15 +112,18 @@ let g:airline_theme='onedark'
 let g:gitgutter_sign_added = '+'
 let g:gitgutter_sign_modified = '~'
 let g:gitgutter_sign_removed = '-'
+
+" ALE linting indicators
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '⚠'
+let g:ale_fix_on_save = 1
 EOF
 
-echo "--- Vim configuration file (~/.vimrc) created ---"
+echo ">>> ~/.vimrc created successfully."
 
-# --- 5. Install the plugins inside Vim ---
-echo "Launching Vim to install plugins. Please wait for the process to finish."
-vim -c 'PlugInstall' -c 'qa!'
+# ─── 5. Install plugins ──────────────────────────────────────────────────────
+echo ">>> Installing Vim plugins..."
+vim -E -s -u "$HOME/.vimrc" +PlugInstall +qall || true
 
-echo "--- Vim plugins installed successfully ---"
-
-echo "--- Setup complete! ---"
-echo "You can now open vim and start coding. Use :PlugUpdate to update plugins."
+echo ">>> Setup complete!"
+echo "Open Vim and enjoy your clean environment. Use :PlugUpdate to refresh plugins."

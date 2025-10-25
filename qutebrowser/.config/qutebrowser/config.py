@@ -80,21 +80,46 @@ c.content.blocking.method = "both"
 c.downloads.location.directory = "~/Downloads"
 c.downloads.remove_finished = 5000  # Remove after 5s
 c.downloads.position = "bottom"
-
 # =============================
 # Keybindings (Vim-style)
 # =============================
-config.bind("J", "tab-prev")          # Previous tab
-config.bind("K", "tab-next")          # Next tab
-config.bind("d", "tab-close")         # Close tab
-config.bind("u", "undo")              # Reopen closed tab
+
+# ----- Tab navigation -----
+config.bind("J", "tab-prev")           # Move to previous tab
+config.bind("K", "tab-next")           # Move to next tab
+config.bind("g0", "tab-focus 0")       # Focus first tab
+config.bind("g$", "tab-focus -1")      # Focus last tab
+config.bind("d", "tab-close")          # Close current tab
+config.bind("u", "undo")               # Reopen last closed tab
+config.bind("tn", "open -t about:blank")  # Open new blank tab
 config.bind("xo", "set-cmd-text -s :open -t")  # Open new tab with URL
-config.bind("X", "config-source")     # Reload config
-config.bind("f", "hint links")        # Follow link
-config.bind("F", "hint links tab")    # Open link in new tab
-config.bind("yy", "yank url")         # Copy current URL
-config.bind("p", "open -t")           # Prompt to open new tab
-config.bind("ge", "edit-text")        # Edit textarea externally
+config.bind("p", "open -t")            # Prompt to open new tab
+
+# ----- Page navigation -----
+config.bind("H", "back")               # Go back in history
+config.bind("L", "forward")            # Go forward in history
+config.bind("r", "reload")             # Reload current page
+
+# ----- Links & clipboard -----
+config.bind("f", "hint links")         # Follow link
+config.bind("F", "hint links tab")     # Open link in new tab
+config.bind("yy", "yank url")          # Copy current URL
+config.bind("gp", "open -t {clipboard}")  # Open URL from clipboard
+
+# ----- Zoom -----
+config.bind("zi", "zoom-in")           # Zoom in
+config.bind("zo", "zoom-out")          # Zoom out
+config.bind("zr", "zoom-reset")        # Reset zoom
+
+# ----- Bookmarks -----
+config.bind("b", "bookmark-add")       # Add bookmark
+config.bind("B", "bookmark-load")      # Load bookmark
+
+# ----- Editing -----
+config.bind("ge", "edit-text")         # Edit textarea externally
+
+# ----- Config & commands -----
+config.bind("X", "config-source")      # Reload configuration
 
 # =============================
 # External Editor

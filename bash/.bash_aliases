@@ -2,24 +2,27 @@
 alias ll='ls -alF --color=auto'
 alias la='ls -A'
 alias l='ls -CF'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias config='cd ~/.config/'
-alias download='cd ~/Downloads/'
-alias dotfiles='cd ~/dotfiles/'
-alias plugin.='cd ~/dotfiles/nvim/.config/nvim/lua/user/plugins/'
 alias aliases.e='nvim ~/.bash_aliases'
 alias func.e='nvim ~/.bash_functions'
 alias bashrc.e='nvim ~/.bashrc'
 alias c='clear'
 alias s='source ~/.bashrc'
 alias sz='source ~/.zshrc'
-alias thesis='cd ~/Documents/thesis_latex' 
-alias slide='cd ~/Documents/Fall_Detection_System_Report' 
 alias mirror='xrandr --output HDMI-1-1 --mode 1024x768 --same-as LVDS-1'
 
-alias pro='pdfpc -1 LVDS-1 -2 HDMI-1-1'
+
+# ---- Change directory ----
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias fconfig='cd ~/.config/'
+alias fdot='cd ~/dotfiles/'
+alias fplugin.='cd ~/dotfiles/nvim/.config/nvim/lua/user/plugins/'
+alias fpy='cd ~/python'
+alias fdown='cd ~/Downloads/'
+alias fdoc='cd ~/Documents/'
+alias fpic='cd ~/Pictures/'
+
 # ---- fd aliases ----
 alias fd='fdfind'  # Ubuntu/Mint gọi là fdfind
 
@@ -27,20 +30,23 @@ alias fd='fdfind'  # Ubuntu/Mint gọi là fdfind
 alias ffo='ff . | fzf'
 alias fho='fh . | fzf'
 alias fao='fa . | fzf'
-
 alias listfonts="fc-list : family style | awk -F: '{print \$2}' | sed 's/^[ \t]*//;s/[ \t]*$//' | sort -u"
 
-alias zbm='zathura build/main.pdf'
+
+# =============================
+# ---- open app and run sh ----
+# =============================
 alias zm='zathura main.pdf'
 alias zth='zathura'
 alias xe='latexmk -xelatex main.tex'
 alias pvc='latexmk -pvc main.tex'
 alias cl='./clean.sh'
 alias b='./build.sh'
-alias qute='qutebrowser'
-alias pdf='xreader'
-alias slide='pdfpc'
-alias image='feh'
+alias omt='nvim main.tex'
+alias rqute='qutebrowser'
+alias rpdf='xreader'
+alias rslide='pdfpc'
+alias rpic='feh'
 
 # =============================
 # Aliases compress 
@@ -61,9 +67,8 @@ alias utxz='tar -xJvf'    # Giải tar.xz: untxz archive.tar.xz
 alias utz='tar -xZvf'     # Giải tar.Z: untz archive.tar.Z
 alias uzip='unzip'       # Giải zip: unzipf archive.zip
 alias urar='unrar x'     # Giải rar: unrarf archive.rar
-#
-# ============================  SYS CTL SHORTCUTS ============================
 
+# ============================  SYS CTL SHORTCUTS ============================
 alias sctl='sudo systemctl'
 alias tctl='timedatectl'
 alias hctl='hostnamectl'
@@ -73,10 +78,9 @@ alias lcl='localectl'
 alias getlocation='curl -s https://ipinfo.io/loc'
 
 # ============================  PYTHON ================================
-#
+
 alias py='python'
 alias miniterm='python -m serial.tools.miniterm'
-alias cdpy='cd ~/python'
 alias rmp='py main.py'
 
 # ============================ TMUX MANAGEMENT ================================
@@ -94,7 +98,6 @@ alias tmkall='tmux kill-server'     # kill all session
 alias shutdown='sudo shutdown -P now'
 alias reboot='sudo reboot'
 
-# ============================ SYSTEM OPS ================================
 alias update='sudo apt update && sudo apt upgrade -y'
 alias install='sudo apt install'
 alias remove='sudo apt remove'
@@ -156,19 +159,19 @@ alias psg='ps aux | grep -v grep | grep -i -e VSZ -e'
 alias topcpu='ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%cpu | head'
 
 # ============================ GIT POWER TOOLS ============================
-alias gro='git remote add origin'
-alias gru='git remote set-url origin'
+alias grao='git remote add origin'
+alias grsu='git remote set-url origin'
 alias grv='git remote -v'
 
 alias g='git'
 alias gs='git status'
 alias ga='git add'
 alias gc='git commit -m'
-alias gca='git commit --amend'
-alias gco='git checkout'
+alias gc.a='git commit --amend'
+alias g.co='git checkout'
 alias gb='git branch'
 alias gbd='git branch -d'
-alias gcb='git checkout -b'
+alias g.cb='git checkout -b'
 alias gp='git push'
 alias gpo='git push origin'
 alias gl='git pull'
@@ -291,6 +294,3 @@ alias tc='tree -C -I "build|*.o|*.elf|*.bin|.git|.vscode|*.pyc|__pycache__"'
 alias tpj='tree -C -L 2 -I "node_modules|dist|.git|.vscode|*.lock"'
 alias tpy='tree -C -I "__pycache__|.venv|.git|*.pyc"'
 
-# Create and activate `.venv` in current directory
-alias .venv='source .venv/bin/activate'
-alias venv='source venv/bin/activate'
