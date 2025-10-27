@@ -12,8 +12,15 @@ include ~/.config/i3/apps.conf
 # =============================
 # Startup Scripts
 # =============================
+exec_always --no-startup-id setxkbmap -option caps:escape  # Đã đổi thành exec_always
 exec --no-startup-id ~/.config/i3/startup_layout.sh
-exec --no-startup-id setxkbmap -option caps:escape
+
+# Thêm các thành phần hệ thống quan trọng
+exec --no-startup-id dunst                             # Dịch vụ thông báo
+exec_always --no-startup-id nm-applet --indicator      # Quản lý mạng
+exec_always --no-startup-id /usr/lib/polkit-gnome/polkit-agent-helper-1 # Xác thực quyền
+
+# Các script tùy chỉnh
 exec_always --no-startup-id ~/.config/i3/touchpad.sh
 exec_always --no-startup-id ~/.config/i3/set_wallpaper.sh
 exec_always --no-startup-id autorandr --change
