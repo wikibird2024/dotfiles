@@ -61,8 +61,9 @@ keymap("t", "<Esc>", [[<C-\><C-n>]], opts)
 keymap("t", "jk", [[<C-\><C-n>]], opts)
 
 -- NvimTree toggle
-keymap("n", "<leader>tn", "<cmd>NvimTreeToggle<CR>", opts)  -- đổi từ <leader>n để tránh trùng
+-- keymap("n", "<leader>tn", "<cmd>NvimTreeToggle<CR>", opts)  
 
+keymap("n", "<leader>tn", "<cmd>Neotree toggle<CR>", opts)
 -- ╭────────────────────────────────────────────╮
 -- │ IDF Terminal Integrations (ESP32)          │
 -- ╰────────────────────────────────────────────╯
