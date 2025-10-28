@@ -1,3 +1,4 @@
+
 "=============================================================================
 " VIM-PLUG: Plugin Manager
 "=============================================================================
@@ -17,7 +18,6 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Syntax and Formatting
 Plug 'sheerun/vim-polyglot'
-"Plug 'ycm-core/YouCompleteMe' " Uncomment this and others if you need a specific completion engine
 Plug 'dense-analysis/ale'
 
 " Aesthetics
@@ -41,6 +41,8 @@ set smartcase
 set hlsearch
 set fileencoding=utf-8
 set wildmenu
+syntax on
+filetype plugin indent on
 
 " Set leader key to space
 let mapleader = ' '
@@ -53,8 +55,8 @@ colorscheme onedark
 " Plugin-Specific Settings
 "=============================================================================
 " NERDTree
-map <C-n> :NERDTreeToggle<CR>
-map <C-f> :NERDTreeFind<CR>
+nnoremap <leader>tn :NERDTreeToggle<CR>
+nnoremap <leader>tf :NERDTreeFind<CR>
 
 " FZF
 nnoremap <C-p> :Files<CR>

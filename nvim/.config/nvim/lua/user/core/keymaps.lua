@@ -1,98 +1,122 @@
 
+-- ======================================================================
+-- 🧠 Ginko Keymap System – Professional Embedded Developer Layout
+-- ======================================================================
+
 vim.g.mapleader = " "
-
-local keymap = vim.keymap.set
+local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
 -- ╭────────────────────────────────────────────╮
--- │ <leader>f – FILE / FIND / FORMAT           │
+-- │ Helper function                            │
 -- ╰────────────────────────────────────────────╯
-keymap("n", "<leader>ff", "<cmd>Telescope find_files<CR>", opts)
-keymap("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", opts)
-keymap("n", "<leader>f", function() vim.lsp.buf.format({ async = true }) end, opts)
+local function nmap(lhs, rhs, desc)
+  map("n", lhs, rhs, vim.tbl_extend("force", opts, { desc = desc }))
+end
+local function vmap(lhs, rhs, desc)
+  map("v", lhs, rhs, vim.tbl_extend("force", opts, { desc = desc }))
+end
+local function tmap(lhs, rhs, desc)
+  map("t", lhs, rhs, vim.tbl_extend("force", opts, { desc = desc }))
+end
 
 -- ╭────────────────────────────────────────────╮
--- │ <leader>g – GIT                             │
+-- │ FILE / FIND / FORMAT                       │
 -- ╰────────────────────────────────────────────╯
-keymap("n", "<leader>gs", "<cmd>Gitsigns stage_hunk<CR>", opts)
-keymap("n", "<leader>gb", "<cmd>Gitsigns blame_line<CR>", opts)
+nmap("<leader>ff", "<cmd>Telescope find_files<CR>", "Find files")
+nmap("<leader>fg", "<cmd>Telescope live_grep<CR>", "Live grep")
+nmap("<leader>fr", "<cmd>Telescope oldfiles<CR>", "Recent files")
+nmap("<leader>fs", "<cmd>w<CR>", "Save file")
+nmap("<leader>fS", "<cmd>wa<CR>", "Save all files")
+nmap("<leader>f", function() vim.lsp.buf.format({ async = true }) end, "Format buffer")
 
 -- ╭────────────────────────────────────────────╮
--- │ <leader>b – BUFFER                          │
+-- │ BUFFER MANAGEMENT                          │
 -- ╰────────────────────────────────────────────╯
-keymap("n", "<leader>bd", "<cmd>bdelete<CR>", opts)
-keymap("n", "<leader>bn", "<cmd>bnext<CR>", opts)
-keymap("n", "<leader>bp", "<cmd>bprevious<CR>", opts)
+nmap("<leader>bn", "<cmd>bnext<CR>", "Next buffer")
+nmap("<leader>bp", "<cmd>bprevious<CR>", "Previous buffer")
+nmap("<leader>bd", "<cmd>bdelete<CR>", "Delete buffer")
+nmap("<leader>bo", "<cmd>BufferLineCloseOthers<CR>", "Close other buffers")
 
 -- ╭────────────────────────────────────────────╮
--- │ <leader>w – WINDOW                          │
+-- │ WINDOW / SPLIT                             │
 -- ╰────────────────────────────────────────────╯
-keymap("n", "<leader>ws", "<cmd>split<CR>", opts)
-keymap("n", "<leader>wv", "<cmd>vsplit<CR>", opts)
-keymap("n", "<leader>wc", "<cmd>close<CR>", opts)
+nmap("<leader>ws", "<cmd>split<CR>", "Horizontal split")
+nmap("<leader>wv", "<cmd>vsplit<CR>", "Vertical split")
+nmap("<leader>wc", "<cmd>close<CR>", "Close window")
+nmap("<leader>wh", "<C-w>h", "Move left")
+nmap("<leader>wl", "<C-w>l", "Move right")
+nmap("<leader>wj", "<C-w>j", "Move down")
+nmap("<leader>wk", "<C-w>k", "Move up")
 
 -- ╭────────────────────────────────────────────╮
--- │ <leader>l – LSP                              │
+-- │ LSP / INTELLISENSE                         │
 -- ╰────────────────────────────────────────────╯
-keymap("n", "<leader>ld", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
-keymap("n", "<leader>lr", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
-keymap("n", "<leader>lh", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
-keymap("n", "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+nmap("<leader>ld", vim.lsp.buf.definition, "Go to definition")
+nmap("<leader>lr", vim.lsp.buf.rename, "Rename symbol")
+nmap("<leader>lh", vim.lsp.buf.hover, "Hover info")
+nmap("<leader>li", vim.lsp.buf.implementation, "Go to implementation")
+nmap("<leader>la", vim.lsp.buf.code_action, "Code action")
+nmap("<leader>le", "<cmd>Telescope diagnostics bufnr=0<CR>", "Show diagnostics")
 
 -- ╭────────────────────────────────────────────╮
--- │ <leader>d – DEBUG / DAP                     │
+-- │ DEBUGGING (DAP)                            │
 -- ╰────────────────────────────────────────────╯
-keymap("n", "<leader>db", "<cmd>lua require'dap'.toggle_breakpoint()<CR>", opts)
-keymap("n", "<leader>dc", "<cmd>lua require'dap'.continue()<CR>", opts)
-keymap("n", "<leader>do", "<cmd>lua require'dap'.step_over()<CR>", opts)
-keymap("n", "<leader>di", "<cmd>lua require'dap'.step_into()<CR>", opts)
+nmap("<leader>db", "<cmd>lua require'dap'.toggle_breakpoint()<CR>", "Toggle breakpoint")
+nmap("<leader>dc", "<cmd>lua require'dap'.continue()<CR>", "Continue")
+nmap("<leader>do", "<cmd>lua require'dap'.step_over()<CR>", "Step over")
+nmap("<leader>di", "<cmd>lua require'dap'.step_into()<CR>", "Step into")
+nmap("<leader>dr", "<cmd>lua require'dap'.repl.open()<CR>", "Open DAP REPL")
 
 -- ╭────────────────────────────────────────────╮
--- │ <leader>t – TERMINAL & TOGGLE              │
+-- │ ESP32 RUN / BUILD / FLASH                  │
 -- ╰────────────────────────────────────────────╯
-local keymap = vim.keymap.set
-local opts = { noremap = true, silent = true }
-
--- Terminal toggle bình thường
-keymap("n", "<leader>tt", "<cmd>ToggleTerm<CR>", opts)
-
--- Thoát terminal mode nhanh
-keymap("t", "<Esc>", [[<C-\><C-n>]], opts)
-keymap("t", "jk", [[<C-\><C-n>]], opts)
-
--- NvimTree toggle
-keymap("n", "<leader>tn", "<cmd>NvimTreeToggle<CR>", opts)  -- đổi từ <leader>n để tránh trùng
+nmap("<leader>rb", "<cmd>1ToggleTerm direction=float<CR>idf.py build<CR>", "Build project")
+nmap("<leader>rf", "<cmd>2ToggleTerm direction=float<CR>idf.py flash<CR>", "Flash firmware")
+nmap("<leader>rm", "<cmd>3ToggleTerm direction=float<CR>idf.py monitor<CR>", "Serial monitor")
+nmap("<leader>ra", "<cmd>4ToggleTerm direction=float<CR>idf.py build flash monitor<CR>", "Build+Flash+Monitor")
 
 -- ╭────────────────────────────────────────────╮
--- │ IDF Terminal Integrations (ESP32)          │
+-- │ GIT                                        │
 -- ╰────────────────────────────────────────────╯
--- Mỗi lệnh chạy trong terminal float riêng, tiện theo dõi log
-keymap("n", "<leader>tb", "<cmd>1ToggleTerm direction=float<CR>idf.py build<CR>", opts)
-keymap("n", "<leader>tf", "<cmd>2ToggleTerm direction=float<CR>idf.py flash<CR>", opts)
-keymap("n", "<leader>tm", "<cmd>3ToggleTerm direction=float<CR>idf.py monitor<CR>", opts)
+nmap("<leader>gs", "<cmd>Gitsigns stage_hunk<CR>", "Stage hunk")
+nmap("<leader>gb", "<cmd>Gitsigns blame_line<CR>", "Blame line")
+nmap("<leader>gd", "<cmd>Gitsigns diffthis<CR>", "Diff hunk")
+nmap("<leader>gp", "<cmd>Gitsigns preview_hunk<CR>", "Preview hunk")
 
 -- ╭────────────────────────────────────────────╮
--- │ <leader>p – PLUGIN / PROJECT MANAGEMENT     │
+-- │ TERMINAL / TREE / TOGGLE                   │
 -- ╰────────────────────────────────────────────╯
-keymap("n", "<leader>ps", "<cmd>Lazy<CR>", opts)
-keymap("n", "<leader>pi", "<cmd>Lazy install<CR>", opts)
-keymap("n", "<leader>pu", "<cmd>Lazy update<CR>", opts)
+nmap("<leader>tt", "<cmd>ToggleTerm<CR>", "Toggle terminal")
+nmap("<leader>te", "<cmd>NvimTreeToggle<CR>", "Toggle file tree")
+nmap("<leader>tf", "<cmd>NvimTreeFocus<CR>", "Focus file tree")
+
+tmap("<Esc>", [[<C-\><C-n>]], "Exit terminal mode")
+tmap("jk", [[<C-\><C-n>]], "Exit terminal mode")
 
 -- ╭────────────────────────────────────────────╮
--- │ <leader>c – COMMENT / CODE TOOLS            │
+-- │ PLUGIN MANAGEMENT                          │
 -- ╰────────────────────────────────────────────╯
-keymap("n", "<leader>cc", "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>", opts)
-keymap("v", "<leader>cc", "<esc><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>", opts)
-keymap("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+nmap("<leader>ps", "<cmd>Lazy<CR>", "Lazy menu")
+nmap("<leader>pi", "<cmd>Lazy install<CR>", "Install plugins")
+nmap("<leader>pu", "<cmd>Lazy update<CR>", "Update plugins")
+nmap("<leader>pc", "<cmd>Lazy clean<CR>", "Clean plugins")
 
 -- ╭────────────────────────────────────────────╮
--- │ <leader>s – SEARCH / SYMBOL / SESSION       │
+-- │ COMMENT / CODE TOOLS                       │
 -- ╰────────────────────────────────────────────╯
-keymap("n", "<leader>ss", "<cmd>Telescope lsp_document_symbols<CR>", opts)
-keymap("n", "<leader>sr", "<cmd>Telescope resume<CR>", opts)
-keymap("n", "<leader>sh", "<cmd>Telescope help_tags<CR>", opts)
+nmap("<leader>cc", "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>", "Toggle comment line")
+vmap("<leader>cc", "<esc><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>", "Toggle comment block")
 
 -- ╭────────────────────────────────────────────╮
--- │ <leader><space> – CLEAR SEARCH HIGHLIGHT    │
+-- │ SEARCH / SYMBOL / SESSION                  │
 -- ╰────────────────────────────────────────────╯
-keymap("n", "<leader><space>", "<cmd>nohlsearch<CR>", opts)
+nmap("<leader>ss", "<cmd>Telescope lsp_document_symbols<CR>", "Document symbols")
+nmap("<leader>sr", "<cmd>Telescope resume<CR>", "Resume search")
+nmap("<leader>sh", "<cmd>Telescope help_tags<CR>", "Help tags")
+nmap("<leader>sk", "<cmd>Telescope keymaps<CR>", "Show keymaps")
+
+-- ╭────────────────────────────────────────────╮
+-- │ MISC                                       │
+-- ╰────────────────────────────────────────────╯
+nmap("<leader><space>", "<cmd>nohlsearch<CR>", "Clear search highlight")
