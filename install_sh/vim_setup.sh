@@ -1,46 +1,55 @@
 
 #!/usr/bin/env bash
 # ===============================================================
-# Comprehensive Vim setup script (No Python interference)
+# Professional Vim setup script (Arch, Ubuntu, Fedora, macOS)
 # Author: Ginko
-# Purpose: Set up a professional Vim environment safely
+# Purpose: Build a clean, professional Vim environment safely
 # ===============================================================
 
 set -e
 
 echo ">>> Starting Vim setup..."
 
-# ─── 1. Install Vim and dependencies (No Python) ──────────────────────────────
-echo ">>> Installing Vim and essential build tools..."
+# ────────────────────────────────────────────────────────────────
+# 1. Detect and install Vim + dependencies
+# ────────────────────────────────────────────────────────────────
+echo ">>> Installing Vim and essential tools..."
 if command -v apt-get &>/dev/null; then
-    sudo apt-get update
-    sudo apt-get install -y vim curl build-essential git
+    sudo apt-get update -y
+    sudo apt-get install -y vim curl git build-essential ripgrep
+elif command -v pacman &>/dev/null; then
+    sudo pacman -Sy --needed --noconfirm vim curl git base-devel ripgrep
 elif command -v dnf &>/dev/null; then
-    sudo dnf install -y vim curl make gcc git
+    sudo dnf install -y vim curl git make gcc ripgrep
 elif command -v brew &>/dev/null; then
-    brew install vim curl git make gcc
+    brew install vim curl git ripgrep
 else
-    echo "Warning: Package manager not found. Please install vim, curl, and build-essential manually."
+    echo "⚠️  Warning: Unsupported system. Please install vim, curl, git manually."
 fi
 
-# ─── 2. Create Vim directory structure ───────────────────────────────────────
-echo ">>> Creating Vim configuration directories..."
+# ────────────────────────────────────────────────────────────────
+# 2. Create Vim directory structure
+# ────────────────────────────────────────────────────────────────
 VIM_DIR="$HOME/.vim"
-mkdir -p "$VIM_DIR/autoload"
+mkdir -p "$VIM_DIR/autoload" "$VIM_DIR/plugged"
 
-# ─── 3. Install vim-plug ─────────────────────────────────────────────────────
-echo ">>> Installing vim-plug..."
-PLUG_URL="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-if [ ! -f "$VIM_DIR/autoload/plug.vim" ]; then
-    curl -fLo "$VIM_DIR/autoload/plug.vim" --create-dirs "$PLUG_URL"
-    echo "vim-plug installed successfully."
+# ────────────────────────────────────────────────────────────────
+# 3. Install vim-plug
+# ────────────────────────────────────────────────────────────────
+PLUG_FILE="$VIM_DIR/autoload/plug.vim"
+if [ ! -f "$PLUG_FILE" ]; then
+    echo ">>> Installing vim-plug..."
+    curl -fLo "$PLUG_FILE" --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 else
-    echo "vim-plug is already installed."
+    echo ">>> vim-plug already exists."
 fi
 
-# ─── 4. Create or overwrite ~/.vimrc ─────────────────────────────────────────
-echo ">>> Writing professional ~/.vimrc configuration..."
-cat << 'EOF' > ~/.vimrc
+# ────────────────────────────────────────────────────────────────
+# 4. Write ~/.vimrc configuration
+# ────────────────────────────────────────────────────────────────
+echo ">>> Writing ~/.vimrc configuration..."
+cat <<'EOF' > ~/.vimrc
 "=============================================================================
 " VIM PROFESSIONAL SETUP — GINKO EDITION
 "=============================================================================
@@ -59,7 +68,7 @@ Plug 'vim-airline/vim-airline-themes'
 
 " ─── Syntax and Linting ──────────────────────────────────────────────────────
 Plug 'sheerun/vim-polyglot'
-Plug 'dense-analysis/ale' " Async linting
+Plug 'dense-analysis/ale'
 
 " ─── Aesthetics ───────────────────────────────────────────────────────────────
 Plug 'joshdick/onedark.vim'
@@ -97,8 +106,8 @@ colorscheme onedark
 " PLUGIN-SPECIFIC SETTINGS
 "=============================================================================
 " NERDTree
-map <C-n> :NERDTreeToggle<CR>
-map <C-f> :NERDTreeFind<CR>
+nnoremap <C-n> :NERDTreeToggle<CR>
+nnoremap <C-f> :NERDTreeFind<CR>
 
 " FZF
 nnoremap <C-p> :Files<CR>
@@ -121,9 +130,19 @@ EOF
 
 echo ">>> ~/.vimrc created successfully."
 
-# ─── 5. Install plugins ──────────────────────────────────────────────────────
-echo ">>> Installing Vim plugins..."
-vim -E -s -u "$HOME/.vimrc" +PlugInstall +qall || true
+# ────────────────────────────────────────────────────────────────
+# 5. Install Vim plugins safely (headless)
+# ────────────────────────────────────────────────────────────────
+echo ">>> Installing Vim plugins via vim-plug..."
+if command -v vim &>/dev/null; then
+    vim -E -s -u "$HOME/.vimrc" +PlugInstall +qall || true
+else
+    echo "⚠️ Vim not found — skipping plugin installation."
+fi
 
-echo ">>> Setup complete!"
-echo "Open Vim and enjoy your clean environment. Use :PlugUpdate to refresh plugins."
+# ────────────────────────────────────────────────────────────────
+# 6. Final message
+# ────────────────────────────────────────────────────────────────
+echo "✅ Vim setup complete!"
+echo "Open Vim and enjoy your clean environment."
+echo "Tip: use ':PlugUpdate' anytime to refresh plugins."
