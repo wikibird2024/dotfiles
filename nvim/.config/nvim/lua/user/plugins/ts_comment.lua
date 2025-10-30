@@ -8,6 +8,5 @@ return {
       javascript = { "// %s", "/* %s */", jsx_element = "{/* %s */}", jsx_fragment = "{/* %s */}" },
       typescript = "// %s",
     },
-    -- Không gọi Comment.api, chỉ định nghĩa ngôn ngữ
   },
 }
