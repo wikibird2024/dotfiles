@@ -20,8 +20,14 @@ local function safe_require(name)
   if ok then return mod end
 end
 
+-- Ensure fallback description is always a string
+local function ensure_desc(rhs)
+  if type(rhs) == "string" then return rhs end
+  return "Keymap"
+end
+
 -- ╭────────────────────────────────────────────╮
--- │ Keymap definitions                          │
+-- │ Leader keymaps definitions                  │
 -- ╰────────────────────────────────────────────╯
 local leader_maps = {
   -- FILE / FIND / FORMAT
@@ -124,7 +130,7 @@ else
   for group, maps in pairs(leader_maps) do
     for k, rhs in pairs(maps) do
       if k ~= "name" then
-        nmap("<leader>" .. k, rhs, rhs)
+        nmap("<leader>" .. k, rhs, ensure_desc(rhs))
       end
     end
   end
@@ -142,14 +148,20 @@ tmap("jk", [[<C-\><C-n>]], "Exit terminal mode")
 local cmp_ok, cmp = pcall(require, "cmp")
 if cmp_ok then
   map("i", "<C-n>", function()
-    if cmp.visible() then cmp.select_next_item() else vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Down>", true, true, true), "n", true) end
+    if cmp.visible() then cmp.select_next_item()
+    else vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Down>", true, true, true), "n", true) end
   end, opts)
+
   map("i", "<C-p>", function()
-    if cmp.visible() then cmp.select_prev_item() else vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Up>", true, true, true), "n", true) end
+    if cmp.visible() then cmp.select_prev_item()
+    else vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Up>", true, true, true), "n", true) end
   end, opts)
+
   map("i", "<CR>", function()
-    if cmp.visible() then cmp.confirm({ select = true }) else vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, true, true), "n", true) end
+    if cmp.visible() then cmp.confirm({ select = true })
+    else vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, true, true), "n", true) end
   end, opts)
+
   map("i", "<Tab>", function(fallback) if cmp.visible() then cmp.select_next_item() else fallback() end end, opts)
   map("i", "<S-Tab>", function(fallback) if cmp.visible() then cmp.select_prev_item() else fallback() end end, opts)
 end
