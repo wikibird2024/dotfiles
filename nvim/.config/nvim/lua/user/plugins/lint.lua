@@ -1,5 +1,5 @@
 -- ~/.config/nvim/lua/user/plugins/lint.lua
-
+--error check souce code.
 return {
   {
     "mfussenegger/nvim-lint",

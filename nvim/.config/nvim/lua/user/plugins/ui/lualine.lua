@@ -1,74 +1,63 @@
+
 -- File: lua/user/plugins/ui/lualine.lua
--- Plugin: nvim-lualine/lualine.nvim
+-- Pro-level dynamic Lualine setup
 
 return {
   "nvim-lualine/lualine.nvim",
-  -- ĐÃ XÓA DÒNG DEPENDENCIES: Icon sẽ được xử lý bởi mini.icons đã cài đặt ở file init.lua
   event = "VeryLazy",
 
   config = function()
+    local lualine = require("lualine")
+
     ---------------------------------------------------------------------------
-    -- LSP client detector (Đã Tối ưu hóa)
+    -- Utility: LSP client names
     ---------------------------------------------------------------------------
-    -- Sử dụng cách ngắn gọn hơn để lấy tên client LSP
-    local function lsp_names_for_current_buf()
-      local bufnr = vim.api.nvim_get_current_buf()
-      local clients = vim.lsp.get_clients({ bufnr = bufnr })
+    local function lsp_clients()
+      local clients = vim.lsp.get_clients({ bufnr = vim.api.nvim_get_current_buf() })
       local names = {}
-      
       for _, c in ipairs(clients) do
-        -- Lọc null-ls (nếu có)
-        if c and c.name and c.name ~= "null-ls" then
+        if c.name ~= "null-ls" then
           table.insert(names, c.name)
         end
       end
-      
-      -- Trả về icon  (Gear) và tên clients, hoặc " Off"
       return (#names > 0) and (" " .. table.concat(names, ", ")) or " Off"
     end
 
     ---------------------------------------------------------------------------
-    -- Custom theme (Giữ nguyên - Đã được tùy chỉnh rất tốt)
+    -- Dynamic color function based on filetype
     ---------------------------------------------------------------------------
-    local custom_theme = {
-      normal = {
-        a = { fg = "#282828", bg = "#fabd2f", gui = "bold" }, -- bright yellow
-        b = { fg = "#ebdbb2", bg = "#d65d0e" },               -- orange
-        c = { fg = "#ebdbb2", bg = "#3c3836" },               -- subtle dark
-      },
-      insert = {
-        a = { fg = "#282828", bg = "#3fdcee", gui = "bold" }, -- vivid cyan
-        b = { fg = "#282828", bg = "#3fdcee" },
-        c = { fg = "#282828", bg = "#3fdcee" },
-      },
-      visual = {
-        a = { fg = "#282828", bg = "#d3869b", gui = "bold" }, -- purple
-        b = { fg = "#282828", bg = "#d3869b" },
-        c = { fg = "#282828", bg = "#d3869b" },
-      },
-      replace = {
-        a = { fg = "#282828", bg = "#fb4934", gui = "bold" }, -- hot red
-        b = { fg = "#282828", bg = "#fb4934" },
-        c = { fg = "#282828", bg = "#fb4934" },
-      },
-      command = {
-        a = { fg = "#282828", bg = "#b8bb26", gui = "bold" }, -- neon green
-        b = { fg = "#282828", bg = "#b8bb26" },
-        c = { fg = "#282828", bg = "#b8bb26" },
-      },
-      inactive = {
-        a = { fg = "#a89984", bg = "#3c3836", gui = "bold" },
-        b = { fg = "#a89984", bg = "#3c3836" },
-        c = { fg = "#a89984", bg = "#3c3836" },
-      },
-    }
+    local function filetype_color()
+      local ft = vim.bo.filetype
+      local colors = {
+        python = "#ff9e64",
+        lua    = "#7aa2f7",
+        sh     = "#9ece6a",
+        javascript = "#e0af68",
+        html   = "#f7768e",
+        css    = "#bb9af7",
+      }
+      return colors[ft] or "#a9b1d6"
+    end
 
     ---------------------------------------------------------------------------
-    -- Setup (Giữ nguyên cấu trúc)
+    -- Floating mode highlights
     ---------------------------------------------------------------------------
-    require("lualine").setup({
+    local function mode_color()
+      local modes = {
+        n = "#f7768e", i = "#7aa2f7", v = "#9ece6a",
+        V = "#9ece6a", [""] = "#9ece6a", c = "#bb9af7",
+        s = "#bb9af7", S = "#bb9af7", [""] = "#bb9af7",
+        R = "#ff9e64", Rv = "#ff9e64", t = "#f7768e"
+      }
+      return modes[vim.fn.mode()] or "#ffffff"
+    end
+
+    ---------------------------------------------------------------------------
+    -- Lualine setup
+    ---------------------------------------------------------------------------
+    lualine.setup({
       options = {
-        theme = custom_theme,
+        theme = "auto", -- auto adapts to colorscheme
         globalstatus = true,
         icons_enabled = true,
         component_separators = { left = "", right = "" },
@@ -76,18 +65,15 @@ return {
       },
 
       sections = {
-        lualine_a = { { "mode", icon = "" } },
+        lualine_a = { { "mode", color = { fg = "#1e1e2e", bg = mode_color(), gui = "bold" }, icon = "" } },
         lualine_b = {
           { "branch", icon = "" },
           { "diff", symbols = { added = " ", modified = " ", removed = " " } },
           { "diagnostics" },
         },
-        lualine_c = {
-          { "filename", path = 1, symbols = { modified = "●", readonly = "" } },
-        },
+        lualine_c = { { "filename", path = 1, color = { fg = filetype_color(), bg = "#1e1e2e" } } },
         lualine_x = {
-          -- Sử dụng hàm LSP đã tối ưu
-          { lsp_names_for_current_buf, cond = function() return vim.bo.buftype == "" and vim.bo.filetype ~= "" end },
+          { lsp_clients, cond = function() return vim.bo.buftype == "" and vim.bo.filetype ~= "" end },
           "encoding",
           "fileformat",
           "filetype",
@@ -99,7 +85,7 @@ return {
       inactive_sections = {
         lualine_a = {},
         lualine_b = {},
-        lualine_c = { { "filename", path = 0 } },
+        lualine_c = { { "filename", path = 2 } },
         lualine_x = { "location" },
         lualine_y = {},
         lualine_z = {},
