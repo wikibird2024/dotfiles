@@ -87,6 +87,7 @@ local leader_maps = {
     sr = "<cmd>Telescope resume<CR>",
     sh = "<cmd>Telescope help_tags<CR>",
     sk = "<cmd>Telescope keymaps<CR>",
+    ["<Space>"] = "<cmd>nohlsearch<CR>",
   },
 
   -- LSP
