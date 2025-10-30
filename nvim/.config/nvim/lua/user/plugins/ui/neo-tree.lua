@@ -1,14 +1,11 @@
-
--- lua/ui/neo-tree.lua
--- Neo-tree configuration (no keymaps included)
--- Author: Ginko
+-- File: lua/user/plugins/ui/neo-tree.lua
 
 return {
   "nvim-neo-tree/neo-tree.nvim",
   branch = "v3.x",
   dependencies = {
     "nvim-lua/plenary.nvim",
-    "nvim-tree/nvim-web-devicons", -- optional, for icons
+    -- ĐÃ XÓA DÒNG DEPENDENCY DƯ THỪA: Icon sẽ được xử lý bởi mini.icons đã cài đặt ở file init.lua
     "MunifTanjim/nui.nvim",
   },
 
@@ -21,7 +18,8 @@ return {
 
       filesystem = {
         filtered_items = {
-          visible = false, -- Set to true to show hidden files by default
+          -- Giữ nguyên cài đặt lọc file
+          visible = false, 
           hide_dotfiles = false,
           hide_gitignored = true,
         },
@@ -46,6 +44,7 @@ return {
           with_expanders = true,
         },
         icon = {
+          -- Giữ nguyên các icon đã tùy chỉnh rõ ràng
           folder_closed = "",
           folder_open = "",
           folder_empty = "ﰊ",
@@ -55,15 +54,15 @@ return {
         modified = { symbol = "" },
         git_status = {
           symbols = {
-            added     = "",
-            modified  = "",
-            deleted   = "",
-            renamed   = "",
-            untracked = "★",
-            ignored   = "◌",
-            unstaged  = "✗",
-            staged    = "✓",
-            conflict  = "",
+            added       = "",
+            modified    = "",
+            deleted     = "",
+            renamed     = "",
+            untracked   = "★",
+            ignored     = "◌",
+            unstaged    = "✗",
+            staged      = "✓",
+            conflict    = "",
           },
         },
       },

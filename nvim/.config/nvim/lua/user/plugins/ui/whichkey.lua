@@ -1,21 +1,63 @@
+-- ======================================================================
+-- WHICH-KEY (Stable for Neovim ≥ 0.11)
+-- Author : Ginko
+-- ======================================================================
+
 return {
   "folke/which-key.nvim",
-  event = "VeryLazy",
-  opts = {
-    -- 1. Đã thay 'window' bằng 'win'
-    win = {
-      border = "rounded",
-    },
-  },
-  -- 2. Không cần thay đổi gì về mini.icons nếu bạn hài lòng với nvim-web-devicons
-  -- 3. Cấu hình phím tắt theo chuẩn mới
-  keys = {
-    { "<leader>f", group = "File / Find / Format" },
-    { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
-    { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Grep" },
-    { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
-    { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent Files" },
-    { "<leader>fc", "<cmd>Telescope command_history<cr>", desc = "Command History" },
-    { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help Tags" },
-  },
+  lazy = false,
+  priority = 1000,
+  config = function()
+    local wk = require("which-key")
+
+    wk.setup({
+      delay = 300,
+
+      win = {
+        border = "rounded",
+        padding = { 1, 2, 1, 2 },
+        zindex = 1000,
+      },
+
+      layout = {
+        height = { min = 4, max = 25 },
+        width = { min = 20, max = 50 },
+        spacing = 4,
+        align = "left",
+      },
+
+      icons = {
+        breadcrumb = "»",
+        separator = "➜",
+        group = "+",
+      },
+
+      show_help = true,
+      show_keys = true,
+
+      -- ✅ modern syntax: explicit trigger list
+      triggers = {
+        { "<leader>", mode = { "n", "v" } },
+        { "g", mode = { "n", "v" } },
+        { "]", mode = "n" },
+        { "[", mode = "n" },
+      },
+
+      -- ✅ replace deprecated ignore_missing
+      filter = function(mapping)
+        return true -- hiển thị toàn bộ mapping
+      end,
+    })
+
+    -- Leader groups
+    wk.add({
+      { "<leader>f", group = "File" },
+      { "<leader>g", group = "Git" },
+      { "<leader>l", group = "LSP" },
+      { "<leader>b", group = "Buffer" },
+      { "<leader>t", group = "Tools" },
+      { "<leader>q", group = "Quit" },
+    })
+  end,
 }
+

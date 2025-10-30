@@ -1,3 +1,4 @@
+-- File: latex.lua (Đã tối ưu hóa Which-key và Clean-up)
 
 return {
   -- 1. VimTeX for LaTeX editing and compilation
@@ -27,26 +28,28 @@ return {
       vim.g.vimtex_view_forward_search_on_start = 1
       vim.g.vimtex_quickfix_mode = 2
 
-      -- Keymaps using which-key (corrected spec)
+      -- Keymaps using which-key (Dùng wk.register/wk.add với cú pháp chuẩn)
       local wk_avail, wk = pcall(require, "which-key")
       if wk_avail then
+        -- Sử dụng cú pháp flat spec/wk.register mà which-key yêu cầu
+        -- Lưu ý: Không cần prefix nếu bạn muốn chúng xuất hiện ngay trong menu chính (không có <leader> đi kèm)
         wk.add({
-          { "l", group = "LaTeX", mode = "n", prefix = "" },
-          { "lc", "VimtexCompile", desc = "Compile", mode = "n", prefix = "" },
-          { "lv", "VimtexView", desc = "View", mode = "n", prefix = "" },
-          { "ls", "VimtexStop", desc = "Stop", mode = "n", prefix = "" },
-          { "lC", "VimtexClean", desc = "Clean", mode = "n", prefix = "" },
-          { "le", "copen", desc = "Open Quickfix list", mode = "n", prefix = "" },
-        })
+          { mode = "n", group = "LaTeX", prefix = "l" }, -- Group cho 'l'
+          { "lc", "<cmd>VimtexCompile<cr>", desc = "Compile", mode = "n" },
+          { "lv", "<cmd>VimtexView<cr>", desc = "View", mode = "n" },
+          { "ls", "<cmd>VimtexStop<cr>", desc = "Stop", mode = "n" },
+          { "lC", "<cmd>VimtexClean<cr>", desc = "Clean", mode = "n" },
+          { "le", "<cmd>copen<cr>", desc = "Open Quickfix list", mode = "n" },
+        }, { prefix = "<leader>" }) -- Đăng ký dưới <leader>
       else
-        -- Fallback keymaps (if which-key is not available)
+        -- Fallback keymaps (giữ nguyên, nhưng sử dụng <cmd> thay vì ':')
         local map = vim.keymap.set
         local opts = { silent = true, noremap = true, buffer = true }
-        map("n", "lc", "VimtexCompile", opts)
-        map("n", "lv", "VimtexView", opts)
-        map("n", "ls", "VimtexStop", opts)
-        map("n", "lC", "VimtexClean", opts)
-        map("n", "le", ":copen", opts)
+        map("n", "lc", "<cmd>VimtexCompile<cr>", opts)
+        map("n", "lv", "<cmd>VimtexView<cr>", opts)
+        map("n", "ls", "<cmd>VimtexStop<cr>", opts)
+        map("n", "lC", "<cmd>VimtexClean<cr>", opts)
+        map("n", "le", "<cmd>copen<cr>", opts)
       end
     end,
   },
@@ -60,6 +63,7 @@ return {
       local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
       local on_attach = function(_, bufnr)
+        -- Keymaps cục bộ chỉ cho buffer này (gd, ca)
         vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = bufnr, desc = "Go to definition" })
         vim.keymap.set("n", "ca", vim.lsp.buf.code_action, { buffer = bufnr, desc = "Code action" })
 
@@ -116,14 +120,15 @@ return {
 
   -- 4. Clean auxiliary files on exit
   {
-    "nvim-lua/plenary.nvim",
+    "nvim-lua/plenary.nvim", -- Hoặc bất kỳ plugin cơ bản nào khác
     config = function()
-      vim.api.nvim_create_autocmd("VimLeave", {
+      vim.api.nvim_create_autocmd("VimLeavePre", { -- Sử dụng VimLeavePre để đảm bảo chạy trước khi đóng
         pattern = { "*.tex" },
         callback = function()
           local build_dir = "build"
+          -- Chỉ chạy latexmk -c nếu thư mục build tồn tại
           if vim.fn.isdirectory(build_dir) == 1 then
-            vim.fn.system("latexmk -c -outdir=" .. build_dir)
+            vim.fn.system("latexmk -c -silent -outdir=" .. build_dir)
           end
         end,
       })
