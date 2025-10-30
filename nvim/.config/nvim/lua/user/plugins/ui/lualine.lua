@@ -1,45 +1,42 @@
-
+-- File: lua/user/plugins/ui/lualine.lua
 -- Plugin: nvim-lualine/lualine.nvim
--- Statusline: Gruvbox-inspired, colorful in Normal,
---             but FULL vibrant highlight when in Insert/Visual/etc.
 
 return {
   "nvim-lualine/lualine.nvim",
-  dependencies = { "nvim-tree/nvim-web-devicons" },
+  -- ĐÃ XÓA DÒNG DEPENDENCIES: Icon sẽ được xử lý bởi mini.icons đã cài đặt ở file init.lua
   event = "VeryLazy",
 
   config = function()
     ---------------------------------------------------------------------------
-    -- LSP client detector
+    -- LSP client detector (Đã Tối ưu hóa)
     ---------------------------------------------------------------------------
+    -- Sử dụng cách ngắn gọn hơn để lấy tên client LSP
     local function lsp_names_for_current_buf()
       local bufnr = vim.api.nvim_get_current_buf()
-      if type(vim.lsp.get_clients) == "function" then
-        local ok, clients_or_err = pcall(vim.lsp.get_clients, { bufnr = bufnr })
-        local clients = ok and clients_or_err or {}
-        local names = {}
-        for _, c in ipairs(clients) do
-          if c and c.name and c.name ~= "null-ls" then
-            table.insert(names, c.name)
-          end
+      local clients = vim.lsp.get_clients({ bufnr = bufnr })
+      local names = {}
+      
+      for _, c in ipairs(clients) do
+        -- Lọc null-ls (nếu có)
+        if c and c.name and c.name ~= "null-ls" then
+          table.insert(names, c.name)
         end
-        return (#names > 0) and (" " .. table.concat(names, ", ")) or " Off"
       end
-      return " Off"
+      
+      -- Trả về icon  (Gear) và tên clients, hoặc " Off"
+      return (#names > 0) and (" " .. table.concat(names, ", ")) or " Off"
     end
 
     ---------------------------------------------------------------------------
-    -- Custom theme (balanced normal + vibrant active modes)
+    -- Custom theme (Giữ nguyên - Đã được tùy chỉnh rất tốt)
     ---------------------------------------------------------------------------
     local custom_theme = {
       normal = {
-        -- Vibrant, gruvbox-alike but multi-color blocks
         a = { fg = "#282828", bg = "#fabd2f", gui = "bold" }, -- bright yellow
         b = { fg = "#ebdbb2", bg = "#d65d0e" },               -- orange
         c = { fg = "#ebdbb2", bg = "#3c3836" },               -- subtle dark
       },
       insert = {
-        -- Super bright teal full bar (high-contrast)
         a = { fg = "#282828", bg = "#3fdcee", gui = "bold" }, -- vivid cyan
         b = { fg = "#282828", bg = "#3fdcee" },
         c = { fg = "#282828", bg = "#3fdcee" },
@@ -67,7 +64,7 @@ return {
     }
 
     ---------------------------------------------------------------------------
-    -- Setup
+    -- Setup (Giữ nguyên cấu trúc)
     ---------------------------------------------------------------------------
     require("lualine").setup({
       options = {
@@ -89,6 +86,7 @@ return {
           { "filename", path = 1, symbols = { modified = "●", readonly = "" } },
         },
         lualine_x = {
+          -- Sử dụng hàm LSP đã tối ưu
           { lsp_names_for_current_buf, cond = function() return vim.bo.buftype == "" and vim.bo.filetype ~= "" end },
           "encoding",
           "fileformat",

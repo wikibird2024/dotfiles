@@ -1,4 +1,4 @@
-
+-- File: keymaps.lua (FIXED: Không còn xung đột <leader>f)
 -- ======================================================================
 -- 🧠 Ginko Keymap System – Professional Embedded Developer Layout
 -- ======================================================================
@@ -28,7 +28,8 @@ nmap("<leader>fg", "<cmd>Telescope live_grep<CR>", "Live grep")
 nmap("<leader>fr", "<cmd>Telescope oldfiles<CR>", "Recent files")
 nmap("<leader>fs", "<cmd>w<CR>", "Save file")
 nmap("<leader>fS", "<cmd>wa<CR>", "Save all files")
-nmap("<leader>f", function() vim.lsp.buf.format({ async = true }) end, "Format buffer")
+-- ĐÃ SỬA LỖI: Chuyển Format sang <leader>F
+nmap("<leader>F", function() vim.lsp.buf.format({ async = true }) end, "Format buffer")
 
 -- ╭────────────────────────────────────────────╮
 -- │ BUFFER MANAGEMENT                          │
