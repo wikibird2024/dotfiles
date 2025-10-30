@@ -1,8 +1,12 @@
+
 # =======================================================================
-# Alacritty config optimized for i3wm, TN panel, and minimal eye strain
+# Alacritty Config - Optimized for i3wm, TN panel, and minimal eye strain
 # Author: Ginko's AI Assistant (Refactored)
 # =======================================================================
 
+# --------------------------------------------
+# Window settings
+# --------------------------------------------
 [window]
 decorations = "full"
 startup_mode = "windowed"
@@ -12,48 +16,32 @@ opacity = 1.0
 x = 10
 y = 10
 
+# --------------------------------------------
+# Font settings (simplified)
+# --------------------------------------------
 [font]
-size = 9.00  # Kích thước font dễ nhìn
-
-[font.normal]
+size = 9.0                       # Kích thước dễ nhìn
 family = "JetBrains Mono Nerd Font"
-style = "Regular"
+style = "Regular"                # Alacritty tự nhận bold/italic/bold_italic
+offset.y = 4                     # Tăng line height giúp văn bản thoáng
 
-[font.bold]
-family = "JetBrains Mono Nerd Font"
-style = "Bold"
-
-[font.italic]
-family = "JetBrains Mono Nerd Font"
-style = "Italic"
-
-[font.bold_italic]
-family = "JetBrains Mono Nerd Font"
-style = "Bold Italic"
-
-[font.offset]
-# Tăng line height giúp văn bản thoáng, giảm mỏi mắt khi đọc code dài.
-y = 4
-
+# --------------------------------------------
+# Cursor
+# --------------------------------------------
 [cursor]
 style = "Block"
 
-# =======================================================================
-# COLOR SCHEME: Custom Dark Amber/Gold
-# =======================================================================
-
+# --------------------------------------------
+# Colors (Custom Dark Amber/Gold Theme)
+# --------------------------------------------
 [colors.primary]
-# Nền đen xám dịu (dễ chịu hơn #000000)
-background = "0x202020"
-# Chữ vàng hổ phách dịu (Soft Amber), giảm độ chói hơn so với vàng thuần (0xFFD700)
-foreground = "0xF5E0B3"
+background = "0x202020"          # Nền tối dịu
+foreground = "0xF5E0B3"          # Chữ vàng hổ phách nhẹ
 
 [colors.cursor]
-# Con trỏ sáng hơn để nổi bật trên nền tối
 text = "0x000000"
-cursor = "0xFFE866"
+cursor = "0xFFE866"              # Con trỏ nổi bật
 
-# Màu ANSI (Normal - Giữ nguyên các tông màu dịu của bạn)
 [colors.normal]
 black   = "0x1a1a1a"
 red     = "0xff4c4c"
@@ -64,7 +52,6 @@ magenta = "0xd787ff"
 cyan    = "0x5fd7d7"
 white   = "0xd0d0d0"
 
-# Màu ANSI (Bright - Giữ nguyên)
 [colors.bright]
 black   = "0x4d4d4d"
 red     = "0xff6666"
@@ -75,10 +62,16 @@ magenta = "0xffaaff"
 cyan    = "0x87ffff"
 white   = "0xffffff"
 
+# --------------------------------------------
+# Scrolling
+# --------------------------------------------
 [scrolling]
 history = 10000
 multiplier = 3
 
+# --------------------------------------------
+# Mouse & Selection
+# --------------------------------------------
 [[mouse.bindings]]
 mouse = "Right"
 action = "PasteSelection"
@@ -86,8 +79,14 @@ action = "PasteSelection"
 [selection]
 save_to_clipboard = true
 
+# --------------------------------------------
+# Environment
+# --------------------------------------------
 [env]
 TERM = "xterm-256color"
 
+# --------------------------------------------
+# General
+# --------------------------------------------
 [general]
 live_config_reload = true
