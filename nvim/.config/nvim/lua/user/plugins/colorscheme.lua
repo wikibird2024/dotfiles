@@ -1,21 +1,50 @@
 
--- Colorscheme configuration for Gruvbox
--- File: ~/.config/nvim/lua/user/plugins/colorscheme.lua
+-- ~/.config/nvim/lua/user/plugins/colorscheme.lua
+
+-- List of themes you want to support
+local themes = {
+  gruvbox = {
+    plugin = "ellisonleao/gruvbox.nvim",
+    module = "gruvbox",
+    opts = {
+      contrast = "hard",
+      overrides = {},
+    },
+  },
+  nord = {
+    plugin = "gbprod/nord.nvim",
+    module = "nord",
+    opts = {}, -- Nord does not require options by default
+  },
+  catppuccin = {
+    plugin = "catppuccin/nvim",
+    module = "catppuccin",
+    opts = {
+      flavour = "mocha", -- Options: latte, frappe, macchiato, mocha
+    },
+  },
+}
+
+-- Choose the active theme
+local active_theme = "catppuccin"  -- Change this to switch theme
+local theme_config = themes[active_theme]
 
 return {
   {
-    "ellisonleao/gruvbox.nvim",  -- Gruvbox colorscheme plugin
-    priority = 1000,             -- Ensure it loads before all other plugins (highest priority)
-    lazy = false,                -- Do not lazy load; apply immediately at startup
+    theme_config.plugin,
+    priority = 1000,
+    lazy = false,
     config = function()
-      -- Optional Gruvbox setup before applying the theme
-      require("gruvbox").setup({
-        contrast = "hard",       -- Options: "soft", "medium", "hard"
-        overrides = {},          -- You can override highlight groups here
-      })
+      -- Safely require the theme module
+      if theme_config.module and theme_config.opts then
+        local ok, theme_module = pcall(require, theme_config.module)
+        if ok and theme_module and type(theme_module.setup) == "function" then
+          theme_module.setup(theme_config.opts)
+        end
+      end
 
-      -- Set the colorscheme
-      vim.cmd.colorscheme("gruvbox")
+      -- Apply the colorscheme
+      vim.cmd.colorscheme(active_theme)
     end,
   },
 }
