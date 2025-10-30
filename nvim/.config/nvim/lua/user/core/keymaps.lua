@@ -9,7 +9,7 @@ local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
 -- ╭────────────────────────────────────────────╮
--- │ Helper functions                            │
+-- │ Helper functions                           │
 -- ╰────────────────────────────────────────────╯
 local function nmap(lhs, rhs, desc) map("n", lhs, rhs, vim.tbl_extend("force", opts, { desc = desc })) end
 local function vmap(lhs, rhs, desc) map("v", lhs, rhs, vim.tbl_extend("force", opts, { desc = desc })) end
@@ -27,7 +27,7 @@ local function ensure_desc(rhs)
 end
 
 -- ╭────────────────────────────────────────────╮
--- │ Leader keymaps definitions                  │
+-- │ Leader keymaps definitions                 │
 -- ╰────────────────────────────────────────────╯
 local leader_maps = {
   -- FILE / FIND / FORMAT
@@ -121,7 +121,7 @@ local leader_maps = {
 }
 
 -- ╭────────────────────────────────────────────╮
--- │ Register leader keymaps with which-key      │
+-- │ Register leader keymaps with which-key     │
 -- ╰────────────────────────────────────────────╯
 local wk_ok, wk = pcall(require, "which-key")
 if wk_ok then
@@ -138,13 +138,13 @@ else
 end
 
 -- ╭────────────────────────────────────────────╮
--- │ Terminal mode escape                        │
+-- │ Terminal mode escape                       │
 -- ╰────────────────────────────────────────────╯
 tmap("<Esc>", [[<C-\><C-n>]], "Exit terminal mode")
 tmap("jk", [[<C-\><C-n>]], "Exit terminal mode")
 
 -- ╭────────────────────────────────────────────╮
--- │ CMP (completion) helpers                     │
+-- │ CMP (completion) helpers                   │
 -- ╰────────────────────────────────────────────╯
 local cmp_ok, cmp = pcall(require, "cmp")
 if cmp_ok then
@@ -168,7 +168,7 @@ if cmp_ok then
 end
 
 -- ╭────────────────────────────────────────────╮
--- │ Treesitter / UFO folding                     │
+-- │ Treesitter / UFO folding                   │
 -- ╰────────────────────────────────────────────╯
 local ufo_ok = pcall(require, "ufo")
 if ufo_ok then
