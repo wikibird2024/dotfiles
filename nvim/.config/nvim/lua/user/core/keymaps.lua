@@ -1,123 +1,180 @@
--- File: keymaps.lua (FIXED: Không còn xung đột <leader>f)
+
+-- File: core/keymaps.lua
 -- ======================================================================
--- 🧠 Ginko Keymap System – Professional Embedded Developer Layout
--- ======================================================================
+-- Professional & Maintainable Keymaps Layout
+-- Author: Ginko
 
 vim.g.mapleader = " "
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
 -- ╭────────────────────────────────────────────╮
--- │ Helper function                            │
+-- │ Helper functions                           │
 -- ╰────────────────────────────────────────────╯
-local function nmap(lhs, rhs, desc)
-  map("n", lhs, rhs, vim.tbl_extend("force", opts, { desc = desc }))
+local function nmap(lhs, rhs, desc) map("n", lhs, rhs, vim.tbl_extend("force", opts, { desc = desc })) end
+local function vmap(lhs, rhs, desc) map("v", lhs, rhs, vim.tbl_extend("force", opts, { desc = desc })) end
+local function tmap(lhs, rhs, desc) map("t", lhs, rhs, vim.tbl_extend("force", opts, { desc = desc })) end
+
+local function safe_require(name)
+  local ok, mod = pcall(require, name)
+  if ok then return mod end
 end
-local function vmap(lhs, rhs, desc)
-  map("v", lhs, rhs, vim.tbl_extend("force", opts, { desc = desc }))
+
+-- Ensure fallback description is always a string
+local function ensure_desc(rhs)
+  if type(rhs) == "string" then return rhs end
+  return "Keymap"
 end
-local function tmap(lhs, rhs, desc)
-  map("t", lhs, rhs, vim.tbl_extend("force", opts, { desc = desc }))
+
+-- ╭────────────────────────────────────────────╮
+-- │ Leader keymaps definitions                 │
+-- ╰────────────────────────────────────────────╯
+local leader_maps = {
+  -- FILE / FIND / FORMAT
+  f = {
+    name = "File",
+    ff = "<cmd>Telescope find_files<CR>",
+    fg = "<cmd>Telescope live_grep<CR>",
+    fr = "<cmd>Telescope oldfiles<CR>",
+    fs = "<cmd>w<CR>",
+    fS = "<cmd>wa<CR>",
+    fF = function() vim.lsp.buf.format({ async = true }) end,
+    fb = "<cmd>Telescope buffers<CR>",
+    ft = "<cmd>Telescope tags<CR>",
+    fgs = "<cmd>Telescope git_status<CR>",
+    ftodo = "<cmd>TodoTelescope<CR>",
+  },
+
+  -- BUFFER
+  b = {
+    name = "Buffer",
+    bn = "<cmd>bnext<CR>",
+    bp = "<cmd>bprevious<CR>",
+    bd = "<cmd>bdelete<CR>",
+    bo = "<cmd>BufferLineCloseOthers<CR>",
+  },
+
+  -- WINDOW / SPLIT
+  w = {
+    name = "Window",
+    ws = "<cmd>split<CR>",
+    wv = "<cmd>vsplit<CR>",
+    wc = "<cmd>close<CR>",
+    wh = "<C-w>h",
+    wl = "<C-w>l",
+    wj = "<C-w>j",
+    wk = "<C-w>k",
+  },
+
+  -- TERMINAL / TREE / UI
+  t = {
+    name = "Terminal/Tree",
+    tt = "<cmd>ToggleTerm<CR>",
+    te = "<cmd>NvimTreeToggle<CR>",
+    tf = "<cmd>NvimTreeFocus<CR>",
+  },
+
+  -- COMMENT
+  c = {
+    name = "Comment",
+    cc = "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>",
+  },
+
+  -- SEARCH / SYMBOL / SESSION
+  s = {
+    name = "Search",
+    ss = "<cmd>Telescope lsp_document_symbols<CR>",
+    sr = "<cmd>Telescope resume<CR>",
+    sh = "<cmd>Telescope help_tags<CR>",
+    sk = "<cmd>Telescope keymaps<CR>",
+    ["<Space>"] = "<cmd>nohlsearch<CR>",
+  },
+
+  -- LSP
+  l = {
+    name = "LSP",
+    ld = vim.lsp.buf.definition,
+    lr = vim.lsp.buf.rename,
+    lh = vim.lsp.buf.hover,
+    li = vim.lsp.buf.implementation,
+    la = vim.lsp.buf.code_action,
+    le = "<cmd>Telescope diagnostics bufnr=0<CR>",
+  },
+
+  -- GIT
+  g = {
+    name = "Git",
+    gs = "<cmd>Gitsigns stage_hunk<CR>",
+    gb = "<cmd>Gitsigns blame_line<CR>",
+    gd = "<cmd>Gitsigns diffthis<CR>",
+    gp = "<cmd>Gitsigns preview_hunk<CR>",
+  },
+
+  -- PLUGINS
+  p = {
+    name = "Plugins",
+    ps = "<cmd>Lazy<CR>",
+    pi = "<cmd>Lazy install<CR>",
+    pu = "<cmd>Lazy update<CR>",
+    pc = "<cmd>Lazy clean<CR>",
+  },
+}
+
+-- ╭────────────────────────────────────────────╮
+-- │ Register leader keymaps with which-key     │
+-- ╰────────────────────────────────────────────╯
+local wk_ok, wk = pcall(require, "which-key")
+if wk_ok then
+  wk.register(leader_maps, { prefix = "<leader>" })
+else
+  -- fallback nếu which-key chưa cài
+  for group, maps in pairs(leader_maps) do
+    for k, rhs in pairs(maps) do
+      if k ~= "name" then
+        nmap("<leader>" .. k, rhs, ensure_desc(rhs))
+      end
+    end
+  end
 end
 
 -- ╭────────────────────────────────────────────╮
--- │ FILE / FIND / FORMAT                       │
+-- │ Terminal mode escape                       │
 -- ╰────────────────────────────────────────────╯
-nmap("<leader>ff", "<cmd>Telescope find_files<CR>", "Find files")
-nmap("<leader>fg", "<cmd>Telescope live_grep<CR>", "Live grep")
-nmap("<leader>fr", "<cmd>Telescope oldfiles<CR>", "Recent files")
-nmap("<leader>fs", "<cmd>w<CR>", "Save file")
-nmap("<leader>fS", "<cmd>wa<CR>", "Save all files")
--- ĐÃ SỬA LỖI: Chuyển Format sang <leader>F
-nmap("<leader>F", function() vim.lsp.buf.format({ async = true }) end, "Format buffer")
-
--- ╭────────────────────────────────────────────╮
--- │ BUFFER MANAGEMENT                          │
--- ╰────────────────────────────────────────────╯
-nmap("<leader>bn", "<cmd>bnext<CR>", "Next buffer")
-nmap("<leader>bp", "<cmd>bprevious<CR>", "Previous buffer")
-nmap("<leader>bd", "<cmd>bdelete<CR>", "Delete buffer")
-nmap("<leader>bo", "<cmd>BufferLineCloseOthers<CR>", "Close other buffers")
-
--- ╭────────────────────────────────────────────╮
--- │ WINDOW / SPLIT                             │
--- ╰────────────────────────────────────────────╯
-nmap("<leader>ws", "<cmd>split<CR>", "Horizontal split")
-nmap("<leader>wv", "<cmd>vsplit<CR>", "Vertical split")
-nmap("<leader>wc", "<cmd>close<CR>", "Close window")
-nmap("<leader>wh", "<C-w>h", "Move left")
-nmap("<leader>wl", "<C-w>l", "Move right")
-nmap("<leader>wj", "<C-w>j", "Move down")
-nmap("<leader>wk", "<C-w>k", "Move up")
-
--- ╭────────────────────────────────────────────╮
--- │ LSP / INTELLISENSE                         │
--- ╰────────────────────────────────────────────╯
-nmap("<leader>ld", vim.lsp.buf.definition, "Go to definition")
-nmap("<leader>lr", vim.lsp.buf.rename, "Rename symbol")
-nmap("<leader>lh", vim.lsp.buf.hover, "Hover info")
-nmap("<leader>li", vim.lsp.buf.implementation, "Go to implementation")
-nmap("<leader>la", vim.lsp.buf.code_action, "Code action")
-nmap("<leader>le", "<cmd>Telescope diagnostics bufnr=0<CR>", "Show diagnostics")
-
--- ╭────────────────────────────────────────────╮
--- │ DEBUGGING (DAP)                            │
--- ╰────────────────────────────────────────────╯
-nmap("<leader>db", "<cmd>lua require'dap'.toggle_breakpoint()<CR>", "Toggle breakpoint")
-nmap("<leader>dc", "<cmd>lua require'dap'.continue()<CR>", "Continue")
-nmap("<leader>do", "<cmd>lua require'dap'.step_over()<CR>", "Step over")
-nmap("<leader>di", "<cmd>lua require'dap'.step_into()<CR>", "Step into")
-nmap("<leader>dr", "<cmd>lua require'dap'.repl.open()<CR>", "Open DAP REPL")
-
--- ╭────────────────────────────────────────────╮
--- │ ESP32 RUN / BUILD / FLASH                  │
--- ╰────────────────────────────────────────────╯
-nmap("<leader>rb", "<cmd>1ToggleTerm direction=float<CR>idf.py build<CR>", "Build project")
-nmap("<leader>rf", "<cmd>2ToggleTerm direction=float<CR>idf.py flash<CR>", "Flash firmware")
-nmap("<leader>rm", "<cmd>3ToggleTerm direction=float<CR>idf.py monitor<CR>", "Serial monitor")
-nmap("<leader>ra", "<cmd>4ToggleTerm direction=float<CR>idf.py build flash monitor<CR>", "Build+Flash+Monitor")
-
--- ╭────────────────────────────────────────────╮
--- │ GIT                                        │
--- ╰────────────────────────────────────────────╯
-nmap("<leader>gs", "<cmd>Gitsigns stage_hunk<CR>", "Stage hunk")
-nmap("<leader>gb", "<cmd>Gitsigns blame_line<CR>", "Blame line")
-nmap("<leader>gd", "<cmd>Gitsigns diffthis<CR>", "Diff hunk")
-nmap("<leader>gp", "<cmd>Gitsigns preview_hunk<CR>", "Preview hunk")
-
--- ╭────────────────────────────────────────────╮
--- │ TERMINAL / TREE / TOGGLE                   │
--- ╰────────────────────────────────────────────╯
-nmap("<leader>tt", "<cmd>ToggleTerm<CR>", "Toggle terminal")
-nmap("<leader>te", "<cmd>NvimTreeToggle<CR>", "Toggle file tree")
-nmap("<leader>tf", "<cmd>NvimTreeFocus<CR>", "Focus file tree")
-
 tmap("<Esc>", [[<C-\><C-n>]], "Exit terminal mode")
 tmap("jk", [[<C-\><C-n>]], "Exit terminal mode")
 
 -- ╭────────────────────────────────────────────╮
--- │ PLUGIN MANAGEMENT                          │
+-- │ CMP (completion) helpers                   │
 -- ╰────────────────────────────────────────────╯
-nmap("<leader>ps", "<cmd>Lazy<CR>", "Lazy menu")
-nmap("<leader>pi", "<cmd>Lazy install<CR>", "Install plugins")
-nmap("<leader>pu", "<cmd>Lazy update<CR>", "Update plugins")
-nmap("<leader>pc", "<cmd>Lazy clean<CR>", "Clean plugins")
+local cmp_ok, cmp = pcall(require, "cmp")
+if cmp_ok then
+  map("i", "<C-n>", function()
+    if cmp.visible() then cmp.select_next_item()
+    else vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Down>", true, true, true), "n", true) end
+  end, opts)
+
+  map("i", "<C-p>", function()
+    if cmp.visible() then cmp.select_prev_item()
+    else vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Up>", true, true, true), "n", true) end
+  end, opts)
+
+  map("i", "<CR>", function()
+    if cmp.visible() then cmp.confirm({ select = true })
+    else vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, true, true), "n", true) end
+  end, opts)
+
+  map("i", "<Tab>", function(fallback) if cmp.visible() then cmp.select_next_item() else fallback() end end, opts)
+  map("i", "<S-Tab>", function(fallback) if cmp.visible() then cmp.select_prev_item() else fallback() end end, opts)
+end
 
 -- ╭────────────────────────────────────────────╮
--- │ COMMENT / CODE TOOLS                       │
+-- │ Treesitter / UFO folding                   │
 -- ╰────────────────────────────────────────────╯
-nmap("<leader>cc", "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>", "Toggle comment line")
-vmap("<leader>cc", "<esc><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>", "Toggle comment block")
+local ufo_ok = pcall(require, "ufo")
+if ufo_ok then
+  nmap("zR", "<cmd>lua require('ufo').openAllFolds()<CR>", "Open all folds")
+  nmap("zM", "<cmd>lua require('ufo').closeAllFolds()<CR>", "Close all folds")
+end
 
--- ╭────────────────────────────────────────────╮
--- │ SEARCH / SYMBOL / SESSION                  │
--- ╰────────────────────────────────────────────╯
-nmap("<leader>ss", "<cmd>Telescope lsp_document_symbols<CR>", "Document symbols")
-nmap("<leader>sr", "<cmd>Telescope resume<CR>", "Resume search")
-nmap("<leader>sh", "<cmd>Telescope help_tags<CR>", "Help tags")
-nmap("<leader>sk", "<cmd>Telescope keymaps<CR>", "Show keymaps")
-
--- ╭────────────────────────────────────────────╮
--- │ MISC                                       │
--- ╰────────────────────────────────────────────╯
-nmap("<leader><space>", "<cmd>nohlsearch<CR>", "Clear search highlight")
+-- Export helpers
+return { nmap = nmap, vmap = vmap, tmap = tmap }
