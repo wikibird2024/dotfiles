@@ -1,6 +1,3 @@
-
--- ~/.config/nvim/lua/user/plugins/colorscheme.lua
-
 -- List of themes you want to support
 local themes = {
   gruvbox = {
@@ -14,19 +11,45 @@ local themes = {
   nord = {
     plugin = "gbprod/nord.nvim",
     module = "nord",
-    opts = {}, -- Nord does not require options by default
+    opts = {}, -- no extra options by default
   },
   catppuccin = {
     plugin = "catppuccin/nvim",
     module = "catppuccin",
     opts = {
-      flavour = "mocha", -- Options: latte, frappe, macchiato, mocha
+      flavour = "mocha", -- latte | frappe | macchiato | mocha
+    },
+  },
+
+  -- New additions:
+  tokyonight = {
+    plugin = "folke/tokyonight.nvim",
+    module = "tokyonight",
+    opts = {
+      style = "storm",        -- possible: storm | night | day
+      transparent = false,
+    },
+  },
+  kanagawa = {
+    plugin = "rebelot/kanagawa.nvim",
+    module = "kanagawa",
+    opts = {
+      variant = "wave",       -- possible: wave | dragon | lotus
+      background = "dark",
+    },
+  },
+  nightfox = {
+    plugin = "EdenEast/nightfox.nvim",
+    module = "nightfox",
+    opts = {
+      variant = "carbonfox",  -- many variants: duskfox, nordfox, etc.
+      transparent = true,
     },
   },
 }
 
 -- Choose the active theme
-local active_theme = "catppuccin"  -- Change this to switch theme
+local active_theme = "tokyonight"  -- Change this to the one you want
 local theme_config = themes[active_theme]
 
 return {
@@ -35,16 +58,14 @@ return {
     priority = 1000,
     lazy = false,
     config = function()
-      -- Safely require the theme module
       if theme_config.module and theme_config.opts then
         local ok, theme_module = pcall(require, theme_config.module)
         if ok and theme_module and type(theme_module.setup) == "function" then
           theme_module.setup(theme_config.opts)
         end
       end
-
-      -- Apply the colorscheme
       vim.cmd.colorscheme(active_theme)
     end,
   },
 }
+
