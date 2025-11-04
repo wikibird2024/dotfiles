@@ -16,14 +16,28 @@ opacity = 1.0
 x = 10
 y = 10
 
-# --------------------------------------------
-# Font settings (simplified)
-# --------------------------------------------
+# =====================================================
+# Font configuration (optimized for JetBrains Mono Nerd Font)
+# Compatible with Alacritty 0.14.x+
+# =====================================================
+
 [font]
-size = 9.0                       # Kích thước dễ nhìn
-family = "JetBrains Mono Nerd Font"
-style = "Regular"                # Alacritty tự nhận bold/italic/bold_italic
-offset.y = 4                     # Tăng line height giúp văn bản thoáng
+size = 9.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font"
+style = "Italic"
+
+[font.offset]
+y = 4    # Tăng khoảng cách dòng để dễ đọc hơn
 
 # --------------------------------------------
 # Cursor
