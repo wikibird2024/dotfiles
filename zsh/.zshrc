@@ -1,68 +1,84 @@
+
 # =======================================================================
-# PROFESSIONAL ZSH CONFIGURATION (Powered by Oh My Zsh & P10k)
-# Optimized for performance, Git workflow, and ESP32 Development.
+# PROFESSIONAL ZSH CONFIGURATION
+# Clean, fast, and extensible — tuned for development, Git, Docker, ESP32.
 # =======================================================================
+
+# --- 0. POWERLEVEL10K INSTANT PROMPT (Keep this block at the top) ---
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
 # --- 1. OH MY ZSH SETUP ---
-# Đường dẫn tới thư mục cài đặt Oh My Zsh.
 export ZSH="$HOME/.oh-my-zsh"
-
-# THIẾT LẬP THEME: Sử dụng Powerlevel10k
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
-# Kích hoạt các plugins cốt lõi (Bắt buộc phải có để thành pro)
+# --- 2. PLUGINS ---
+# NOTE: Load syntax-highlighting last for performance and correctness
 plugins=(
-    git                        # Cực nhiều alias ngắn gọn (gst, ga, gc...)
-    zsh-autosuggestions        # Gợi ý lệnh từ lịch sử (bấm mũi tên phải để chấp nhận)
-    zsh-syntax-highlighting    # Tô màu lệnh khi gõ (giúp phát hiện lỗi)
-    zsh-history                # Tăng cường chức năng lịch sử
-    sudo                       # Bấm ESC 2 lần để tự động thêm 'sudo ' vào đầu lệnh
-    docker                     # Hoàn thành lệnh cho Docker
-    docker-compose             # Hoàn thành lệnh cho Docker Compose
+  git
+  zsh-autosuggestions
+  sudo
+  docker
+  docker-compose
+  history
+  zsh-syntax-highlighting
 )
 
-source $ZSH/oh-my-zsh.sh
+# Load Oh My Zsh core
+if [ -f "$ZSH/oh-my-zsh.sh" ]; then
+  source "$ZSH/oh-my-zsh.sh"
+else
+  echo "⚠️  Oh My Zsh not found at $ZSH"
+fi
 
-# --- 2. CORE ZSH OPTIONS ---
-
-# History Configuration (Giữ nguyên cấu hình tốt của bạn)
+# --- 3. CORE ZSH OPTIONS ---
 setopt histignorealldups sharehistory
-HISTSIZE=10000 # Tăng lịch sử lên 10000 dòng (cao thủ cần lịch sử dài)
+HISTSIZE=10000
 SAVEHIST=10000
 HISTFILE=~/.zsh_history
+setopt autocd extended_glob
+setopt correct        # Suggest corrections for mistyped commands
+setopt interactivecomments  # Allow comments in interactive mode
 
-# Cho phép gõ cd path thay vì phải gõ 'cd path'
-setopt autocd 
+# --- 4. KEYBINDINGS ---
+bindkey -e   # Emacs keybindings (default)
+# bindkey -v   # Uncomment for Vim-style keybindings
 
-# Bật tính năng 'extended globbing' (tính năng tìm kiếm nâng cao)
-setopt extended_glob
+# --- 5. PATH & ENVIRONMENT ---
+export PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export EDITOR="nvim"
 
-# --- 3. KEYBINDINGS ---
+# --- 6. ESP-IDF ENVIRONMENT ---
+# Automatically source ESP-IDF tools if available
 
-# Use Emacs keybindings
-bindkey -e
-
-# --- 4. ENVIRONMENT & PATHS ---
-
-# Source Bash aliases/profile (Nếu bạn có các alias từ Bash)
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
-# KHỞI TẠO MÔI TRƯỜNG ESP-IDF (Quan trọng cho dự án Fall Detection)
-# Đảm bảo các lệnh idf.py và công cụ toolchain hoạt động
-if [ -f "$HOME/esp/esp-idf/export.sh" ]; then
-    . "$HOME/esp/esp-idf/export.sh"
-fi
-
-# THIẾT LẬP CHO ALACRITTY TERM (Để các ứng dụng nhận diện 24-bit color)
-# Đây là cách đặt TERM nếu bạn không muốn đặt trong alacritty.toml
+# --- 7. TERMINAL SETTINGS ---
+# Uncomment if using Alacritty or a 24-bit truecolor terminal
 # export TERM="alacritty"
 
-# --- 5. POWERLEVEL10K CONFIG (Cần chạy p10k configure lần đầu) ---
+# --- 8. POWERLEVEL10K CONFIG ---
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-# Khởi tạo p10k config. Sau lần đầu khởi động, nó sẽ tự tạo file ~/.p10k.zsh
-# và load từ đó, giúp tăng tốc độ đáng kể.
-if [[ -f ~/.p10k.zsh ]]; then
-    source ~/.p10k.zsh
+# --- 9. CUSTOM ALIASES ---
+alias ll='ls -lh --color=auto'
+alias la='ls -lha --color=auto'
+alias grep='grep --color=auto'
+alias zshconfig='nvim ~/.zshrc'
+alias ohmyzsh='nvim ~/.oh-my-zsh'
+alias idf='cd ~/esp/esp-idf'
+alias mainproj='cd ~/esp/mainproject'
+
+# --- 10. AUTO UPDATE SETTINGS ---
+zstyle ':omz:update' mode reminder
+zstyle ':omz:update' frequency 14
+
+# --- 11. EXTERNAL ALIASES ---
+# You can keep personal aliases/functions modular in ~/.aliases.zsh
+if [ -f ~/.aliases ]; then
+  source ~/.aliases
 fi
+
+# --- 12. FINAL TOUCH: clear PROMPT_SP, ensure smooth startup ---
+unsetopt nomatch      # Avoid errors on unmatched globs

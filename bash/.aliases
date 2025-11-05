@@ -1,0 +1,263 @@
+
+# ============================ 🚀 BASIC SHORTCUTS 🚀 ============================
+alias ll='ls -alFh --color=auto'
+alias la='ls -A'
+alias l='ls -CF'
+
+# Config File Editors
+alias aliases.e='nvim ~/.aliases'
+alias func.e='nvim ~/.bash_functions'
+alias bashrc.e='nvim ~/.bashrc'
+alias zshrc.e='nvim ~/.zshrc'
+
+alias c='clear'
+alias s='source ~/.bashrc'
+alias sz='source ~/.zshrc'
+
+# Display/Screen Management
+alias mirror='xrandr --output HDMI-1-1 --auto --same-as LVDS-1'
+
+
+# ============================ 📂 Change Directory 📂 ============================
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+# Standard Directory Jumps
+alias cconfig='cd ~/.config/'
+alias cdot='cd ~/dotfiles/'
+alias cpy='cd ~/python'
+alias cdown='cd ~/Downloads/'
+alias cdoc='cd ~/Documents/'
+alias cpic='cd ~/Pictures/'
+
+# Project-Specific
+alias zplugin.='cd ~/dotfiles/nvim/.config/nvim/lua/user/plugins/'
+
+
+# ============================ 🔍 Find & Search ============================
+alias fd='fdfind'  # Ubuntu-based distros
+alias fzf-file='fdfind --type f | fzf'
+alias listfonts="fc-list : family style | awk -F: '{print \$2}' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | sort -u"
+
+
+# ============================ 🖥️ Apps & Scripts ============================
+alias zthm='zathura main.pdf'
+alias zth='zathura'
+alias xe='latexmk -xelatex main.tex'
+alias pvc='latexmk -pvc main.tex'
+alias cl='./clean.sh'
+alias b='./build.sh'
+alias omt='nvim main.tex'
+alias qute='qutebrowser'
+alias pdf='xreader'
+alias slide='pdfpc'
+alias pic='feh'
+
+
+# ============================ 📦 Compression & Extraction ============================
+# --- Compress ---
+alias ctgz='tar -czvf'
+alias ctbz='tar -cjvf'
+alias ctxz='tar -cJvf'
+alias ctz='tar -cZvf'
+alias czip='zip -r'
+alias crar='rar a'
+
+# --- Extract ---
+alias etgz='tar -xzvf'
+alias etbz='tar -xjvf'
+alias etxz='tar -xJvf'
+alias etz='tar -xZvf'
+alias ezip='unzip'
+alias erar='unrar x'
+alias extract='tar -xf'
+alias untar='tar -xvzf'
+
+
+# ============================ 🐧 System Control ============================
+alias sys='systemctl'
+alias sysr='sudo systemctl restart'
+alias sysl='systemctl list-units --type=service'
+alias sctl='sudo systemctl'
+alias jctl='journalctl -xe'
+
+alias tctl='timedatectl'
+alias hctl='hostnamectl'
+alias lctl='loginctl'
+alias nctl='networkctl'
+alias lcl='localectl'
+alias getlocation='curl -s https://ipinfo.io/loc'
+
+
+# ============================ 🐍 Python ============================
+alias py='python3'
+alias miniterm='python3 -m serial.tools.miniterm'
+alias rmp='python3 main.py'
+
+
+# ============================ 💻 TMUX ============================
+alias tmls='tmux ls'
+alias tm='tmux'
+alias tma='tmux attach -t '
+alias tmn='tmux new -s '
+alias tmks='tmux kill-session -t '
+alias tmd='tmux detach'
+alias tmrws='tmux rename-window -t '
+alias tmrs='tmux rename-session -t '
+alias tmkall='tmux kill-server'
+
+
+# ============================ ⚡ Power & Package ============================
+alias shutdown='sudo shutdown -P now'
+alias reboot='sudo reboot'
+alias update='sudo apt update && sudo apt upgrade -y'
+alias install='sudo apt install'
+alias remove='sudo apt remove'
+alias search='apt search'
+
+
+# ============================ 🗄️ File & Disk Info ============================
+alias df='df -h'
+alias du='du -h --max-depth=1'
+alias mountlist='lsblk -f'
+alias cat='batcat --paging=never'
+alias view='batcat'
+alias less='batcat --paging=always'
+alias bat='batcat'
+
+
+# ============================ 🌐 Networking ============================
+alias ports='sudo lsof -i -P -n'
+alias myip="ip a | rg 'inet' | grep -v '127.0.0.1' | awk '{print \$2}' | cut -d/ -f1"
+alias pingg='ping google.com'
+alias scanwifi='nmcli dev wifi list'
+alias connectwifi='nmtui'
+
+
+# ============================ 📞 Asterisk ============================
+alias d_ast='sudo systemctl stop asterisk'
+alias e_ast='sudo systemctl start asterisk'
+alias sudo_ast='sudo -u asterisk asterisk -rvvvvv'
+alias astcli='sudo asterisk -rvvvvv'
+alias ast.corereload='sudo asterisk -rx "core reload"'
+alias ast.coreshowuptime='sudo asterisk -rx "core show uptime"'
+alias ast.log='sudo tail -f /var/log/asterisk/full'
+
+alias sip.reload='sudo asterisk -rx "sip reload"'
+alias sip.showpeers='sudo asterisk -rx "sip show peers"'
+alias sip.showusers='sudo asterisk -rx "sip show users"'
+alias sip.showregistry='sudo asterisk -rx "sip show registry"'
+
+alias pjsip.reload='sudo asterisk -rx "pjsip reload"'
+alias pjsip.showendpoints='sudo asterisk -rx "pjsip show endpoints"'
+alias pjsip.showaors='sudo asterisk -rx "pjsip show aors"'
+alias pjsip.showregistration='sudo asterisk -rx "pjsip show registration"'
+
+alias ast.pjsip='sudo nvim /etc/asterisk/pjsip.conf'
+alias ast.sip='sudo nvim /etc/asterisk/sip.conf'
+alias ast.ext='sudo nvim /etc/asterisk/extensions.conf'
+alias ast.voicemail='sudo nvim /etc/asterisk/voicemail.conf'
+alias ast.manager='sudo nvim /etc/asterisk/manager.conf'
+
+alias dialplanreload='sudo asterisk -rx "dialplan reload"'
+alias astgrep='sudo grep -i --color=auto'
+alias astping='sudo asterisk -rx "sip show peers" | grep -i unreachable'
+alias astcheck='sudo asterisk -rx "core show version"; sudo asterisk -rx "pjsip show endpoints"; sudo asterisk -rx "pjsip show registration"'
+
+
+# ============================ 📊 Processes ============================
+alias psg='ps aux | grep -v grep | grep -i -e VSZ -e'
+alias topcpu='ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%cpu | head -n 11'
+
+
+# ============================ 🌲 Tree ============================
+alias t='tree -C'
+alias taf='tree -a -C'
+alias td='tree -d -C'
+alias t1='tree -L 1 -C'
+alias t2='tree -L 2 -C'
+alias t3='tree -L 3 -C'
+alias t4='tree -L 4 -C'
+
+
+# ============================ 🦊 Git ============================
+alias grao='git remote add origin'
+alias grsu='git remote set-url origin'
+alias grv='git remote -v'
+alias g='git'
+alias gs='git status -sb'
+alias ga='git add'
+alias gc='git commit -m'
+alias gc.a='git commit --amend'
+alias g.co='git checkout'
+alias gb='git branch'
+alias gbd='git branch -d'
+alias g.cb='git checkout -b'
+alias gp='git push'
+alias gpo='git push origin'
+alias gl='git pull'
+alias gcl='git clone'
+alias greset='git reset --hard'
+alias glog='git log --oneline --graph --decorate --all'
+alias gclean='git clean -fd'
+alias gst='git stash'
+alias gsp='git stash pop'
+alias guncommit='git reset --soft HEAD~1'
+
+
+# ============================ 🐳 Docker ============================
+alias d='docker'
+alias dps='docker ps'
+alias di='docker images'
+alias dstopall='docker stop $(docker ps -q)'
+alias drm='docker rm $(docker ps -a -q)'
+alias drmi='docker rmi $(docker images -q)'
+alias dclean='docker system prune -af'
+alias dcompose='docker compose'
+
+
+# ============================ ⚙️ Make & Build ============================
+alias m='make'
+alias mc='make clean'
+alias mb='make && make flash'
+
+
+# ============================ 🔎 Search & Grep ============================
+alias grep='grep --color=auto'
+alias f='find . -name'
+alias ff='find . -type f -iname'
+alias rgg='rg --hidden --smart-case'
+
+
+# ============================ ✏️ Neovim ============================
+alias nv='nvim'
+alias n='nvim'
+alias snv='sudo nvim'
+alias v='nvim .'
+
+
+# ============================ 🔌 Embedded / ESP-IDF ============================
+alias tty='ls /dev/tty*'
+alias ttyusb='ls /dev/ttyUSB*'
+alias ttyacm='ls /dev/ttyACM*'
+alias idfb='idf.py build'
+alias idfst='idf.py set-target'
+alias idfmc='idf.py menuconfig'
+alias idff='idf.py flash'
+alias idfm='idf.py monitor'
+alias idfc='rm -rf build && idf.py fullclean'
+alias idfcb='rm -rf build && idf.py fullclean build'
+alias idffm='idf.py flash monitor'
+alias idfall='idf.py fullclean build flash monitor'
+
+
+# ============================ ✨ Misc ============================
+alias please='sudo $(fc -ln -1)'
+alias now='date "+%Y-%m-%d %H:%M:%S"'
+
+
+# ============================ 🛡️ Safety ============================
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
