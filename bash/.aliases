@@ -122,9 +122,8 @@ alias df='df -h'
 alias du='du -h --max-depth=1'
 alias mountlist='lsblk -f'
 alias cat='batcat --paging=never'
-alias view='batcat'
+alias view='bat'
 alias less='batcat --paging=always'
-alias bat='batcat'
 
 
 # ============================ 🌐 Networking ============================
