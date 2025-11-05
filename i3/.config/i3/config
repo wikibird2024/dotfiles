@@ -3,8 +3,7 @@
 # i3 Config — Modular Includes
 # =============================
 include ~/.config/i3/ui.conf
-include ~/.config/i3/bindings.conf
-#include ~/.config/i3/rules.conf
+include ~/.config/i3/bindings_rule.conf
 include ~/.config/i3/bar.conf
 include ~/.config/i3/workspace.conf
 include ~/.config/i3/apps.conf
@@ -12,7 +11,7 @@ include ~/.config/i3/apps.conf
 # =============================
 # Startup Scripts
 # =============================
-exec_always --no-startup-id setxkbmap -option caps:escape  # Đã đổi thành exec_always
+exec_always --no-startup-id setxkbmap -option caps:escape
 exec --no-startup-id ~/.config/i3/layout.sh.sh
 
 # Thêm các thành phần hệ thống quan trọng
