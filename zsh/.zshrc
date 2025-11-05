@@ -1,6 +1,6 @@
 
 # =======================================================================
-# PROFESSIONAL ZSH CONFIGURATION
+# PROFESSIONAL ZSH CONFIGURATION - FINALIZED
 # Clean, fast, and extensible — tuned for development, Git, Docker, ESP32.
 # =======================================================================
 
@@ -12,9 +12,10 @@ fi
 # --- 1. OH MY ZSH SETUP ---
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
+# Disable automatic updates
+DISABLE_AUTO_UPDATE="true"
 
 # --- 2. PLUGINS ---
-# NOTE: Load syntax-highlighting last for performance and correctness
 plugins=(
   git
   zsh-autosuggestions
@@ -22,6 +23,7 @@ plugins=(
   docker
   docker-compose
   history
+  fzf
   zsh-syntax-highlighting
 )
 
@@ -29,42 +31,49 @@ plugins=(
 if [ -f "$ZSH/oh-my-zsh.sh" ]; then
   source "$ZSH/oh-my-zsh.sh"
 else
-  echo "⚠️  Oh My Zsh not found at $ZSH"
+  echo "⚠️ Oh My Zsh not found at $ZSH"
 fi
 
-# --- 4. CORE ZSH OPTIONS ---
-setopt histignorealldups sharehistory autocd extended_glob correct interactivecomments
+# --- 4. CORE ZSH OPTIONS & HISTORY ---
+setopt histignorealldups sharehistory autocd extended_glob correct interactivecomments globdots
 HISTSIZE=10000
 SAVEHIST=10000
 HISTFILE=~/.zsh_history
+
+# Khắc phục lỗi globbing thất bại
+unsetopt nomatch
 
 # --- 5. KEYBINDINGS ---
 bindkey -e   # Emacs keybindings (default)
 # bindkey -v   # Uncomment for Vim-style keybindings
 
 # --- 6. PATH & ENVIRONMENT ---
-export PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
+typeset -aU path
+path=($HOME/bin $HOME/.local/bin /usr/local/bin $path)
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export EDITOR="nvim"
 
 # --- 7. ESP-IDF ENVIRONMENT ---
-# Automatically source ESP-IDF tools if available
+# Uncomment to load ESP-IDF when needed
 # [ -f ~/esp/esp-idf/export.sh ] && source ~/esp/esp-idf/export.sh
 
 # --- 8. TERMINAL SETTINGS ---
-# export TERM="alacritty"  # Uncomment for truecolor terminals
+# export TERM="alacritty"
 
-# --- 9. SHARED ALIASES (COMMON WITH BASH) ---
-# Maintain all aliases in ~/.aliases to share across Bash and Zsh
+# --- 9. LOAD ALIASES & FUNCTIONS ---
 if [ -f ~/.aliases ]; then
   source ~/.aliases
 fi
 
-# --- 10. CUSTOM SHORTCUTS (SHELL-SPECIFIC) ---
+if [ -f ~/.zsh_functions ]; then
+  source ~/.zsh_functions
+fi
+
+# --- 10. CUSTOM SHORTCUTS (ZSH-SPECIFIC) ---
 alias zshconfig='nvim ~/.zshrc'
 alias bashconfig='nvim ~/.bashrc'
-alias ohmyzsh='nvim ~/.oh-my-zsh'
+alias ohmyzsh='nvim "$ZSH"'
 alias reload='exec zsh'
 
 # --- 11. AUTO UPDATE SETTINGS ---
@@ -72,13 +81,10 @@ zstyle ':omz:update' mode reminder
 zstyle ':omz:update' frequency 14
 
 # --- 12. POWERLEVEL10K CONFIG ---
+# Ensure no invalid number values in ~/.p10k.zsh
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-# --- 13. FINAL TOUCH ---
-unsetopt nomatch  # Avoid errors on unmatched globs
-
-# Kích hoạt completion (tự động hoàn thành) của fzf
-source /usr/share/fzf/completion.zsh
-
-# Kích hoạt key bindings (phím tắt) của fzf
-source /usr/share/fzf/key-bindings.zsh
+# --- 13. ZOXIDE (SMART CD REPLACEMENT - MUST BE LAST) ---
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init zsh)"
+fi

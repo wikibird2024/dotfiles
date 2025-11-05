@@ -1,0 +1,106 @@
+# =======================================================================
+# STARSHIP.TOML - PROFESSIONAL & MINIMAL CONFIGURATION
+# Focus: Speed, Clarity, and Git/Dev Status Highlighting.
+# =======================================================================
+
+# 1. Cấu hình Chung & Tối ưu hóa Hiệu suất
+# -----------------------------------------------------------------------
+add_newline = true # QUAN TRỌNG: Thêm dòng mới giúp tách Prompt khỏi kết quả lệnh, tăng khả năng đọc.
+
+# Thiết lập FORMAT mới: Ngắt dòng sau các module thông tin (user/dir/git)
+format = """
+$all$line_break$character
+"""
+
+# Tăng timeout để tránh các công cụ chậm (như Git hoặc một số Node projects) làm chậm prompt
+command_timeout = 700
+
+# 2. Cấu hình Dấu nhắc lệnh (Character) - Đơn giản và Mạnh mẽ
+# -----------------------------------------------------------------------
+[character]
+# Dùng ký hiệu tối giản cho prompt dòng thứ hai
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+# Không thêm khoảng trống, để prompt sát lề trái
+
+# 3. Thông tin Người dùng & Hệ thống - CHỈ HIỆN KHI CẦN (SSH/ROOT)
+# -----------------------------------------------------------------------
+[username]
+show_always = false # Rất ít khi cần hiện user/host trên máy local
+format = "[$user]($style)@"
+style_user = "bold white"
+
+[hostname]
+ssh_only = true # CHỈ hiển thị khi SSH vào máy khác
+format = "[$hostname](bold yellow) "
+style = "bold yellow"
+
+# 4. Thư mục (Directory) - Rõ ràng
+# -----------------------------------------------------------------------
+[directory]
+# Chỉ hiện tên thư mục hiện tại (ví dụ: 'dotfiles'), hoặc 2 cấp nếu đang ở Home (ví dụ: '~/dotfiles')
+# Điều này giúp prompt ngắn gọn tối đa.
+truncation_length = 1
+truncate_to_repo = true # Nếu đang trong Git Repo, chỉ hiện tên Repo
+style = "bold cyan"
+format = "[$path]($style)[$read_only]($read_only_style) "
+
+# 5. Git & Version Control - ĐƯA LÊN HÀNG ĐẦU
+# -----------------------------------------------------------------------
+# Gán style và format cho Git Status để nó nổi bật nhất
+[git_branch]
+symbol = " "
+style = "bold green"
+format = "on [$symbol$branch]($style) "
+
+[git_status]
+# SỬ DỤNG MÀU SẮC ĐỂ PHÂN BIỆT RÕ RÀNG
+style = "red bold" # Đặt màu đỏ khi có thay đổi chưa commit
+format = '([$all_status$ahead_behind]($style))'
+conflicted = "⇎" # Biểu tượng Conflicts
+untracked = "❓"
+modified = "✍️"
+stashed = "📦"
+deleted = "🗑️"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕"
+
+# 6. Môi trường Lập trình (Dev Environments) - Gọn gàng
+# -----------------------------------------------------------------------
+# Sử dụng 'bold' nhẹ nhàng hơn cho các môi trường, không làm lu mờ Git
+[rust]
+symbol = "🦀 "
+style = "bold yellow"
+format = "[$symbol($version)]($style) "
+
+[nodejs]
+symbol = "⬢ "
+style = "bold green"
+format = "[$symbol($version)]($style) "
+
+[python]
+symbol = "🐍 "
+style = "bold green"
+format = "[$symbol$version]($style) " # Gộp version vào symbol
+
+[c]
+symbol = " "
+style = "bold blue"
+disabled = false
+format = "[$symbol]($style) " # Chỉ hiển thị biểu tượng, không hiển thị version (ít quan trọng hơn trong C/C++)
+
+# 7. Hiển thị Thời gian & Kết thúc
+# -----------------------------------------------------------------------
+[time]
+disabled = true # Tắt hẳn time
+
+[cmd_duration]
+# Tăng ngưỡng: Chỉ hiện nếu lệnh mất hơn 500ms (giảm nhiễu)
+min_time = 500
+format = " took [$duration](bold yellow)"
+disabled = false
+
+# Dòng ngắt (phải là disabled = false nếu muốn thêm dòng mới)
+[line_break]
+disabled = false
