@@ -49,7 +49,7 @@ local themes = {
 }
 
 -- Choose the active theme
-local active_theme = "nord"  -- Change this to the one you want
+local active_theme = "gruvbox"  -- Change this to the one you want
 local theme_config = themes[active_theme]
 
 return {
