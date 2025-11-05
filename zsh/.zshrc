@@ -76,3 +76,9 @@ zstyle ':omz:update' frequency 14
 
 # --- 13. FINAL TOUCH ---
 unsetopt nomatch  # Avoid errors on unmatched globs
+
+# Kích hoạt completion (tự động hoàn thành) của fzf
+source /usr/share/fzf/completion.zsh
+
+# Kích hoạt key bindings (phím tắt) của fzf
+source /usr/share/fzf/key-bindings.zsh
