@@ -25,60 +25,54 @@ plugins=(
   zsh-syntax-highlighting
 )
 
-# Load Oh My Zsh core
+# --- 3. LOAD OH MY ZSH CORE ---
 if [ -f "$ZSH/oh-my-zsh.sh" ]; then
   source "$ZSH/oh-my-zsh.sh"
 else
   echo "⚠️  Oh My Zsh not found at $ZSH"
 fi
 
-# --- 3. CORE ZSH OPTIONS ---
-setopt histignorealldups sharehistory
+# --- 4. CORE ZSH OPTIONS ---
+setopt histignorealldups sharehistory autocd extended_glob correct interactivecomments
 HISTSIZE=10000
 SAVEHIST=10000
 HISTFILE=~/.zsh_history
-setopt autocd extended_glob
-setopt correct        # Suggest corrections for mistyped commands
-setopt interactivecomments  # Allow comments in interactive mode
 
-# --- 4. KEYBINDINGS ---
+# --- 5. KEYBINDINGS ---
 bindkey -e   # Emacs keybindings (default)
 # bindkey -v   # Uncomment for Vim-style keybindings
 
-# --- 5. PATH & ENVIRONMENT ---
+# --- 6. PATH & ENVIRONMENT ---
 export PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export EDITOR="nvim"
 
-# --- 6. ESP-IDF ENVIRONMENT ---
+# --- 7. ESP-IDF ENVIRONMENT ---
 # Automatically source ESP-IDF tools if available
+# [ -f ~/esp/esp-idf/export.sh ] && source ~/esp/esp-idf/export.sh
 
-# --- 7. TERMINAL SETTINGS ---
-# Uncomment if using Alacritty or a 24-bit truecolor terminal
-# export TERM="alacritty"
+# --- 8. TERMINAL SETTINGS ---
+# export TERM="alacritty"  # Uncomment for truecolor terminals
 
-# --- 8. POWERLEVEL10K CONFIG ---
-[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
-
-# --- 9. CUSTOM ALIASES ---
-alias ll='ls -lh --color=auto'
-alias la='ls -lha --color=auto'
-alias grep='grep --color=auto'
-alias zshconfig='nvim ~/.zshrc'
-alias ohmyzsh='nvim ~/.oh-my-zsh'
-alias idf='cd ~/esp/esp-idf'
-alias mainproj='cd ~/esp/mainproject'
-
-# --- 10. AUTO UPDATE SETTINGS ---
-zstyle ':omz:update' mode reminder
-zstyle ':omz:update' frequency 14
-
-# --- 11. EXTERNAL ALIASES ---
-# You can keep personal aliases/functions modular in ~/.aliases.zsh
+# --- 9. SHARED ALIASES (COMMON WITH BASH) ---
+# Maintain all aliases in ~/.aliases to share across Bash and Zsh
 if [ -f ~/.aliases ]; then
   source ~/.aliases
 fi
 
-# --- 12. FINAL TOUCH: clear PROMPT_SP, ensure smooth startup ---
-unsetopt nomatch      # Avoid errors on unmatched globs
+# --- 10. CUSTOM SHORTCUTS (SHELL-SPECIFIC) ---
+alias zshconfig='nvim ~/.zshrc'
+alias bashconfig='nvim ~/.bashrc'
+alias ohmyzsh='nvim ~/.oh-my-zsh'
+alias reload='exec zsh'
+
+# --- 11. AUTO UPDATE SETTINGS ---
+zstyle ':omz:update' mode reminder
+zstyle ':omz:update' frequency 14
+
+# --- 12. POWERLEVEL10K CONFIG ---
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+
+# --- 13. FINAL TOUCH ---
+unsetopt nomatch  # Avoid errors on unmatched globs
