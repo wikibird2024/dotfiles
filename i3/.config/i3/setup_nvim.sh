@@ -45,7 +45,7 @@ function configure_i3() {
         echo "i3 is not running. Please start i3 first."
         exit 1
     fi
-    
+
     # Send commands to i3 to set up workspaces
     i3-msg 'workspace 1; exec alacritty'
     sleep 0.5

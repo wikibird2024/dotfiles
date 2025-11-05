@@ -13,7 +13,7 @@ include ~/.config/i3/apps.conf
 # Startup Scripts
 # =============================
 exec_always --no-startup-id setxkbmap -option caps:escape  # Đã đổi thành exec_always
-exec --no-startup-id ~/.config/i3/startup_layout.sh
+exec --no-startup-id ~/.config/i3/layout.sh.sh
 
 # Thêm các thành phần hệ thống quan trọng
 exec --no-startup-id dunst                             # Dịch vụ thông báo
