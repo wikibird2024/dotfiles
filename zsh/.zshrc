@@ -88,3 +88,5 @@ zstyle ':omz:update' frequency 14
 if command -v zoxide >/dev/null 2>&1; then
     eval "$(zoxide init zsh)"
 fi
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
