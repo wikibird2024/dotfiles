@@ -13,6 +13,10 @@ case "$APP" in
     CLASS="firefox"
     CMD="firefox"
     ;;
+  google-chrome)
+    CLASS="Google-chrome"
+    CMD="google-chrome"
+    ;;
   alacritty)
     CLASS="Alacritty"
     CMD="alacritty"

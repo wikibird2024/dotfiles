@@ -114,3 +114,4 @@ if [[ "$(tty)" =~ ^/dev/tty[0-9]+$ ]] && [[ -z "$TMUX" ]] && [[ -z "$SSH_TTY" ]]
 fi
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+xset -b
