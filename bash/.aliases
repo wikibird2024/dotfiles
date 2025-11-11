@@ -25,7 +25,7 @@ alias ....='cd ../../..'
 
 # Standard Directory Jumps
 alias cconfig='cd ~/.config/'
-alias cdot='cd ~/dotfiles/'
+alias zdot='cd ~/dotfiles/'
 alias cpy='cd ~/python'
 alias cdown='cd ~/Downloads/'
 alias cdoc='cd ~/Documents/'

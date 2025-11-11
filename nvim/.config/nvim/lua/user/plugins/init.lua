@@ -16,6 +16,6 @@ return {
   { import = "user.plugins.treesitter" },
   { import = "user.plugins.lint" },           -- ✅ Linters (e.g., nvim-lint or null-ls)
   { import = "user.plugins.format" },         -- ✅ Formatter (e.g., conform.nvim)
-  { import = "user.plugins.ts_comment" }, 
+  { import = "user.plugins.ts_comment" },
   { "echasnovski/mini.icons" },
 }
