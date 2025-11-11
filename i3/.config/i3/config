@@ -12,6 +12,7 @@ include ~/.config/i3/apps.conf
 # Startup Scripts
 # =============================
 exec_always --no-startup-id setxkbmap -option caps:escape
+exec_always --no-startup-id picom -b
 exec --no-startup-id ~/.config/i3/layout.sh.sh
 
 # Thêm các thành phần hệ thống quan trọng
