@@ -121,10 +121,6 @@ alias search='apt search'
 alias df='df -h'
 alias du='du -h --max-depth=1'
 alias mountlist='lsblk -f'
-alias cat='batcat --paging=never'
-alias view='bat'
-alias less='batcat --paging=always'
-
 
 # ============================ 🌐 Networking ============================
 alias ports='sudo lsof -i -P -n'

@@ -69,6 +69,10 @@ if [ -f ~/.aliases ]; then
   source ~/.aliases
 fi
 
+if [ -f ~/.bash_functions ]; then
+  source ~/.bash_functions
+fi
+
 if [ -f ~/.zsh_functions ]; then
   source ~/.zsh_functions
 fi
