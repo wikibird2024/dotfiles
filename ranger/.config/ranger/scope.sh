@@ -1,36 +1,29 @@
 
 #!/usr/bin/env bash
-# scope.sh – ranger file preview
-
-set -o noclobber -o noglob -o nounset -o pipefail
-IFS=$'\n'
+set -u
 
 FILE_PATH="$1"
-PV_WIDTH="$2"
-PV_HEIGHT="$3"
-IMAGE_CACHE_PATH="$4"
-PV_IMAGE_ENABLED="$5"
+FILE_EXTENSION="${FILE_PATH##*.}"
 
-mimetype=$(file --mime-type -Lb "$FILE_PATH")
-
-case "$mimetype" in
+case "$FILE_EXTENSION" in
+    # Code preview
+    c|cpp|h|py|sh|lua|json|toml|yaml|yml|txt|md)
+        bat --style=plain --color=always "$FILE_PATH"
+        exit 0;;
+    # PDF
+    pdf)
+        pdftoppm -f 1 -singlefile -jpeg "$FILE_PATH" /tmp/pdf_preview > /dev/null 2>&1
+        ueberzug layer --parser simple --silent < <(printf 'add [identifier]="preview" [path]="/tmp/pdf_preview.jpg"\n')
+        exit 0;;
     # Images
-    image/*)
-        exit 7 ;;  # handled by ueberzug
-    # PDFs
-    application/pdf)
-        pdftoppm -png -f 1 -singlefile "$FILE_PATH" "$IMAGE_CACHE_PATH" && exit 6
-        ;;
-    # Video thumbnails
-    video/*)
-        ffmpegthumbnailer -i "$FILE_PATH" -o "$IMAGE_CACHE_PATH.png" -s 0 && exit 6
-        ;;
-    # Text/code
-    text/* | */xml | application/json)
-        bat --color=always --style=plain --pager=never "$FILE_PATH"
-        exit 5 ;;
-    # Fallback
+    jpg|jpeg|png|gif|bmp|svg)
+        ueberzug layer --parser simple --silent < <(printf 'add [identifier]="preview" [path]="'$FILE_PATH'"\n')
+        exit 0;;
+    # Archive
+    zip|tar|gz|bz2|xz|rar)
+        atool -l "$FILE_PATH"
+        exit 0;;
     *)
-        file -Lb "$FILE_PATH"
-        exit 5 ;;
+        file --mime-type -b "$FILE_PATH"
+        exit 0;;
 esac
