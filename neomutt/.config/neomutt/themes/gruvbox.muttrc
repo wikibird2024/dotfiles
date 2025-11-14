@@ -1,0 +1,5 @@
+# Basic Gruvbox theme
+color index brightyellow default ~F
+color index brightcyan default ~N
+color index brightred default ~D
+color status brightyellow blue

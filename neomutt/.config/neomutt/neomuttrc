@@ -1,0 +1,24 @@
+# =============================
+# NeoMutt Master Config
+# =============================
+# Load theme
+source /home/hx/dotfiles/neomutt/.config/neomutt/themes/gruvbox.muttrc
+
+# Load account
+source /home/hx/dotfiles/neomutt/.config/neomutt/accounts/gmail.muttrc
+
+# Load hooks
+source /home/hx/dotfiles/neomutt/.config/neomutt/hooks/index_hooks.muttrc
+source /home/hx/dotfiles/neomutt/.config/neomutt/hooks/send_hooks.muttrc
+
+set folder="imaps://imap.gmail.com:993"
+set spoolfile="+INBOX"
+set record="+Sent"
+set postponed="+Drafts"
+
+set header_cache="/home/hx/.cache/neomutt/headers"
+set message_cachedir="/home/hx/.cache/neomutt/messages"
+set certificate_file="/home/hx/.cache/neomutt/certificates"
+
+set realname = "Your Name"
+set from = "your_email@gmail.com"

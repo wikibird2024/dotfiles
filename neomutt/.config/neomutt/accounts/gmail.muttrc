@@ -1,0 +1,9 @@
+# Gmail Account Config
+set imap_user = "bkanduchao@gmail.com"
+set imap_pass = ""
+
+set smtp_url = "smtp://your_email@gmail.com@smtp.gmail.com:587/"
+set smtp_pass = "app_password_here"
+
+set ssl_force_tls = yes
+set ssl_starttls = yes
