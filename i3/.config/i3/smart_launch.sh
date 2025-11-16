@@ -13,15 +13,19 @@ case "$APP" in
     CLASS="firefox"
     CMD="firefox"
     ;;
-  google-chrome)
-    CLASS="Google-chrome"
+  google-chrome|chrome)
+    CLASS="google-chrome"
     CMD="google-chrome"
     ;;
-  alacritty)
+  qutebrowser|qute)
+    CLASS="qutebrowser"
+    CMD="qutebrowser"
+    ;;
+  alacritty|terminal)
     CLASS="Alacritty"
     CMD="alacritty"
     ;;
-  telegram-desktop)
+  telegram-desktop|tg)
     CLASS="TelegramDesktop"
     CMD="telegram-desktop"
     ;;

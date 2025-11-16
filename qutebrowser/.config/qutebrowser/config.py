@@ -137,6 +137,10 @@ c.url.searchengines = {
     "rd": "https://www.reddit.com/search/?q={}",
     "so": "https://stackoverflow.com/search?q={}",
     "gem": "https://gemini.google.com/app?q={}",
+    "ppx": "https://www.perplexity.ai/search?q={}",
+    "ph": "https://www.phind.com/search?q={}",
+    "cop": "https://www.bing.com/search?q={}",
+    "gpt": "https://chat.openai.com/?q={}",  # mở ChatGPT thẳng
 }
 
 # =============================

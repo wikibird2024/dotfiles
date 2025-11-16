@@ -40,6 +40,9 @@ HISTSIZE=10000
 SAVEHIST=10000
 HISTFILE=~/.zsh_history
 
+# TERMINAL / EDITOR
+export EDITOR=nvim  # Ưu tiên nvim/vim như bạn đã cấu hình
+export VISUAL=$EDITOR
 # Khắc phục lỗi globbing thất bại
 unsetopt nomatch
 
@@ -66,6 +69,10 @@ if [ -f ~/.aliases ]; then
   source ~/.aliases
 fi
 
+if [ -f ~/.bash_functions ]; then
+  source ~/.bash_functions
+fi
+
 if [ -f ~/.zsh_functions ]; then
   source ~/.zsh_functions
 fi
@@ -74,7 +81,6 @@ fi
 alias zshconfig='nvim ~/.zshrc'
 alias bashconfig='nvim ~/.bashrc'
 alias ohmyzsh='nvim "$ZSH"'
-alias reload='exec zsh'
 
 # --- 11. AUTO UPDATE SETTINGS ---
 zstyle ':omz:update' mode reminder
