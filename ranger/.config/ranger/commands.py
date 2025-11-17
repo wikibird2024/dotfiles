@@ -1,79 +1,147 @@
-<<<<<<< HEAD
-=======
-# commands.py – custom ranger commands
->>>>>>> df70299fc361acef84985177c03587b96811d96f
 
+# ================================
+#  Ranger PRO Commands
+# ================================
 from ranger.api.commands import Command
-import os, subprocess
+import os
+import subprocess
 
-<<<<<<< HEAD
+
+# ----------------------------------------------------
+# Open file in Neovim
+# ----------------------------------------------------
 class open_nvim(Command):
-    """:open_nvim
-    Open selected file in Neovim."""
     def execute(self):
         f = self.fm.thisfile.path
-        self.fm.notify(f"Opening {f} in Neovim")
         subprocess.run(["nvim", f])
-=======
+
+
+# ----------------------------------------------------
+# Copy LaTeX includegraphics to clipboard
+# ----------------------------------------------------
 class yanklatex(Command):
-    r""":yanklatex
-    Copy LaTeX \includegraphics command for the selected file
+    def execute(self):
+        f = self.fm.thisfile.path
+        cmd = f"\\includegraphics[width=0.7\\textwidth]{{{f}}}"
+        try:
+            subprocess.run(["xclip", "-selection", "clipboard"], input=cmd.encode(), check=True)
+            self.fm.notify("Copied LaTeX command to clipboard")
+        except Exception:
+            self.fm.notify("xclip error", bad=True)
+
+
+# ----------------------------------------------------
+# Copy absolute path
+# ----------------------------------------------------
+class copy_path(Command):
+    def execute(self):
+        f = self.fm.thisfile.path
+        try:
+            subprocess.run(["xclip", "-selection", "clipboard"], input=f.encode(), check=True)
+            self.fm.notify("Copied path to clipboard")
+        except Exception:
+            self.fm.notify("xclip not found", bad=True)
+
+
+# ----------------------------------------------------
+# fzf select
+# ----------------------------------------------------
+class fzf_select(Command):
+    """
+    :fzf_select
+    Use fzf to select a file or directory and jump there.
     """
     def execute(self):
-        f = self.fm.thisfile.path
-        # Tạo chuỗi lệnh LaTeX
-        cmd = f"\\includegraphics[width=0.7\\textwidth]{{{f}}}"
-
-        # Thao tác với subprocess.run:
-        # - Chuyển lệnh thành list các đối số để loại bỏ shell=True, tăng bảo mật.
-        # - Dữ liệu đầu vào (cmd.encode()) được chuyển trực tiếp qua stdin.
         try:
-            subprocess.run(
-                ["xclip", "-selection", "clipboard"],
-                input=cmd.encode(),
-                check=True # Kiểm tra nếu lệnh xclip thất bại (ví dụ: xclip chưa cài)
+            fzf = subprocess.run(
+                ["fzf", "--height", "40%", "--layout=reverse", "--border"],
+                capture_output=True, text=True
             )
-            self.fm.notify("Copied LaTeX includegraphics to clipboard!")
+            if fzf.stdout.strip():
+                path = fzf.stdout.strip()
+                self.fm.select_file(path)
         except FileNotFoundError:
-             self.fm.notify("Error: 'xclip' command not found. Please install xclip.", bad=True)
-        except subprocess.CalledProcessError:
-             self.fm.notify("Error: xclip failed to execute.", bad=True)
->>>>>>> df70299fc361acef84985177c03587b96811d96f
+            self.fm.notify("fzf not installed", bad=True)
 
+
+# ----------------------------------------------------
+# Create directory then cd
+# ----------------------------------------------------
+class mkcd(Command):
+    def execute(self):
+        dirname = self.rest(1)
+        if not dirname:
+            self.fm.notify("Usage: mkcd <dirname>", bad=True)
+            return
+        os.makedirs(dirname, exist_ok=True)
+        self.fm.cd(dirname)
+
+
+# ----------------------------------------------------
+# Extract archives
+# ----------------------------------------------------
 class extract(Command):
-    """:extract
-    Extract archives (zip/tar) in current directory."""
     def execute(self):
         f = self.fm.thisfile.path
-<<<<<<< HEAD
         if f.endswith(".zip"):
             self.fm.run(f'unzip "{f}" -d .')
         elif f.endswith(".tar.gz") or f.endswith(".tgz"):
             self.fm.run(f'tar -xzf "{f}" -C .')
+        elif f.endswith(".7z"):
+            self.fm.run(f'7z x "{f}"')
         else:
             self.fm.notify("Unsupported archive", bad=True)
 
+
+# ----------------------------------------------------
+# Compile C file
+# ----------------------------------------------------
 class compile_c(Command):
-    """:compile_c
-    Compile .c file with gcc automatically."""
     def execute(self):
         f = self.fm.thisfile.path
         out = os.path.splitext(f)[0]
         self.fm.run(f"gcc {f} -o {out} && echo 'Compiled -> {out}'")
-=======
 
-        # Thao tác với subprocess.run:
-        # - Chuyển lệnh thành list các đối số để loại bỏ shell=True.
-        # - Dữ liệu đầu vào (f.encode()) được chuyển trực tiếp qua stdin.
+
+# ----------------------------------------------------
+# Safe delete (trash)
+# ----------------------------------------------------
+class trash(Command):
+    def execute(self):
+        f = self.fm.thisfile.path
+        self.fm.run(f"trash-put '{f}'")
+
+
+# ----------------------------------------------------
+# Jump to file via fzf (directories only)
+# ----------------------------------------------------
+class fzf_jump(Command):
+    def execute(self):
         try:
-            subprocess.run(
-                ["xclip", "-selection", "clipboard"],
-                input=f.encode(),
-                check=True
+            p = subprocess.run(
+                ["fzf", "--type=d"],
+                capture_output=True, text=True
             )
-            self.fm.notify("Copied path to clipboard!")
-        except FileNotFoundError:
-            self.fm.notify("Error: 'xclip' command not found. Please install xclip.", bad=True)
-        except subprocess.CalledProcessError:
-             self.fm.notify("Error: xclip failed to execute.", bad=True)
->>>>>>> df70299fc361acef84985177c03587b96811d96f
+            path = p.stdout.strip()
+            if path:
+                self.fm.cd(path)
+        except Exception:
+            self.fm.notify("fzf error", bad=True)
+
+
+# ----------------------------------------------------
+# Compress to tar.gz
+# ----------------------------------------------------
+class compress(Command):
+    def execute(self):
+        f = self.fm.thisfile.path
+        out = f"{os.path.basename(f)}.tar.gz"
+        self.fm.run(f'tar -czf "{out}" "{f}"')
+
+
+# ----------------------------------------------------
+# Bulk rename with nvim
+# ----------------------------------------------------
+class bulk_rename(Command):
+    def execute(self):
+        self.fm.run("bulkrename")
