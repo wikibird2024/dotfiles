@@ -5,7 +5,7 @@ alias la='ls -A'
 alias l='ls -CF'
 
 # Config File Editors
-alias aliases.e='nvim ~/.aliases'
+alias alias.e='nvim ~/.aliases'
 alias func.e='nvim ~/.bash_functions'
 alias bashrc.e='nvim ~/.bashrc'
 alias zshrc.e='nvim ~/.zshrc'
@@ -213,9 +213,8 @@ alias dcompose='docker compose'
 
 
 # ============================ ⚙️ Make & Build ============================
-alias m='make'
-alias mc='make clean'
-alias mb='make && make flash'
+alias mk='make'
+alias mkc='make clean'
 
 
 # ============================ 🔎 Search & Grep ============================
