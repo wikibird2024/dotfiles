@@ -1,98 +1,128 @@
 
 # =======================================================================
-# PROFESSIONAL ZSH CONFIGURATION - FINALIZED
-# Clean, fast, and extensible — tuned for development, Git, Docker, ESP32.
+# PROFESSIONAL ZSH CONFIGURATION
+# Fast • Stable • Zinit-powered • P10k-ready • Clean Architecture
 # =======================================================================
 
-# --- 0. POWERLEVEL10K INSTANT PROMPT (Keep this block at the top) ---
+
+# -----------------------------------------------------------------------
+# 0. POWERLEVEL10K INSTANT PROMPT (MUST BE FIRST)
+# -----------------------------------------------------------------------
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# --- 1. OH MY ZSH SETUP ---
+
+# -----------------------------------------------------------------------
+# PHASE 1 — BOOTSTRAP ENVIRONMENT
+# -----------------------------------------------------------------------
+
+# --- 1. Oh My Zsh core (không dùng theme của OMZ) ---
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="powerlevel10k/powerlevel10k"
-# Disable automatic updates
+ZSH_THEME=""                       # Ngăn OMZ override Powerlevel10k
 DISABLE_AUTO_UPDATE="true"
+DISABLE_OMZ_DIAGNOSTIC="true"
 
-# --- 2. PLUGINS ---
-plugins=(
-  git
-  zsh-autosuggestions
-  sudo
-  docker
-  docker-compose
-  history
-  fzf
-  zsh-syntax-highlighting
-)
-
-# --- 3. LOAD OH MY ZSH CORE ---
 if [ -f "$ZSH/oh-my-zsh.sh" ]; then
   source "$ZSH/oh-my-zsh.sh"
-else
-  echo "⚠️ Oh My Zsh not found at $ZSH"
 fi
 
-# --- 4. CORE ZSH OPTIONS & HISTORY ---
-setopt histignorealldups sharehistory autocd extended_glob correct interactivecomments globdots
+
+# --- 2. Zinit: Plugin Manager (install once, else skip) ---
+ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
+
+if [[ ! -f "$ZINIT_HOME/zinit.zsh" ]]; then
+  echo "Installing Zinit..."
+  mkdir -p "$(dirname "$ZINIT_HOME")"
+  git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+fi
+
+source "$ZINIT_HOME/zinit.zsh"
+
+
+# --- 3. Plugins: clean & fast ---
+# Syntax & suggestions
+zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-syntax-highlighting
+
+# OMZ plugins via Zinit (plugin = pure script, no overhead)
+zinit light "$ZSH/plugins/sudo"
+zinit light "$ZSH/plugins/docker"
+zinit light "$ZSH/plugins/docker-compose"
+zinit light "$ZSH/plugins/history"
+zinit light "$ZSH/plugins/fzf"
+
+# Powerlevel10k
+zinit ice wait lucid
+zinit light romkatv/powerlevel10k
+
+
+# -----------------------------------------------------------------------
+# PHASE 2 — SHELL OPTIONS, PATH, ENVIRONMENT
+# -----------------------------------------------------------------------
+
+# --- 4. Core Zsh Options ---
+setopt histignorealldups sharehistory autocd extended_glob correct \
+       interactivecomments globdots
+
 HISTSIZE=10000
 SAVEHIST=10000
-HISTFILE=~/.zsh_history
+HISTFILE="$HOME/.zsh_history"
 
-# TERMINAL / EDITOR
-export EDITOR=nvim  # Ưu tiên nvim/vim như bạn đã cấu hình
-export VISUAL=$EDITOR
-# Khắc phục lỗi globbing thất bại
-unsetopt nomatch
+unsetopt nomatch              # Không báo lỗi globbing rỗng
 
-# --- 5. KEYBINDINGS ---
-bindkey -e   # Emacs keybindings (default)
-# bindkey -v   # Uncomment for Vim-style keybindings
 
-# --- 6. PATH & ENVIRONMENT ---
-typeset -aU path
-path=($HOME/bin $HOME/.local/bin /usr/local/bin $path)
+# --- 5. PATH ---
+path=(
+  $HOME/bin
+  $HOME/.local/bin
+  /usr/local/bin
+  $path
+)
+
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
+
+
+# --- 6. Editor ---
 export EDITOR="nvim"
+export VISUAL="$EDITOR"
 
-# --- 7. ESP-IDF ENVIRONMENT ---
-# Uncomment to load ESP-IDF when needed
-# [ -f ~/esp/esp-idf/export.sh ] && source ~/esp/esp-idf/export.sh
 
-# --- 8. TERMINAL SETTINGS ---
-# export TERM="alacritty"
+# --- 7. Keybindings ---
+bindkey -e       # Emacs-mode (default)
+# bindkey -v     # Uncomment nếu muốn Vim-style
 
-# --- 9. LOAD ALIASES & FUNCTIONS ---
-if [ -f ~/.aliases ]; then
-  source ~/.aliases
-fi
 
-if [ -f ~/.bash_functions ]; then
-  source ~/.bash_functions
-fi
+# --- 8. Custom Aliases & Functions ---
+for file in ~/.aliases ~/.zsh_functions ~/.bash_functions; do
+  [ -f "$file" ] && source "$file"
+done
 
-if [ -f ~/.zsh_functions ]; then
-  source ~/.zsh_functions
-fi
-
-# --- 10. CUSTOM SHORTCUTS (ZSH-SPECIFIC) ---
 alias zshconfig='nvim ~/.zshrc'
 alias bashconfig='nvim ~/.bashrc'
-alias ohmyzsh='nvim "$ZSH"'
 
-# --- 11. AUTO UPDATE SETTINGS ---
-zstyle ':omz:update' mode reminder
-zstyle ':omz:update' frequency 14
 
-# --- 12. POWERLEVEL10K CONFIG ---
-# Ensure no invalid number values in ~/.p10k.zsh
-[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+# --- 9. ESP-IDF / Extra Tools (tùy chọn) ---
+# [ -f ~/esp/esp-idf/export.sh ] && source ~/esp/esp-idf/export.sh
+# export TERM="alacritty"
 
-# --- 13. ZOXIDE (SMART CD REPLACEMENT - MUST BE LAST) ---
+
+# -----------------------------------------------------------------------
+# PHASE 3 — POST-LOAD (Require plugins already loaded)
+# -----------------------------------------------------------------------
+
+# --- 10. Zoxide (smart cd) ---
 if command -v zoxide >/dev/null 2>&1; then
-    eval "$(zoxide init zsh)"
+  eval "$(zoxide init zsh)"
 fi
 
+# --- 11. FZF Integration ---
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# --- 12. Powerlevel10k Config ---
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+
+# =======================================================================
+# END OF FILE
+# =======================================================================
