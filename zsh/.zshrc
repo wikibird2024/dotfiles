@@ -124,6 +124,23 @@ bindkey '^[[B' history-substring-search-down
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
 
+# -----------------------------------------------------------------------
+# 9. AUTO LOAD TMUX
+# -----------------------------------------------------------------------
+if command -v tmux >/dev/null 2>&1; then
+  if [[ -z "$TMUX" && -n "$PS1" ]]; then
+    sessions=$(tmux ls 2>/dev/null | cut -d: -f1)
+    count=$(echo "$sessions" | wc -l)
+
+    if [ "$count" -le 1 ]; then
+      tmux new-session -A -s main
+    else
+      chosen=$(echo "$sessions" | fzf --prompt="tmux session > ")
+      [ -n "$chosen" ] && tmux attach -t "$chosen" || tmux new-session -A -s main
+    fi
+  fi
+fi
+
 # =======================================================================
 # END OF FILE — Optimized for speed, portability, dotfiles use
 # =======================================================================
