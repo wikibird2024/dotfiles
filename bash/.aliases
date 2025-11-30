@@ -242,7 +242,7 @@ alias idfc='rm -rf build && idf.py fullclean'
 alias idfcb='rm -rf build && idf.py fullclean build'
 alias idffm='idf.py flash monitor'
 alias idfall='idf.py fullclean build flash monitor'
-
+alias idfide='idf.py install dependencies'
 
 # ============================ ✨ Misc ============================
 alias please='sudo $(fc -ln -1)'
