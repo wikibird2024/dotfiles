@@ -1,6 +1,5 @@
-
 # ================================
-#  Ranger PRO Commands
+# Ranger PRO Commands
 # ================================
 from ranger.api.commands import Command
 import os
