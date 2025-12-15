@@ -33,13 +33,16 @@ alias cpic='cd ~/Pictures/'
 
 # Project-Specific
 alias zplugin.='cd ~/dotfiles/nvim/.config/nvim/lua/user/plugins/'
+# ================================================= ARCH LINUX  ==============
+alias pminstall='sudo pacman -S'
 
-
-# ============================ 🔍 Find & Search ============================
+# ============================ 🔍 Find & Search for FZF and  FD ============================
 alias fd='fdfind'  # Ubuntu-based distros
 alias fzf-file='fdfind --type f | fzf'
 alias listfonts="fc-list : family style | awk -F: '{print \$2}' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | sort -u"
 
+# ============================ Yocto_ ============================
+alias o_yt='cd ~/yocto_project/poky && source oe-init-build-env build'
 
 # ============================ 🖥️ Apps & Scripts ============================
 alias zthm='zathura main.pdf'

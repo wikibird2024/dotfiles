@@ -105,7 +105,7 @@ function goto_espidf {
 # 1️⃣ Filesystem & Navigation
 # ==============================
 
-function mkcd { mkdir -p "$1" && cd "$1"; }
+function mk.cd { mkdir -p "$1" && cd "$1"; }
 function back { cd -; }
 
 function editf {
