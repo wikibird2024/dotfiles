@@ -54,7 +54,7 @@ new_window pixel 1
 # hide_edge_borders both
 
 # Set inner/outer gaps
-gaps inner 4
+gaps inner 3
 gaps outer 2
 
 # show window title bars (not officially supported with i3gaps)
@@ -172,7 +172,10 @@ bindcode $mod+Shift+90   move container to workspace  $ws10
 ######################################
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id xfce4-terminal
+bindsym $mod+Return exec --no-startup-id kitty
+
+# start a  sub-terminal
+bindsym Mod1+Control+t exec --no-startup-id alacritty
 
 # kill focused window
 bindsym $mod+q kill
@@ -334,14 +337,14 @@ set $ws10 "10"
 #workspace $ws5 output HDMI-0
 
 # bind program to workspace and focus to them on startup:
-assign [class="Xfce4-terminal"] $ws1
+assign [class="kitty"] $ws1
 assign [class="(?i)firefox"] $ws2
 assign [class="Thunar"] $ws3
 assign [class="thunderbird"] $ws4
 assign [class="TelegramDesktop"] $ws5
 
 # automatic set focus new window if it opens on another workspace than the current:
-for_window [class=Xfce4-terminal] focus
+for_window [class="^(Xfce4-terminal|kitty)$"] focus
 for_window [class=(?i)firefox] focus
 for_window [class=Thunar] focus
 for_window [class=Thunderbird] focus

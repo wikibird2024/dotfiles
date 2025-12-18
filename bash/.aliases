@@ -11,7 +11,7 @@ alias bashrc.e='nvim ~/.bashrc'
 alias zshrc.e='nvim ~/.zshrc'
 
 alias c='clear'
-alias s='source ~/.bashrc'
+alias source_b='source ~/.bashrc'
 alias sz='source ~/.zshrc'
 
 # Display/Screen Management
@@ -42,7 +42,6 @@ alias fzf-file='fdfind --type f | fzf'
 alias listfonts="fc-list : family style | awk -F: '{print \$2}' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | sort -u"
 
 # ============================ Yocto_ ============================
-alias o_yt='cd ~/yocto_project/poky && source oe-init-build-env build'
 
 # ============================ 🖥️ Apps & Scripts ============================
 alias zthm='zathura main.pdf'
@@ -201,22 +200,32 @@ alias gst='git stash'
 alias gsp='git stash pop'
 alias guncommit='git reset --soft HEAD~1'
 
-
-# ============================ 🐳 Docker ============================
+# =================================================
+# 🐳 DOCKER ULTIMATE ALIASES
+# =================================================
+# --- Management ---
 alias d='docker'
-alias dps='docker ps'
+alias dps='docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"'
+alias dpa='docker ps -a'
 alias di='docker images'
+
+# --- Operations ---
+alias dstop='docker stop'
+alias drm='docker rm'
+alias dex='docker exec -it' # Enter a running container: dex <ID> bash
+alias dl='docker logs -f'
+
+# --- Cleanup (Use with caution!) ---
 alias dstopall='docker stop $(docker ps -q)'
-alias drm='docker rm $(docker ps -a -q)'
-alias drmi='docker rmi $(docker images -q)'
-alias dclean='docker system prune -af'
-alias dcompose='docker compose'
+alias drmall='docker rm $(docker ps -a -q)'
+alias dclean-img='docker image prune -f' # Cleans "none" images (dangling)
+alias dclean-all='docker system prune -a --volumes -f' # Nuclear option
 
+# --- Performance Monitoring ---
+alias dstats='docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}"'
 
-# ============================ ⚙️ Make & Build ============================
-alias mk='make'
-alias mkc='make clean'
-
+# Automatically moves to project dir and launches the environment
+alias  container-yocto='docker start -ai yocto_learning'
 
 # ============================ 🔎 Search & Grep ============================
 alias grep='grep --color=auto'

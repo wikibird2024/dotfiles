@@ -1,12 +1,9 @@
-
 # =======================================================================
-# Alacritty Config - Optimized for i3wm, TN panel, and minimal eye strain
-# Author: Ginko's AI Assistant (Refactored)
+# Alacritty Config - Optimized for i3wm, Arch Linux, and JetBrains Mono
 # =======================================================================
+[general]
+live_config_reload = true
 
-# --------------------------------------------
-# Window settings
-# --------------------------------------------
 [window]
 decorations = "full"
 startup_mode = "windowed"
@@ -16,45 +13,35 @@ opacity = 0.95
 x = 10
 y = 10
 
-# =====================================================
-# Font configuration (optimized for JetBrains Mono Nerd Font)
-# Compatible with Alacritty 0.14.x+
-# =====================================================
-
 [font]
 size = 9.0
 
 [font.normal]
-family = "JetBrainsMono Nerd Font"
+family = "JetBrains Mono Nerd Font"
 style = "Regular"
 
 [font.bold]
-family = "JetBrainsMono Nerd Font"
+family = "JetBrains Mono Nerd Font"
 style = "Bold"
 
 [font.italic]
-family = "JetBrainsMono Nerd Font"
+family = "JetBrains Mono Nerd Font"
 style = "Italic"
 
 [font.offset]
-y = 4    # Tăng khoảng cách dòng để dễ đọc hơn
+x = 0
+y = 4
 
-# --------------------------------------------
-# Cursor
-# --------------------------------------------
 [cursor]
 style = "Block"
 
-# --------------------------------------------
-# Colors (Custom Dark Amber/Gold Theme)
-# --------------------------------------------
 [colors.primary]
-background = "0x202020"          # Nền tối dịu
-foreground = "0xF5E0B3"          # Chữ vàng hổ phách nhẹ
+background = "0x202020"
+foreground = "0xF5E0B3"
 
 [colors.cursor]
 text = "0x000000"
-cursor = "0xFFE866"              # Con trỏ nổi bật
+cursor = "0xFFE866"
 
 [colors.normal]
 black   = "0x1a1a1a"
@@ -76,31 +63,32 @@ magenta = "0xffaaff"
 cyan    = "0x87ffff"
 white   = "0xffffff"
 
-# --------------------------------------------
-# Scrolling
-# --------------------------------------------
 [scrolling]
 history = 10000
 multiplier = 3
 
-# --------------------------------------------
-# Mouse & Selection
-# --------------------------------------------
+[selection]
+save_to_clipboard = true
+
 [[mouse.bindings]]
 mouse = "Right"
 action = "PasteSelection"
 
-[selection]
-save_to_clipboard = true
+# --- Bổ sung phím tắt Zoom cCực kỳ hữu íchc ---
+[[keyboard.bindings]]
+key = "Equals"
+mods = "Control"
+action = "IncreaseFontSize"
 
-# --------------------------------------------
-# Environment
-# --------------------------------------------
+[[keyboard.bindings]]
+key = "Minus"
+mods = "Control"
+action = "DecreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Key0"
+mods = "Control"
+action = "ResetFontSize"
+
 [env]
 TERM = "xterm-256color"
-
-# --------------------------------------------
-# General
-# --------------------------------------------
-[general]
-live_config_reload = true
