@@ -1,64 +1,36 @@
-
--- user/plugins/lsp/init.lua
--- Modern LSP configuration using Neovim's native vim.lsp.config API
-
 return {
-  -- Core LSP support
-  {
-    "neovim/nvim-lspconfig",
-    event = { "BufReadPre", "BufNewFile" },
-    config = function()
-      -- Shared config (capabilities & on_attach)
-      local on_attach = require("user.config.lsp_on_attach").on_attach
-      local capabilities = require("user.config.lsp_capabilities")
+  "neovim/nvim-lspconfig",
+  event = { "BufReadPre", "BufNewFile" },
+  config = function()
+    -- Guard: Đảm bảo chỉ khởi tạo một lần duy nhất mỗi session
+    vim.g._lsp_kernel_enabled = vim.g._lsp_kernel_enabled or {}
+    local enabled = vim.g._lsp_kernel_enabled
 
-      -- List of LSP servers to enable
-      local servers = {
-        "pyright",
-        "clangd",
-        "rust_analyzer",
-        -- add more servers here
-      }
+    -- Dependencies (Đảm bảo các file này tồn tại trong user/config/)
+    local on_attach = require("user.config.lsp_on_attach").on_attach
+    local capabilities = require("user.config.lsp_capabilities")
 
-      for _, server in ipairs(servers) do
-        local ok, custom = pcall(require, "user.plugins.lsp.servers." .. server)
+    local servers = { "pyright", "clangd", "rust_analyzer" }
 
-        if ok and type(custom.setup) == "function" then
-          -- Nếu có file cấu hình riêng (custom), thì dùng nó
-          custom.setup(on_attach, capabilities)
+    for _, name in ipairs(servers) do
+      if not enabled[name] then
+        local ok, server_mod = pcall(require, "user.plugins.lsp.servers." .. name)
+
+        if ok and type(server_mod.setup) == "function" then
+          server_mod.setup(on_attach, capabilities)
         else
-          -- Dùng default setup
-          vim.lsp.config[server] = {
+          -- Fallback nếu không tìm thấy file cấu hình riêng
+          vim.lsp.config[name] = {
             on_attach = on_attach,
             capabilities = capabilities,
+            root_markers = { ".git" },
           }
-          vim.lsp.start(server)
         end
+
+        -- Kích hoạt và đánh dấu đã enable
+        vim.lsp.enable(name)
+        enabled[name] = true
       end
-    end,
-  },
-
-  -- Mason: manage LSP, DAP, Linters, Formatters binaries
-  {
-    "williamboman/mason.nvim",
-    build = ":MasonUpdate",
-    config = function()
-      require("mason").setup()
-    end,
-  },
-
-  -- Mason bridge to nvim-lspconfig
-  {
-    "williamboman/mason-lspconfig.nvim",
-    config = function()
-      require("mason-lspconfig").setup({
-        ensure_installed = {
-          "pyright",
-          "clangd",
-          "rust_analyzer",
-        },
-        automatic_installation = true,
-      })
-    end,
-  },
+    end
+  end,
 }
