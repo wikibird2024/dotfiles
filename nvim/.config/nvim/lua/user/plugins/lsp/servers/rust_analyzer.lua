@@ -2,7 +2,7 @@ local M = {}
 
 function M.setup(on_attach, capabilities)
   vim.lsp.config.rust_analyzer = {
-    cmd = { "rust-analyzer" }, -- Đảm bảo đã cài qua Mason hoặc hệ thống
+    cmd = { "rust-analyzer" },
     filetypes = { "rust" },
     root_markers = { "Cargo.toml", "rust-project.json" },
     on_attach = on_attach,
@@ -10,7 +10,12 @@ function M.setup(on_attach, capabilities)
     settings = {
       ["rust-analyzer"] = {
         cargo = { allFeatures = true },
-        checkOnSave = { command = "clippy" },
+        -- Fix: checkOnSave must be a boolean
+        checkOnSave = true,
+        -- Fix: Move the command configuration here
+        check = {
+          command = "clippy",
+        },
         procMacro = { enable = true },
       },
     },
