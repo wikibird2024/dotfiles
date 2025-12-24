@@ -4,43 +4,42 @@ return {
   event = "VeryLazy",
   config = function()
     require("toggleterm").setup({
-      -- Kích thước động dựa trên hướng mở
+      -- Viewport động: Terminal là một phần của hệ sinh thái hiển thị
       size = function(term)
         if term.direction == "horizontal" then
-          return 15
+          return math.floor(vim.o.lines * 0.30)
         elseif term.direction == "vertical" then
-          return vim.o.columns * 0.4
+          return math.floor(vim.o.columns * 0.38)
         end
       end,
 
-      -- Giao diện & Trải nghiệm gõ
-      hide_numbers = true,      -- Ẩn số dòng cho terminal sạch sẽ
-      shade_terminals = true,   -- Làm tối màu nền terminal để phân biệt với code
-      shading_factor = 2,       -- Độ đậm nhạt (1-3)
-      start_in_insert = true,   -- Luôn vào Insert mode khi mở
-      insert_mappings = true,   -- Quan trọng: cho phép phím toggle hoạt động trong Insert mode
-      terminal_mappings = true, -- Quan trọng: cho phép phím toggle hoạt động trong Terminal mode
-      persist_size = true,      -- Nhớ kích thước cũ
-      persist_mode = false,     -- Không nhớ mode (để luôn bắt đầu bằng Insert cho tiện)
-      direction = "horizontal", -- Hướng mặc định (có thể đổi thành 'float' hoặc 'vertical')
-      close_on_exit = true,     -- Tự động đóng nếu lệnh chạy thành công (exit 0)
-      auto_scroll = true,       -- Tự động cuộn xuống khi có output mới
+      -- Trạng thái tĩnh
+      hide_numbers = true,
+      shade_terminals = true,
+      shading_factor = 1,
+      start_in_insert = true,
+      persist_size = true,
+      persist_mode = false,
+      direction = "horizontal",
+      auto_scroll = true,
 
-      -- Cấu hình chuyên sâu cho Floating Terminal (nếu bạn dùng direction = "float")
+      -- Triết lý quản lý Input tập trung
+      insert_mappings = false,
+      terminal_mappings = false,
+
+      -- Triết lý Debug: Không bao giờ tự hủy dữ liệu lỗi
+      close_on_exit = false,
+
       float_opts = {
-        border = "curved",      -- Bo góc cong (curved) nhìn rất hiện đại
-        winblend = 3,           -- Độ trong suốt nhẹ
-        highlights = {
-          border = "Normal",
-          background = "Normal",
-        },
+        border = "curved",
+        winblend = 2,
       },
 
-      -- Winbar (Thanh trạng thái nhỏ phía trên terminal - cực pro)
+      -- Terminal Management Layer
       winbar = {
         enabled = true,
         name_formatter = function(term)
-          return " Terminal #" .. term.id
+          return string.format(" [%d] Terminal ", term.id)
         end,
       },
     })
