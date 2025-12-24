@@ -80,7 +80,7 @@ local reload_grp = augroup("ReloadConfig", { clear = true })
 -- Automatically source Lua config files on save
 autocmd("BufWritePost", {
     group = reload_grp,
-    pattern = { "~/.config/nvim/lua/user/*.lua", "~/.config/nvim/init.lua" },
+    pattern = { "**/lua/user/*.lua", "~/.config/nvim/init.lua" },
     callback = function()
         vim.notify("Reloading Neovim config...", vim.log.levels.INFO)
         vim.cmd("source " .. vim.fn.expand("<afile>"))

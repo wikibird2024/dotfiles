@@ -5,14 +5,13 @@ return {
     build = ":TSUpdate",
     dependencies = {
       "nvim-treesitter/nvim-treesitter-textobjects",
-      -- Bạn có thể chuyển ts_comment vào đây nếu nó là 1 plugin của treesitter
     },
     config = function()
       require("nvim-treesitter.configs").setup({
         ensure_installed = {
-          "lua", "python", "c", "cpp", "bash",
-          "json", "html", "css", "javascript",
-          "yaml", "markdown", "markdown_inline"
+          "lua", "python", "c", "cpp", "bash", "rust", "toml",
+          "json", "html", "css", "javascript", "yaml",
+          "markdown", "markdown_inline",
         },
         highlight = {
           enable = true,
@@ -31,12 +30,15 @@ return {
         textobjects = {
           select = {
             enable = true,
-            lookahead = true,
+            lookahead = true, -- Auto jump to the nearest textobj
             keymaps = {
               ["af"] = "@function.outer",
               ["if"] = "@function.inner",
               ["ac"] = "@class.outer",
               ["ic"] = "@class.inner",
+              -- Bổ sung cho C/C++/Rust
+              ["ap"] = "@parameter.outer",
+              ["ip"] = "@parameter.inner",
             },
           },
         },

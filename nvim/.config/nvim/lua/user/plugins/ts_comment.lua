@@ -5,18 +5,35 @@
 return {
   "folke/ts-comments.nvim",
   event = "VeryLazy",
-  enabled = vim.fn.has("nvim-0.10") == 1, -- chỉ dùng nếu nvim >= 0.10
+  enabled = vim.fn.has("nvim-0.10") == 1,
   opts = {
     lang = {
+      -- Low-level languages
+      c = "// %s",
+      cpp = "// %s",
+      rust = "// %s",
+
+      -- Document Preparation
+      latex = "%% %s", -- Double % is needed to escape in Lua
+      tex = "%% %s",
+      bib = "%% %s",
+
+      -- Web & Scripting
       javascript = {
-        "// %s",                 -- line comment
-        "/* %s */",             -- block comment
+        "// %s",
+        "/* %s */",
         jsx_element = "{/* %s */}",
         jsx_fragment = "{/* %s */}",
       },
       typescript = "// %s",
       lua = "-- %s",
       python = "# %s",
+
+      -- Config & Shell
+      bash = "# %s",
+      sh = "# %s",
+      toml = "# %s", -- Very common for Rust (Cargo.toml)
+      yaml = "# %s",
     },
   },
 }
