@@ -1,43 +1,36 @@
 
--- ~/.config/nvim/lua/user/plugins/snippets.lua
--- Snippet engine + loader for custom snippets
-
+-- lua/user/plugins/snippets.lua
 return {
   "L3MON4D3/LuaSnip",
   event = "InsertEnter",
-  dependencies = {
-    "rafamadriz/friendly-snippets",
-  },
+  dependencies = { "rafamadriz/friendly-snippets" },
+
+  init = function()
+    -- Module-scope guard, KHÔNG dùng _G
+    local loaded = false
+
+    vim.api.nvim_create_autocmd("InsertEnter", {
+      once = true,
+      callback = function()
+        if loaded then return end
+        loaded = true
+
+        local loader = require("luasnip.loaders.from_lua")
+        loader.load({
+          paths = vim.fn.stdpath("config") .. "/lua/user/plugins/snippets_data",
+          include = { "rust", "c", "cpp", "python" },
+        })
+      end,
+    })
+  end,
 
   config = function()
     local ls = require("luasnip")
-    local loader = require("luasnip.loaders.from_lua")
 
-    -- Enable LuaSnip keymaps (expand, jump)
-    vim.keymap.set({ "i", "s" }, "<Tab>", function()
-      if ls.expand_or_jumpable() then
-        ls.expand_or_jump()
-      else
-        return "<Tab>"
-      end
-    end, { expr = true, silent = true })
-
-    vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
-      if ls.jumpable(-1) then
-        ls.jump(-1)
-      end
-    end, { silent = true })
-
-    -- Load snippets in ~/.config/nvim/lua/user/plugins/snippets_data/
-    loader.load({
-      paths = vim.fn.stdpath("config") .. "/lua/user/plugins/snippets_data",
-    })
-
-    -- Optional: enable autosnippets
     ls.config.set_config({
       history = true,
-      updateevents = "TextChanged,TextChangedI",
-      enable_autosnippets = true,
+      updateevents = "TextChangedI",
+      enable_autosnippets = false,
     })
   end,
 }
