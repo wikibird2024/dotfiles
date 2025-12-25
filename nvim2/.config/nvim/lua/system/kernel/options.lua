@@ -13,3 +13,4 @@ opt.termguicolors = true    -- Hỗ trợ màu sắc 24-bit
 opt.signcolumn = "yes"      -- Luôn hiện cột bên trái để tránh giật UI
 opt.cursorline = true       -- Highlight dòng hiện tại
 opt.scrolloff = 8           -- Luôn giữ 8 dòng trống khi cuộn lên/xuống
+opt.completeopt = { "menu", "menuone", "noselect" }
