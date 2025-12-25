@@ -1,6 +1,5 @@
 
 -- ~/.config/nvim/lua/user/init.lua
-
 require("user.core")
 
 -- Dùng Lazy.nvim để setup plugins

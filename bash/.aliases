@@ -16,7 +16,8 @@ alias sz='source ~/.zshrc'
 
 # Display/Screen Management
 alias mirror='xrandr --output HDMI-1-1 --auto --same-as LVDS-1'
-
+#  Create.sh
+alias create.sh='touch create.sh && chmod +x create.sh && nvim create.sh'
 
 # ============================ 📂 Change Directory 📂 ============================
 alias ..='cd ..'
