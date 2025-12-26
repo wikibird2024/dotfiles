@@ -1,46 +1,27 @@
+
 local M = {}
 
 M.on_attach = function(client, bufnr)
-  -- Cấu hình viền và kích thước cửa sổ
-  local border_style = "single"
+    local opts = { buffer = bufnr, silent = true, desc = "LSP Action" }
 
-  -- Tạo cấu hình chung cho các cửa sổ nổi để tránh bị cắt chữ
-  local float_config = {
-    border = border_style,
-    max_width = 80,         -- Giới hạn chiều ngang để không tràn màn hình
-    max_height = 20,        -- Giới hạn chiều cao
-    wrap = true,            -- QUAN TRỌNG: Tự động xuống dòng khi văn bản quá dài
-    focus_id = "lsp_float",
-  }
+    -- Navigation
+    vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+    vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+    vim.keymap.set("n", "K",  vim.lsp.buf.hover, opts)
 
-  -- Áp dụng cho Hover (Phím K)
-  vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-    vim.lsp.handlers.hover, float_config
-  )
+    -- Refactor
+    vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { buffer = bufnr, desc = "Rename" })
+    vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { buffer = bufnr, desc = "Code Action" })
 
-  -- Áp dụng cho Signature Help
-  vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-    vim.lsp.handlers.signature_help, float_config
-  )
-
-  -- Cấu hình Diagnostic (Bảng báo lỗi)
-  vim.diagnostic.config({
-    virtual_text = true,
-    signs = true,
-    underline = true,
-    update_in_insert = false,
-    severity_sort = true,
-    float = {
-      border = border_style,
-      source = "always",
-      max_width = 80,
-      wrap = true, -- Tự động xuống dòng cho bảng báo lỗi
-      header = "",
-      prefix = "",
-    },
-  })
-
-  -- ... (Phần Keybindings và Autocmd giữ nguyên bên dưới)
+    -- Auto-Format chuẩn Neovim mới
+    if client.supports_method("textDocument/formatting") then
+        vim.api.nvim_create_autocmd("BufWritePre", {
+            buffer = bufnr,
+            callback = function()
+                vim.lsp.buf.format({ bufnr = bufnr, async = false })
+            end,
+        })
+    end
 end
 
 return M

@@ -1,89 +1,42 @@
-
--- File: autocommands.lua
--- ======================================================================
--- 🧠 Ginko AutoCommands – Professional Embedded Developer Setup
--- ======================================================================
-
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
 
--- ╭────────────────────────────────────────────╮
--- │ GENERAL SETTINGS / UI                       │
--- ╰────────────────────────────────────────────╯
+-- 1. General Settings
 local general_grp = augroup("GeneralSettings", { clear = true })
 
--- Highlight yanked text briefly
+-- Highlight yank
 autocmd("TextYankPost", {
     group = general_grp,
-    pattern = "*",
-    callback = function()
-        vim.highlight.on_yank({ higroup = "Visual", timeout = 200 })
-    end,
-    desc = "Highlight text when yanked",
+    callback = function() vim.highlight.on_yank({ timeout = 200 }) end,
 })
 
--- Trim trailing whitespaces before save
+-- Trim whitespace (Giữ vị trí con trỏ)
 autocmd("BufWritePre", {
     group = general_grp,
-    pattern = "*",
-    command = [[%s/\s\+$//e]],
-    desc = "Trim trailing whitespace on save",
-})
-
--- Enable spellcheck for markdown / text files
-autocmd("FileType", {
-    group = general_grp,
-    pattern = { "markdown", "text" },
-    command = "setlocal spell",
-    desc = "Enable spellcheck for markdown and text",
-})
-
--- ╭────────────────────────────────────────────╮
--- │ FILETYPE / SYNTAX                           │
--- ╰────────────────────────────────────────────╯
-local ft_grp = augroup("FiletypeSettings", { clear = true })
-
--- Set header files to C by default (can switch to cpp if needed)
-autocmd({ "BufRead", "BufNewFile" }, {
-    group = ft_grp,
-    pattern = "*.h",
-    command = "setlocal filetype=c",
-    desc = "Set .h files to C filetype",
-})
-
--- ╭────────────────────────────────────────────╮
--- │ TERMINAL / TOGGLETERM                        │
--- ╰────────────────────────────────────────────╯
-local term_grp = augroup("TerminalSettings", { clear = true })
-
--- Start in insert mode for terminals
-autocmd("TermOpen", {
-    group = term_grp,
-    pattern = "*",
-    command = "startinsert",
-    desc = "Start insert mode in terminal",
-})
-
--- Stop insert mode when leaving terminal buffer
-autocmd("BufLeave", {
-    group = term_grp,
-    pattern = "term://*",
-    command = "stopinsert",
-    desc = "Stop insert mode when leaving terminal",
-})
-
--- ╭────────────────────────────────────────────╮
--- │ AUTO-RELOAD CONFIG                           │
--- ╰────────────────────────────────────────────╯
-local reload_grp = augroup("ReloadConfig", { clear = true })
-
--- Automatically source Lua config files on save
-autocmd("BufWritePost", {
-    group = reload_grp,
-    pattern = { "**/lua/user/*.lua", "~/.config/nvim/init.lua" },
     callback = function()
-        vim.notify("Reloading Neovim config...", vim.log.levels.INFO)
-        vim.cmd("source " .. vim.fn.expand("<afile>"))
+        local save_cursor = vim.fn.getpos(".")
+        vim.cmd([[%s/\s\+$//e]])
+        vim.fn.setpos(".", save_cursor)
     end,
-    desc = "Auto-source Neovim Lua config on save",
+})
+
+-- 2. LSP Bridge (Kết nối Runtime)
+local lsp_grp = augroup("LspSystem", { clear = true })
+autocmd("LspAttach", {
+    group = lsp_grp,
+    callback = function(args)
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        local bufnr = args.buf
+        -- Gọi logic từ tầng Runtime - KHÔNG require ở đầu file để tránh gọi vòng
+        require("system.runtime.lsp_attach").on_attach(client, bufnr)
+    end,
+})
+
+-- 3. Auto-Reload Config (Cập nhật pattern sang system)
+autocmd("BufWritePost", {
+    group = augroup("ReloadConfig", { clear = true }),
+    pattern = { "**/lua/system/**/*.lua", "init.lua" },
+    callback = function()
+        vim.notify("Config updated...", vim.log.levels.INFO)
+    end,
 })

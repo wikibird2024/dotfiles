@@ -9,3 +9,4 @@ require("system.plugins.init")      -- tất cả plugin setup
 
 -- Load Runtime logic
 require("system.runtime.lsp_attach")  -- LSP on_attach
+
