@@ -1,6 +1,7 @@
 
 -- lua/user/core/options.lua
 
+local opt = vim.opt
 -- =============================
 -- UI & Visual Settings
 -- =============================

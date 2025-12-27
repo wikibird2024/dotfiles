@@ -1,30 +1,37 @@
 return {
-{
-    "neovim/nvim-lspconfig",
-    dependencies = {
-        "williamboman/mason.nvim",
-        "williamboman/mason-lspconfig.nvim",
-    },
-    config = function()
-        require("system.constitution.lsp_ui").setup()
-        local lspconfig = require("lspconfig")
-        local caps = require("system.constitution.lsp_capabilities").get_capabilities()
+  "neovim/nvim-lspconfig",
+  event = { "BufReadPre", "BufNewFile" },
+  config = function()
+    -- Guard: Đảm bảo chỉ khởi tạo một lần duy nhất mỗi session
+    vim.g._lsp_kernel_enabled = vim.g._lsp_kernel_enabled or {}
+    local enabled = vim.g._lsp_kernel_enabled
 
-        -- Danh sách server bạn muốn dùng
-        local servers = { "rust_analyzer", "clangd", "pyright", "lua_ls" }
+    -- Dependencies (Đảm bảo các file này tồn tại trong user/config/)
+    local on_attach = require("system.runtime.lsp_on_attach").on_attach
+    local capabilities = require("system.constitution.lsp_capabilities")
 
-        require("mason").setup()
-        require("mason-lspconfig").setup({ ensure_installed = servers })
+    local servers = { "pyright", "clangd", "rust_analyzer" }
 
-        for _, server in ipairs(servers) do
-            local opts = { capabilities = caps }
-            -- Kiểm tra nếu có file config riêng trong servers/
-            local has_custom_opts, custom_opts = pcall(require, "system.plugins.lsp.servers." .. server)
-            if has_custom_opts then
-                opts = vim.tbl_deep_extend("force", opts, custom_opts)
-            end
-            lspconfig[server].setup(opts)
+    for _, name in ipairs(servers) do
+      if not enabled[name] then
+        local ok, server_mod = pcall(require, "system.plugins.lsp.servers." .. name)
+
+        if ok and type(server_mod.setup) == "function" then
+          server_mod.setup(on_attach, capabilities)
+        else
+          -- Fallback nếu không tìm thấy file cấu hình riêng
+          vim.lsp.config[name] = {
+            on_attach = on_attach,
+            capabilities = capabilities,
+            root_markers = { ".git" },
+          }
         end
+
+        -- Kích hoạt và đánh dấu đã enable
+        vim.lsp.enable(name)
+        enabled[name] = true
+      end
     end
+  end,
 }
-}
+

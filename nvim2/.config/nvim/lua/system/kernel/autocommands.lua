@@ -7,10 +7,11 @@ local general_grp = augroup("GeneralSettings", { clear = true })
 -- Highlight yank
 autocmd("TextYankPost", {
     group = general_grp,
-    callback = function() vim.highlight.on_yank({ timeout = 200 }) end,
+    -- FIX: Changed vim.highlight to vim.hl to resolve deprecation warning
+    callback = function() vim.hl.on_yank({ timeout = 200 }) end,
 })
 
--- Trim whitespace (Giữ vị trí con trỏ)
+-- Trim whitespace
 autocmd("BufWritePre", {
     group = general_grp,
     callback = function()
@@ -20,19 +21,23 @@ autocmd("BufWritePre", {
     end,
 })
 
--- 2. LSP Bridge (Kết nối Runtime)
+-- 2. LSP Bridge
 local lsp_grp = augroup("LspSystem", { clear = true })
 autocmd("LspAttach", {
     group = lsp_grp,
     callback = function(args)
         local client = vim.lsp.get_client_by_id(args.data.client_id)
         local bufnr = args.buf
-        -- Gọi logic từ tầng Runtime - KHÔNG require ở đầu file để tránh gọi vòng
-        require("system.runtime.lsp_attach").on_attach(client, bufnr)
+
+        -- FIX: Ensure the file name matches (lsp_on_attach)
+        -- AND: Ensure you are calling the function correctly.
+        -- If lsp_on_attach.lua returns a table with an on_attach function, keep .on_attach()
+        -- If lsp_on_attach.lua IS the function, remove the .on_attach suffix.
+        require("system.runtime.lsp_on_attach").on_attach(client, bufnr)
     end,
 })
 
--- 3. Auto-Reload Config (Cập nhật pattern sang system)
+-- 3. Auto-Reload Config
 autocmd("BufWritePost", {
     group = augroup("ReloadConfig", { clear = true }),
     pattern = { "**/lua/system/**/*.lua", "init.lua" },

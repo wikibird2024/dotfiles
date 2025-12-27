@@ -8,5 +8,5 @@ require("system.kernel.init")       -- options, autocommands, keynames
 require("system.plugins.init")      -- tất cả plugin setup
 
 -- Load Runtime logic
-require("system.runtime.lsp_attach")  -- LSP on_attach
+require("system.runtime.lsp_on_attach")  -- LSP on_attach
 

@@ -1,11 +1,13 @@
+
 local M = {}
-M.get_capabilities = function()
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    -- Thêm hỗ trợ snippet và completion từ cmp
-    local status, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
-    if status then
-        capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
-    end
-    return capabilities
-end
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+-- Hỗ trợ cho nvim-cmp (completion)
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+-- Quan trọng cho Clangd: Tránh xung đột encoding giữa utf-8 và utf-16
+capabilities.offsetEncoding = { "utf-16" }
+
+M.capabilities = capabilities
 return M
