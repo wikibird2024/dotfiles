@@ -1,64 +1,96 @@
 -- lua/system/plugins/treesitter.lua
 return {
-  "nvim-treesitter/nvim-treesitter",
-  -- KHÔNG dùng version = false nữa → chuyển sang branch master (ổn định hơn main ở thời điểm hiện tại)
-  branch = "master",  -- hoặc bỏ dòng này nếu muốn dùng release tag mới nhất (nhưng master thường ổn)
+	"nvim-treesitter/nvim-treesitter",
+	branch = "master",
+	build = ":TSUpdate",
+	lazy = false,
+	dependencies = {
+		"nvim-treesitter/nvim-treesitter-textobjects",
+	},
+	config = function()
+		require("nvim-treesitter.configs").setup({
+			ensure_installed = {
+				"c",
+				"cpp",
+				"rust",
+				"python",
+				"lua",
+				"vim",
+				"vimdoc",
+				"query",
+				"markdown",
+				"markdown_inline",
+				"bash",
+				"json",
+				"latex",
+				"bibtex",
+			},
 
-  -- Hoặc nếu muốn lock version cụ thể (an toàn nhất):
-  -- tag = "v0.9.5",  -- check github để lấy tag mới nhất nếu có
+			highlight = {
+				enable = true,
+				disable = function(lang, buf)
+					local max_filesize = 500 * 1024 -- 500 KB
+					local ok, stat = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+					if ok and stat and stat.size > max_filesize then
+						return true
+					end
+				end,
+			},
 
-  build = ":TSUpdate",   -- vẫn giữ, rất quan trọng
+			indent = { enable = true },
 
-  lazy = false,          -- treesitter nên load sớm
+			-- 1. CHỌN KHỐI CODE (Selection)
+			incremental_selection = {
+				enable = true,
+				keymaps = {
+					init_selection = "<C-space>",
+					node_incremental = "<C-space>",
+					scope_incremental = false,
+					node_decremental = "<bs>",
+				},
+			},
 
-  config = function()
-    require("nvim-treesitter.configs").setup({
-      ensure_installed = {
-        "c",
-        "cpp",
-        "rust",
-        "python",
-        "lua",
-        "vim",
-        "vimdoc",
-        "query",
-        "markdown",
-        "markdown_inline",
-        "bash",
-        "diff",
-        "json",
-        "jsonc",
-        "yaml",
-        "toml",
-        -- thêm dần nếu cần
-      },
+			-- 2. SIÊU NĂNG LỰC TEXTOBJECTS (PRO CONFIG)
+			textobjects = {
+				-- Chọn nhanh: vif, vaf, vic, vac
+				select = {
+					enable = true,
+					lookahead = true,
+					keymaps = {
+						["af"] = "@function.outer",
+						["if"] = "@function.inner",
+						["ac"] = "@class.outer",
+						["ic"] = "@class.inner",
+						["ai"] = "@conditional.outer", -- Chọn toàn bộ khối if-else
+						["ii"] = "@conditional.inner",
+					},
+				},
 
-      highlight = {
-        enable = true,
+				-- Di chuyển nhanh: ]f (hàm sau), [f (hàm trước)
+				move = {
+					enable = true,
+					set_jumps = true, -- Lưu vào danh sách jump (Ctrl+o để quay lại)
+					goto_next_start = {
+						["]f"] = "@function.outer",
+						["]c"] = "@class.outer",
+					},
+					goto_previous_start = {
+						["[f"] = "@function.outer",
+						["[c"] = "@class.outer",
+					},
+				},
 
-        -- disable thông minh cho file lớn (giữ nguyên của bạn)
-        disable = function(lang, buf)
-          local max_filesize = 500 * 1024 -- 500 KB
-          local ok, stat = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-          if ok and stat and stat.size > max_filesize then
-            return true
-          end
-        end,
-
-        additional_vim_regex_highlighting = { "markdown" },
-      },
-
-      indent = { enable = true },
-
-      incremental_selection = {
-        enable = true,
-        keymaps = {
-          init_selection = "<C-space>",
-          node_incremental = "<C-space>",
-          scope_incremental = false,
-          node_decremental = "<bs>",
-        },
-      },
-    })
-  end,
+				-- Hoán đổi vị trí: <leader>na (đổi chỗ tham số trong hàm)
+				swap = {
+					enable = true,
+					swap_next = {
+						["<leader>na"] = "@parameter.inner", -- swap next argument
+					},
+					swap_previous = {
+						["<leader>pa"] = "@parameter.inner", -- swap previous argument
+					},
+				},
+			},
+		})
+	end,
 }
