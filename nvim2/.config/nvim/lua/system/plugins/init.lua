@@ -5,6 +5,7 @@ return {
 	{ import = "system.plugins.ui" },
 	{ import = "system.plugins.latex" },
 	{ import = "system.plugins.lint" },
+	{ import = "system.plugins.luasnip" },
 	{ import = "system.plugins.tools" },
 	{ import = "system.plugins.cmp" },
 	{ import = "system.plugins.lsp" },
