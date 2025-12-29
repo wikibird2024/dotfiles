@@ -1,47 +1,35 @@
-
 local M = {}
-
 M.on_attach = function(client, bufnr)
-  -- Cấu hình viền và kích thước cửa sổ
-  local border_style = "single"
+	local nmap = function(keys, func, desc)
+		if desc then
+			desc = "LSP: " .. desc
+		end
+		vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc, silent = true })
+	end
 
-  -- Tạo cấu hình chung cho các cửa sổ nổi để tránh bị cắt chữ
-  local float_config = {
-    border = border_style,
-    max_width = 80,         -- Giới hạn chiều ngang để không tràn màn hình
-    max_height = 20,        -- Giới hạn chiều cao
-    wrap = true,            -- QUAN TRỌNG: Tự động xuống dòng khi văn bản quá dài
-    focus_id = "lsp_float",
-  }
+	-- --- CÁC PHÍM TẮT CHUẨN ---
+	nmap("K", vim.lsp.buf.hover, "Hiện tài liệu (Hover)")
+	nmap("gd", vim.lsp.buf.definition, "Đi đến định nghĩa (Definition)")
+	nmap("gr", vim.lsp.buf.references, "Xem danh sách tham chiếu (References)")
+	nmap("gi", vim.lsp.buf.implementation, "Đi đến phần thực thi (Implementation)")
+	nmap("<leader>rn", vim.lsp.buf.rename, "Đổi tên biến toàn cục (Rename)")
+	nmap("<leader>ca", vim.lsp.buf.code_action, "Sửa lỗi nhanh (Code Action)")
+	nmap("<leader>d", vim.diagnostic.open_float, "Xem lỗi chi tiết tại dòng")
 
-  -- Áp dụng cho Hover (Phím K)
-  vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-    vim.lsp.handlers.hover, float_config
-  )
+	-- Gợi ý tham số hàm (Signature Help) khi đang gõ
+	vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, { buffer = bufnr, desc = "LSP: Signature Help" })
 
-  -- Áp dụng cho Signature Help
-  vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-    vim.lsp.handlers.signature_help, float_config
-  )
-
-  -- Cấu hình Diagnostic (Bảng báo lỗi)
-  vim.diagnostic.config({
-    virtual_text = true,
-    signs = true,
-    underline = true,
-    update_in_insert = false,
-    severity_sort = true,
-    float = {
-      border = border_style,
-      source = "always",
-      max_width = 80,
-      wrap = true, -- Tự động xuống dòng cho bảng báo lỗi
-      header = "",
-      prefix = "",
-    },
-  })
-
-  -- ... (Phần Keybindings và Autocmd giữ nguyên bên dưới)
+	-- Tự động highlight các biến trùng nhau khi đặt con trỏ vào
+	if client.server_capabilities.documentHighlightProvider then
+		vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+			buffer = bufnr,
+			callback = vim.lsp.buf.document_highlight,
+		})
+		vim.api.nvim_create_autocmd({ "CursorMoved" }, {
+			buffer = bufnr,
+			callback = vim.lsp.buf.clear_references,
+		})
+	end
 end
 
 return M

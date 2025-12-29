@@ -1,42 +1,53 @@
 local M = {}
-
 function M.setup()
-    local border = "rounded" -- Đổi sang rounded cho hiện đại và đồng bộ với CMP
+	local border = "rounded"
+	-- 1. Cấu hình Icons cho Diagnostic (Giữ nguyên của bạn)
+	local signs = { Error = "󰅚 ", Warn = "󰀪 ", Hint = "󰌶 ", Info = "󰋽 " }
+	for type, icon in pairs(signs) do
+		local hl = "DiagnosticSign" .. type
+		vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+	end
 
-    -- 1. Cấu hình giao diện cửa sổ nổi (Floating Windows)
-    local float_cfg = {
-        border = border,
-        focusable = false, -- Tránh việc con trỏ nhảy vào cửa sổ hover vô ý
-        style = "minimal",
-    }
+	-- 2. Cấu hình hiển thị Diagnostic (Giữ nguyên của bạn)
+	vim.diagnostic.config({
+		virtual_text = { prefix = "●", spacing = 4 },
+		signs = true,
+		underline = true,
+		update_in_insert = false,
+		severity_sort = true,
+		float = {
+			border = border,
+			source = "always",
+			header = "",
+			prefix = "",
+		},
+	})
 
-    vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, float_cfg)
-    vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, float_cfg)
+	-- 3. ÉP BO GÓC cho cửa sổ LSP (Hover, Signature Help)
+	local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+	function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+		opts = opts or {}
+		opts.border = opts.border or border
+		return orig_util_open_floating_preview(contents, syntax, opts, ...)
+	end
 
-    -- 2. Định nghĩa các Icon cho lỗi (Diagnostic)
-    local signs = { Error = "󰅚 ", Warn = "󰀪 ", Hint = "󰌶 ", Info = "󰋽 " }
-    for type, icon in pairs(signs) do
-        local hl = "DiagnosticSign" .. type
-        vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-    end
-
-    -- 3. Cấu hình cách hiển thị lỗi
-    vim.diagnostic.config({
-        virtual_text = {
-            prefix = '●', -- Dấu chấm nhỏ cuối dòng code khi có lỗi
-            spacing = 4,
-        },
-        signs = true,
-        underline = true,
-        update_in_insert = false, -- Chỉ hiện lỗi khi thoát Insert mode (giúp tập trung gõ)
-        severity_sort = true,
-        float = {
-            border = border,
-            source = "always", -- Hiện tên nguồn lỗi (ví dụ: rust-analyzer)
-            header = "",
-            prefix = "",
-        },
-    })
+	-- 4. CẤU HÌNH BO GÓC CHO GỢI Ý CODE (CMP)
+	-- Chúng ta dùng pcall để tránh lỗi nếu plugin cmp chưa được load
+	local ok, cmp = pcall(require, "cmp")
+	if ok then
+		cmp.setup({
+			window = {
+				completion = cmp.config.window.bordered({
+					border = border,
+					winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
+				}),
+				documentation = cmp.config.window.bordered({
+					border = border,
+					winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
+				}),
+			},
+		})
+	end
 end
 
 return M
