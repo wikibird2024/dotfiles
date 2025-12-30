@@ -3,17 +3,23 @@ local M = {}
 function M.setup()
 	-- single rounded double solid
 	local border = "single"
-	-- 1. Cấu hình Icons cho Diagnostic (Giữ nguyên của bạn)
-	local signs = { Error = "󰅚 ", Warn = "󰀪 ", Hint = "󰌶 ", Info = "󰋽 " }
-	for type, icon in pairs(signs) do
-		local hl = "DiagnosticSign" .. type
-		vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-	end
 
-	-- 2. Cấu hình hiển thị Diagnostic (Giữ nguyên của bạn)
+	-- 1. Cấu hình Icons cho Diagnostic (CÁCH MỚI)
+	-- Thay thế hoàn toàn vòng lặp vim.fn.sign_define cũ
+	local signs = {
+		[vim.diagnostic.severity.ERROR] = "󰅚 ",
+		[vim.diagnostic.severity.WARN]  = "󰀪 ",
+		[vim.diagnostic.severity.HINT]  = "󰌶 ",
+		[vim.diagnostic.severity.INFO]  = "󰋽 ",
+	}
+
+	-- 2. Cấu hình hiển thị Diagnostic
 	vim.diagnostic.config({
 		virtual_text = { prefix = "●", spacing = 4 },
-		signs = true,
+		-- Sử dụng table text bên dưới để định nghĩa icon thay vì dùng sign_define
+		signs = {
+			text = signs,
+		},
 		underline = true,
 		update_in_insert = false,
 		severity_sort = true,
@@ -34,7 +40,6 @@ function M.setup()
 	end
 
 	-- 4. CẤU HÌNH BO GÓC CHO GỢI Ý CODE (CMP)
-	-- Chúng ta dùng pcall để tránh lỗi nếu plugin cmp chưa được load
 	local ok, cmp = pcall(require, "cmp")
 	if ok then
 		cmp.setup({
