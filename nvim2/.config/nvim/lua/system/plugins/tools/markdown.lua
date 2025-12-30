@@ -1,106 +1,70 @@
 return {
-  {
-    "MeanderingProgrammer/render-markdown.nvim",
-    ft = { "markdown" },
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-    },
-    opts = {
-      -- Core safety
+  "MeanderingProgrammer/render-markdown.nvim",
+  ft = { "markdown", "codecompanion" }, -- Thêm codecompanion nếu bạn dùng AI
+  dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
+  opts = {
+    -- Core performance & safety
+    enabled = true,
+    max_file_size = 10.0,
+    debounce = 100,
+    -- Modes where rendering is active (keeps Insert mode clean)
+    render_modes = { "n", "v", "c" },
+    -- Headings: distinctive but clean
+    heading = {
       enabled = true,
-      max_file_size = 8.0,
-      debounce = 120,
-      -- Render only when thinking, not typing
-      render_modes = { "n", "v" },
-      -- Headings: structural, not decorative
-      heading = {
-        enabled = true,
-        sign = false,
-        icons = { "▌ ", "▌▌ ", "▌▌▌ ", "▌▌▌▌ " },
-      },
-      -- Code blocks: calm, readable, predictable
-      code = {
-        enabled = true,
-        sign = false,
-        style = "normal",
-        position = "left",
-        width = "block",
-        left_pad = 0,
-        right_pad = 1,
-        min_width = 0,
-        border = "none",
-        highlight = "RenderMarkdownCode",
-        highlight_inline = "RenderMarkdownCodeInline",
-      },
-      -- Task lists: semantic only
-      checkbox = {
-        enabled = true,
-        unchecked = { icon = "[ ] " },
-        checked   = { icon = "[x] " },
-      },
-      -- Lists: no noise
-      bullet = {
-        enabled = true,
-        icons = { "•" },
-      },
-      -- Quotes: subtle structural marker
-      quote = {
-        enabled = true,
-        icon = "▏",
-        repeat_linebreak = false,
-      },
-      -- Horizontal rules: simple separator
-      dash = {
-        enabled = true,
-        icon = "─",
-        width = "full",
-      },
-      -- Tables: readable, no box-drawing art
-      pipe_table = {
-        enabled = true,
-        style = "normal",
-        cell = "trimmed",
-      },
-      -- Callouts: minimal, text-first
-      callout = {
-        note      = { raw = "[!NOTE]",      rendered = "NOTE:" },
-        tip       = { raw = "[!TIP]",       rendered = "TIP:" },
-        important = { raw = "[!IMPORTANT]", rendered = "IMPORTANT:" },
-        warning   = { raw = "[!WARNING]",   rendered = "WARNING:" },
-        caution   = { raw = "[!CAUTION]",   rendered = "CAUTION:" },
-      },
-      -- Links: no icons, no tricks
-      link = {
-        enabled = true,
-      },
-      -- No sign column pollution
-      sign = {
-        enabled = false,
-      },
-      -- Inline emphasis only
-      inline = {
-        enabled = true,
-      },
-      -- Conceal: controlled and reversible
-      win_options = {
-        conceallevel = {
-          default = vim.api.nvim_get_option_value("conceallevel", {}),
-          rendered = 2,
-        },
-        concealcursor = {
-          default = vim.api.nvim_get_option_value("concealcursor", {}),
-          rendered = "nc",
-        },
-      },
+      sign = false,
+      position = "overlay",
+      icons = { "󰲡 ", "󰲣 ", "󰲥 ", "󰲧 ", "󰲩 ", "󰲫 " },
+      signs = { "󰫎 " },
     },
-    config = function(_, opts)
-      require("render-markdown").setup(opts)
-      vim.keymap.set(
-        "n",
-        "<leader>rm",
-        "<cmd>RenderMarkdown toggle<cr>",
-        { desc = "Toggle Markdown Render" }
-      )
-    end,
+    -- Code blocks: Professional look
+    code = {
+      enabled = true,
+      sign = false,
+      style = "language",
+      position = "left",
+      width = "block",
+      left_pad = 2,
+      right_pad = 2,
+      border = "thin",
+    },
+    -- Task lists
+    checkbox = {
+      enabled = true,
+      unchecked = { icon = "󰄱 " },
+      checked   = { icon = "󰄵 " },
+    },
+    -- Bullets
+    bullet = {
+      enabled = true,
+      icons = { "●", "○", "◆", "◇" },
+      left_pad = 0,
+      right_pad = 1,
+    },
+    -- Tables: Grid style
+    pipe_table = {
+      enabled = true,
+      preset = "round",
+      style = "full",
+      cell = "trimmed",
+    },
+    -- Callouts (GitHub style)
+    callout = {
+      note      = { raw = "[!NOTE]",      rendered = "󰋽 Note",     highlight = "RenderMarkdownInfo" },
+      tip       = { raw = "[!TIP]",       rendered = "󰌶 Tip",      highlight = "RenderMarkdownSuccess" },
+      important = { raw = "[!IMPORTANT]", rendered = "󰅚 Important", highlight = "RenderMarkdownError" },
+      warning   = { raw = "[!WARNING]",   rendered = "󰀪 Warning",   highlight = "RenderMarkdownWarn" },
+      caution   = { raw = "[!CAUTION]",   rendered = "󰳦 Caution",   highlight = "RenderMarkdownError" },
+    },
+    -- Integration with Neovim UI
+    win_options = {
+      conceallevel = { default = 0, rendered = 2 },
+      concealcursor = { default = "", rendered = "nc" },
+    },
   },
+  config = function(_, opts)
+    require("render-markdown").setup(opts)
+    -- Keymap to toggle rendering
+    vim.keymap.set("n", "<leader>tm", "<cmd>RenderMarkdown toggle<cr>", { desc = "Toggle Markdown Render" })
+  end,
 }

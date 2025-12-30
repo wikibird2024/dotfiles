@@ -1,59 +1,58 @@
+# 🌌 Neovim OS-Style Architecture
 
-Đây là sơ đồ kiến trúc trực quan cho cấu trúc Neovim Lua mới của bạn, theo từng lớp và luồng load từ `init.lua` root:
+A modular, high-performance Neovim configuration built with a **Layered OS Architecture**. This setup treats the editor as a system, separating core logic, rules, and user-space features.
 
-```
-root init.lua
-├── kernel/             ← Lớp Core
-│   ├── init.lua        → load options, keymaps, autocommands
-│   ├── options.lua     → vim.opt, basic editor settings
-│   ├── keynames.lua    → keymaps, leader
-│   └── autocommands.lua→ autocmds global
-│
-├── plugins/            ← Lớp Plugin
-│   ├── init.lua        → load tất cả plugin modules
-│   ├── cmp/            → completion (init.lua)
-│   ├── lsp/            → LSP setup
-│   │   └── servers/    → từng server config (clangd, pyright, rust_analyzer…)
-│   ├── snippets.lua    → snippet engine
-│   ├── snippets_data/  → snippet data (c, cpp, rust)
-│   ├── tools/          → markdown, telescope, surround, todo…
-│   ├── ui/             → bufferline, lualine, treeviews, which-key…
-│   ├── colorscheme.lua → colorscheme config
-│   ├── format.lua      → formatters
-│   ├── git.lua         → git plugin config
-│   ├── treesitter.lua  → treesitter setup
-│   ├── ts_comment.lua  → comment plugin
-│   └── terminal.lua    → terminal integration
-│
-├── constitution/       ← Lớp Abstraction / Middleware
-│   ├── cmp_sources.lua → cmp sources standardization
-│   ├── lsp_capabilities.lua → LSP capabilities abstraction
-│   └── lsp_ui.lua     → LSP UI helpers
-│
-├── runtime/            ← Lớp Runtime (optional)
-│   └── lsp_attach.lua  → on_attach LSP functions, runtime hooks
-│
-└── utils/              ← Lớp Utils
-    └── init.lua        → safe_require, helper functions
-```
+## 🏗️ The Architecture
 
-### 🔹 Luồng load (flow)
+The system is divided into 5 logical layers for maximum maintainability and "Lazy" performance.
 
-1. **Root `init.lua`** được gọi đầu tiên.
-2. **Kernel**: load core config (options, keymaps, autocmds).
-3. **Plugins**: load plugin theo module; mỗi module tách riêng, lazy load dễ.
-4. **Constitution**: được các plugin gọi để chuẩn hóa config (cmp, LSP, UI).
-5. **Runtime**: các hook runtime như LSP `on_attach`.
-6. **Utils**: helper functions được các lớp khác dùng.
+### 1. 🛡️ Kernel Layer (`/kernel`)
 
-### 🔹 Ưu điểm
+The engine of the editor.
 
-* **Modular**: mỗi lớp chịu trách nhiệm riêng.
-* **Maintainable**: sửa keymaps hay plugin không ảnh hưởng các lớp khác.
-* **Lazy load dễ**: chỉ cần thêm trigger lazy load trong `plugins/init.lua`.
-* **Trực quan**: dễ nhìn và mở rộng, ví dụ thêm layer `autocmds/project` hay plugin riêng.
+* **`options.lua`**: Global system variables and editor behavior.
+* **`keymap.lua`**: Core keybindings and Leader definitions.
+* **`autocommands.lua`**: Native event listeners (LSP hooks, highlight on yank).
+
+### 2. 📜 Constitution Layer (`/constitution`)
+
+The "Laws" that standardize how plugins interact.
+
+* **`lsp_ui.lua`**: Standardized UI elements (Borders, Icons, Floating windows).
+* **`lsp_capabilities.lua`**: Integration with completion and snippet engines.
+* **`cmp_sources.lua`**: Configuration for the completion engine backend.
+
+### 3. 🧩 Plugin Layer (`/plugins`)
+
+Modular features isolated by functionality.
+
+* **`lsp/` & `cmp/**`: Full IDE suite with per-server configurations.
+* **`tools/`**: Productivity suite (FZF, Flash, Todo, Surround, Markdown).
+* **`ui/`**: Visual enhancements (Bufferline, Lualine, Neo-tree, Smear Cursor).
+* **`git.lua` / `terminal.lua**`: Version control and terminal integration.
+
+### 4. ⚡ Runtime & Utils Layer (`/runtime`, `/utils`)
+
+* **`runtime/lsp_on_attach.lua`**: Handles live buffer events when an LSP connects.
+* **`utils/init.lua`**: Global helper functions and safe-require wrappers.
 
 ---
 
-Nếu muốn, mình có thể viết **một ví dụ `root init.lua` hoàn chỉnh** theo kiến trúc này, đã tối ưu lazy load, safe require, và load từng lớp đúng thứ tự.
-Bạn có muốn mình làm không?
+## 🌊 Loading Flow
+
+1. **Entry**: `root/init.lua` initializes the environment.
+2. **Core**: Kernel loads system-wide settings (Options -> Keymaps -> Autocmds).
+3. **Plugins**: Lazy.nvim initializes modules from `/plugins/init.lua`.
+4. **Middleware**: Constitution & Runtime calibrate plugin behaviors and LSP standards.
+5. **Helpers**: Utils provides shared logic across all layers.
+
+---
+
+## 🛠️ Requirements
+
+* **Neovim 0.10+** (Compiled with LuaJIT)
+* **Build Tools**: `cargo` (for Rust/Yazi), `gcc`, `make`.
+* **CLI Tools**: `ripgrep` (search), `fd` (find), `lazygit`.
+* **Font**: Any [Nerd Font](https://www.nerdfonts.com/) (JetBrainsMono recommended).
+
+
