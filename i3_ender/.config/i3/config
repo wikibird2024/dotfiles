@@ -172,10 +172,10 @@ bindcode $mod+Shift+90   move container to workspace  $ws10
 ######################################
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id kitty
+bindsym $mod+Return exec --no-startup-id alacritty
 
 # start a  sub-terminal
-bindsym Mod1+Control+t exec --no-startup-id alacritty
+bindsym Mod1+Control+t exec --no-startup-id kitty
 
 # kill focused window
 bindsym $mod+q kill
@@ -186,8 +186,10 @@ bindsym $mod+Shift+e exec --no-startup-id ~/.config/i3/scripts/powermenu
 # Lock the system
 # lock with a picture:
 #bindsym $mod+l exec --no-startup-id i3lock -i  ~/.config/i3/i3-lock-screen.png -p default|win -t
+
 # lock by blurring the screen:
-bindsym $mod+l exec --no-startup-id ~/.config/i3/scripts/blur-lock
+#bindsym $mod+l exec --no-startup-id ~/.config/i3/scripts/blur-lock
+bindsym Control+Mod1+l exec --no-startup-id ~/.config/i3/scripts/blur-lock
 # lock in case after sleep
 exec --no-startup-id xss-lock -l ~/.config/i3/scripts/blur-lock
 # Thiet lap Caps Lock thanh Escape
@@ -222,10 +224,10 @@ bindsym XF86MonBrightnessDown exec --no-startup-id ~/.config/i3/scripts/volume_b
 #bindsym XF86MonBrightnessDown exec --no-startup-id ~/.config/i3/scripts/volume_brightness2.sh screen_brightness_down
 
 # change focus
-bindsym $mod+j focus left
-bindsym $mod+k focus down
-bindsym $mod+b focus up
-bindsym $mod+o focus right
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
@@ -234,10 +236,10 @@ bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
 # move focused window
-bindsym $mod+Shift+j move left
-bindsym $mod+Shift+k move down
-bindsym $mod+Shift+b move up
-bindsym $mod+Shift+o move right
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Shift+Left move left
@@ -246,10 +248,10 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 # split in horizontal orientation
-bindsym $mod+h split h
+bindsym $mod+| split h
 
 # split in vertical orientation
-bindsym $mod+v split v
+bindsym $mod+- split v
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
@@ -303,7 +305,7 @@ bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 bindsym $mod+p exec --no-startup-id ~/.config/i3/scripts/audio-device-switch
 
 ## App shortcuts
-bindsym $mod+w exec --no-startup-id /usr/bin/firefox
+bindsym $mod+b exec --no-startup-id /usr/bin/firefox
 bindsym $mod+n exec --no-startup-id /usr/bin/thunar
 bindsym Print exec --no-startup-id scrot ~/%Y-%m-%d-%T-screenshot.png && notify-send "Screenshot saved to ~/$(date +"%Y-%m-%d-%T")-screenshot.png"
 
@@ -507,13 +509,15 @@ set $darkgrey       #383c4a
 set $grey           #b0b5bd
 set $mediumgrey     #8b8b8b
 set $yellowbrown    #e1b700
+set $focus_cyan     #00ffff
+set $focus_gold     #fbc02d
 
 # define colors for windows:
-#class                      border      bground     text        indicator   child_border
-client.focused              $lightblue  $darkblue   $white      $mediumgrey $mediumgrey
-client.unfocused            $darkblue   $darkblue   $grey       $darkgrey   $darkgrey
-client.focused_inactive     $darkblue   $darkblue   $grey       $black      $black
-client.urgent               $urgentred  $urgentred  $white      $yellowbrown    $yellowbrown
+# class                 border        bground       text        indicator     child_border
+client.focused          $focus_cyan   $darkblue     $white      $purple       $focus_cyan
+client.unfocused        $darkblue     $darkblue     $grey       $darkgrey     $darkgrey
+client.focused_inactive $darkblue     $darkblue     $grey       $black        $black
+client.urgent           $urgentred    $urgentred    $white      $yellowbrown  $yellowbrown
 
 ############################################
 # bar settings (input comes from i3blocks) #
