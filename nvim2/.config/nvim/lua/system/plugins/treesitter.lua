@@ -1,4 +1,3 @@
--- lua/system/plugins/treesitter.lua
 return {
 	"nvim-treesitter/nvim-treesitter",
 	branch = "master",
@@ -9,6 +8,7 @@ return {
 	},
 	config = function()
 		require("nvim-treesitter.configs").setup({
+			-- Danh sách ngôn ngữ tự động cài đặt
 			ensure_installed = {
 				"c",
 				"cpp",
@@ -18,6 +18,7 @@ return {
 				"vim",
 				"vimdoc",
 				"query",
+				"cmake",
 				"markdown",
 				"markdown_inline",
 				"bash",
@@ -26,20 +27,26 @@ return {
 				"bibtex",
 			},
 
+			-- Tự động cài đặt parser nếu chưa có
+			auto_install = true,
+			sync_install = false,
+
 			highlight = {
 				enable = true,
+				-- Tắt highlight cho file quá nặng để tránh lag
 				disable = function(lang, buf)
 					local max_filesize = 500 * 1024 -- 500 KB
-					local ok, stat = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+					local ok, stat = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
 					if ok and stat and stat.size > max_filesize then
 						return true
 					end
 				end,
+				additional_vim_regex_highlighting = false,
 			},
 
 			indent = { enable = true },
 
-			-- 1. CHỌN KHỐI CODE (Selection)
+			-- 1. CHỌN KHỐI CODE THÔNG MINH (Incremental Selection)
 			incremental_selection = {
 				enable = true,
 				keymaps = {
@@ -50,26 +57,31 @@ return {
 				},
 			},
 
-			-- 2. SIÊU NĂNG LỰC TEXTOBJECTS (PRO CONFIG)
+			-- 2. TEXTOBJECTS (Phím tắt thao tác nhanh)
 			textobjects = {
-				-- Chọn nhanh: vif, vaf, vic, vac
 				select = {
 					enable = true,
-					lookahead = true,
+					lookahead = true, -- Tự động nhảy đến node gần nhất
 					keymaps = {
+						-- Chọn nhanh: vif (trong hàm), vaf (ngoài hàm)
 						["af"] = "@function.outer",
 						["if"] = "@function.inner",
 						["ac"] = "@class.outer",
 						["ic"] = "@class.inner",
-						["ai"] = "@conditional.outer", -- Chọn toàn bộ khối if-else
+						-- Chọn nhanh khối If-Else, Vòng lặp, Scope
+						["ai"] = "@conditional.outer",
 						["ii"] = "@conditional.inner",
+						["al"] = "@loop.outer",
+						["il"] = "@loop.inner",
+						["as"] = "@scope.outer",
+						["is"] = "@scope.inner",
 					},
 				},
 
-				-- Di chuyển nhanh: ]f (hàm sau), [f (hàm trước)
+				-- Di chuyển nhanh: ]f (hàm kế tiếp), [f (hàm phía trước)
 				move = {
 					enable = true,
-					set_jumps = true, -- Lưu vào danh sách jump (Ctrl+o để quay lại)
+					set_jumps = true, -- Lưu vào jump list (Ctrl+o để quay lại)
 					goto_next_start = {
 						["]f"] = "@function.outer",
 						["]c"] = "@class.outer",
@@ -80,14 +92,14 @@ return {
 					},
 				},
 
-				-- Hoán đổi vị trí: <leader>na (đổi chỗ tham số trong hàm)
+				-- Hoán đổi vị trí tham số: <leader>na (đổi chỗ biến trong hàm)
 				swap = {
 					enable = true,
 					swap_next = {
-						["<leader>na"] = "@parameter.inner", -- swap next argument
+						["<leader>na"] = "@parameter.inner",
 					},
 					swap_previous = {
-						["<leader>pa"] = "@parameter.inner", -- swap previous argument
+						["<leader>pa"] = "@parameter.inner",
 					},
 				},
 			},
