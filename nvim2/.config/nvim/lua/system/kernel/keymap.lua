@@ -4,7 +4,6 @@ local opts = { noremap = true, silent = true }
 -- 1. THIẾT LẬP CHUNG
 vim.g.mapleader = " "
 vim.opt.timeoutlen = 300 -- Thời gian chờ phím (300ms là chuẩn để bấm nhanh ăn ngay)
-
 -- Nhấn Space 2 lần để tắt Highlight tìm kiếm
 map("n", "<leader><leader>", "<cmd>noh<CR>", { desc = "Clear Highlight" })
 

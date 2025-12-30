@@ -1,6 +1,8 @@
 local M = {}
+
 function M.setup()
-	local border = "rounded"
+	-- single rounded double solid
+	local border = "single"
 	-- 1. Cấu hình Icons cho Diagnostic (Giữ nguyên của bạn)
 	local signs = { Error = "󰅚 ", Warn = "󰀪 ", Hint = "󰌶 ", Info = "󰋽 " }
 	for type, icon in pairs(signs) do
