@@ -113,3 +113,5 @@ if [[ "$(tty)" =~ ^/dev/tty[0-9]+$ ]] && [[ -z "$TMUX" ]] && [[ -z "$SSH_TTY" ]]
     setterm --blength 0 2>/dev/null || true
 fi
 
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
