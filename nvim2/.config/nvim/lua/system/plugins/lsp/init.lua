@@ -15,8 +15,8 @@ return {
 		local capabilities = require("system.constitution.lsp_capabilities")
 
 		-- Danh sách các server bạn muốn dùng
-		local servers = { "texlab", "pyright", "clangd", "rust_analyzer" }
-
+		local servers = { "texlab", "pyright", "clangd" }
+		-- "rust_analyzer"  if you wan to use it again
 		for _, name in ipairs(servers) do
 			if not enabled[name] then
 				-- Kiểm tra xem có file cấu hình riêng cho từng server không
