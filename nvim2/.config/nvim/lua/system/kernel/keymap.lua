@@ -1,15 +1,17 @@
-local map = vim.keymap.set
-local opts = { noremap = true, silent = true }
+-- Gọi hàm map từ module tiện ích
+local map = require("system.utils").map
 
 -- 1. THIẾT LẬP CHUNG
 vim.g.mapleader = " "
-vim.opt.timeoutlen = 300 -- Thời gian chờ phím (300ms là chuẩn để bấm nhanh ăn ngay)
+vim.opt.timeoutlen = 250
+
 -- Nhấn Space 2 lần để tắt Highlight tìm kiếm
+-- (M.map sẽ tự động gộp {desc} với các option silent/noremap mặc định)
 map("n", "<leader><leader>", "<cmd>noh<CR>", { desc = "Clear Highlight" })
 
--- Thoát Insert mode nhanh
-map("i", "jk", "<Esc>", opts)
-map("i", "kj", "<Esc>", opts)
+-- Thoát Insert mode nhanh (Không cần biến opts nữa)
+map("i", "jk", "<Esc>")
+map("i", "kj", "<Esc>")
 
 -- ──────────────────────────────────────────────────────────────────────
 -- [E] EXPLORER (Neo-tree)
@@ -42,7 +44,6 @@ map("n", "<leader>wv", "<cmd>vsplit<CR>", { desc = "Split Vertical" })
 map("n", "<leader>ws", "<cmd>split<CR>", { desc = "Split Horizontal" })
 map("n", "<leader>wq", "<cmd>close<CR>", { desc = "Close Window" })
 
--- Di chuyển giữa các ô cửa sổ (Ctrl + h/j/k/l)
 map("n", "<C-h>", "<C-w>h", { desc = "Focus Left" })
 map("n", "<C-l>", "<C-w>l", { desc = "Focus Right" })
 map("n", "<C-j>", "<C-w>j", { desc = "Focus Down" })
@@ -51,23 +52,20 @@ map("n", "<C-k>", "<C-w>k", { desc = "Focus Up" })
 -- ──────────────────────────────────────────────────────────────────────
 -- [T] TERMINAL (ToggleTerm)
 -- ──────────────────────────────────────────────────────────────────────
--- KEY QUAN TRỌNG: Nhấn Space + T nhanh sẽ chạy ngay lệnh này
 map("n", "<leader>t", "<cmd>ToggleTerm<CR>", { desc = "Terminal (Quick Toggle)" })
-
--- Các option phụ (Which-key sẽ hiện nếu nhấn chậm)
 map("n", "<leader>tf", "<cmd>ToggleTerm direction=float<CR>", { desc = "Terminal Float" })
 map("n", "<leader>th", "<cmd>ToggleTerm direction=horizontal<CR>", { desc = "Terminal Horizontal" })
 map("n", "<leader>tv", "<cmd>ToggleTerm direction=vertical<CR>", { desc = "Terminal Vertical" })
 
--- Thoát Terminal mode nhanh & Điều hướng thẳng từ Terminal
+-- Terminal Mode keymaps (Sử dụng map tiện ích bên trong function)
 function _G.set_terminal_keymaps()
-	local t_opts = { buffer = 0 }
-	map("t", "<esc>", [[<C-\><C-n>]], t_opts)
-	map("t", "jk", [[<C-\><C-n>]], t_opts)
-	map("t", "<C-h>", [[<C-\><C-n><C-w>h]], t_opts)
-	map("t", "<C-j>", [[<C-\><C-n><C-w>j]], t_opts)
-	map("t", "<C-k>", [[<C-\><C-n><C-w>k]], t_opts)
-	map("t", "<C-l>", [[<C-\><C-n><C-w>l]], t_opts)
+	-- Vẫn dùng map() nhưng truyền thêm { buffer = 0 } cho file hiện tại
+	map("t", "<esc>", [[<C-\><C-n>]], { buffer = 0 })
+	map("t", "jk", [[<C-\><C-n>]], { buffer = 0 })
+	map("t", "<C-h>", [[<C-\><C-n><C-w>h]], { buffer = 0 })
+	map("t", "<C-j>", [[<C-\><C-n><C-w>j]], { buffer = 0 })
+	map("t", "<C-k>", [[<C-\><C-n><C-w>k]], { buffer = 0 })
+	map("t", "<C-l>", [[<C-\><C-n><C-w>l]], { buffer = 0 })
 end
 vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 
@@ -75,18 +73,23 @@ vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 -- [L] LSP / CODE / LaTeX
 -- ──────────────────────────────────────────────────────────────────────
 map("n", "<leader>ld", "<cmd>FzfLua lsp_definitions<CR>", { desc = "Definition" })
-map("n", "<leader>lr", "<cmd>lua vim.lsp.buf.rename()<CR>", { desc = "Rename Symbol" })
+map("n", "<leader>lr", function()
+	vim.lsp.buf.rename()
+end, { desc = "Rename Symbol" })
 map("n", "<leader>la", "<cmd>FzfLua lsp_code_actions<CR>", { desc = "Code Action" })
-map("n", "<leader>lh", "<cmd>lua vim.lsp.buf.hover()<CR>", { desc = "Hover Info" })
-map("n", "<leader>lf", "<cmd>lua vim.lsp.buf.format({async=true})<CR>", { desc = "Format Code" })
+map("n", "<leader>lh", function()
+	vim.lsp.buf.hover()
+end, { desc = "Hover Info" })
+map("n", "<leader>lf", function()
+	vim.lsp.buf.format({ async = true })
+end, { desc = "Format Code" })
 map("n", "<leader>li", "<cmd>LspInfo<CR>", { desc = "LSP Information" })
 
--- Phím tắt cho LaTeX (Dùng L viết hoa để tách biệt với LSP l viết thường)
 map("n", "<leader>Lc", "<cmd>VimtexCompile<CR>", { desc = "LaTeX Compile" })
 map("n", "<leader>Lv", "<cmd>VimtexView<CR>", { desc = "LaTeX View" })
 
 -- ──────────────────────────────────────────────────────────────────────
--- [V] VISUAL MODE (Thao tác thông minh)
+-- [V] VISUAL MODE
 -- ──────────────────────────────────────────────────────────────────────
 map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move block down" })
 map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move block up" })

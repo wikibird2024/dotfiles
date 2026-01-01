@@ -12,6 +12,5 @@ return {
 	{ import = "system.plugins.git" },
 	{ import = "system.plugins.format" },
 	{ import = "system.plugins.treesitter" },
-	{ import = "system.plugins.terminal" },
 	{ import = "system.plugins.ts_comment" },
 }

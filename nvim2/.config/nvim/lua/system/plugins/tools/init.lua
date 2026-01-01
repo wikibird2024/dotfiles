@@ -5,6 +5,9 @@ return {
 	require("system.plugins.tools.flash"),
 	require("system.plugins.tools.todo"),
 	require("system.plugins.tools.numb"),
+	require("system.plugins.tools.treesj"),
 	require("system.plugins.tools.surround"),
+	require("system.plugins.tools.autopairs"),
 	require("system.plugins.tools.markdown"),
+	require("system.plugins.tools.terminal"),
 }
