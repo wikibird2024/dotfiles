@@ -9,9 +9,38 @@ vim.opt.timeoutlen = 250
 -- (M.map sẽ tự động gộp {desc} với các option silent/noremap mặc định)
 map("n", "<leader><leader>", "<cmd>noh<CR>", { desc = "Clear Highlight" })
 
--- Thoát Insert mode nhanh (Không cần biến opts nữa)
+-- Thoát Insert mode nhanh
 map("i", "jk", "<Esc>")
 map("i", "kj", "<Esc>")
+
+-- ──────────────────────────────────────────────────────────────────────
+-- [I] INSERT MODE NAVIGATION (Dùng chung cho mọi ngôn ngữ)
+-- ──────────────────────────────────────────────────────────────────────
+
+-- Nhảy qua phải 1 ký tự (nhảy qua dấu ngoặc, dấu nháy hoặc bất kỳ ký tự nào)
+map("i", "<C-l>", "<Right>", { desc = "Move Right" })
+
+-- Nhảy nhanh xuống cuối dòng (để kết thúc câu, gõ dấu chấm phẩy, v.v.)
+map("i", "<C-e>", "<Esc>A", { desc = "Jump to End of Line" })
+
+-- Xuống dòng thông minh cho các cặp ngoặc (C/C++, JS, Lua, CSS, v.v.)
+-- Khi nhấn Enter giữa { }, nó sẽ tự đẩy dấu } xuống và thụt lề ở giữa
+map("i", "{<CR>", "{<CR>}<Esc>O", { desc = "Smart Brace Break" })
+
+-- LOGIC GÕ ĐÈ DẤU ĐÓNG (Smart Jump Over)
+-- Nếu ký tự phía trước con trỏ giống với phím bạn vừa gõ, nó sẽ nhảy qua thay vì gõ đè.
+local smart_pairs = { [")"] = ")", ["]"] = "]", ["}"] = "}", ['"'] = '"', ["'"] = "'" }
+for _, close in pairs(smart_pairs) do
+    map("i", close, function()
+        local col = vim.fn.col('.')
+        local line = vim.fn.getline('.')
+        if line:sub(col, col) == close then
+            return "<Right>"
+        else
+            return close
+        end
+    end, { expr = true, desc = "Jump over " .. close })
+end
 
 -- ──────────────────────────────────────────────────────────────────────
 -- [E] EXPLORER (Neo-tree)
