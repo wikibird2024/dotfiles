@@ -23,25 +23,6 @@ map("i", "<C-l>", "<Right>", { desc = "Move Right" })
 -- Nhảy nhanh xuống cuối dòng (để kết thúc câu, gõ dấu chấm phẩy, v.v.)
 map("i", "<C-e>", "<Esc>A", { desc = "Jump to End of Line" })
 
--- Xuống dòng thông minh cho các cặp ngoặc (C/C++, JS, Lua, CSS, v.v.)
--- Khi nhấn Enter giữa { }, nó sẽ tự đẩy dấu } xuống và thụt lề ở giữa
-map("i", "{<CR>", "{<CR>}<Esc>O", { desc = "Smart Brace Break" })
-
--- LOGIC GÕ ĐÈ DẤU ĐÓNG (Smart Jump Over)
--- Nếu ký tự phía trước con trỏ giống với phím bạn vừa gõ, nó sẽ nhảy qua thay vì gõ đè.
-local smart_pairs = { [")"] = ")", ["]"] = "]", ["}"] = "}", ['"'] = '"', ["'"] = "'" }
-for _, close in pairs(smart_pairs) do
-    map("i", close, function()
-        local col = vim.fn.col('.')
-        local line = vim.fn.getline('.')
-        if line:sub(col, col) == close then
-            return "<Right>"
-        else
-            return close
-        end
-    end, { expr = true, desc = "Jump over " .. close })
-end
-
 -- ──────────────────────────────────────────────────────────────────────
 -- [E] EXPLORER (Neo-tree)
 -- ──────────────────────────────────────────────────────────────────────
@@ -56,7 +37,6 @@ map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find Files" })
 map("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Live Grep" })
 map("n", "<leader>fh", "<cmd>FzfLua oldfiles<CR>", { desc = "History" })
 map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Search Buffers" })
-map("n", "<leader>fs", "<cmd>w<CR>", { desc = "Save File" })
 
 -- ──────────────────────────────────────────────────────────────────────
 -- [B] BUFFER (Quản lý các tệp đang mở)
@@ -67,16 +47,28 @@ map("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "Delete Buffer" })
 map("n", "<leader>ba", "<cmd>%bd|e#|bd#<CR>", { desc = "Close Other Buffers" })
 
 -- ──────────────────────────────────────────────────────────────────────
--- [W] WINDOW (Điều hướng & Chia màn hình)
+-- [W] WINDOW & FILE OPERATIONS
 -- ──────────────────────────────────────────────────────────────────────
-map("n", "<leader>wv", "<cmd>vsplit<CR>", { desc = "Split Vertical" })
-map("n", "<leader>ws", "<cmd>split<CR>", { desc = "Split Horizontal" })
-map("n", "<leader>wq", "<cmd>close<CR>", { desc = "Close Window" })
+-- Quick Save (Manual update)
+map("n", "<leader>w", "<cmd>update<cr>", { desc = "Save current buffer" })
 
-map("n", "<C-h>", "<C-w>h", { desc = "Focus Left" })
-map("n", "<C-l>", "<C-w>l", { desc = "Focus Right" })
-map("n", "<C-j>", "<C-w>j", { desc = "Focus Down" })
-map("n", "<C-k>", "<C-w>k", { desc = "Focus Up" })
+-- Window Splitting & Closing
+map("n", "<leader>wv", "<cmd>vsplit<CR>", { desc = "Split window vertically" })
+map("n", "<leader>ws", "<cmd>split<CR>", { desc = "Split window horizontally" })
+map("n", "<leader>wq", "<cmd>close<CR>", { desc = "Close current window" })
+
+-- Faster Window Navigation (Ctrl + hjkl)
+-- This allows you to jump between splits without using Ctrl-w
+map("n", "<C-h>", "<C-w>h", { desc = "Focus window left" })
+map("n", "<C-l>", "<C-w>l", { desc = "Focus window right" })
+map("n", "<C-j>", "<C-w>j", { desc = "Focus window down" })
+map("n", "<C-k>", "<C-w>k", { desc = "Focus window up" })
+
+-- Window Resizing (Ctrl + Arrows)
+map("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase window height" })
+map("n", "<C-Down>", "<cmd>resize -2<cr>", { desc = "Decrease window height" })
+map("n", "<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease window width" })
+map("n", "<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase window width" })
 
 -- ──────────────────────────────────────────────────────────────────────
 -- [T] TERMINAL (ToggleTerm)
@@ -88,16 +80,25 @@ map("n", "<leader>tv", "<cmd>ToggleTerm direction=vertical<CR>", { desc = "Termi
 
 -- Terminal Mode keymaps (Sử dụng map tiện ích bên trong function)
 function _G.set_terminal_keymaps()
-	-- Vẫn dùng map() nhưng truyền thêm { buffer = 0 } cho file hiện tại
-	map("t", "<esc>", [[<C-\><C-n>]], { buffer = 0 })
-	map("t", "jk", [[<C-\><C-n>]], { buffer = 0 })
-	map("t", "<C-h>", [[<C-\><C-n><C-w>h]], { buffer = 0 })
-	map("t", "<C-j>", [[<C-\><C-n><C-w>j]], { buffer = 0 })
-	map("t", "<C-k>", [[<C-\><C-n><C-w>k]], { buffer = 0 })
-	map("t", "<C-l>", [[<C-\><C-n><C-w>l]], { buffer = 0 })
-end
-vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
+	local opts = { buffer = 0 }
+	-- Thoát Terminal mode bằng jk (Giữ Esc để dùng cho các app bên trong Terminal)
+	map("t", "jk", [[<C-\><C-n>]], opts)
 
+	-- Điều hướng nhanh từ Terminal sang các Window khác
+	map("t", "<C-h>", [[<C-\><C-n><C-w>h]], opts)
+	map("t", "<C-j>", [[<C-\><C-n><C-w>j]], opts)
+	map("t", "<C-k>", [[<C-\><C-n><C-w>k]], opts)
+	map("t", "<C-l>", [[<C-\><C-n><C-w>l]], opts)
+end
+
+-- Dùng Lua API
+vim.api.nvim_create_autocmd("TermOpen", {
+	pattern = "term://*",
+	callback = function()
+		set_terminal_keymaps()
+	end,
+	desc = "Set terminal-specific keymaps",
+})
 -- ──────────────────────────────────────────────────────────────────────
 -- [L] LSP / CODE / LaTeX
 -- ──────────────────────────────────────────────────────────────────────
