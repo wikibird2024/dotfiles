@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 -- Call function fron utils modul
+=======
+-- lua/config/keymaps.lua
+-- Gọi hàm map từ module tiện ích
+>>>>>>> fee38c5 (ok xong)
 local map = require("system.utils").map
 
 -- ─────────────────────────────────────────────────────
@@ -17,6 +22,7 @@ map("n", "<leader><leader>b", "<cmd>FzfLua buffers<CR>", { desc = "Hub: Buffers"
 map("n", "<leader><leader>l", "<cmd>FzfLua lsp_document_symbols<CR>", { desc = "Hub: LSP Symbols" })
 map("n", "<leader><leader>t", "<cmd>ToggleTerm<CR>", { desc = "Hub: Terminal" })
 
+<<<<<<< HEAD
 -- ─────────────────────────────────────────────────────
 -- [I] INSERT MODE
 -- ─────────────────────────────────────────────────────
@@ -25,6 +31,20 @@ map("i", "<A-l>", "<Right>", { desc = "Move Right" })
 map("i", "<A-e>", "<Esc>A", { desc = "Jump to End of Line" })
 
 -- ─────────────────────────────────────────────────────
+=======
+-- Thoát Insert mode nhanh (Không cần biến opts nữa)
+map("i", "jk", "<Esc>")
+map("i", "kj", "<Esc>")
+local map = vim.keymap.set
+
+-- ──────────────────────────────────────────────────────────────────────
+--[ ] - Di chuyển trong Insert Mode
+-- ──────────────────────────────────────────────────────────────────────
+map("i", "<C-l>", "<Right>", { desc = "Move Right" })
+map("i", "<A-e>", "<Esc>A", { desc = "Jump to End of Line" }) -- Dùng Alt-e để tránh chiếm dụng C-e của CMP
+
+-- ──────────────────────────────────────────────────────────────────────
+>>>>>>> fee38c5 (ok xong)
 -- [E] EXPLORER (Neo-tree)
 -- ─────────────────────────────────────────────────────
 map("n", "<leader>e", "<cmd>Neotree toggle<CR>", { desc = "Explorer Toggle" })
