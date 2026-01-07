@@ -24,7 +24,6 @@ map("i", "<A-q>", "<Esc>", { desc = "Exit Insert Mode" })
 map("i", "<A-l>", "<Right>", { desc = "Move Right" })
 map("i", "<A-e>", "<Esc>A", { desc = "Jump to End of Line" })
 
-
 -- ──────────────────────────────────────────────────────────────────────
 --[ ] - Di chuyển trong Insert Mode
 -- ──────────────────────────────────────────────────────────────────────
