@@ -1,4 +1,4 @@
--- Call function fron utils modul
+-- lua/config/keymaps.lua
 local map = require("system.utils").map
 
 -- ─────────────────────────────────────────────────────
@@ -24,7 +24,14 @@ map("i", "<A-q>", "<Esc>", { desc = "Exit Insert Mode" })
 map("i", "<A-l>", "<Right>", { desc = "Move Right" })
 map("i", "<A-e>", "<Esc>A", { desc = "Jump to End of Line" })
 
--- ─────────────────────────────────────────────────────
+
+-- ──────────────────────────────────────────────────────────────────────
+--[ ] - Di chuyển trong Insert Mode
+-- ──────────────────────────────────────────────────────────────────────
+map("i", "<C-l>", "<Right>", { desc = "Move Right" })
+map("i", "<A-e>", "<Esc>A", { desc = "Jump to End of Line" }) -- Dùng Alt-e để tránh chiếm dụng C-e của CMP
+
+-- ──────────────────────────────────────────────────────────────────────
 -- [E] EXPLORER (Neo-tree)
 -- ─────────────────────────────────────────────────────
 map("n", "<leader>e", "<cmd>Neotree toggle<CR>", { desc = "Explorer Toggle" })
