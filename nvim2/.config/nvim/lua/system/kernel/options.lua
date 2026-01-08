@@ -10,7 +10,7 @@ opt.cursorline = true -- Highlight the current line
 opt.termguicolors = true -- Enable 24-bit RGB colors
 opt.signcolumn = "yes" -- Always show sign column to prevent layout shifts
 opt.scrolloff = 8 -- Keep 8 lines above/below cursor when scrolling
-opt.mouse = "a" -- Enable mouse support in all modes
+opt.mouse = "nv" -- Enable mouse support in all modes
 opt.wrap = true -- Enable line wrapping
 opt.linebreak = true -- Wrap lines at convenient points (word boundaries)
 
