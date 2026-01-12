@@ -30,6 +30,28 @@ map("i", "<A-e>", "<Esc>A", { desc = "Jump to End of Line" })
 map("i", "<C-l>", "<Right>", { desc = "Move Right" })
 map("i", "<A-e>", "<Esc>A", { desc = "Jump to End of Line" }) -- Dùng Alt-e để tránh chiếm dụng C-e của CMP
 
+-- ─────────────────────────────────────────────────────
+-- [D] DEBUG (DAP)
+-- ─────────────────────────────────────────────────────
+map("n", "<leader>d", "<nop>", { desc = "Debug Hub" }) -- Hub lớn
+map("n", "<leader>dc", function()
+	require("dap").continue()
+end, { desc = "Debug: Continue" })
+map("n", "<leader>ds", function()
+	require("dap").step_over()
+end, { desc = "Debug: Step Over" })
+map("n", "<leader>di", function()
+	require("dap").step_into()
+end, { desc = "Debug: Step Into" })
+map("n", "<leader>db", function()
+	require("dap").toggle_breakpoint()
+end, { desc = "Debug: Toggle Breakpoint" })
+map("n", "<leader>du", function()
+	require("dapui").toggle()
+end, { desc = "Debug: Toggle UI" })
+map("n", "<leader>dr", function()
+	require("dap").restart()
+end, { desc = "Debug: Restart" })
 -- ──────────────────────────────────────────────────────────────────────
 -- [E] EXPLORER (Neo-tree)
 -- ─────────────────────────────────────────────────────
