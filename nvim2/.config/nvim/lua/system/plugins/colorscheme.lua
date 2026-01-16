@@ -87,8 +87,8 @@ local themes = {
 
 -- ACTIVE THEME
 --=========================================================================
-local active_theme = "gruvbox8" -- Change this name to select the active theme
--- local active_theme = "catppuccin" -- Change this name to select the active theme
+-- local active_theme = "gruvbox8" -- Change this name to select the active theme
+local active_theme = "catppuccin" -- Change this name to select the active theme
 local theme_config = themes[active_theme]
 --=========================================================================
 
