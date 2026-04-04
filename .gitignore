@@ -18,7 +18,7 @@ __pycache__/
 vim/bundle/
 vim/plugged/
 zsh/custom/plugins/
-
+vim/.vim/plugged/
 # OS files
 .DS_Store
 Thumbs.db

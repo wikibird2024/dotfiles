@@ -5,4 +5,5 @@ return {
   require("user.plugins.tools.todo"),
   require("user.plugins.tools.numb"),
   require("user.plugins.tools.surround"),
+  require("user.plugins.tools.markdown"),
 }

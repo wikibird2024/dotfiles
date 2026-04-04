@@ -1,21 +1,25 @@
-
--- LSP setup for rust-analyzer
 local M = {}
 
-function M.setup(lspconfig, on_attach, capabilities)
-  -- Chỉ bật rust-analyzer nếu có Cargo.toml trong thư mục hiện tại
-  if vim.fn.filereadable("Cargo.toml") == 1 then
-    lspconfig.rust_analyzer.setup({
-      on_attach = on_attach,
-      capabilities = capabilities,
-      settings = {
-        ["rust-analyzer"] = {
-          cargo = { allFeatures = true },
-          checkOnSave = { command = "clippy" }, -- chạy linter khi save
+function M.setup(on_attach, capabilities)
+  vim.lsp.config.rust_analyzer = {
+    cmd = { "rust-analyzer" },
+    filetypes = { "rust" },
+    root_markers = { "Cargo.toml", "rust-project.json" },
+    on_attach = on_attach,
+    capabilities = capabilities,
+    settings = {
+      ["rust-analyzer"] = {
+        cargo = { allFeatures = true },
+        -- Fix: checkOnSave must be a boolean
+        checkOnSave = true,
+        -- Fix: Move the command configuration here
+        check = {
+          command = "clippy",
         },
+        procMacro = { enable = true },
       },
-    })
-  end
+    },
+  }
 end
 
 return M
