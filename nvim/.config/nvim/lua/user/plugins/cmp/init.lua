@@ -14,7 +14,6 @@ return {
     config = function()
       local cmp = require("cmp")
       local luasnip = require("luasnip")
-
       -- Load your own source configuration from a separate file
       local sources = require("user.config.cmp_sources") -- Ensure this file exists
 

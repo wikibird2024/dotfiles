@@ -19,7 +19,7 @@ return {
       filesystem = {
         filtered_items = {
           -- Giữ nguyên cài đặt lọc file
-          visible = false, 
+          visible = false,
           hide_dotfiles = false,
           hide_gitignored = true,
         },

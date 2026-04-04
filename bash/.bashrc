@@ -1,6 +1,6 @@
 # =======================================================================
 # PROFESSIONAL BASH CONFIGURATION - OPTIMIZED FOR STARSHIP & MODULARITY
-# Clean, fast, environment-safe setup for development (ESP32, Rust, etc.)
+# setup for develliveopment (ESP32, Rust, etc.)
 # =======================================================================
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -28,7 +28,7 @@ PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 export PATH="$HOME/.local/bin:$HOME/bin:/usr/local/texlive/2025/bin/x86_64-linux:$PATH"
 
 # TERMINAL / EDITOR
-export EDITOR=nvim  # Ưu tiên nvim/vim như bạn đã cấu hình
+export EDITOR=nvim # Ưu tiên nvim/vim như bạn đã cấu hình
 export VISUAL=$EDITOR
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -104,8 +104,8 @@ fi
 # LOCAL OVERRIDES (Tải cuối cùng để ghi đè mọi thiết lập trước đó)
 [ -f ~/.bash_local ] && . ~/.bash_local
 
-# ──────────────────────────────────────────────────────────────────────────────
 # 6. FINAL TOUCHES
+# ──────────────────────────────────────────────────────────────────────────────
 # ──────────────────────────────────────────────────────────────────────────────
 # TERMINAL BELL CONTROL
 if [[ "$(tty)" =~ ^/dev/tty[0-9]+$ ]] && [[ -z "$TMUX" ]] && [[ -z "$SSH_TTY" ]]; then
@@ -114,4 +114,3 @@ if [[ "$(tty)" =~ ^/dev/tty[0-9]+$ ]] && [[ -z "$TMUX" ]] && [[ -z "$SSH_TTY" ]]
 fi
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-xset -b

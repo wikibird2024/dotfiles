@@ -13,7 +13,8 @@ return {
   { import = "user.plugins.git" },
   { import = "user.plugins.latex" },
   { import = "user.plugins.terminal" },
-  { import = "user.plugins.treesitter" },
+  { import = "user.plugins.nvim-treesitter" },
+  { import = "user.plugins.nvim-treesitter-obj" },
   { import = "user.plugins.lint" },           -- ✅ Linters (e.g., nvim-lint or null-ls)
   { import = "user.plugins.format" },         -- ✅ Formatter (e.g., conform.nvim)
   { import = "user.plugins.ts_comment" },
