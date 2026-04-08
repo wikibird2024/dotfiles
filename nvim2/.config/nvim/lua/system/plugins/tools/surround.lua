@@ -1,52 +1,42 @@
-
 -- ~/.config/nvim/lua/user/plugins/tools/surround.lua
 
 return {
-  {
-    "kylechui/nvim-surround",
-    event = "BufReadPost",
-    config = function()
-      require("nvim-surround").setup({
+	{
+		"kylechui/nvim-surround",
+		version = "*", -- Sử dụng bản release mới nhất để tương thích v4
+		event = "BufReadPost",
+		config = function()
+			require("nvim-surround").setup({
+				-- QUAN TRỌNG: Đã xóa bảng keymaps ở đây để hết lỗi.
+				-- nvim-surround v4 sẽ tự động dùng: ys, ds, cs, S...
 
-        keymaps = {
-          insert = "<C-g>s",
-          insert_line = "<C-g>S",
-          normal = "ys",
-          normal_cur = "yss",
-          normal_line = "yS",
-          normal_cur_line = "ySS",
-          visual = "S",
-          visual_line = "gS",
-          delete = "ds",
-          change = "cs",
-        },
+				surrounds = {
+					["("] = {
+						add = { "( ", " )" },
+						find = "%b()",
+						delete = "^(.?)().-(.)()$",
+					},
 
-        surrounds = {
-          ["("] = {
-            add = { "( ", " )" },
-            find = "%b()",
-            delete = "^(.?)().-(.)()$",
-          },
+					["{"] = {
+						add = { "{ ", " }" },
+						find = "%b{}",
+						delete = "^(.?)().-(.)()$",
+					},
 
-          ["{"] = {
-            add = { "{ ", " }" },
-            find = "%b{}",
-            delete = "^(.?)().-(.)()$",
-          },
+					["<"] = {
+						add = { "<", ">" },
+						find = "%b<>",
+						delete = "^(.?)().-(.)()$",
+					},
 
-          ["<"] = {
-            add = { "<", ">" },
-            find = "%b<>",
-            delete = "^(.?)().-(.)()$",
-          },
-
-          ["l"] = {
-            add = function()
-              return { "ESP_LOGI(TAG, \"", "\");" }
-            end,
-          },
-        },
-      })
-    end,
-  },
+					-- Giữ lại phím 'l' để bọc log cho ESP32/C
+					["l"] = {
+						add = function()
+							return { 'ESP_LOGI(TAG, "', '");' }
+						end,
+					},
+				},
+			})
+		end,
+	},
 }
