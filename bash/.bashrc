@@ -31,6 +31,13 @@ export PATH="$HOME/.local/bin:$HOME/bin:/usr/local/texlive/2025/bin/x86_64-linux
 export EDITOR=nvim # Ưu tiên nvim/vim như bạn đã cấu hình
 export VISUAL=$EDITOR
 
+# Tự động nhận diện môi trường để set biến hiển thị (An toàn cho cả X11 & Wayland)
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    export MOZ_ENABLE_WAYLAND=1
+    export QT_QPA_PLATFORM="wayland;xcb"
+    export SDL_VIDEODRIVER=wayland
+    export _JAVA_AWT_WM_NONREPARENTING=1
+fi
 # ──────────────────────────────────────────────────────────────────────────────
 # 3. COMPONENT & FRAMEWORK INITIALIZATION (Tải các script bên ngoài)
 # ──────────────────────────────────────────────────────────────────────────────
@@ -114,3 +121,15 @@ if [[ "$(tty)" =~ ^/dev/tty[0-9]+$ ]] && [[ -z "$TMUX" ]] && [[ -z "$SSH_TTY" ]]
 fi
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# Đảm bảo các script của HyDE và Cargo luôn được ưu tiên
+export PATH="$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$PATH"
+
+# Load cấu hình môi trường chung (Nếu HyDE có dùng .profile)
+[[ -f ~/.profile ]] && . ~/.profile
+
+# Các biến môi trường cho HyDE/Wayland (An toàn cho cả X11)
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    export MOZ_ENABLE_WAYLAND=1
+    export QT_QPA_PLATFORM="wayland;xcb"
+fi
