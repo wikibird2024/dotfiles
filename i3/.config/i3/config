@@ -23,4 +23,3 @@ exec_always --no-startup-id /usr/lib/polkit-gnome/polkit-agent-helper-1 # Xác t
 # Các script tùy chỉnh
 exec_always --no-startup-id ~/.config/i3/touchpad.sh
 exec_always --no-startup-id ~/.config/i3/set_wallpaper.sh
-exec_always --no-startup-id autorandr --change
