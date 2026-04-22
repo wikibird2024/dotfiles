@@ -30,7 +30,7 @@ alias ....='cd ../../..'
 
 # Standard Directory Jumps
 alias config='cd ~/.config/'
-alias cdot='cd ~/dotfiles/'
+alias dotfiles='cd ~/dotfiles/'
 alias cpy='cd ~/python'
 alias cdown='cd ~/Downloads/'
 alias cdoc='cd ~/Documents/'
