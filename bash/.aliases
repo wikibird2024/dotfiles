@@ -49,8 +49,8 @@ alias listfonts="fc-list : family style | awk -F: '{print \$2}' | sed 's/^[[:spa
 # ============================ Yocto_ ============================
 
 # ============================ 🖥️ Apps & Scripts ============================
-alias zthm='zathura main.pdf'
-alias zth='zathura'
+alias ztm='zathura main.pdf'
+alias zt='zathura'
 alias xe='latexmk -xelatex main.tex'
 alias pvc='latexmk -pvc main.tex'
 alias cl='./clean.sh'

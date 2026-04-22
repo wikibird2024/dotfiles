@@ -1,135 +1,114 @@
-# =======================================================================
-# PROFESSIONAL BASH CONFIGURATION - OPTIMIZED FOR STARSHIP & MODULARITY
-# setup for develliveopment (ESP32, Rust, etc.)
-# =======================================================================
+# ============================================================================
+# MINIMAL • IDEMPOTENT • FAST BASH CONFIG (STARSHIP-READY)
+# ============================================================================
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 0. SHELL GUARD & CORE OPTIONS
-# ──────────────────────────────────────────────────────────────────────────────
-# Load only for interactive, non-login shells (Standard practice)
-case $- in *i*) ;; *) return ;; esac
+# ────────────────────────────────────────────────────────────────────────────
+# 0. INTERACTIVE GUARD (SAFE)
+# ────────────────────────────────────────────────────────────────────────────
+[[ $- != *i* ]] && return 2>/dev/null
 
-# Shell Options
-shopt -s checkwinsize autocd cmdhist nocaseglob histappend
+# ────────────────────────────────────────────────────────────────────────────
+# 1. CORE SHELL OPTIONS
+# ────────────────────────────────────────────────────────────────────────────
+shopt -s checkwinsize autocd cmdhist histappend
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 1. HISTORY SETTINGS
-# ──────────────────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────────────────
+# 2. HISTORY (SAFE + NON-DUPLICATE PROMPT_COMMAND)
+# ────────────────────────────────────────────────────────────────────────────
 HISTCONTROL=ignoreboth:erasedups
 HISTSIZE=5000
 HISTFILESIZE=10000
-# Ghi lịch sử lệnh trước khi hiển thị prompt tiếp theo
-PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 2. PATH & DEFAULT ENVIRONMENT (Gộp tất cả các PATH lại đây)
-# ──────────────────────────────────────────────────────────────────────────────
-# Thiết lập các PATH ưu tiên theo thứ tự: User Bins -> System Tools -> Frameworks
-export PATH="$HOME/.local/bin:$HOME/bin:/usr/local/texlive/2025/bin/x86_64-linux:$PATH"
+# Prevent PROMPT_COMMAND duplication
+__history_append_cmd="history -a"
+case "$PROMPT_COMMAND" in
+*"$__history_append_cmd"*) ;;
+*) PROMPT_COMMAND="${__history_append_cmd}${PROMPT_COMMAND:+; $PROMPT_COMMAND}" ;;
+esac
 
-# TERMINAL / EDITOR
-export EDITOR=nvim # Ưu tiên nvim/vim như bạn đã cấu hình
+# ────────────────────────────────────────────────────────────────────────────
+# 3. PATH MANAGEMENT (IDEMPOTENT)
+# ────────────────────────────────────────────────────────────────────────────
+path_prepend() {
+    case ":$PATH:" in
+    *":$1:"*) ;;
+    *) PATH="$1:$PATH" ;;
+    esac
+}
+
+path_prepend "$HOME/.local/bin"
+path_prepend "$HOME/bin"
+path_prepend "/usr/local/texlive/2025/bin/x86_64-linux"
+export PATH
+
+# ────────────────────────────────────────────────────────────────────────────
+# 4. ENVIRONMENT
+# ────────────────────────────────────────────────────────────────────────────
+export EDITOR=nvim
 export VISUAL=$EDITOR
 
-# Tự động nhận diện môi trường để set biến hiển thị (An toàn cho cả X11 & Wayland)
-if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+# Wayland detection (single source of truth)
+if [[ "$XDG_SESSION_TYPE" == "wayland" ]]; then
     export MOZ_ENABLE_WAYLAND=1
     export QT_QPA_PLATFORM="wayland;xcb"
     export SDL_VIDEODRIVER=wayland
     export _JAVA_AWT_WM_NONREPARENTING=1
 fi
-# ──────────────────────────────────────────────────────────────────────────────
-# 3. COMPONENT & FRAMEWORK INITIALIZATION (Tải các script bên ngoài)
-# ──────────────────────────────────────────────────────────────────────────────
 
-# Bash Completion (Giúp các lệnh như Git, Docker hoàn thành tốt hơn)
+# ────────────────────────────────────────────────────────────────────────────
+# 5. COMPLETION SYSTEM
+# ────────────────────────────────────────────────────────────────────────────
 if ! shopt -oq posix; then
-    if [ -f /usr/share/bash-completion/bash_completion ]; then
-        . /usr/share/bash-completion/bash_completion
-    elif [ -f /etc/bash_completion ]; then
-        . /etc/bash_completion
-    fi
+    for f in \
+        /usr/share/bash-completion/bash_completion \
+        /etc/bash_completion; do
+        [[ -f $f ]] && . "$f" && break
+    done
 fi
 
-# ZOXIDE — SMART CD REPLACEMENT
+# ────────────────────────────────────────────────────────────────────────────
+# 6. TOOLING (LAZY / CONDITIONAL LOAD)
+# ────────────────────────────────────────────────────────────────────────────
+
+# ZOXIDE
 if command -v zoxide >/dev/null 2>&1; then
     eval "$(zoxide init bash)"
 fi
 
-# NVM (Node Version Manager)
+# RUST
+[[ -s "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
+
+# NVM (LAZY LOAD — ZERO STARTUP COST)
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+nvm() {
+    unset -f nvm node npm npx
+    [[ -s "$NVM_DIR/nvm.sh" ]] && . "$NVM_DIR/nvm.sh"
+    nvm "$@"
+}
 
-# RUST/CARGO
-[ -s "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
-
-# ESP-IDF ENVIRONMENT (Dựa trên dự án của bạn)
-# [ -f ~/esp/esp-idf/export.sh ] && source ~/esp/esp-idf/export.sh
-
-# ──────────────────────────────────────────────────────────────────────────────
-# 4. PROMPT & FZF INTEGRATION
-# ──────────────────────────────────────────────────────────────────────────────
-
-# Starship Prompt (Đẹp & nhanh, thay thế hoàn toàn cho PS1 thủ công)
+# ────────────────────────────────────────────────────────────────────────────
+# 7. PROMPT (STARSHIP ONLY)
+# ────────────────────────────────────────────────────────────────────────────
 if command -v starship >/dev/null 2>&1; then
     eval "$(starship init bash)"
-else
-    # Prompt cấu hình thủ công (Dùng làm dự phòng nếu Starship không có)
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 fi
 
-# FZF INTEGRATION (Dùng các file được cài đặt bởi package manager)
-[[ -f /usr/share/fzf/key-bindings.bash ]] && source /usr/share/fzf/key-bindings.bash
-[[ -f /usr/share/fzf/completion.bash ]] && source /usr/share/fzf/completion.bash
+# ────────────────────────────────────────────────────────────────────────────
+# 8. FZF (PORTABLE)
+# ────────────────────────────────────────────────────────────────────────────
+[[ -f ~/.fzf.bash ]] && . ~/.fzf.bash
 
-# Tùy chỉnh FZF (Uncomment nếu cần)
-# export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-# export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-# export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-
-# ──────────────────────────────────────────────────────────────────────────────
-# 5. ALIASES, COLORS & CUSTOM SCRIPTS
-# ──────────────────────────────────────────────────────────────────────────────
-
-# LS COLORS & ALIASES (Đặt LS COLORS trước khi tải ALIASES)
+# ────────────────────────────────────────────────────────────────────────────
+# 9. COLORS + LS
+# ────────────────────────────────────────────────────────────────────────────
 if command -v dircolors >/dev/null 2>&1; then
-    if [ -r ~/.dircolors ]; then
-        eval "$(dircolors -b ~/.dircolors)"
-    else
-        eval "$(dircolors -b)"
-    fi
+    eval "$(dircolors -b ~/.dircolors 2>/dev/null || dircolors -b)"
     alias ls='ls --color=auto'
 fi
 
-# LOAD USER ALIASES
-[ -f ~/.aliases ] && . ~/.aliases
-
-# CUSTOM SHELL FUNCTIONS
-[ -f ~/.bash_functions ] && . ~/.bash_functions
-
-# LOCAL OVERRIDES (Tải cuối cùng để ghi đè mọi thiết lập trước đó)
-[ -f ~/.bash_local ] && . ~/.bash_local
-
-# 6. FINAL TOUCHES
-# ──────────────────────────────────────────────────────────────────────────────
-# ──────────────────────────────────────────────────────────────────────────────
-# TERMINAL BELL CONTROL
-if [[ "$(tty)" =~ ^/dev/tty[0-9]+$ ]] && [[ -z "$TMUX" ]] && [[ -z "$SSH_TTY" ]]; then
-    # Tắt chuông terminal
-    setterm --blength 0 2>/dev/null || true
-fi
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
-# Đảm bảo các script của HyDE và Cargo luôn được ưu tiên
-export PATH="$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$PATH"
-
-# Load cấu hình môi trường chung (Nếu HyDE có dùng .profile)
-[[ -f ~/.profile ]] && . ~/.profile
-
-# Các biến môi trường cho HyDE/Wayland (An toàn cho cả X11)
-if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
-    export MOZ_ENABLE_WAYLAND=1
-    export QT_QPA_PLATFORM="wayland;xcb"
-fi
+# ────────────────────────────────────────────────────────────────────────────
+# 10. MODULAR EXTENSIONS
+# ────────────────────────────────────────────────────────────────────────────
+[[ -f ~/.aliases ]] && . ~/.aliases
+[[ -f ~/.functions ]] && . ~/.functions
+[[ -f ~/.bash_local ]] && . ~/.bash_local
