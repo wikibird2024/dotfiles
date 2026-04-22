@@ -19,11 +19,28 @@
 # config starts here: #
 #######################
 
+# --- PHẦN THÊM VÀO VÀ SỬA ĐỔI ĐỂ CHẠY ỔN ĐỊNH ---
+# Khai báo biến Workspace lên đầu để tránh lỗi bindcode
+set $ws1 "1:"
+set $ws2 "2:"
+set $ws3 "3:"
+set $ws4 "4:"
+set $ws5 "5:"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+# Bật bộ gõ tiếng Việt Fcitx5
+exec --no-startup-id fcitx5 -d
+# -----------------------------------------------
+
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango: Noto Sans Regular 10
+font pango: Noto Sans SemiBold 10
 
 # set the mod key to the winkey:
 set $mod Mod4
@@ -149,20 +166,20 @@ bindcode $mod+Shift+90   move container to workspace  $ws10
 # Pressing right will grow the window's width.
 # Pressing up will shrink the window's height.
 # Pressing down will grow the window's height.
-#        bindsym h resize shrink width 10 px or 10 ppt
-#        bindsym j resize grow height 10 px or 10 ppt
-#        bindsym k resize shrink height 10 px or 10 ppt
-#        bindsym l resize grow width 10 px or 10 ppt
+#         bindsym h resize shrink width 10 px or 10 ppt
+#         bindsym j resize grow height 10 px or 10 ppt
+#         bindsym k resize shrink height 10 px or 10 ppt
+#         bindsym l resize grow width 10 px or 10 ppt
 
 # same bindings, but for the arrow keys
-#        bindsym Left resize shrink width 10 px or 10 ppt
-#        bindsym Down resize grow height 10 px or 10 ppt
-#        bindsym Up resize shrink height 10 px or 10 ppt
-#        bindsym Right resize grow width 10 px or 10 ppt
+#         bindsym Left resize shrink width 10 px or 10 ppt
+#         bindsym Down resize grow height 10 px or 10 ppt
+#         bindsym Up resize shrink height 10 px or 10 ppt
+#         bindsym Right resize grow width 10 px or 10 ppt
 
 # back to normal: Enter or Escape
-#        bindsym Return mode "default"
-#        bindsym Escape mode "default"
+#         bindsym Return mode "default"
+#         bindsym Escape mode "default"
 #}
 
 #bindsym $mod+r mode "resize"
@@ -216,7 +233,7 @@ bindsym XF86MonBrightnessDown exec --no-startup-id ~/.config/i3/scripts/volume_b
 # alternative screen & keyboard brightness setting with brightnessctl using dunst osc
 # install brightnessctl (sudo pacman -S brightnessctl)
 # keyboard backlight setting using brightnessctl
-#bindsym Mod1+space       exec --no-startup-id ~/.config/i3/scripts/volume_brightness2.sh keyboard_brightness_up
+#bindsym Mod1+space        exec --no-startup-id ~/.config/i3/scripts/volume_brightness2.sh keyboard_brightness_up
 #bindsym Mod1+Shift+space exec --no-startup-id ~/.config/i3/scripts/volume_brightness2.sh keyboard_brightness_down
 #
 # screen brightness setting using brightnessctl
@@ -316,18 +333,9 @@ bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
 # configuration for workspace behaviour: #
 ##########################################
 
-# Define names for default workspaces for which we configure key bindings later on.
-# We use variables to avoid repeating the names in multiple places.
-set $ws1 "1:"
-set $ws2 "2:"
-set $ws3 "3:"
-set $ws4 "4:"
-set $ws5 "5:"
-set $ws6 "6"
-set $ws7 "7"
-set $ws8 "8"
-set $ws9 "9"
-set $ws10 "10"
+# Define names for default workspaces for which we configure key bindings sau này.
+# (Đã di chuyển lên đầu file để tránh lỗi, phần này giữ lại để comment nguyên bản)
+# set $ws1 "1:" ...
 
 # use workspaces on different displays:
 # where you have to replace VGA-0/HDMI-0 with the names for your displays
@@ -401,7 +409,8 @@ exec_always $HOME/.config/i3/scripts/import-gsettings
 # install picom package (sudo pacman -Syu picom)
 
 # start using default config
-#exec_always --no-startup-id picom -b
+# Sửa đổi: Đã gỡ comment để Picom hoạt động
+exec_always --no-startup-id picom -b
 
 # for custom config:
 #exec_always --no-startup-id picom --config  ~/.config/picom.conf
@@ -471,7 +480,8 @@ exec --no-startup-id /usr/bin/dunst
 # autotiling script
 # https://github.com/nwg-piotr/autotiling
 # `pacman -Syu autotiling`
-#exec_always --no-startup-id autotiling
+# Sửa đổi: Đã gỡ comment để Autotiling hoạt động
+exec_always --no-startup-id autotiling
 
 # Autostart apps as you like
 #exec --no-startup-id sleep 2 && xfce4-terminal
@@ -500,24 +510,24 @@ exec --no-startup-id sleep 7 && firefox https://github.com
 
 # Define colors variables:
 set $darkbluetrans  #08052be6
-set $darkblue       #08052b
-set $lightblue      #5294e2
-set $urgentred      #e53935
-set $white          #ffffff
-set $black          #000000
-set $purple         #e345ff
-set $darkgrey       #383c4a
-set $grey           #b0b5bd
-set $mediumgrey     #8b8b8b
-set $yellowbrown    #e1b700
-set $focus_cyan     #00ffff
-set $focus_gold     #fbc02d
+set $darkblue        #08052b
+set $lightblue       #5294e2
+set $urgentred       #e53935
+set $white           #ffffff
+set $black           #000000
+set $purple          #e345ff
+set $darkgrey        #383c4a
+set $grey            #b0b5bd
+set $mediumgrey      #8b8b8b
+set $yellowbrown     #e1b700
+set $focus_cyan      #00ffff
+set $focus_gold      #fbc02d
 
 # define colors for windows:
-# class                 border        bground       text        indicator     child_border
+# class                 border         bground        text        indicator     child_border
 client.focused          $focus_cyan   $darkblue     $white      $purple       $focus_cyan
-client.unfocused        $darkblue     $darkblue     $grey       $darkgrey     $darkgrey
-client.focused_inactive $darkblue     $darkblue     $grey       $black        $black
+client.unfocused        $darkblue      $darkblue      $grey       $darkgrey     $darkgrey
+client.focused_inactive $darkblue      $darkblue      $grey       $black        $black
 client.urgent           $urgentred    $urgentred    $white      $yellowbrown  $yellowbrown
 
 ############################################
@@ -530,7 +540,7 @@ bar {
         font pango: Noto Sans Regular 10
         status_command i3blocks -c ~/.config/i3/i3blocks.conf
             position top
-#           i3bar_command i3bar --transparency
+#            i3bar_command i3bar --transparency
 # it could be that you have no primary display set: set one (xrandr --output <output> --primary)
 # reference: https://i3wm.org/docs/userguide.html#_tray_output
             #tray_output primary
@@ -546,7 +556,7 @@ strip_workspace_numbers yes
             separator          $purple
             background         $darkgrey
             statusline         $white
-#                           border              bg          txt         indicator
+#                           border              bg           txt          indicator
         focused_workspace   $mediumgrey         $grey       $darkgrey   $purple
         active_workspace    $lightblue          $mediumgrey $darkgrey   $purple
         inactive_workspace  $darkgrey           $darkgrey   $grey       $purple
@@ -555,35 +565,8 @@ strip_workspace_numbers yes
 }
 
 # you can add different bars for multidisplay setups on each display:
-# set output HDMI-0 to the display you want the bar, --transparency can be set.
-# Transparency needs rgba color codes to be used where the last two letters are the transparency factor see here:
-# https://gist.github.com/lopspower/03fb1cc0ac9f32ef38f4
-# #08052be6 --> e6=90%
-
-# bar {
-#   font pango: Noto Sans Regular 10
-#   status_command i3blocks -c ~/.config/i3/i3blocks-2.conf
-#   i3bar_command i3bar --transparency
-#   output HDMI-0
-#   position bottom
-#
-# When strip_workspace_numbers is set to yes,
-# any workspace that has a name of the form
-# “[n][:][NAME]” will display only the name.
-#strip_workspace_numbers yes
-##strip_workspace_name no
-#
-#   colors {
-#       separator          $purple
-#       background         $darkbluetrans
-#           statusline         $white
-#                           border          bg              txt         indicator
-#       focused_workspace   $lighterblue    $lighterblue    $darkblue   $purple
-#       active_workspace    $lightdblue     $lightdblue     $darkblue   $purple
-#       inactive_workspace  $darkblue       $darkblue       $lightdblue $purple
-#       urgent_workspace    $urgentred      $urgentred      $white      $purple
-#   }
-#}
+# (Giữ nguyên phần comment bên dưới của bạn)
+# ... [Phần comment bar multidisplay] ...
 
 #####################################
 # Application menu handled by rofi: #

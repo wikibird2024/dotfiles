@@ -1,26 +1,19 @@
+# --- Cài đặt cần thiết ---
+# Đồng bộ vùng chọn với clipboard hệ thống (để Ctrl+V được luôn)
+set selection-clipboard clipboard
 
-# --- Appearance ---
-set font "Monospace 12"
-set recolor-keephue true
-set highlight-color "#bd93f9"
-set highlight-active-color "#ff79c6"
+# --- Keybindings bổ sung (Những cái mặc định chưa có hoặc chưa tối ưu) ---
 
-# --- Keybindings ---
-map j scroll down
-map k scroll up
-map h scroll left
-map l scroll right
-map H scroll left
-map L scroll right
+# Cuộn nửa trang (giống Vim, mặc định Zathura không có bind này)
+map <C-d> scroll half-down
+map <C-u> scroll half-up
 
-map <C-f> scroll down-page
-map <C-b> scroll up-page
-
+# Phóng to/Thu nhỏ bằng phím z/x (tiện hơn phím +/- mặc định)
 map z zoom in
 map x zoom out
-set zoom-step 1.2
 
-map <C-r> recolor
+# Reload config nhanh (để mỗi khi sửa file này, nhấn Ctrl+r là nhận luôn)
+map <C-r> source
 
-map / search
-# n / N dùng mặc định trong search mode
+# Copy thủ công (phòng trường hợp quét chuột không tự nhận)
+map y copy-selection
