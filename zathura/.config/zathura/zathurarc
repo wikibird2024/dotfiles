@@ -17,3 +17,31 @@ map <C-r> source
 
 # Copy thủ công (phòng trường hợp quét chuột không tự nhận)
 map y copy-selection
+# -----------------------------------------------------------------------------
+# PHÍM TẮT MẶC ĐỊNH (DEFAULT KEYBINDINGS REFERENCE)
+# -----------------------------------------------------------------------------
+
+# --- Điều hướng (Navigation) ---
+# j, k            : Cuộn xuống / lên
+# h, l            : Cuộn trái / phải
+# Space / S-Space : Cuộn xuống / lên một trang màn hình
+# PgDn / PgUp     : Trang kế tiếp / Trang trước
+# gg / G          : Về đầu / Cuối tài liệu
+# [num]G          : Đi đến trang số [num]
+
+# --- Hiển thị & Zoom (View & Zoom) ---
+# a               : Vừa khít cửa sổ (Adjust to window)
+# s               : Vừa khít chiều rộng (Fit width)
+# r               : Xoay trang 90 độ
+# d               : Chế độ xem đôi (Dual page)
+# i               : Đảo ngược màu (Invert colors)
+# Tab             : Hiện mục lục (Index)
+# F11             : Toàn màn hình
+
+# --- Tìm kiếm & Hệ thống (Search & System) ---
+# /               : Tìm kiếm
+# n / N           : Kết quả tiếp theo / trước đó
+# f               : Nhảy đến link (Follow link)
+# o               : Mở file mới
+# :               : Nhập lệnh (Command mode)
+# q               : Thoát
