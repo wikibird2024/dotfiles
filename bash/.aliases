@@ -14,16 +14,14 @@ alias zshrc.e='nvim ~/.zshrc'
 alias vpn-up='sudo wg-quick up wg0'
 alias vpn-down='sudo wg-quick down wg0'
 alias vpn-status='sudo wg show'
+alias whereami='curl -s "http://ip-api.com/json/?fields=status,message,country,city,query" | jq'
 
-# Kiểm tra IP để xác nhận VPN đang hoạt động
-alias myip='curl -s https://ifconfig.me && echo'
 alias c='clear'
-alias source_b='source ~/.bashrc'
-alias sz='source ~/.zshrc'
+alias s-bash='source ~/.bashrc'
+alias s-zsh='source ~/.zshrc'
 
 # Disk burning
 alias usb-burn="sudo dd status=progress conv=fsync bs=4M"
-
 
 # Display/Screen Management
 alias mirror='xrandr --output HDMI-1-1 --auto --same-as LVDS-1'
@@ -138,8 +136,6 @@ alias mountlist='lsblk -f'
 
 # ============================ 🌐 Networking ============================
 alias ports='sudo lsof -i -P -n'
-alias myip="ip a | rg 'inet' | grep -v '127.0.0.1' | awk '{print \$2}' | cut -d/ -f1"
-alias pingg='ping google.com'
 alias scanwifi='nmcli dev wifi list'
 alias connectwifi='nmtui'
 

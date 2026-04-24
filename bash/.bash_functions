@@ -193,5 +193,29 @@ function logtop { tar -xOzf "$1" | head -n "$2"; }
 function fetch_extract { curl -LO "$1" && extract "$(basename $1)"; }
 
 # ==============================
+# internet and connection
+# ==============================
+iplocal() {
+    echo -e "\033[1;34m[Internal Interfaces]\033[0m"
+    # Thay \e bằng \033 để awk không báo lỗi
+    ip -br -4 addr show | awk '$3 != "" && $1 != "lo" {
+        label = ($1 ~ /^wg/) ? "🔒 VPN" : ($1 ~ /^wl/) ? "🌐 WiFi" : "🔌 Other";
+        printf "  %-10s %-8s => \033[1;32m%s\033[0m\n", $1, label, $3
+    }'
+}
+
+myip() {
+    echo -e "\033[1;34m[Public Identity]\033[0m"
+    local info=$(curl -s "http://ip-api.com/json/?fields=status,country,city,isp,query")
+
+    if [[ $(echo "$info" | jq -r .status) == "success" ]]; then
+        # Dùng jq để format đẹp, nhớ dùng -r để không bị dính dấu ngoặc kép
+        echo "$info" | jq -r '"  IP       => \u001b[1;32m\(.query)\u001b[0m", "  Provider => \u001b[1;33m\(.isp)\u001b[0m", "  Location => \u001b[1;35m\(.city), \(.country)\u001b[0m"'
+    else
+        echo -ne "  IP       => \033[1;31m"
+        curl -s https://ifconfig.me && echo -e "\033[0m"
+    fi
+}
+# ==============================
 # END OF FILE
 # ==============================
