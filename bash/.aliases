@@ -10,6 +10,13 @@ alias func.e='nvim ~/.bash_functions'
 alias bashrc.e='nvim ~/.bashrc'
 alias zshrc.e='nvim ~/.zshrc'
 
+# vpn connect alias
+alias vpn-up='sudo wg-quick up wg0'
+alias vpn-down='sudo wg-quick down wg0'
+alias vpn-status='sudo wg show'
+
+# Kiểm tra IP để xác nhận VPN đang hoạt động
+alias myip='curl -s https://ifconfig.me && echo'
 alias c='clear'
 alias source_b='source ~/.bashrc'
 alias sz='source ~/.zshrc'
