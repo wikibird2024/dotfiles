@@ -40,7 +40,7 @@ exec --no-startup-id fcitx5 -d
 # is used in the bar {} block below.
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango: Noto Sans SemiBold 10
+font pango: Noto Sans SemiBold 9
 
 # set the mod key to the winkey:
 set $mod Mod4
