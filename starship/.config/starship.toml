@@ -1,26 +1,31 @@
 # =======================================================================
-# STARSHIP.TOML - ULTIMATE EMBEDDED & SYSADMIN CONFIG
+# STARSHIP.TOML - COMPACT 2-LINE CONFIG (FOR YOCTO/DOCKER)
 # =======================================================================
 
-# 1. CẤU HÌNH CHUNG
+# 1. CẤU HÌNH CHUNG (TỐI ƯU LIỀN MẠCH)
 # -----------------------------------------------------------------------
-add_newline = true
-# Format 2 dòng: Thông tin ở trên, dấu gõ lệnh ở dưới cho thoáng
+add_newline = false # QUAN TRỌNG: Xóa dòng trống giữa các lệnh để tạo sự liên tục
+
+# Format 2 dòng: Dòng 1 chứa thông tin, Dòng 2 chỉ chứa dấu nhắc lệnh
+# Cách này giúp bạn có toàn bộ chiều ngang để gõ lệnh dài mà không bị vướng
 format = """
 $os$username$hostname$localip$directory$git_branch$git_status$c$rust$python$nodejs$package$memory_usage$cmd_duration
-$line_break$character"""
+$character"""
 
 command_timeout = 800
 
+[line_break]
+disabled = true # Vô hiệu hóa ngắt dòng mặc định để dùng format tùy chỉnh bên trên
+
 # 2. DẤU NHẮC LỆNH (CHARACTER)
 [character]
-success_symbol = "[❯](bold green)"
-error_symbol = "[❯](bold red)"
-vimcmd_symbol = "[❮](bold green)" # Hỗ trợ cực tốt nếu bạn dùng Vi-mode
+success_symbol = "[❯](bold green) " # Dấu cách sau ❯ để gõ lệnh thoải mái
+error_symbol = "[❯](bold red) "
+vimcmd_symbol = "[❮](bold green) "
 
-# 3. HỆ ĐIỀU HÀNH & NGƯỜI DÙNG (CHỈ HIỆN KHI CẦN)
+# 3. HỆ ĐIỀU HÀNH & NGƯỜI DÙNG
 [os]
-disabled = false # Hiện icon Arch/EndeavourOS cho ngầu
+disabled = false
 style = "bold white"
 
 [username]
@@ -31,9 +36,9 @@ format = " [$user]($style) "
 ssh_only = true
 format = "@[$hostname](bold yellow) "
 
-# 4. THƯ MỤC (DIRECTORY)
+# 4. THƯ MỤC (DIRECTORY - GỌN GÀNG)
 [directory]
-truncation_length = 3
+truncation_length = 2 # Chỉ hiện 2 cấp thư mục cuối để không choán chỗ
 truncate_to_repo = true
 style = "bold cyan"
 format = "in [$path]($style)[$read_only]($read_only_style) "
@@ -48,7 +53,6 @@ format = "on [$symbol$branch]($style) "
 [git_status]
 style = "bold red"
 format = '([\[$all_status$ahead_behind\]]($style) )'
-# Các ký hiệu trực quan hơn cho dân Pro
 conflicted = "="
 ahead = "⇡${count}"
 behind = "⇣${count}"
@@ -63,7 +67,7 @@ deleted = "✘"
 [c]
 symbol = " "
 style = "bold blue"
-format = "via [$symbol($version)]($style) " # Hiện version rất quan trọng khi làm việc với nhiều toolchain
+format = "via [$symbol($version)]($style) "
 
 [rust]
 symbol = "🦀 "
@@ -79,16 +83,16 @@ symbol = "󰎙 "
 style = "bold green"
 format = "via [$symbol($version)]($style) "
 
-# 7. GIÁM SÁT HỆ THỐNG (PRO FEATURE)
+# 7. GIÁM SÁT HỆ THỐNG
 [memory_usage]
-disabled = false # Hiển thị khi RAM dùng quá 75%
+disabled = false
 threshold = 75
 symbol = "󰍛 "
 style = "bold dimmed white"
 format = "mem $symbol[$ram]($style) "
 
 [cmd_duration]
-min_time = 1000 # Chỉ hiện nếu lệnh chạy lâu hơn 1 giây
+min_time = 1000
 format = "took [$duration](bold yellow) "
 
 [battery]
@@ -96,5 +100,5 @@ full_symbol = "󰁹 "
 charging_symbol = "󰂄 "
 discharging_symbol = "󰂃 "
 [[battery.display]]
-threshold = 15 # Chỉ hiện cảnh báo khi pin dưới 15%
+threshold = 15
 style = "bold red"
