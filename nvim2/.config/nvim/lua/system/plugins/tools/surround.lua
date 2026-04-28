@@ -7,8 +7,6 @@ return {
 		event = "BufReadPost",
 		config = function()
 			require("nvim-surround").setup({
-				-- QUAN TRỌNG: Đã xóa bảng keymaps ở đây để hết lỗi.
-				-- nvim-surround v4 sẽ tự động dùng: ys, ds, cs, S...
 
 				surrounds = {
 					["("] = {
