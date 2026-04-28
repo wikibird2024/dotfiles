@@ -1,103 +1,135 @@
-"=============================================================================
-" VIM PROFESSIONAL SETUP — GINKO PRO EDITION
-"=============================================================================
+" ============================================================================
+" 1. TỰ ĐỘNG CÀI ĐẶT VIM-PLUG
+" ============================================================================
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+    if executable('curl')
+        silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    endif
+endif
+
+" ============================================================================
+" 2. DANH SÁCH PLUGIN (Tổng hợp: Ổn định & Thông minh)
+" ============================================================================
 call plug#begin('~/.vim/plugged')
 
-" ─── Essentials ───────────────────────────────────────────────────────────────
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-Plug 'preservim/nerdtree'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-surround'
-Plug 'airblade/vim-gitgutter'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+" Giao diện & Tiện ích hệ thống
+Plug 'morhetz/gruvbox'          " Màu sắc chuyên nghiệp
+Plug 'preservim/nerdtree'        " Cây thư mục
+Plug 'vim-airline/vim-airline'  " Thanh trạng thái
+Plug 'ctrlpvim/ctrlp.vim'        " Tìm file nhanh (Ctrl + p)
+Plug 'tpope/vim-commentary'      " Comment nhanh (gcc)
+Plug 'sheerun/vim-polyglot'      " Syntax highlight đa ngôn ngữ
 
-" ─── Themes (Thêm Everforest vào để đổi gió) ──────────────────────────────────
-Plug 'joshdick/onedark.vim'
-Plug 'sainnhe/everforest'
-
-" ─── Syntax and Linting ──────────────────────────────────────────────────────
-Plug 'sheerun/vim-polyglot'
-Plug 'dense-analysis/ale'
+" Tính năng thông minh từ Neovim (Nhưng nhẹ & ổn định cho Vim)
+Plug 'jiangmiao/auto-pairs'       " Tự đóng ngoặc, nhảy qua dấu đóng, Smart Enter
+Plug 'dense-analysis/ale'         " Báo lỗi cú pháp (Linter) ngay khi đang gõ
+Plug 'easymotion/vim-easymotion' " Nhảy cực nhanh đến mọi vị trí trên màn hình
 
 call plug#end()
 
-"=============================================================================
-" GENERAL SETTINGS
-"=============================================================================
-set nocompatible
+" ============================================================================
+" 3. CẤU HÌNH CƠ BẢN (Tối ưu Code)
+" ============================================================================
+syntax on
+filetype plugin indent on
 set number relativenumber
-set autoindent
-set shiftwidth=4
-set tabstop=4
-set expandtab
 set mouse=a
-set incsearch
-set ignorecase
-set smartcase
-set hlsearch
-set fileencoding=utf-8
-set wildmenu
-set ttyfast
-set ruler
 set cursorline
-set termguicolors
+set tabstop=4 shiftwidth=4 expandtab smartindent
+set ignorecase smartcase
+set noswapfile undofile         " Lưu lịch sử undo ngay cả khi đóng file
+set encoding=utf-8
+set hidden
+set hlsearch incsearch showmatch
+set clipboard=unnamedplus       " Đồng bộ clipboard hệ thống
 
-" Leader Key (Space)
+" ============================================================================
+" 4. CẤU HÌNH TÍNH NĂNG THÔNG MINH
+" ============================================================================
+
+" --- Auto-pairs (Tự động đóng ngoặc & Xuống dòng thông minh) ---
+let g:AutoPairsMapCR = 1        " Nhấn Enter giữa {} sẽ tự xuống dòng thụt lề
+let g:AutoPairsShortcutToggle = '' " Tắt phím tắt không cần thiết
+
+" --- ALE (Báo lỗi ngay khi gõ - Thay thế LSP nặng nề) ---
+let g:ale_linters = {'javascript': ['eslint'], 'python': ['flake8'], 'cpp': ['gcc']}
+let g:ale_sign_error = '●'
+let g:ale_sign_warning = '○'
+let g:ale_fix_on_save = 1
+
+" --- Giao diện ---
+set background=dark
+silent! colorscheme gruvbox
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#fnamemod = ':t'
+
+" Đổi hình dạng con trỏ
+if &term =~ '256color' || &term =~ 'xterm'
+    let &t_SI = "\e[5 q"
+    let &t_EI = "\e[1 q"
+endif
+
+" ============================================================================
+" 5. PHÍM TẮT THÔNG MINH (UNIFIED KEYMAPS)
+" ============================================================================
 let mapleader = " "
 
-" Colorscheme mặc định
-colorscheme onedark
+" --- Thoát nhanh (Normal, Insert & Terminal) ---
+inoremap jk <Esc>
+inoremap kj <Esc>
+nnoremap <silent> <leader><leader> :noh<CR>
 
-"=============================================================================
-" PRO KEYBINDINGS (THỰC DỤNG & TỐC ĐỘ)
-"=============================================================================
+if has('nvim')
+    tnoremap jk <C-\><C-n>
+else
+    tnoremap jk <C-w>N
+endif
 
-" --- 1. File & Explorer (Dùng Space + phím chữ cho nhanh) ---
-" Mở cây thư mục (E = Explorer)
-nnoremap <leader>e :NERDTreeToggle<CR>
-" Tìm file hiện tại trong cây thư mục
-nnoremap <leader>n :NERDTreeFind<CR>
+" --- Điều hướng Insert Mode (Tính năng bạn muốn) ---
+inoremap <C-l> <Right>
+inoremap <C-e> <Esc>A
 
-" --- 2. Tìm kiếm (FZF) ---
-" Tìm file nhanh (F = Find)
-nnoremap <leader>f :Files<CR>
-" Tìm chữ trong toàn bộ project (G = Grep)
-nnoremap <leader>g :Rg<CR>
-" Danh sách các file đang mở (B = Buffers)
-nnoremap <leader>b :Buffers<CR>
+" --- Di chuyển cửa sổ Split (Đồng bộ Code và Terminal) ---
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
-" --- 3. Lưu & Thoát (W = Write, Q = Quit) ---
-nnoremap <leader>w :w<CR>
-nnoremap <leader>q :q<CR>
-" Thoát nhanh không lưu
-nnoremap <leader>Q :q!<CR>
+" --- Duyệt File & Buffer ---
+function! ToggleExplorer()
+    if exists(':NERDTreeToggle') | exec 'NERDTreeToggle' | else | exec 'Lexplore' | endif
+endfunction
+nnoremap <leader>e :call ToggleExplorer()<CR>
+nnoremap [b :bprevious<CR>
+nnoremap ]b :bnext<CR>
+nnoremap <leader>bd :bdelete<CR>
 
-" --- 4. Chỉnh sửa cực nhanh ---
-" Tắt Highlight sau khi search xong (NH = No Highlight)
-nnoremap <leader>nh :nohlsearch<CR>
-" Reload lại file config sau khi sửa
-nnoremap <leader>v :source $MYVIMRC<CR>
+" --- Quản lý Terminal ---
+if has('nvim')
+    nnoremap <leader>t :botright split +terminal | resize 10<CR>
+else
+    nnoremap <leader>t :botright terminal ++rows=10<CR>
+endif
 
-" --- 5. Đổi Theme nhanh (T = Theme) ---
-nnoremap <leader>t :colorscheme everforest<CR>:let g:airline_theme='everforest'<CR>:AirlineTheme everforest<CR>
-nnoremap <leader>T :colorscheme onedark<CR>:let g:airline_theme='onedark'<CR>:AirlineTheme onedark<CR>
+" --- Tiện ích hỗ trợ Code ---
+nnoremap <leader>i gg=G''
+vnoremap <Tab> >gv
+vnoremap <S-Tab> <gv
 
-"=============================================================================
-" PLUGIN-SPECIFIC SETTINGS
-"=============================================================================
-" Airline
-let g:airline_powerline_fonts = 1
-let g:airline_theme='onedark'
+" Nhảy nhanh đến từ bất kỳ đâu (EasyMotion)
+nmap s <Plug>(easymotion-s2)
 
-" GitGutter
-let g:gitgutter_sign_added = '+'
-let g:gitgutter_sign_modified = '~'
-let g:gitgutter_sign_removed = '-'
+" ============================================================================
+" 6. TỰ ĐỘNG HÓA
+" ============================================================================
+if has('nvim')
+    autocmd TermOpen * setlocal nonumber norelativenumber | startinsert
+else
+    autocmd TerminalOpen * setlocal nonumber norelativenumber | startinsert
+endif
 
-" ALE
-let g:ale_sign_error = '✗'
-let g:ale_sign_warning = '⚠'
-let g:ale_fix_on_save = 1
+" Tự động lưu file khi rời cửa sổ
+autocmd BufLeave,FocusLost * silent! wa
