@@ -2,28 +2,30 @@
 # STARSHIP.TOML - COMPACT 2-LINE CONFIG (FOR YOCTO/DOCKER)
 # =======================================================================
 
-# 1. CẤU HÌNH CHUNG (TỐI ƯU LIỀN MẠCH)
-# -----------------------------------------------------------------------
-add_newline = false # QUAN TRỌNG: Xóa dòng trống giữa các lệnh để tạo sự liên tục
+# 1. CẤU HÌNH CHUNG
+add_newline = false
 
-# Format 2 dòng: Dòng 1 chứa thông tin, Dòng 2 chỉ chứa dấu nhắc lệnh
-# Cách này giúp bạn có toàn bộ chiều ngang để gõ lệnh dài mà không bị vướng
+# format: Dòng 1 chứa thông tin bên trái, dùng $fill để đẩy $time sang phải.
 format = """
-$os$username$hostname$localip$directory$git_branch$git_status$c$rust$python$nodejs$package$memory_usage$cmd_duration
+$os$username$hostname$localip$directory$git_branch$git_status$c$rust$python$nodejs$package$memory_usage$cmd_duration$fill$time
 $character"""
 
 command_timeout = 800
 
 [line_break]
-disabled = true # Vô hiệu hóa ngắt dòng mặc định để dùng format tùy chỉnh bên trên
+disabled = true
 
 # 2. DẤU NHẮC LỆNH (CHARACTER)
 [character]
-success_symbol = "[❯](bold green) " # Dấu cách sau ❯ để gõ lệnh thoải mái
+success_symbol = "[❯](bold green) "
 error_symbol = "[❯](bold red) "
 vimcmd_symbol = "[❮](bold green) "
 
-# 3. HỆ ĐIỀU HÀNH & NGƯỜI DÙNG
+# 3. KHOẢNG TRỐNG (FILL - Đẩy nội dung sang phải)
+[fill]
+symbol = " " # Sử dụng khoảng trắng để đẩy time về cuối dòng
+
+# 4. HỆ ĐIỀU HÀNH & NGƯỜI DÙNG
 [os]
 disabled = false
 style = "bold white"
@@ -36,15 +38,15 @@ format = " [$user]($style) "
 ssh_only = true
 format = "@[$hostname](bold yellow) "
 
-# 4. THƯ MỤC (DIRECTORY - GỌN GÀNG)
+# 5. THƯ MỤC (DIRECTORY)
 [directory]
-truncation_length = 2 # Chỉ hiện 2 cấp thư mục cuối để không choán chỗ
+truncation_length = 2
 truncate_to_repo = true
 style = "bold cyan"
-format = "in [$path]($style)[$read_only]($read_only_style) "
+format = "[$path]($style)[$read_only]($read_only_style) "
 read_only = " 🔒"
 
-# 5. GIT - TRẠNG THÁI NÂNG CAO
+# 6. GIT
 [git_branch]
 symbol = " "
 style = "bold purple"
@@ -53,17 +55,8 @@ format = "on [$symbol$branch]($style) "
 [git_status]
 style = "bold red"
 format = '([\[$all_status$ahead_behind\]]($style) )'
-conflicted = "="
-ahead = "⇡${count}"
-behind = "⇣${count}"
-diverged = "⇕"
-untracked = "?"
-modified = "!"
-staged = "+"
-renamed = "»"
-deleted = "✘"
 
-# 6. NGÔN NGỮ LẬP TRÌNH (TỐI ƯU CHO EMBEDDED)
+# 7. NGÔN NGỮ LẬP TRÌNH
 [c]
 symbol = " "
 style = "bold blue"
@@ -83,7 +76,7 @@ symbol = "󰎙 "
 style = "bold green"
 format = "via [$symbol($version)]($style) "
 
-# 7. GIÁM SÁT HỆ THỐNG
+# 8. GIÁM SÁT HỆ THỐNG
 [memory_usage]
 disabled = false
 threshold = 75
@@ -102,3 +95,10 @@ discharging_symbol = "󰂃 "
 [[battery.display]]
 threshold = 15
 style = "bold red"
+
+# 9. THỜI GIAN (TIME - Right Aligned)
+[time]
+disabled = false
+time_format = "%T"
+style = "bold dimmed white"
+format = "[$time]($style)"
