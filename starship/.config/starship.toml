@@ -1,106 +1,100 @@
 # =======================================================================
-# STARSHIP.TOML - PROFESSIONAL & MINIMAL CONFIGURATION
-# Focus: Speed, Clarity, and Git/Dev Status Highlighting.
+# STARSHIP.TOML - ULTIMATE EMBEDDED & SYSADMIN CONFIG
 # =======================================================================
 
-# 1. Cấu hình Chung & Tối ưu hóa Hiệu suất
+# 1. CẤU HÌNH CHUNG
 # -----------------------------------------------------------------------
-add_newline = true # QUAN TRỌNG: Thêm dòng mới giúp tách Prompt khỏi kết quả lệnh, tăng khả năng đọc.
-
-# Thiết lập FORMAT mới: Ngắt dòng sau các module thông tin (user/dir/git)
+add_newline = true
+# Format 2 dòng: Thông tin ở trên, dấu gõ lệnh ở dưới cho thoáng
 format = """
-$all$line_break$character
-"""
+$os$username$hostname$localip$directory$git_branch$git_status$c$rust$python$nodejs$package$memory_usage$cmd_duration
+$line_break$character"""
 
-# Tăng timeout để tránh các công cụ chậm (như Git hoặc một số Node projects) làm chậm prompt
-command_timeout = 700
+command_timeout = 800
 
-# 2. Cấu hình Dấu nhắc lệnh (Character) - Đơn giản và Mạnh mẽ
-# -----------------------------------------------------------------------
+# 2. DẤU NHẮC LỆNH (CHARACTER)
 [character]
-# Dùng ký hiệu tối giản cho prompt dòng thứ hai
 success_symbol = "[❯](bold green)"
 error_symbol = "[❯](bold red)"
-# Không thêm khoảng trống, để prompt sát lề trái
+vimcmd_symbol = "[❮](bold green)" # Hỗ trợ cực tốt nếu bạn dùng Vi-mode
 
-# 3. Thông tin Người dùng & Hệ thống - CHỈ HIỆN KHI CẦN (SSH/ROOT)
-# -----------------------------------------------------------------------
+# 3. HỆ ĐIỀU HÀNH & NGƯỜI DÙNG (CHỈ HIỆN KHI CẦN)
+[os]
+disabled = false # Hiện icon Arch/EndeavourOS cho ngầu
+style = "bold white"
+
 [username]
-show_always = false # Rất ít khi cần hiện user/host trên máy local
-format = "[$user]($style)@"
-style_user = "bold white"
+show_always = false
+format = " [$user]($style) "
 
 [hostname]
-ssh_only = true # CHỈ hiển thị khi SSH vào máy khác
-format = "[$hostname](bold yellow) "
-style = "bold yellow"
+ssh_only = true
+format = "@[$hostname](bold yellow) "
 
-# 4. Thư mục (Directory) - Rõ ràng
-# -----------------------------------------------------------------------
+# 4. THƯ MỤC (DIRECTORY)
 [directory]
-# Chỉ hiện tên thư mục hiện tại (ví dụ: 'dotfiles'), hoặc 2 cấp nếu đang ở Home (ví dụ: '~/dotfiles')
-# Điều này giúp prompt ngắn gọn tối đa.
-truncation_length = 1
-truncate_to_repo = true # Nếu đang trong Git Repo, chỉ hiện tên Repo
+truncation_length = 3
+truncate_to_repo = true
 style = "bold cyan"
-format = "[$path]($style)[$read_only]($read_only_style) "
+format = "in [$path]($style)[$read_only]($read_only_style) "
+read_only = " 🔒"
 
-# 5. Git & Version Control - ĐƯA LÊN HÀNG ĐẦU
-# -----------------------------------------------------------------------
-# Gán style và format cho Git Status để nó nổi bật nhất
+# 5. GIT - TRẠNG THÁI NÂNG CAO
 [git_branch]
 symbol = " "
-style = "bold green"
+style = "bold purple"
 format = "on [$symbol$branch]($style) "
 
 [git_status]
-# SỬ DỤNG MÀU SẮC ĐỂ PHÂN BIỆT RÕ RÀNG
-style = "red bold" # Đặt màu đỏ khi có thay đổi chưa commit
-format = '([$all_status$ahead_behind]($style))'
-conflicted = "⇎" # Biểu tượng Conflicts
-untracked = "❓"
-modified = "✍️"
-stashed = "📦"
-deleted = "🗑️"
+style = "bold red"
+format = '([\[$all_status$ahead_behind\]]($style) )'
+# Các ký hiệu trực quan hơn cho dân Pro
+conflicted = "="
 ahead = "⇡${count}"
 behind = "⇣${count}"
 diverged = "⇕"
+untracked = "?"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
 
-# 6. Môi trường Lập trình (Dev Environments) - Gọn gàng
-# -----------------------------------------------------------------------
-# Sử dụng 'bold' nhẹ nhàng hơn cho các môi trường, không làm lu mờ Git
-[rust]
-symbol = "🦀 "
-style = "bold yellow"
-format = "[$symbol($version)]($style) "
-
-[nodejs]
-symbol = "⬢ "
-style = "bold green"
-format = "[$symbol($version)]($style) "
-
-[python]
-symbol = "🐍 "
-style = "bold green"
-format = "[$symbol$version]($style) " # Gộp version vào symbol
-
+# 6. NGÔN NGỮ LẬP TRÌNH (TỐI ƯU CHO EMBEDDED)
 [c]
 symbol = " "
 style = "bold blue"
-disabled = false
-format = "[$symbol]($style) " # Chỉ hiển thị biểu tượng, không hiển thị version (ít quan trọng hơn trong C/C++)
+format = "via [$symbol($version)]($style) " # Hiện version rất quan trọng khi làm việc với nhiều toolchain
 
-# 7. Hiển thị Thời gian & Kết thúc
-# -----------------------------------------------------------------------
-[time]
-disabled = true # Tắt hẳn time
+[rust]
+symbol = "🦀 "
+style = "bold orange"
+format = "via [$symbol($version)]($style) "
+
+[python]
+symbol = "🐍 "
+format = "via [$symbol($version)]($style) "
+
+[nodejs]
+symbol = "󰎙 "
+style = "bold green"
+format = "via [$symbol($version)]($style) "
+
+# 7. GIÁM SÁT HỆ THỐNG (PRO FEATURE)
+[memory_usage]
+disabled = false # Hiển thị khi RAM dùng quá 75%
+threshold = 75
+symbol = "󰍛 "
+style = "bold dimmed white"
+format = "mem $symbol[$ram]($style) "
 
 [cmd_duration]
-# Tăng ngưỡng: Chỉ hiện nếu lệnh mất hơn 500ms (giảm nhiễu)
-min_time = 500
-format = " took [$duration](bold yellow)"
-disabled = false
+min_time = 1000 # Chỉ hiện nếu lệnh chạy lâu hơn 1 giây
+format = "took [$duration](bold yellow) "
 
-# Dòng ngắt (phải là disabled = false nếu muốn thêm dòng mới)
-[line_break]
-disabled = false
+[battery]
+full_symbol = "󰁹 "
+charging_symbol = "󰂄 "
+discharging_symbol = "󰂃 "
+[[battery.display]]
+threshold = 15 # Chỉ hiện cảnh báo khi pin dưới 15%
+style = "bold red"
