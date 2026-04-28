@@ -43,8 +43,16 @@ set noswapfile undofile         " Lưu lịch sử undo ngay cả khi đóng fil
 set encoding=utf-8
 set hidden
 set hlsearch incsearch showmatch
-set clipboard=unnamedplus       " Đồng bộ clipboard hệ thống
+if has('clipboard')
+    " Nếu có hỗ trợ, tự động dùng clipboard hệ thống cho mọi thao tác y, d, p
+    set clipboard=unnamedplus
+endif
 
+" Fix cho một số môi trường Terminal không nhận diện được DISPLAY
+if !empty($DISPLAY) || !empty($WAYLAND_DISPLAY)
+    " Đảm bảo xterm-clipboard được kích hoạt nếu có môi trường đồ họa
+    set term=xterm-256color
+endif
 " ============================================================================
 " 4. CẤU HÌNH TÍNH NĂNG THÔNG MINH
 " ============================================================================
