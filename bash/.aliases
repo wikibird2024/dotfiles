@@ -4,6 +4,11 @@ alias ll='ls -alFh --color=auto'
 alias la='ls -A'
 alias l='ls -CF'
 
+# ============================ 🚀 GREYSTONE WORKING 🚀 ============================
+alias run-avr='mono ~/BTranHao/run-avrdudess/avrdudess.exe &'
+
+
+
 # Config File Editors
 alias alias.e='nvim ~/.aliases'
 alias func.e='nvim ~/.bash_functions'

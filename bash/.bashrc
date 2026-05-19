@@ -105,3 +105,10 @@ fi
 if command -v starship >/dev/null 2>&1; then
     eval "$(starship init bash)"
 fi
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+
+# 11 AI google studio key
+export GEMINI_API_KEY="AIzaSyCVy9iPqWSvK-UqhLd372yzKQohwVHrY6w"
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

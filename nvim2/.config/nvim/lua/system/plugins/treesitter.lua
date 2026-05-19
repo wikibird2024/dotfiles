@@ -8,6 +8,7 @@ return {
 	},
 	config = function()
 		require("nvim-treesitter.configs").setup({
+            prefer_git = true,
 			-- Danh sách ngôn ngữ tự động cài đặt
 			ensure_installed = {
 				"c",
