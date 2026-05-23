@@ -1,0 +1,84 @@
+! ==============================================================================
+! Regolith 3 Xresources Configuration
+! Mimicking standard i3wm hotkey behavior
+! ==============================================================================
+
+! --- Modifier Key ---
+! Use Mod4 (Super/Windows key) as the primary modifier
+#define mod Mod4
+#define alt Mod1
+
+! --- Terminal ---
+! i3 default: Mod + Return to open terminal
+regolith.keybind.program.terminal = mod+Return
+
+! --- Launcher / App Menu ---
+! i3 default: Mod + d to open launcher (rofi / dmenu)
+regolith.keybind.program.launcher = mod+d
+
+! --- Window Management ---
+! i3 default: Mod + Shift + q to kill/close focused window
+regolith.keybind.window.close = mod+Shift+q
+
+! --- Navigation (Focus) ---
+! i3 default: Mod + hjkl or Arrow keys to change focus
+regolith.keybind.navigation.left = mod+h
+regolith.keybind.navigation.down = mod+j
+regolith.keybind.navigation.up = mod+k
+regolith.keybind.navigation.right = mod+l
+
+regolith.keybind.navigation.left.alt = mod+Left
+regolith.keybind.navigation.down.alt = mod+Down
+regolith.keybind.navigation.up.alt = mod+Up
+regolith.keybind.navigation.right.alt = mod+Right
+
+! --- Window Movement ---
+! i3 default: Mod + Shift + hjkl or Arrow keys to move focused window
+regolith.keybind.move.left = mod+Shift+h
+regolith.keybind.move.down = mod+Shift+j
+regolith.keybind.move.up = mod+Shift+k
+regolith.keybind.move.right = mod+Shift+l
+
+regolith.keybind.move.left.alt = mod+Shift+Left
+regolith.keybind.move.down.alt = mod+Shift+Down
+regolith.keybind.move.up.alt = mod+Shift+Up
+regolith.keybind.move.right.alt = mod+Shift+Right
+
+! --- Layouts & Tiling ---
+! i3 default: Mod + e for toggle split direction / toggle layout
+regolith.keybind.layout.toggle = mod+e
+regolith.keybind.layout.split.horizontal = mod+g
+regolith.keybind.layout.split.vertical = mod+v
+regolith.keybind.layout.fullscreen = mod+f
+regolith.keybind.layout.floating.toggle = mod+Shift+space
+
+! --- Workspaces ---
+! i3 default: Mod + [1-10] to switch to workspace
+regolith.keybind.workspace.1 = mod+1
+regolith.keybind.workspace.2 = mod+2
+regolith.keybind.workspace.3 = mod+3
+regolith.keybind.workspace.4 = mod+4
+regolith.keybind.workspace.5 = mod+5
+regolith.keybind.workspace.6 = mod+6
+regolith.keybind.workspace.7 = mod+7
+regolith.keybind.workspace.8 = mod+8
+regolith.keybind.workspace.9 = mod+9
+regolith.keybind.workspace.10 = mod+0
+
+! --- Move to Workspaces ---
+! i3 default: Mod + Shift + [1-10] to move container to workspace
+regolith.keybind.workspace.move.1 = mod+Shift+1
+regolith.keybind.workspace.move.2 = mod+Shift+2
+regolith.keybind.workspace.move.3 = mod+Shift+3
+regolith.keybind.workspace.move.4 = mod+Shift+4
+regolith.keybind.workspace.move.5 = mod+Shift+5
+regolith.keybind.workspace.move.6 = mod+Shift+6
+regolith.keybind.workspace.move.7 = mod+Shift+7
+regolith.keybind.workspace.move.8 = mod+Shift+8
+regolith.keybind.workspace.move.9 = mod+Shift+9
+regolith.keybind.workspace.move.10 = mod+Shift+0
+
+! --- Session Control ---
+! i3 default: Mod + Shift + e to exit i3 / log out
+regolith.keybind.session.logout = mod+Shift+e
+regolith.keybind.session.lock = mod+Escape
