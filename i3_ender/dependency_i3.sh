@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # dependency_i3.sh - Install dependencies for the i3_ender configuration
-# Designed for Arch Linux / EndeavourOS
+# Designed for Ubuntu/Debian and Arch Linux / EndeavourOS
 
 set -euo pipefail
 
@@ -23,72 +23,108 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $*" >&2
 }
 
-# Check if running on an Arch-based system
-if [ ! -f /etc/arch-release ]; then
-    log_error "This script is designed for Arch Linux or Arch-based distributions (like EndeavourOS)."
-    log_warn "If you are on Debian/Ubuntu or Fedora, please install the equivalent packages manually."
+# Detect OS
+OS="unknown"
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    OS=$ID
+    if [ "${ID_LIKE:-}" = "debian" ] || [ "$ID" = "ubuntu" ] || [ "$ID" = "debian" ]; then
+        OS="debian"
+    elif [ "${ID_LIKE:-}" = "arch" ] || [ "$ID" = "arch" ] || [ "$ID" = "endeavouros" ]; then
+        OS="arch"
+    fi
+fi
+
+if [ "$OS" = "unknown" ]; then
+    log_error "Unsupported operating system."
+    log_warn "This script supports Ubuntu/Debian and Arch Linux."
     exit 1
 fi
 
-# List of official packages to install
-PACKAGES=(
-    # Core Window Manager & Bar
-    i3-wm
-    i3blocks
+if [ "$OS" = "debian" ]; then
+    log_info "Detected Ubuntu/Debian-based system."
     
-    # Terminals
-    alacritty
-    kitty
-    xfce4-terminal
-    
-    # Application Launcher & Menus
-    rofi
-    yad
-    
-    # Compositor, Wallpaper & Autotiling
-    picom
-    feh
-    autotiling
-    
-    # Screen Locker & Power Management
-    i3lock
-    xss-lock
-    scrot
-    imagemagick
-    power-profiles-daemon
-    
-    # Audio & Media Control
-    pulseaudio-utils
-    alsa-utils
-    pavucontrol
-    playerctl
-    
-    # Brightness Control
-    brightnessctl
-    
-    # File Manager, Browser & System Tray
-    thunar
-    firefox
-    network-manager-applet
-    networkmanager
-    
-    # Fonts (Crucial for Icons and UI)
-    ttf-font-awesome
-    noto-fonts
-    
-    # Script Dependencies & Utilities
-    dex
-    polkit-gnome
-    lm_sensors
-    sysstat
-    jq
-    curl
-    perl
-    python
-)
+    # List of Debian/Ubuntu packages
+    PACKAGES=(
+        # Core Window Manager & Bar
+        i3-wm
+        i3blocks
+        
+        # Terminals
+        alacritty
+        kitty
+        xfce4-terminal
+        
+        # Application Launcher & Menus
+        rofi
+        yad
+        
+        # Compositor, Wallpaper & Autotiling
+        picom
+        feh
+        
+        # Screen Locker & Power Management
+        i3lock
+        xss-lock
+        scrot
+        imagemagick
+        power-profiles-daemon
+        
+        # Audio & Media Control
+        pulseaudio-utils
+        alsa-utils
+        pavucontrol
+        playerctl
+        
+        # Brightness Control
+        brightnessctl
+        
+        # File Manager, Browser & System Tray
+        thunar
+        firefox
+        network-manager-gnome
+        network-manager
+        
+        # Fonts (Crucial for Icons and UI)
+        fonts-font-awesome
+        fonts-noto
+        
+        # Script Dependencies & Utilities
+        dex
+        policykit-1-gnome
+        lm-sensors
+        sysstat
+        jq
+        curl
+        perl
+        python3
+        python3-pip
+    )
 
-log_info "Updating package databases and installing dependencies..."
-sudo pacman -Syu --needed "${PACKAGES[@]}"
+    log_info "Updating package databases and installing dependencies..."
+    sudo apt-get update
+    sudo apt-get install -y "${PACKAGES[@]}"
+
+    # Install autotiling via pip if not available in apt
+    if ! command -v autotiling >/dev/null 2>&1; then
+        log_info "Installing autotiling via pip3..."
+        sudo pip3 install --break-system-packages autotiling || sudo pip3 install autotiling || true
+    fi
+
+elif [ "$OS" = "arch" ]; then
+    log_info "Detected Arch-based system."
+    
+    PACKAGES=(
+        i3-wm i3blocks alacritty kitty xfce4-terminal rofi yad picom feh autotiling
+        i3lock xss-lock scrot imagemagick power-profiles-daemon pulseaudio-utils
+        alsa-utils pavucontrol playerctl brightnessctl thunar firefox
+        network-manager-applet networkmanager ttf-font-awesome noto-fonts dex
+        polkit-gnome lm_sensors sysstat jq curl perl python
+    )
+
+    log_info "Updating package databases and installing dependencies..."
+    sudo pacman -Syu --needed "${PACKAGES[@]}"
+fi
 
 log_info "Enabling and starting systemd services..."
 
