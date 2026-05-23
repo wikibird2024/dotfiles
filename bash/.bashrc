@@ -105,3 +105,6 @@ fi
 if command -v starship >/dev/null 2>&1; then
     eval "$(starship init bash)"
 fi
+
+# gemini key
+export GEMINI_API_KEY="AIzaSyCVy9iPqWSvK-UqhLd372yzKQohwVHrY6w"
