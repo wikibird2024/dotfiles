@@ -189,10 +189,10 @@ bindcode $mod+Shift+90   move container to workspace  $ws10
 ######################################
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id alacritty
+bindsym $mod+Return exec --no-startup-id kitty
 
 # start a  sub-terminal
-bindsym Mod1+Control+t exec --no-startup-id kitty
+bindsym Mod1+Control+t exec --no-startup-id  alacritty
 
 # kill focused window
 bindsym $mod+q kill

@@ -107,4 +107,6 @@ if command -v starship >/dev/null 2>&1; then
 fi
 
 # gemini key
-export GEMINI_API_KEY="AIzaSyCVy9iPqWSvK-UqhLd372yzKQohwVHrY6w"
+# export GEMINI_API_KEY="AIzaSyBahXcj82WhXXd9rWHaagC_3w3_kkfrs0o"
+export GEMINI_MODEL="gemini-2.5-flash"
+eval "$(navi widget bash)"

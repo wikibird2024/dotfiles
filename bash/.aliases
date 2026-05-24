@@ -4,6 +4,7 @@ alias ll='ls -alFh --color=auto'
 alias la='ls -A'
 alias l='ls -CF'
 
+alias agemini='aider --model gemini/gemini-2.5-flash'
 # Config File Editors
 alias alias.e='nvim ~/.aliases'
 alias func.e='nvim ~/.bash_functions'
@@ -19,7 +20,7 @@ alias mac-addr='ethtool -P wlan0'
 alias mac-status='ip link show wlan0'
 
 alias c='clear'
-alias s-bash='source ~/.bashrc'
+alias s-bashrc='source ~/.bashrc'
 alias s-zsh='source ~/.zshrc'
 
 # Disk burning
