@@ -6,6 +6,7 @@ alias l='ls -CF'
 
 # ============================ 🚀 GREYSTONE WORKING 🚀 ============================
 alias run-avr='mono ~/BTranHao/run-avrdudess/avrdudess.exe &'
+
 # Aider Shortcuts
 alias agemini='aider --model gemini/gemini-3.5-flash'
 alias adeep='aider --model deepseek/deepseek-chat'
@@ -13,6 +14,8 @@ alias agrog='aider --model groq/llama-4-scout'
 alias datasheet='cd ~/Documents/Datasheets/'
 alias schematic='cd ~/Documents/Schematics/'
 alias cat='batcat --paging=never'
+
+alias agemini='aider --model gemini/gemini-2.5-flash'
 
 # Config File Editors
 alias alias.e='nvim ~/.aliases'
@@ -29,7 +32,7 @@ alias mac-addr='ethtool -P wlan0'
 alias mac-status='ip link show wlan0'
 
 alias c='clear'
-alias s-bash='source ~/.bashrc'
+alias s-bashrc='source ~/.bashrc'
 alias s-zsh='source ~/.zshrc'
 
 # Disk burning
@@ -284,3 +287,7 @@ alias now='date "+%Y-%m-%d %H:%M:%S"'
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
+
+
+# ============================ 🛡️ AI agent ============================
+alias gemini='npx @google/gemini-cli'

@@ -8,8 +8,12 @@ return {
 	},
 	config = function()
 		require("nvim-treesitter.configs").setup({
+<<<<<<< HEAD
             prefer_git = true,
 			-- Danh sách ngôn ngữ tự động cài đặt
+=======
+			-- List of languages auto install
+>>>>>>> origin/main
 			ensure_installed = {
 				"c",
 				"cpp",
@@ -28,7 +32,7 @@ return {
 				"bibtex",
 			},
 
-			-- Tự động cài đặt parser nếu chưa có
+			-- Auto install parse
 			auto_install = true,
 			sync_install = false,
 
