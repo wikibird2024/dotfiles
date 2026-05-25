@@ -110,7 +110,7 @@ fi
 
 
 # 11 AI google studio key
-# export GEMINI_API_KEY="AIzaSyCVy9iPqWSvK-UqhLd372yzKQohwVHrY6w"
+export GEMINI_API_KEY="AIzaSyCVy9iPqWSvK-UqhLd372yzKQohwVHrY6w"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
