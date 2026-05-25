@@ -106,7 +106,10 @@ if command -v starship >/dev/null 2>&1; then
     eval "$(starship init bash)"
 fi
 
-# gemini key
-# export GEMINI_API_KEY="REMOVED_API_KEY"
-export GEMINI_MODEL="gemini-2.5-flash"
+# 12 NAVI
 eval "$(navi widget bash)"
+
+# gemini key
+export GEMINI_API_KEY="REMOVED_API_KEY"
+
+# export GEMINI_MODEL="gemini-2.5-flash"

@@ -5,6 +5,9 @@ alias la='ls -A'
 alias l='ls -CF'
 
 alias agemini='aider --model gemini/gemini-2.5-flash'
+alias aidergemini='aider --model gemini/gemini-2.5-flash '
+alias local-aider='aider --model ollama_chat/qwen2.5-coder:7b'
+
 # Config File Editors
 alias alias.e='nvim ~/.aliases'
 alias func.e='nvim ~/.bash_functions'
