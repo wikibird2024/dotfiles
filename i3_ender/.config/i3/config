@@ -33,7 +33,10 @@ set $ws9 "9"
 set $ws10 "10"
 
 # Bật bộ gõ tiếng Việt Fcitx5
-exec --no-startup-id fcitx5 -d
+
+# exec --no-startup-id fcitx5 -d
+
+exec --no-startup-id ibus-daemon -drx
 # -----------------------------------------------
 
 # Font for window titles. Will also be used by the bar unless a different font
@@ -189,10 +192,10 @@ bindcode $mod+Shift+90   move container to workspace  $ws10
 ######################################
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id alacritty
+bindsym $mod+Return exec --no-startup-id kitty
 
 # start a  sub-terminal
-bindsym Mod1+Control+t exec --no-startup-id kitty
+bindsym Mod1+Control+t exec --no-startup-id alacritty
 
 # kill focused window
 bindsym $mod+q kill
