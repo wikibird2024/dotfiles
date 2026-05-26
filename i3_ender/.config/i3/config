@@ -26,11 +26,11 @@ set $ws2 "2:"
 set $ws3 "3:"
 set $ws4 "4:"
 set $ws5 "5:"
-set $ws6 "6"
-set $ws7 "7"
-set $ws8 "8"
-set $ws9 "9"
-set $ws10 "10"
+set $ws6  "6:"
+set $ws7  "7:⚙"
+set $ws9 "9:📻"
+set $ws8  "8:"
+set $ws10 "10:►"
 
 # Bật bộ gõ tiếng Việt Fcitx5
 
@@ -74,8 +74,8 @@ new_window pixel 1
 # hide_edge_borders both
 
 # Set inner/outer gaps
-gaps inner 3
-gaps outer 2
+gaps inner 4
+gaps outer 3
 
 # show window title bars (not officially supported with i3gaps)
 #default_border normal
@@ -168,24 +168,16 @@ bindcode $mod+Shift+90   move container to workspace  $ws10
 # Pressing left will shrink the window's width.
 # Pressing right will grow the window's width.
 # Pressing up will shrink the window's height.
-# Pressing down will grow the window's height.
-#         bindsym h resize shrink width 10 px or 10 ppt
-#         bindsym j resize grow height 10 px or 10 ppt
-#         bindsym k resize shrink height 10 px or 10 ppt
-#         bindsym l resize grow width 10 px or 10 ppt
-
-# same bindings, but for the arrow keys
-#         bindsym Left resize shrink width 10 px or 10 ppt
-#         bindsym Down resize grow height 10 px or 10 ppt
+# ppt
 #         bindsym Up resize shrink height 10 px or 10 ppt
 #         bindsym Right resize grow width 10 px or 10 ppt
-
-# back to normal: Enter or Escape
+#
+# # back to normal: Enter or Escape
 #         bindsym Return mode "default"
 #         bindsym Escape mode "default"
-#}
-
-#bindsym $mod+r mode "resize"
+# #}
+#
+# bindsym $mod+r mode "resize"
 
 ######################################
 # keybindings for different actions: #
@@ -205,7 +197,7 @@ bindsym $mod+Shift+e exec --no-startup-id ~/.config/i3/scripts/powermenu
 
 # Lock the system
 # lock with a picture:
-#bindsym $mod+l exec --no-startup-id i3lock -i  ~/.config/i3/i3-lock-screen.png -p default|win -t
+# bindsym $mod+l exec --no-startup-id i3lock -i  ~/.config/i3/i3-lock-screen.png -p default|win -t
 
 # lock by blurring the screen:
 #bindsym $mod+l exec --no-startup-id ~/.config/i3/scripts/blur-lock
@@ -268,10 +260,10 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 # split in horizontal orientation
-bindsym $mod+| split h
+# bindsym $mod+Shift+ split h
 
 # split in vertical orientation
-bindsym $mod+- split v
+# bindsym $mod+Sift+ split v
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
@@ -354,7 +346,7 @@ assign [class="kitty"] $ws1
 assign [class="(?i)firefox"] $ws2
 assign [class="Thunar"] $ws3
 assign [class="thunderbird"] $ws4
-assign [class="TelegramDesktop"] $ws5
+assign [class="TelegramDesktop|(?i)teams"] $ws5
 
 # automatic set focus new window if it opens on another workspace than the current:
 for_window [class="^(Xfce4-terminal|kitty)$"] focus
@@ -451,7 +443,8 @@ exec --no-startup-id ~/.screenlayout/monitor.sh
 
 # set wallpaper
 # exec --no-startup-id sleep 2 && nitrogen --restore
-exec --no-startup-id sleep 1 && feh --bg-fill ~/Pictures/wallpaper/road_wallpaper.jpg
+# exec --no-startup-id sleep 1 && feh --bg-fill ~/Pictures/wallpaper/road_wallpaper.jpg
+ exec --no-startup-id sleep 1 && feh --bg-fill ~/Pictures/wallpaper/Fuwafuwa_nanbatto_san_by_amaral-dark.png
 
 # set powersavings for display:
 exec --no-startup-id xset s 480 dpms 600 600 600
