@@ -31,8 +31,9 @@ disabled = false
 style = "bold white"
 
 [username]
-show_always = false
+show_always = true
 format = " [$user]($style) "
+disabled = false
 
 [hostname]
 ssh_only = true

@@ -107,7 +107,15 @@ if command -v starship >/dev/null 2>&1; then
 fi
 
 # 12 NAVI
+
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
+
 eval "$(navi widget bash)"
+
+# 11 AI google studio key
+export GEMINI_API_KEY="AIzaSyCVy9iPqWSvK-UqhLd372yzKQohwVHrY6w"
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 # gemini key
 export GEMINI_API_KEY="AIzaSyCeMSQlyRH2BvgiuqPTnHj29h0ZUyEE6qU"

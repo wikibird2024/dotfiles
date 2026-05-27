@@ -4,15 +4,25 @@ alias ll='ls -alFh --color=auto'
 alias la='ls -A'
 alias l='ls -CF'
 
+# ============================ 🚀 GREYSTONE WORKING 🚀 ============================
+alias run-avr='mono ~/BTranHao/run-avrdudess/avrdudess.exe &'
+
+# Aider Shortcuts
+alias agemini='aider --model gemini/gemini-3.5-flash'
+alias adeep='aider --model deepseek/deepseek-chat'
+alias agrog='aider --model groq/llama-4-scout'
+alias datasheet='cd ~/Documents/Datasheets/'
+alias schematic='cd ~/Documents/Schematics/'
+alias cat='batcat --paging=never'
+
 alias agemini='aider --model gemini/gemini-2.5-flash'
-alias aidergemini='aider --model gemini/gemini-2.5-flash '
 alias local-aider='aider --model ollama_chat/qwen2.5-coder:7b'
 
 # Config File Editors
 alias alias.e='nvim ~/.aliases'
 alias func.e='nvim ~/.bash_functions'
-alias bashrc.e='nvim ~/.bashrc'
-alias zshrc.e='nvim ~/.zshrc'
+alias bash.e='nvim ~/.bashrc'
+alias zsh.e='nvim ~/.zshrc'
 
 # vpn connect alias
 alias vpn-up='sudo wg-quick up wg0 || (sudo wg-quick down wg0)'
@@ -50,7 +60,7 @@ alias cpic='cd ~/Pictures/'
 # Project-Specific
 alias zplugin.='cd ~/dotfiles/nvim/.config/nvim/lua/user/plugins/'
 # ================================================= ARCH LINUX  ==============
-alias pminstall='sudo pacman -S'
+
 
 # ============================ 🔍 Find & Search for FZF and  FD ============================
 alias fd='fdfind'  # Ubuntu-based distros
@@ -61,14 +71,14 @@ alias listfonts="fc-list : family style | awk -F: '{print \$2}' | sed 's/^[[:spa
 
 # ============================ 🖥️ Apps & Scripts ============================
 alias ztm='zathura main.pdf'
-alias zt='zathura'
+alias zth='zathura'
 alias xe='latexmk -xelatex main.tex'
 alias pvc='latexmk -pvc main.tex'
 alias cl='./clean.sh'
 alias b='./build.sh'
 alias omt='nvim main.tex'
 alias qute='qutebrowser'
-alias pdf='xreader'
+alias pdf='zathura'
 alias slide='pdfpc'
 alias pic='feh'
 
