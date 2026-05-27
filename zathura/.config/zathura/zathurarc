@@ -2,7 +2,7 @@
 # Đồng bộ vùng chọn với clipboard hệ thống (để Ctrl+V được luôn)
 set selection-clipboard clipboard
 
-# --- Keybindings bổ sung (Những cái mặc định chưa có hoặc chưa tối ưu) ---
+# --- Keybindings  ---
 
 # Cuộn nửa trang (giống Vim, mặc định Zathura không có bind này)
 map <C-d> scroll half-down
@@ -10,6 +10,7 @@ map <C-u> scroll half-up
 
 # Phóng to/Thu nhỏ bằng phím z/x (tiện hơn phím +/- mặc định)
 map z zoom in
+map Z zoom out
 map x zoom out
 
 # Reload config nhanh (để mỗi khi sửa file này, nhấn Ctrl+r là nhận luôn)
@@ -17,11 +18,12 @@ map <C-r> source
 
 # Copy thủ công (phòng trường hợp quét chuột không tự nhận)
 map y copy-selection
+
 # -----------------------------------------------------------------------------
-# PHÍM TẮT MẶC ĐỊNH (DEFAULT KEYBINDINGS REFERENCE)
+# (DEFAULT KEYBINDINGS REFERENCE)
 # -----------------------------------------------------------------------------
 
-# --- Điều hướng (Navigation) ---
+# --- Navigation ---
 # j, k            : Cuộn xuống / lên
 # h, l            : Cuộn trái / phải
 # Space / S-Space : Cuộn xuống / lên một trang màn hình

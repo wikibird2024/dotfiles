@@ -8,6 +8,7 @@ return {
 	},
 	config = function()
 		require("nvim-treesitter.configs").setup({
+			prefer_git = true,
 			-- List of languages auto install
 			ensure_installed = {
 				"c",
@@ -23,7 +24,7 @@ return {
 				"markdown_inline",
 				"bash",
 				"json",
-				"latex",
+				-- "latex",
 				"bibtex",
 			},
 
