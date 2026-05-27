@@ -282,3 +282,4 @@ alias mv='mv -i'
 
 # ============================ 🛡️ AI agent ============================
 alias gemini='npx @google/gemini-cli'
+alias serial-connect='ls /dev/tty* | fzf | xargs -I {} tio {}'
