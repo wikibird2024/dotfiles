@@ -28,15 +28,16 @@ set $ws4 "4:"
 set $ws5 "5:"
 set $ws6  "6:"
 set $ws7  "7:⚙"
-set $ws9 "9:📻"
 set $ws8  "8:"
+set $ws9 "9:📻"
 set $ws10 "10:►"
 
-# Bật bộ gõ tiếng Việt Fcitx5
-
+# Turn on and use citx5
 # exec --no-startup-id fcitx5 -d
 
+# Turn on using ibus-daemon
 exec --no-startup-id ibus-daemon -drx
+
 # -----------------------------------------------
 
 # Font for window titles. Will also be used by the bar unless a different font
@@ -168,16 +169,6 @@ bindcode $mod+Shift+90   move container to workspace  $ws10
 # Pressing left will shrink the window's width.
 # Pressing right will grow the window's width.
 # Pressing up will shrink the window's height.
-# ppt
-#         bindsym Up resize shrink height 10 px or 10 ppt
-#         bindsym Right resize grow width 10 px or 10 ppt
-#
-# # back to normal: Enter or Escape
-#         bindsym Return mode "default"
-#         bindsym Escape mode "default"
-# #}
-#
-# bindsym $mod+r mode "resize"
 
 # Define the resize mode block
 mode "resize" {
@@ -223,8 +214,10 @@ bindsym $mod+Shift+e exec --no-startup-id ~/.config/i3/scripts/powermenu
 bindsym Control+Mod1+l exec --no-startup-id ~/.config/i3/scripts/blur-lock
 # lock in case after sleep
 exec --no-startup-id xss-lock -l ~/.config/i3/scripts/blur-lock
-# Thiet lap Caps Lock thanh Escape
+
+# Set caps as Escape
 exec --no-startup-id setxkbmap -option 'caps:escape'
+
 # reload the configuration file
 bindsym $mod+Shift+c reload
 
@@ -233,6 +226,7 @@ bindsym $mod+Shift+r restart
 
 # keybinding in fancy rofi (automated):
 bindsym F1 exec --no-startup-id ~/.config/i3/scripts/keyhint-2
+
 # alternative
 # keybinding list in editor:
 # bindsym $mod+F1 exec --no-startup-id xed ~/.config/i3/keybindings
@@ -338,10 +332,17 @@ bindsym $mod+p exec --no-startup-id ~/.config/i3/scripts/audio-device-switch
 ## App shortcuts
 bindsym $mod+b exec --no-startup-id /usr/bin/firefox
 bindsym $mod+e exec --no-startup-id /usr/bin/thunar
-bindsym Print exec --no-startup-id scrot ~/%Y-%m-%d-%T-screenshot.png && notify-send "Screenshot saved to ~/$(date +"%Y-%m-%d-%T")-screenshot.png"
 
-# Power Profiles menu switcher (rofi)
+# Launch Flameshot GUI for region selection, saving, or copying to clipboard
+exec_always --no-startup-id flameshot
+
+bindsym Print exec --no-startup-id flameshot gui
+
+# bindsym Print exec --no-startup-id scrot ~/%Y-%m-%d-%T-screenshot.png && notify-send "Screenshot saved to ~/$(date +"%Y-%m-%d-%T")-screenshot.png"
+
+# Power Profilemes menu switcher (rofi)
 bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
+
 
 ##########################################
 # configuration for workspace behaviour: #
@@ -363,16 +364,19 @@ bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
 # bind program to workspace and focus to them on startup:
 assign [class="kitty"] $ws1
 assign [class="(?i)firefox"] $ws2
-assign [class="Thunar"] $ws3
-assign [class="thunderbird"] $ws4
+assign [class="Thunar|zathura"] $ws3
+assign [class="thunderbird|(?i)virtualbox"] $ws4
 assign [class="TelegramDesktop|(?i)teams"] $ws5
 
 # automatic set focus new window if it opens on another workspace than the current:
 for_window [class="^(Xfce4-terminal|kitty)$"] focus
-for_window [class=(?i)firefox] focus
-for_window [class=Thunar] focus
-for_window [class=Thunderbird] focus
-for_window [class=TelegramDesktop] focus
+for_window [class="(?i)firefox"] focus
+for_window [class="Thunar"] focus
+for_window [class="zathura"] focus
+for_window [class="Thunderbird"] focus
+for_window [class="(?i)virtualbox"] focus
+for_window [class="TelegramDesktop"] focus
+for_window [class="(?i)teams"] focus
 
 ##################
 # floating rules #
