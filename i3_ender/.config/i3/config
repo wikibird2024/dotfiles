@@ -179,6 +179,25 @@ bindcode $mod+Shift+90   move container to workspace  $ws10
 #
 # bindsym $mod+r mode "resize"
 
+# Define the resize mode block
+mode "resize" {
+    # Directional keys to resize windows
+    bindsym Left  resize shrink width 10 px or 10 ppt
+    bindsym Down  resize grow height 10 px or 10 ppt
+    bindsym Up    resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+
+    # Pressing $mod+r AGAIN while inside the mode will exit it
+    bindsym $mod+r mode "default"
+
+    # Standard fallbacks to go back to normal mode: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# Pressing $mod+r from the normal/default state enters the resize mode
+bindsym $mod+r mode "resize"
+
 ######################################
 # keybindings for different actions: #
 ######################################
