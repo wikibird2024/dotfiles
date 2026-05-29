@@ -173,10 +173,10 @@ bindcode $mod+Shift+90   move container to workspace  $ws10
 # Define the resize mode block
 mode "resize" {
     # Directional keys to resize windows
-    bindsym Left  resize shrink width 10 px or 10 ppt
-    bindsym Down  resize grow height 10 px or 10 ppt
-    bindsym Up    resize shrink height 10 px or 10 ppt
-    bindsym Right resize grow width 10 px or 10 ppt
+    bindsym l  resize shrink width 10 px or 10 ppt
+    bindsym k  resize grow height 10 px or 10 ppt
+    bindsym j  resize shrink height 10 px or 10 ppt
+    bindsym h  resize grow width 10 px or 10 ppt
 
     # Pressing $mod+r AGAIN while inside the mode will exit it
     bindsym $mod+r mode "default"
@@ -467,8 +467,7 @@ exec --no-startup-id ~/.screenlayout/monitor.sh
 # set wallpaper
 # exec --no-startup-id sleep 2 && nitrogen --restore
 # exec --no-startup-id sleep 1 && feh --bg-fill ~/Pictures/wallpaper/road_wallpaper.jpg
- exec --no-startup-id sleep 1 && feh --bg-fill ~/Pictures/wallpaper/Fuwafuwa_nanbatto_san_by_amaral-dark.png
-
+ exec --no-startup-id sleep 1 && feh --bg-fill ~/Pictures/wallpaper/road_wallpaper.png
 # set powersavings for display:
 exec --no-startup-id xset s 480 dpms 600 600 600
 
@@ -503,7 +502,7 @@ exec --no-startup-id /usr/bin/dunst
 exec_always --no-startup-id autotiling
 
 # Autostart apps as you like
-#exec --no-startup-id sleep 2 && xfce4-terminal
+exec --no-startup-id sleep 2 && alacritty 
 #exec --no-startup-id sleep 7 && firefox https://github.com/endeavouros-team/endeavouros-i3wm-setup/blob/main/force-knowledge.md
 exec --no-startup-id sleep 7 && firefox https://github.com
 #exec --no-startup-id sleep 3 && thunar
