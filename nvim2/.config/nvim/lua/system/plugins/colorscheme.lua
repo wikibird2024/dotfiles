@@ -5,7 +5,7 @@ local themes = {
 		module = nil, -- It doesn't use require("gruvbox8").setup()
 		opts = {
 			-- We handle these via vim.g in the config function below
-			contrast = "medium", -- Options: soft, medium, hard
+			contrast = "hard", -- Options: soft, medium, hard
 			italic = 1,
 		},
 	},

@@ -139,6 +139,9 @@ map("n", "<leader>lf", function()
 end, { desc = "Format" })
 map("n", "<leader>li", "<cmd>LspInfo<CR>", { desc = "LSP Info" })
 
+-- aerial.lua 
+map("n", "<leader>lo", "<cmd>AerialToggle!<CR>", { desc = "LSP: Code Structure Outline" })
+
 map("n", "<leader>Lc", "<cmd>VimtexCompile<CR>", { desc = "LaTeX Compile" })
 map("n", "<leader>Lv", "<cmd>VimtexView<CR>", { desc = "LaTeX View" })
 
