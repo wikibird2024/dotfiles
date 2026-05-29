@@ -1,6 +1,7 @@
 -- ~/.config/nvim/lua/user/plugins/tools/init.lua
 return {
-	require("system.plugins.tools.fzf"),
+	-- require("system.plugins.tools.fzf"),
+	require("system.plugins.tools.telescope"),
 
 	require("system.plugins.tools.dap"),
 	require("system.plugins.tools.crates"),

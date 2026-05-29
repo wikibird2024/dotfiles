@@ -10,11 +10,19 @@ vim.opt.timeoutlen = 500
 -- ─────────────────────────────────────────────────────
 -- [HUB] COMMAND DISPATCHER
 -- ─────────────────────────────────────────────────────
+-- map("n", "<leader><leader>", "<nop>", { desc = "Command Hub" })
+-- map("n", "<leader><leader>h", "<cmd>noh<CR>", { desc = "Clear Highlight" })
+-- map("n", "<leader><leader>f", "<cmd>FzfLua files<CR>", { desc = "Hub: Find Files" })
+-- map("n", "<leader><leader>b", "<cmd>FzfLua buffers<CR>", { desc = "Hub: Buffers" })
+-- map("n", "<leader><leader>l", "<cmd>FzfLua lsp_document_symbols<CR>", { desc = "Hub: LSP Symbols" })
+-- map("n", "<leader><leader>t", "<cmd>ToggleTerm<CR>", { desc = "Hub: Terminal" })
+
+-- it using for telescope
 map("n", "<leader><leader>", "<nop>", { desc = "Command Hub" })
 map("n", "<leader><leader>h", "<cmd>noh<CR>", { desc = "Clear Highlight" })
-map("n", "<leader><leader>f", "<cmd>FzfLua files<CR>", { desc = "Hub: Find Files" })
-map("n", "<leader><leader>b", "<cmd>FzfLua buffers<CR>", { desc = "Hub: Buffers" })
-map("n", "<leader><leader>l", "<cmd>FzfLua lsp_document_symbols<CR>", { desc = "Hub: LSP Symbols" })
+map("n", "<leader><leader>f", "<cmd>Telescope find_files<CR>", { desc = "Hub: Find Files" })
+map("n", "<leader><leader>b", "<cmd>Telescope buffers<CR>", { desc = "Hub: Buffers" })
+map("n", "<leader><leader>l", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "Hub: LSP Symbols" })
 map("n", "<leader><leader>t", "<cmd>ToggleTerm<CR>", { desc = "Hub: Terminal" })
 
 -- ─────────────────────────────────────────────────────
@@ -62,10 +70,16 @@ map("n", "<leader>r", "<cmd>Neotree reveal<CR>", { desc = "Reveal Current File" 
 -- ─────────────────────────────────────────────────────
 -- [F] FIND / SEARCH (Fzf-lua)
 -- ─────────────────────────────────────────────────────
-map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find Files" })
-map("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Live Grep" })
-map("n", "<leader>fh", "<cmd>FzfLua oldfiles<CR>", { desc = "History" })
-map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Search Buffers" })
+-- Fzf-lua
+-- map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find Files" })
+-- map("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Live Grep" })
+-- map("n", "<leader>fh", "<cmd>FzfLua oldfiles<CR>", { desc = "History" })
+-- map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Search Buffers" })
+-- Telescope
+map("n", "<leader>ff", "<cmd>Telescope find_files<CR>", { desc = "Find Files" })
+map("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", { desc = "Live Grep" })
+map("n", "<leader>fh", "<cmd>Telescope oldfiles<CR>", { desc = "History" })
+map("n", "<leader>fb", "<cmd>Telescope buffers<CR>", { desc = "Search Buffers" })
 
 -- ─────────────────────────────────────────────────────
 -- [B] BUFFERS
@@ -126,11 +140,17 @@ vim.api.nvim_create_autocmd("TermOpen", {
 -- ─────────────────────────────────────────────────────
 -- [L] LSP / LaTeX
 -- ─────────────────────────────────────────────────────
-map("n", "<leader>ld", "<cmd>FzfLua lsp_definitions<CR>", { desc = "Definition" })
+-- map("n", "<leader>la", "<cmd>FzfLua lsp_code_actions<CR>", { desc = "Code Action" })
+-- map("n", "<leader>ld", "<cmd>FzfLua lsp_definitions<CR>", { desc = "Definition" })
+
+--- Using for telescope
+map("n", "<leader>ld", "<cmd>Telescope lsp_definitions<CR>", { desc = "Definition" })
+map("n", "<leader>la", "<cmd>Telescope lsp_code_actions<CR>", { desc = "Code Action" })
+
+-- end of using for telescope
 map("n", "<leader>lr", function()
 	vim.lsp.buf.rename()
 end, { desc = "Rename" })
-map("n", "<leader>la", "<cmd>FzfLua lsp_code_actions<CR>", { desc = "Code Action" })
 map("n", "<leader>lh", function()
 	vim.lsp.buf.hover()
 end, { desc = "Hover" })
@@ -139,7 +159,7 @@ map("n", "<leader>lf", function()
 end, { desc = "Format" })
 map("n", "<leader>li", "<cmd>LspInfo<CR>", { desc = "LSP Info" })
 
--- aerial.lua 
+-- aerial.lua
 map("n", "<leader>lo", "<cmd>AerialToggle!<CR>", { desc = "LSP: Code Structure Outline" })
 
 map("n", "<leader>Lc", "<cmd>VimtexCompile<CR>", { desc = "LaTeX Compile" })
