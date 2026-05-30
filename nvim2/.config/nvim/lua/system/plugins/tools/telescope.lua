@@ -17,14 +17,14 @@ return {
                 sorting_strategy = "ascending",
                 path_display = { "smart" },
 
-                -- Flex natively drops to vertical if width limits are hit
+                -- Flex shifts layouts automatically when you change window dimensions or monitor setups
                 layout_strategy = "flex",
 
                 layout_config = {
-                    -- Global static baselines
+                    -- Base layout dimensions across any responsive strategies
                     width = 0.90,
                     height = 0.85,
-                    preview_cutoff = 0, -- Prevents Telescope from dropping the preview pane entirely
+                    preview_cutoff = 1,
 
                     horizontal = {
                         prompt_position = "top",
@@ -33,10 +33,10 @@ return {
                     vertical = {
                         mirror = true,
                         prompt_position = "top",
-                        preview_height = 0.50, -- 50% of the height goes cleanly to preview
+                        preview_height = 0.50,
                     },
                     flex = {
-                        flip_columns = 120, -- Breakpoint width for stacking
+                        flip_columns = 120, -- Snaps vertical when layout space < 120 columns
                     },
                 },
 
@@ -46,7 +46,7 @@ return {
                         ["<C-k>"] = actions.move_selection_previous,
                         ["<Esc>"] = actions.close,
                         ["<C-u>"] = false,
-                        -- Use C-f and C-b to read up/down inside file previews without switching windows
+                        -- Continuous terminal workflow utility: scroll previews directly from input mode
                         ["<C-f>"] = actions.preview_scrolling_down,
                         ["<C-b>"] = actions.preview_scrolling_up,
                     },
@@ -65,7 +65,7 @@ return {
                 },
                 buffers = {
                     sort_lastused = true,
-                    ignore_current_buffer = true,
+                    ignore_current_buffer = false,
                     mappings = {
                         i = { ["<C-d>"] = actions.delete_buffer },
                         n = { ["d"] = actions.delete_buffer },

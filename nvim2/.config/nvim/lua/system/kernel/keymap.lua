@@ -11,6 +11,9 @@ vim.opt.timeoutlen = 500
 -- [HUB] COMMAND DISPATCHER
 -- ─────────────────────────────────────────────────────
 -- map("n", "<leader><leader>", "<nop>", { desc = "Command Hub" })
+map("n", "<leader><leader>t", "<cmd>ToggleTerm<CR>", { desc = "Hub: Terminal" })
+--
+-- map("n", "<leader><leader>", "<nop>", { desc = "Command Hub" })
 -- map("n", "<leader><leader>h", "<cmd>noh<CR>", { desc = "Clear Highlight" })
 -- map("n", "<leader><leader>f", "<cmd>FzfLua files<CR>", { desc = "Hub: Find Files" })
 -- map("n", "<leader><leader>b", "<cmd>FzfLua buffers<CR>", { desc = "Hub: Buffers" })
@@ -18,13 +21,10 @@ vim.opt.timeoutlen = 500
 -- map("n", "<leader><leader>t", "<cmd>ToggleTerm<CR>", { desc = "Hub: Terminal" })
 
 -- it using for telescope
-map("n", "<leader><leader>", "<nop>", { desc = "Command Hub" })
 map("n", "<leader><leader>h", "<cmd>noh<CR>", { desc = "Clear Highlight" })
 map("n", "<leader><leader>f", "<cmd>Telescope find_files<CR>", { desc = "Hub: Find Files" })
 map("n", "<leader><leader>b", "<cmd>Telescope buffers<CR>", { desc = "Hub: Buffers" })
 map("n", "<leader><leader>l", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "Hub: LSP Symbols" })
-map("n", "<leader><leader>t", "<cmd>ToggleTerm<CR>", { desc = "Hub: Terminal" })
-
 -- ─────────────────────────────────────────────────────
 -- [I] INSERT MODE
 -- ─────────────────────────────────────────────────────
