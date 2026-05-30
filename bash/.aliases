@@ -223,7 +223,7 @@ alias gcl='git clean -fd'
 alias gst='git stash'
 alias gsp='git stash pop'
 alias guncommit='git reset --soft HEAD~1'
-
+alias gitlogtree='git log --oneline --graph --decorate --all --boundary -20'
 # =================================================
 # 🐳 DOCKER ULTIMATE ALIASES
 # =================================================
