@@ -10,33 +10,20 @@ vim.opt.timeoutlen = 500
 -- ─────────────────────────────────────────────────────
 -- [HUB] COMMAND DISPATCHER
 -- ─────────────────────────────────────────────────────
--- map("n", "<leader><leader>", "<nop>", { desc = "Command Hub" })
-map("n", "<leader><leader>t", "<cmd>ToggleTerm<CR>", { desc = "Hub: Terminal" })
-map("n", "<leader><leader>h", "<cmd>noh<CR>", { desc = "Clear Highlight" })
-map("n", "<leader><leader>f", "<cmd>FzfLua files<CR>", { desc = "Hub: Find Files" })
-map("n", "<leader><leader>b", "<cmd>FzfLua buffers<CR>", { desc = "Hub: Buffers" })
-map("n", "<leader><leader>l", "<cmd>FzfLua lsp_document_symbols<CR>", { desc = "Hub: LSP Symbols" })
- map("n", "<leader><leader>t", "<cmd>ToggleTerm<CR>", { desc = "Hub: Terminal" })
-
--- it using for telescope
--- map("n", "<leader><leader>", "<nop>", { desc = "Command Hub" })
-
--- it using for telescope
--- map("n", "<leader><leader>h", "<cmd>noh<CR>", { desc = "Clear Highlight" })
--- map("n", "<leader><leader>f", "<cmd>Telescope find_files<CR>", { desc = "Hub: Find Files" })
--- map("n", "<leader><leader>b", "<cmd>Telescope buffers<CR>", { desc = "Hub: Buffers" })
--- map("n", "<leader><leader>l", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "Hub: LSP Symbols" })
+--
+--
+--
 -- ─────────────────────────────────────────────────────
 -- [I] INSERT MODE
 -- ─────────────────────────────────────────────────────
 map("i", "<A-q>", "<Esc>", { desc = "Exit Insert Mode" })
 map("i", "<A-l>", "<Right>", { desc = "Move Right" })
-map("i", "<A-e>", "<Esc>A", { desc = "Jump to End of Line" })
 
 -- ──────────────────────────────────────────────────────────────────────
 --[ ] - Di chuyển trong Insert Mode
 -- ──────────────────────────────────────────────────────────────────────
 map("i", "<C-l>", "<Right>", { desc = "Move Right" })
+
 map("i", "<A-e>", "<Esc>A", { desc = "Jump to End of Line" }) -- Dùng Alt-e để tránh chiếm dụng C-e của CMP
 
 -- ─────────────────────────────────────────────────────
@@ -94,6 +81,14 @@ map(
 	"<cmd>bufdo if buflisted(bufnr('%')) && bufnr('%') != bufnr('#') | silent! bdelete | endif<CR>",
 	{ desc = "Close Other Buffers (safe)" }
 )
+--
+map("n", "<Tab>", "<cmd>bnext<CR>", {
+	desc = "Next Buffer",
+})
+
+map("n", "<S-Tab>", "<cmd>bprevious<CR>", {
+	desc = "Previous Buffer",
+})
 
 -- ─────────────────────────────────────────────────────
 -- [W] WINDOWS
@@ -113,6 +108,13 @@ map("n", "<C-Down>", "<cmd>resize -2<cr>", { desc = "Decrease Height" })
 map("n", "<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease Width" })
 map("n", "<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase Width" })
 
+map("n", "<leader>|", "<cmd>vsplit<CR>", {
+	desc = "Vertical Split",
+})
+
+map("n", "<leader>-", "<cmd>split<CR>", {
+	desc = "Horizontal Split",
+})
 -- ─────────────────────────────────────────────────────
 -- [T] TERMINAL (ToggleTerm)
 -- ─────────────────────────────────────────────────────
@@ -144,11 +146,33 @@ vim.api.nvim_create_autocmd("TermOpen", {
 map("n", "<leader>la", "<cmd>FzfLua lsp_code_actions<CR>", { desc = "Code Action" })
 map("n", "<leader>ld", "<cmd>FzfLua lsp_definitions<CR>", { desc = "Definition" })
 
---- Using for telescope
--- map("n", "<leader>ld", "<cmd>Telescope lsp_definitions<CR>", { desc = "Definition" })
--- map("n", "<leader>la", "<cmd>Telescope lsp_code_actions<CR>", { desc = "Code Action" })
+-- Standard LSP Navigation
 
--- end of using for telescope
+map("n", "gd", "<cmd>FzfLua lsp_definitions<CR>", {
+	desc = "Goto Definition",
+})
+
+map("n", "gr", "<cmd>FzfLua lsp_references<CR>", {
+	desc = "Goto References",
+})
+
+map("n", "gi", "<cmd>FzfLua lsp_implementations<CR>", {
+	desc = "Goto Implementation",
+})
+
+map("n", "K", vim.lsp.buf.hover, {
+	desc = "Hover Documentation",
+})
+
+map("n", "[d", vim.diagnostic.goto_prev, {
+	desc = "Previous Diagnostic",
+})
+
+map("n", "]d", vim.diagnostic.goto_next, {
+	desc = "Next Diagnostic",
+})
+--
+
 map("n", "<leader>lr", function()
 	vim.lsp.buf.rename()
 end, { desc = "Rename" })
@@ -179,3 +203,31 @@ map("v", ">", ">gv", { desc = "Indent Right" })
 -- ─────────────────────────────────────────────────────
 map({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to Clipboard" })
 map("n", "<leader>yp", [["+p]], { desc = "Paste from Clipboard" })
+
+-- ─────────────────────────────────────────────────────
+-- [VS] VS CODE MUSCLE MEMORY
+-- ─────────────────────────────────────────────────────
+
+map("n", "<C-p>", "<cmd>FzfLua files<CR>", {
+	desc = "Quick Open",
+})
+
+map("n", "<C-b>", "<cmd>Neotree toggle<CR>", {
+	desc = "Explorer Toggle",
+})
+
+map("n", "<leader>p", "<cmd>FzfLua commands<CR>", {
+	desc = "Command Palette",
+})
+
+map("n", "<leader>sg", "<cmd>FzfLua live_grep<CR>", {
+	desc = "Search Project",
+})
+
+map("n", "<A-Left>", "<C-o>", {
+	desc = "Jump Back",
+})
+
+map("n", "<A-Right>", "<C-i>", {
+	desc = "Jump Forward",
+})
