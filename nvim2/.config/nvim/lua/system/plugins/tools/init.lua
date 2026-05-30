@@ -1,9 +1,5 @@
 -- ~/.config/nvim/lua/user/plugins/tools/init.lua
 return {
-<<<<<<< HEAD
-	-- require("system.plugins.tools.telescope"),
-=======
->>>>>>> 075a4123256029ec8883da2f96579f7d60478127
 	require("system.plugins.tools.fzf"),
 	require("system.plugins.tools.dap"),
 	require("system.plugins.tools.crates"),
