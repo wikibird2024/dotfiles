@@ -24,6 +24,7 @@ vim/.vim/plugged/
 Thumbs.db
 
 # Ignore anything Stow shouldn't track
+
 stow-*
 .aider*
 .env

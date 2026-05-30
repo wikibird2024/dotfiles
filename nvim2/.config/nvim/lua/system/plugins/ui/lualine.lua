@@ -8,6 +8,9 @@ return {
 	},
 
 	config = function()
+		---------------------------------------------------------------------------
+		-- LSP
+		---------------------------------------------------------------------------
 		local function lsp()
 			local clients = vim.lsp.get_clients({
 				bufnr = vim.api.nvim_get_current_buf(),
@@ -25,7 +28,12 @@ return {
 				end
 			end
 
-			return "󰒋 " .. table.concat(names, ", ")
+			if #names == 0 then
+				return "󰅚 No LSP"
+			end
+
+			-- Avoid statusline overflow
+			return "󰒋 " .. names[1]
 		end
 
 		require("lualine").setup({
@@ -33,6 +41,8 @@ return {
 				theme = "auto",
 
 				globalstatus = true,
+
+				icons_enabled = true,
 
 				component_separators = {
 					left = "│",
@@ -46,14 +56,24 @@ return {
 
 				disabled_filetypes = {
 					statusline = {
-						"dashboard",
 						"alpha",
+						"dashboard",
 						"lazy",
 					},
 				},
+
+				ignore_focus = {
+					"NvimTree",
+					"toggleterm",
+				},
+
+				always_divide_middle = true,
 			},
 
 			sections = {
+				-----------------------------------------------------------------------
+				-- MODE
+				-----------------------------------------------------------------------
 				lualine_a = {
 					{
 						"mode",
@@ -61,6 +81,9 @@ return {
 					},
 				},
 
+				-----------------------------------------------------------------------
+				-- GIT
+				-----------------------------------------------------------------------
 				lualine_b = {
 					{
 						"branch",
@@ -77,32 +100,63 @@ return {
 					},
 				},
 
+				-----------------------------------------------------------------------
+				-- FILE
+				-----------------------------------------------------------------------
 				lualine_c = {
 					{
 						"filename",
 						path = 1,
+
+						file_status = true,
+						newfile_status = true,
+
 						symbols = {
 							modified = " ●",
 							readonly = " ",
+							unnamed = "[No Name]",
+							newfile = "[New]",
 						},
+
+						shorting_target = 40,
 					},
 				},
 
+				-----------------------------------------------------------------------
+				-- DIAGNOSTICS + LSP
+				-----------------------------------------------------------------------
 				lualine_x = {
 					{
 						"diagnostics",
-						sources = { "nvim_diagnostic" },
+
+						symbols = {
+							error = " ",
+							warn = " ",
+							info = " ",
+							hint = " ",
+						},
 					},
 
 					lsp,
 
-					"filetype",
+					{
+						"filetype",
+						icon_only = false,
+					},
 				},
 
+				-----------------------------------------------------------------------
+				-- PROGRESS
+				-----------------------------------------------------------------------
 				lualine_y = {
-					"progress",
+					{
+						"progress",
+					},
 				},
 
+				-----------------------------------------------------------------------
+				-- CURSOR
+				-----------------------------------------------------------------------
 				lualine_z = {
 					{
 						"location",
@@ -113,19 +167,30 @@ return {
 
 			inactive_sections = {
 				lualine_a = {},
+
 				lualine_b = {},
+
 				lualine_c = {
 					{
 						"filename",
 						path = 1,
 					},
 				},
+
 				lualine_x = {
 					"location",
 				},
+
 				lualine_y = {},
+
 				lualine_z = {},
 			},
+
+			tabline = {},
+
+			winbar = {},
+
+			inactive_winbar = {},
 
 			extensions = {
 				"lazy",
