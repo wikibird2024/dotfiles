@@ -3,6 +3,7 @@
 return {
   "ibhagwan/fzf-lua",
   cmd = "FzfLua",
+
   dependencies = {
     "nvim-tree/nvim-web-devicons",
   },
@@ -11,19 +12,12 @@ return {
     winopts = {
       height = 0.90,
       width = 0.90,
-
       border = "rounded",
-      title = false,
 
       preview = {
         layout = "vertical",
         vertical = "down:50%",
       },
-    },
-
-    fzf_opts = {
-      ["--layout"] = "reverse",
-      ["--info"] = "inline",
     },
 
     files = {
@@ -33,15 +27,6 @@ return {
 
     grep = {
       hidden = true,
-    },
-
-    oldfiles = {
-      cwd_only = true,
-    },
-
-    buffers = {
-      sort_lastused = true,
-      show_unloaded = false,
     },
 
     keymap = {
@@ -55,10 +40,9 @@ return {
         ["ctrl-u"] = "preview-page-up",
       },
     },
-
-    lsp = {
-      jump1 = true,
-      async_or_timeout = 3000,
-    },
   },
+
+  config = function(_, opts)
+    require("fzf-lua").setup(opts)
+  end,
 }
