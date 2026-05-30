@@ -70,15 +70,15 @@ map("n", "<leader>r", "<cmd>Neotree reveal<CR>", { desc = "Reveal Current File" 
 -- [F] FIND / SEARCH (Fzf-lua)
 -- ─────────────────────────────────────────────────────
 -- Fzf-lua
--- map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find Files" })
--- map("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Live Grep" })
--- map("n", "<leader>fh", "<cmd>FzfLua oldfiles<CR>", { desc = "History" })
--- map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Search Buffers" })
+map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find Files" })
+map("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Live Grep" })
+map("n", "<leader>fh", "<cmd>FzfLua oldfiles<CR>", { desc = "History" })
+map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Search Buffers" })
 -- Telescope
-map("n", "<leader>ff", "<cmd>Telescope find_files<CR>", { desc = "Find Files" })
-map("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", { desc = "Live Grep" })
-map("n", "<leader>fh", "<cmd>Telescope oldfiles<CR>", { desc = "History" })
-map("n", "<leader>fb", "<cmd>Telescope buffers<CR>", { desc = "Search Buffers" })
+-- map("n", "<leader>ff", "<cmd>Telescope find_files<CR>", { desc = "Find Files" })
+-- map("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", { desc = "Live Grep" })
+-- map("n", "<leader>fh", "<cmd>Telescope oldfiles<CR>", { desc = "History" })
+-- map("n", "<leader>fb", "<cmd>Telescope buffers<CR>", { desc = "Search Buffers" })
 
 -- ─────────────────────────────────────────────────────
 -- [B] BUFFERS

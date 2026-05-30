@@ -1,38 +1,64 @@
--- File: ~/.config/nvim/lua/system/plugins/tools/fzf.lua
+-- ~/.config/nvim/lua/system/plugins/tools/fzf.lua
+
 return {
   "ibhagwan/fzf-lua",
-  -- Load immediately when Neovim starts to keep picker availability instant
   cmd = "FzfLua",
-  dependencies = { "nvim-tree/nvim-web-devicons" },
-  config = function()
-    local fzf = require("fzf-lua")
+  dependencies = {
+    "nvim-tree/nvim-web-devicons",
+  },
 
-    fzf.setup({
-      -- Clean, floating aesthetic
-      winopts = {
-        height = 0.85,
-        width = 0.80,
-        row = 0.35,
-        col = 0.50,
-        preview = {
-          layout = "vertical", -- Vertical layout is great for long code files
-          vertical = "down:45%",
-        },
+  opts = {
+    winopts = {
+      height = 0.90,
+      width = 0.90,
+
+      border = "rounded",
+      title = false,
+
+      preview = {
+        layout = "vertical",
+        vertical = "down:50%",
       },
-      keymap = {
-        builtin = {
-          -- Standardize scroll controls inside the preview window
-          ["<C-d>"] = "preview-page-down",
-          ["<C-u>"] = "preview-page-up",
-        },
+    },
+
+    fzf_opts = {
+      ["--layout"] = "reverse",
+      ["--info"] = "inline",
+    },
+
+    files = {
+      hidden = true,
+      cwd_prompt = false,
+    },
+
+    grep = {
+      hidden = true,
+    },
+
+    oldfiles = {
+      cwd_only = true,
+    },
+
+    buffers = {
+      sort_lastused = true,
+      show_unloaded = false,
+    },
+
+    keymap = {
+      builtin = {
+        ["<C-d>"] = "preview-page-down",
+        ["<C-u>"] = "preview-page-up",
       },
-      -- Force it to show hidden items (.dotfiles) by default, matching your preferences
-      files = {
-        cmd = "fd --type f --hidden --follow --exclude .git",
+
+      fzf = {
+        ["ctrl-d"] = "preview-page-down",
+        ["ctrl-u"] = "preview-page-up",
       },
-      grep = {
-        cmd = "rg --column --line-number --no-heading --color=always --smart-case --hidden",
-      },
-    })
-  end,
+    },
+
+    lsp = {
+      jump1 = true,
+      async_or_timeout = 3000,
+    },
+  },
 }
