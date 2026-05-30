@@ -50,15 +50,15 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 
 # Standard Directory Jumps
-alias config='cd ~/.config/'
-alias dotfiles='cd ~/dotfiles/'
-alias cpy='cd ~/python'
-alias cdown='cd ~/Downloads/'
-alias cdoc='cd ~/Documents/'
-alias cpic='cd ~/Pictures/'
+alias cd-conf='cd ~/.config/'
+alias cd-.='cd ~/dotfiles/'
+alias cd-py='cd ~/python'
+alias cd-curl='cd ~/Downloads/'
+alias cd-doc='cd ~/Documents/'
+alias cd-pic='cd ~/Pictures/'
 
-# Project-Specific
-alias zplugin.='cd ~/dotfiles/nvim/.config/nvim/lua/user/plugins/'
+
+
 # ================================================= ARCH LINUX  ==============
 
 
@@ -76,7 +76,6 @@ alias xe='latexmk -xelatex main.tex'
 alias pvc='latexmk -pvc main.tex'
 alias cl='./clean.sh'
 alias b='./build.sh'
-alias omt='nvim main.tex'
 alias qute='qutebrowser'
 alias pdf='zathura'
 alias slide='pdfpc'
@@ -129,11 +128,11 @@ alias tmls='tmux ls'
 alias tm='tmux'
 alias tma='tmux attach -t '
 alias tmn='tmux new -s '
-alias tmks='tmux kill-session -t '
+alias tmk-s='tmux kill-session -t '
 alias tmd='tmux detach'
-alias tmrws='tmux rename-window -t '
-alias tmrs='tmux rename-session -t '
-alias tmkall='tmux kill-server'
+alias tmr-w='tmux rename-window -t '
+alias tmr-s='tmux rename-session -t '
+alias tmk-all='tmux kill-server'
 
 
 # ============================ ⚡ Power & Package ============================
@@ -210,13 +209,7 @@ alias gs='git status -sb'
 alias ga='git add'
 alias gc='git commit -m'
 alias gc.a='git commit --amend'
-alias gco='git checkout'
-alias gbr='git branch'
-alias gbrd='git branch -d'
-alias gcb='git checkout -b'
-alias gp='git push'
 alias gpo='git push origin'
-alias gl='git pull'
 alias greset='git reset --hard'
 alias glog='git log --oneline --graph --decorate --all'
 alias gcl='git clean -fd'
@@ -224,6 +217,7 @@ alias gst='git stash'
 alias gsp='git stash pop'
 alias guncommit='git reset --soft HEAD~1'
 alias gitlogtree='git log --oneline --graph --decorate --all --boundary -20'
+
 # =================================================
 # 🐳 DOCKER ULTIMATE ALIASES
 # =================================================
@@ -260,9 +254,7 @@ alias rgg='rg --hidden --smart-case'
 # ============================ ✏️ Neovim ============================
 alias nv='nvim'
 alias n='nvim'
-alias snv='sudo nvim'
-alias v='nvim .'
-
+alias v='vim'
 
 # ============================ 🔌 Embedded / ESP-IDF ============================
 alias tty='ls /dev/tty*'
