@@ -48,6 +48,12 @@ map("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Live Grep" })
 map("n", "<leader>fh", "<cmd>FzfLua oldfiles<CR>", { desc = "History" })
 map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Buffers" })
 
+-- Clear search highlights properly without breaking default Esc actions
+map("n", "<Esc>", function()
+	vim.cmd("nohlsearch")
+	return "<Esc>"
+end, { expr = true, desc = "Clear Search Highlights" })
+
 -- ─────────────────────────────────────────────────────
 -- 6. EXPLORER
 -- ─────────────────────────────────────────────────────
@@ -60,22 +66,66 @@ map("n", "<leader>r", "<cmd>Neotree reveal<CR>", { desc = "Reveal File" })
 -- ─────────────────────────────────────────────────────
 map("n", "<leader>dc", function()
 	require("dap").continue()
-end, { desc = "Continue" })
+end, { desc = "Debug: Continue (F5)" })
+map("n", "<leader>dt", function()
+	require("dap").terminate()
+end, { desc = "Debug: Terminate" })
+map("n", "<leader>dr", function()
+	local dap = require("dap")
+	if not pcall(dap.restart) then
+		dap.terminate()
+		vim.defer_fn(dap.continue, 150)
+	end
+end, { desc = "Debug: Restart" })
+
 map("n", "<leader>ds", function()
 	require("dap").step_over()
-end, { desc = "Step Over" })
+end, { desc = "Step Over (F10)" })
 map("n", "<leader>di", function()
 	require("dap").step_into()
-end, { desc = "Step Into" })
+end, { desc = "Step Into (F11)" })
+map("n", "<leader>do", function()
+	require("dap").step_out()
+end, { desc = "Step Out (F12)" })
+map("n", "<leader>drt", function()
+	require("dap").run_to_cursor()
+end, { desc = "Run to Cursor" })
+
+map("n", "<F5>", function()
+	require("dap").continue()
+end, { desc = "Debug: Continue" })
+map("n", "<F10>", function()
+	require("dap").step_over()
+end, { desc = "Debug: Step Over" })
+map("n", "<F11>", function()
+	require("dap").step_into()
+end, { desc = "Debug: Step Into" })
+map("n", "<F12>", function()
+	require("dap").step_out()
+end, { desc = "Debug: Step Out" })
+
 map("n", "<leader>db", function()
 	require("dap").toggle_breakpoint()
-end, { desc = "Breakpoint" })
+end, { desc = "Breakpoint: Toggle" })
+map("n", "<leader>dB", function()
+	require("dap").set_breakpoint(vim.fn.input("Condition: "))
+end, { desc = "Breakpoint: Condition" })
+map("n", "<leader>dl", function()
+	require("dap").set_breakpoint(nil, nil, vim.fn.input("Log: "))
+end, { desc = "Log Point" })
+
+map("n", "<leader>dh", function()
+	require("dap.ui.widgets").hover()
+end, { desc = "Debugger Hover" })
+map("n", "<leader>de", function()
+	require("dapui").eval()
+end, { desc = "Evaluate Expression" })
+map("v", "<leader>de", function()
+	require("dapui").eval()
+end, { desc = "Evaluate Selection" })
 map("n", "<leader>du", function()
 	require("dapui").toggle()
-end, { desc = "DAP UI" })
-map("n", "<leader>dr", function()
-	require("dap").restart()
-end, { desc = "Restart" })
+end, { desc = "Toggle Debug UI" })
 
 -- ─────────────────────────────────────────────────────
 -- 8. TERMINAL
@@ -87,11 +137,14 @@ map("n", "<leader>tv", "<cmd>ToggleTerm direction=vertical<CR>", { desc = "Verti
 
 function _G.set_terminal_keymaps()
 	local opts = { buffer = 0 }
-	map("t", "<Esc><Esc>", [[<C-\><C-n>]], opts)
+	-- Quick navigation out of terminals
 	map("t", "<C-h>", [[<C-\><C-n><C-w>h]], opts)
 	map("t", "<C-j>", [[<C-\><C-n><C-w>j]], opts)
 	map("t", "<C-k>", [[<C-\><C-n><C-w>k]], opts)
 	map("t", "<C-l>", [[<C-\><C-n><C-w>l]], opts)
+
+	-- Native hide/open toggle within terminal mode
+	map("t", "<leader>t", [[<C-\><C-n><cmd>ToggleTerm<CR>]], opts)
 end
 
 vim.api.nvim_create_autocmd("TermOpen", {
@@ -103,8 +156,6 @@ vim.api.nvim_create_autocmd("TermOpen", {
 -- ─────────────────────────────────────────────────────
 -- 9. LSP (VIM CORE + MODERN UX)
 -- ─────────────────────────────────────────────────────
-
--- Core Vim LSP standard (professional baseline)
 map("n", "gd", "<cmd>FzfLua lsp_definitions<CR>", { desc = "Definition" })
 map("n", "gr", "<cmd>FzfLua lsp_references<CR>", { desc = "References" })
 map("n", "gi", "<cmd>FzfLua lsp_implementations<CR>", { desc = "Implementation" })
@@ -113,7 +164,6 @@ map("n", "K", vim.lsp.buf.hover, { desc = "Hover" })
 map("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev Diagnostic" })
 map("n", "]d", vim.diagnostic.goto_next, { desc = "Next Diagnostic" })
 
--- Extended LSP actions (leader-based)
 map("n", "<leader>la", "<cmd>FzfLua lsp_code_actions<CR>", { desc = "Code Action" })
 map("n", "<leader>ld", "<cmd>FzfLua lsp_definitions<CR>", { desc = "Definition (leader)" })
 map("n", "<leader>lr", function()
@@ -123,7 +173,6 @@ map("n", "<leader>lf", function()
 	vim.lsp.buf.format({ async = true })
 end, { desc = "Format" })
 map("n", "<leader>li", "<cmd>LspInfo<CR>", { desc = "LSP Info" })
-
 map("n", "<leader>lo", "<cmd>AerialToggle!<CR>", { desc = "Outline" })
 
 map("n", "<leader>Lc", "<cmd>VimtexCompile<CR>", { desc = "LaTeX Compile" })
@@ -148,9 +197,8 @@ map("n", "<leader>yp", [["+p]], { desc = "Paste Clipboard" })
 -- ─────────────────────────────────────────────────────
 map("n", "<C-p>", "<cmd>FzfLua files<CR>", { desc = "Quick Open" })
 map("n", "<C-b>", "<cmd>Neotree toggle<CR>", { desc = "Explorer Toggle" })
-
 map("n", "<leader>p", "<cmd>FzfLua commands<CR>", { desc = "Command Palette" })
 map("n", "<leader>sg", "<cmd>FzfLua live_grep<CR>", { desc = "Search Project" })
 
-map("n", "<A-Left>", "<C-o>", { desc = "Jump Back" })
-map("n", "<A-Right>", "<C-i>", { desc = "Jump Forward" })
+-- map("n", "<A-Left>", "<C-o>", { desc = "Jump Back" })
+-- map("n", "<A-Right>", "<C-i>", { desc = "Jump Forward" })

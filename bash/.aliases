@@ -50,12 +50,12 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 
 # Standard Directory Jumps
-alias cd-conf='cd ~/.config/'
-alias cd-.='cd ~/dotfiles/'
+alias cd-.conf='cd ~/.config/'
+alias cd-.files='cd ~/dotfiles/'
 alias cd-py='cd ~/python'
-alias cd-curl='cd ~/Downloads/'
-alias cd-doc='cd ~/Documents/'
-alias cd-pic='cd ~/Pictures/'
+alias cd-Dl='cd ~/Downloads/'
+alias cd-Doc='cd ~/Documents/'
+alias cd-Pic='cd ~/Pictures/'
 
 
 
