@@ -1,2 +1,0 @@
-# Ensure correct From when sending
-send-hook . 'set from = "your_email@gmail.com"'

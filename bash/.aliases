@@ -51,7 +51,7 @@ alias ....='cd ../../..'
 
 # Standard Directory Jumps
 alias cd-.conf='cd ~/.config/'
-alias cd-.files='cd ~/dotfiles/'
+alias cd-.='cd ~/dotfiles/'
 alias cd-py='cd ~/python'
 alias cd-Dl='cd ~/Downloads/'
 alias cd-Doc='cd ~/Documents/'
