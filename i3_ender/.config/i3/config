@@ -37,6 +37,8 @@ set $ws10 "10:►"
 
 # Turn on using ibus-daemon
 exec --no-startup-id ibus-daemon -drx
+# Turn on flameshot screenshot
+exec --no-startup-id flameshot
 
 # -----------------------------------------------
 
@@ -332,16 +334,12 @@ bindsym $mod+p exec --no-startup-id ~/.config/i3/scripts/audio-device-switch
 ## App shortcuts
 bindsym $mod+b exec --no-startup-id /usr/bin/firefox
 bindsym $mod+e exec --no-startup-id /usr/bin/thunar
-
-# Launch Flameshot GUI for region selection, saving, or copying to clipboard
-exec_always --no-startup-id flameshot
-
 bindsym Print exec --no-startup-id flameshot gui
 
 # bindsym Print exec --no-startup-id scrot ~/%Y-%m-%d-%T-screenshot.png && notify-send "Screenshot saved to ~/$(date +"%Y-%m-%d-%T")-screenshot.png"
 
 # Power Profilemes menu switcher (rofi)
-bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
+# bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
 
 
 ##########################################
@@ -502,7 +500,7 @@ exec --no-startup-id /usr/bin/dunst
 exec_always --no-startup-id autotiling
 
 # Autostart apps as you like
-exec --no-startup-id sleep 2 && alacritty 
+exec --no-startup-id sleep 2 && alacritty
 #exec --no-startup-id sleep 7 && firefox https://github.com/endeavouros-team/endeavouros-i3wm-setup/blob/main/force-knowledge.md
 exec --no-startup-id sleep 7 && firefox https://github.com
 #exec --no-startup-id sleep 3 && thunar
