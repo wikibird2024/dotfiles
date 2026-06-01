@@ -1,49 +1,48 @@
-# --- Cài đặt cần thiết ---
-# Đồng bộ vùng chọn với clipboard hệ thống (để Ctrl+V được luôn)
+# -----------------------------------------------------------------------------
+# CORE (important)
+# -----------------------------------------------------------------------------
 set selection-clipboard clipboard
 
-# --- Keybindings  ---
-
-# Cuộn nửa trang (giống Vim, mặc định Zathura không có bind này)
+# -----------------------------------------------------------------------------
+# SCROLLING (Vim-style improvements)
+# -----------------------------------------------------------------------------
 map <C-d> scroll half-down
 map <C-u> scroll half-up
 
-# Phóng to/Thu nhỏ bằng phím z/x (tiện hơn phím +/- mặc định)
+map <C-f> scroll full-down
+map <C-b> scroll full-up
+
+# -----------------------------------------------------------------------------
+# NAVIGATION (keep Vim mental model)
+# -----------------------------------------------------------------------------
+map gg goto top
+map G goto bottom
+
+# -----------------------------------------------------------------------------
+# ZOOM (simple + predictable)
+# -----------------------------------------------------------------------------
 map z zoom in
 map Z zoom out
-map x zoom out
+map r zoom reset
 
-# Reload config nhanh (để mỗi khi sửa file này, nhấn Ctrl+r là nhận luôn)
-map <C-r> source
+# -----------------------------------------------------------------------------
+# VIEW MODES (very useful for PDFs)
+# -----------------------------------------------------------------------------
+map f adjust_window best-fit
+map w adjust_window width
 
-# Copy thủ công (phòng trường hợp quét chuột không tự nhận)
+# -----------------------------------------------------------------------------
+# SEARCH (keep Vim consistency)
+# -----------------------------------------------------------------------------
+map n search next
+map N search previous
+
+# -----------------------------------------------------------------------------
+# COPY
+# -----------------------------------------------------------------------------
 map y copy-selection
 
 # -----------------------------------------------------------------------------
-# (DEFAULT KEYBINDINGS REFERENCE)
+# RELOAD CONFIG
 # -----------------------------------------------------------------------------
-
-# --- Navigation ---
-# j, k            : Cuộn xuống / lên
-# h, l            : Cuộn trái / phải
-# Space / S-Space : Cuộn xuống / lên một trang màn hình
-# PgDn / PgUp     : Trang kế tiếp / Trang trước
-# gg / G          : Về đầu / Cuối tài liệu
-# [num]G          : Đi đến trang số [num]
-
-# --- Hiển thị & Zoom (View & Zoom) ---
-# a               : Vừa khít cửa sổ (Adjust to window)
-# s               : Vừa khít chiều rộng (Fit width)
-# r               : Xoay trang 90 độ
-# d               : Chế độ xem đôi (Dual page)
-# i               : Đảo ngược màu (Invert colors)
-# Tab             : Hiện mục lục (Index)
-# F11             : Toàn màn hình
-
-# --- Tìm kiếm & Hệ thống (Search & System) ---
-# /               : Tìm kiếm
-# n / N           : Kết quả tiếp theo / trước đó
-# f               : Nhảy đến link (Follow link)
-# o               : Mở file mới
-# :               : Nhập lệnh (Command mode)
-# q               : Thoát
+map R reload
