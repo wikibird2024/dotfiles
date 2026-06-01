@@ -92,11 +92,14 @@ return {
 
 					{
 						"diff",
-						symbols = {
-							added = " ",
-							modified = " ",
-							removed = " ",
-						},
+                            colored = true,
+                            symbols = { added = " ", modified = " ", removed = " " } ,
+                        diff_color = {
+                            added = { fg = "#a9b665" },
+                            modified = { fg = "#d8a657" },
+                            removed = { fg = "#ea6962" },
+                        },
+
 					},
 				},
 
