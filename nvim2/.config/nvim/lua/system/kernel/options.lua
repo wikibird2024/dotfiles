@@ -20,7 +20,8 @@ opt.linebreak = true -- Wrap lines at convenient points (word boundaries)
 opt.tabstop = 4 -- Number of spaces a <Tab> counts for
 opt.shiftwidth = 4 -- Size of an indent
 opt.expandtab = true -- Convert tabs to spaces
-opt.smartindent = true -- Make indenting smart
+opt.autoindent = true
+opt.smartindent = false -- Make indenting smart
 
 -- =============================================================================
 -- SEARCH & SYSTEM
