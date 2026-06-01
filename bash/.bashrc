@@ -124,3 +124,6 @@ export GEMINI_API_KEY="AIzaSyCeMSQlyRH2BvgiuqPTnHj29h0ZUyEE6qU"
 # >>>>>>> 6bc33e5 ( Modify: alacritty treesitter nvim2 README.md)
 
 # export GEMINI_MODEL="gemini-2.5-flash"
+
+
+export STM32_PRG_PATH=/mnt/storage/STM32cube/bin
