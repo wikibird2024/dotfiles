@@ -6,6 +6,22 @@
 # Compatible Bash, tmux-safe
 # ==========================================
 
+# ===========================================
+#   Jump to folder that yazi is open
+# ===========================================
+# Add this to your ~/.bashrc or ~/.zshrc
+# Add this to ~/.bashrc
+function y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+    yazi "$@" --cwd-file="$tmp"
+    if [ -f "$tmp" ]; then
+        local cwd="$(cat -- "$tmp")"
+        if [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+            cd -- "$cwd"
+        fi
+        rm -f -- "$tmp"
+    fi
+}
 # ==============================
 # 0️⃣ Pyenv & ESP-IDF Management
 # ==============================
