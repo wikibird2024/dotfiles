@@ -12,10 +12,12 @@
 # Add this to your ~/.bashrc or ~/.zshrc
 # Add this to ~/.bashrc
 function y() {
-    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+    # Changed lowercase x to uppercase X, and separated the template from -t
+    local tmp="$(mktemp -t yazi-cwd.XXXXXX)"
     yazi "$@" --cwd-file="$tmp"
     if [ -f "$tmp" ]; then
-        local cwd="$(cat -- "$tmp")"
+        local cwd
+        cwd=$(<"$tmp")
         if [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
             cd -- "$cwd"
         fi
