@@ -98,7 +98,7 @@ if command -v dircolors >/dev/null 2>&1; then
 fi
 
 # 10. MODULAR EXTENSIONS
-[[ -f ~/.functions ]] && . ~/.functions
+[[ -f ~/.bash_functions ]] && . ~/.bash_functions
 [[ -f ~/.bash_local ]] && . ~/.bash_local
 
 # 11. STARSHIP (MUST BE LAST)
@@ -113,13 +113,10 @@ fi
 eval "$(navi widget bash)"
 
 # 11 AI google studio key
+# export GEMINI_API_KEY="AIzaSyCVy9iPqWSvK-UqhLd372yzKQohwVHrY6w"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-# gemini key
-# export GEMINI_MODEL="gemini-2.5-flash"
-# export GEMINI_API_KEY="AIzaSyCg4x1X65qbokaZZPRxvLkHeHOjutnerwY"
-# >>>>>>> 6bc33e5 ( Modify: alacritty treesitter nvim2 README.md)
 
 # export GEMINI_MODEL="gemini-2.5-flash"
 
