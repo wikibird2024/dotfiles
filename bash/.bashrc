@@ -113,12 +113,10 @@ fi
 eval "$(navi widget bash)"
 
 # 11 AI google studio key
-export GEMINI_API_KEY="AIzaSyCVy9iPqWSvK-UqhLd372yzKQohwVHrY6w"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 # gemini key
-export GEMINI_API_KEY="AIzaSyCeMSQlyRH2BvgiuqPTnHj29h0ZUyEE6qU"
 # export GEMINI_MODEL="gemini-2.5-flash"
 # export GEMINI_API_KEY="AIzaSyCg4x1X65qbokaZZPRxvLkHeHOjutnerwY"
 # >>>>>>> 6bc33e5 ( Modify: alacritty treesitter nvim2 README.md)
