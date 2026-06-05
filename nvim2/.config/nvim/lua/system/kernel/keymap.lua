@@ -44,22 +44,27 @@ map("n", "<leader>-", "<cmd>split<CR>", { desc = "Horizontal Split" })
 -- ─────────────────────────────────────────────────────
 map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find Files" })
 
--- FIXED: Grabs ALL live grep results instantly on Ctrl-q and sends them to Quickfix
+-- FIXED: Uses fzf-lua actions mapping interface to safely populate quickfix
 map("n", "<leader>fg", function()
-    require("fzf-lua").live_grep({
-        fzf_opts = {
-            ["--bind"] = "ctrl-q:select-all+accept",
-        }
-    })
+	require("fzf-lua").live_grep({
+		actions = {
+			-- Overrides Ctrl-Q inside the search buffer
+			["ctrl-q"] = {
+				fn = require("fzf-lua").actions.file_sel_to_qf,
+				prefix = "select-all",
+			},
+		},
+	})
 end, { desc = "Live Grep (Send All to Quickfix)" })
 
+--
 map("n", "<leader>fh", "<cmd>FzfLua oldfiles<CR>", { desc = "History" })
 map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Buffers" })
 
 -- Clear search highlights properly without breaking default Esc actions
 map("n", "<Esc>", function()
-    vim.cmd("nohlsearch")
-    return "<Esc>"
+	vim.cmd("nohlsearch")
+	return "<Esc>"
 end, { expr = true, desc = "Clear Search Highlights" })
 
 -- Quickfix
