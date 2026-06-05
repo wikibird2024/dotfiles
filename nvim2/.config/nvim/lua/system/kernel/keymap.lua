@@ -39,20 +39,34 @@ map("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Resize Right" })
 
 map("n", "<leader>|", "<cmd>vsplit<CR>", { desc = "Vertical Split" })
 map("n", "<leader>-", "<cmd>split<CR>", { desc = "Horizontal Split" })
-
 -- ─────────────────────────────────────────────────────
 -- 5. FIND / SEARCH
 -- ─────────────────────────────────────────────────────
 map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find Files" })
-map("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Live Grep" })
+
+-- FIXED: Grabs ALL live grep results instantly on Ctrl-q and sends them to Quickfix
+map("n", "<leader>fg", function()
+    require("fzf-lua").live_grep({
+        fzf_opts = {
+            ["--bind"] = "ctrl-q:select-all+accept",
+        }
+    })
+end, { desc = "Live Grep (Send All to Quickfix)" })
+
 map("n", "<leader>fh", "<cmd>FzfLua oldfiles<CR>", { desc = "History" })
 map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Buffers" })
 
 -- Clear search highlights properly without breaking default Esc actions
 map("n", "<Esc>", function()
-	vim.cmd("nohlsearch")
-	return "<Esc>"
+    vim.cmd("nohlsearch")
+    return "<Esc>"
 end, { expr = true, desc = "Clear Search Highlights" })
+
+-- Quickfix
+map("n", "<leader>qo", "<cmd>copen<CR>", { desc = "Quickfix: Open Window" })
+map("n", "<leader>qc", "<cmd>cclose<CR>", { desc = "Quickfix: Close Window" })
+map("n", "]q", "<cmd>cnext<CR>", { desc = "Quickfix: Next Item" })
+map("n", "[q", "<cmd>cprev<CR>", { desc = "Quickfix: Prev Item" })
 
 -- ─────────────────────────────────────────────────────
 -- 6. EXPLORER
