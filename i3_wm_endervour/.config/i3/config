@@ -25,12 +25,12 @@ set $ws1 "1:"
 set $ws2 "2:"
 set $ws3 "3:"
 set $ws4 "4:"
-set $ws5 "5:"
+set $ws5 "5:►"
 set $ws6 "6:"
 set $ws7 "7:⚙"
 set $ws8 "8:"
 set $ws9 "9:📻"
-set $ws10 "10:►"
+set $ws10 "10:EEE"
 
 # Turn on and use citx5
 # exec --no-startup-id fcitx5 -d
@@ -71,8 +71,7 @@ workspace_layout default
 ##############################
 
 #border indicator on windows:
-# new_window pixel 1
-new_window normal 2
+new_window pixel 1
 
 # thin borders
 hide_edge_borders smart
@@ -85,7 +84,7 @@ gaps outer 3
 #default_border normal
 
 # window title alignment
-#title_align center
+title_align center
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -285,8 +284,8 @@ bindsym $mod+Shift+Right move right
 bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
-bindsym $mod+g layout tabbed
+# bindsym $mod+s layout stacking
+bindsym $mod+s layout tabbed
 bindsym $mod+n layout toggle split
 
 # toggle tiling / floating
@@ -365,14 +364,15 @@ bindsym $mod+y exec --no-startup-id kitty -e bash -ic "y"
 assign [class="kitty"] $ws1
 assign [class="(?i)firefox"] $ws2
 assign [class="Thunar|zathura"] $ws3
-assign [class="thunderbird|(?i)virtualbox"] $ws4
-assign [class="|code"] $ws5
+assign [class="thunderbird"] $ws4
+assign [class=""] $ws5
 assign [class="TelegramDesktop|(?i)teams"] $ws6
 
 # automatic set focus new window if it opens on another workspace than the current:
 for_window [class="^(Xfce4-terminal|kitty)$"] focus
 for_window [class="(?i)firefox"] focus
 for_window [class="Thunar"] focus
+for_window [class="code"] focus
 for_window [class="zathura"] focus
 for_window [class="Thunderbird"] focus
 for_window [class="(?i)virtualbox"] focus
@@ -398,7 +398,7 @@ for_window [class="Pamac-manager"] floating enable
 for_window [window_role="About"] floating enable
 
 # set border of floating window
-for_window [class="urxvt"] border pixel 0
+for_window [class="urxvt"] border pixel 1
 
 # set size of floating window
 #for_window [window_role="(?i)GtkFileChooserDialog"] resize set 640 480 #to set size of file choose dialog
@@ -428,7 +428,6 @@ exec_always $HOME/.config/i3/scripts/import-gsettings
 # install picom package (sudo pacman -Syu picom)
 
 # start using default config
-# Sửa đổi: Đã gỡ comment để Picom hoạt động
 exec_always --no-startup-id picom -b
 
 # for custom config:
@@ -468,7 +467,7 @@ exec --no-startup-id ~/.screenlayout/monitor.sh
 # set wallpaper
 # exec --no-startup-id sleep 2 && nitrogen --restore
 # exec --no-startup-id sleep 1 && feh --bg-fill ~/Pictures/wallpaper/road_wallpaper.jpg
- exec --no-startup-id sleep 1 && feh --bg-fill ~/Pictures/wallpaper/road_wallpaper.png
+ exec --no-startup-id sleep 1 && feh --bg-fill ~/Pictures/wallpaper/road_wallpaper.jpg
 # set powersavings for display:
 exec --no-startup-id xset s 480 dpms 600 600 600
 
@@ -499,7 +498,6 @@ exec --no-startup-id /usr/bin/dunst
 # autotiling script
 # https://github.com/nwg-piotr/autotiling
 # `pacman -Syu autotiling`
-# Sửa đổi: Đã gỡ comment để Autotiling hoạt động
 exec_always --no-startup-id autotiling
 
 # Autostart apps as you like
