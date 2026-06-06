@@ -6,7 +6,7 @@ alias l='ls -CF'
 
 # ============================ 🚀 GREYSTONE WORKING 🚀 ============================
 alias run-avr='mono ~/BTranHao/run-avrdudess/avrdudess.exe &'
-
+alias qt5="/home/greystone/storage/qtcreator-5.0.3/bin/qtcreator.sh -settingspath ~/.config/QtCreator5"
 # Aider Shortcuts
 alias agemini='aider --model gemini/gemini-3.5-flash'
 alias adeep='aider --model deepseek/deepseek-chat'
