@@ -8,7 +8,7 @@ live_config_reload = true
 [window]
 decorations = "none"
 startup_mode = "Windowed"  # Capitalized to match Alacritty's strict Enum parsing
-opacity = 0.96
+opacity = 1.0
 
 [window.padding]
 x = 10
