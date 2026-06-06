@@ -25,11 +25,12 @@ set $ws1 "1:"
 set $ws2 "2:"
 set $ws3 "3:"
 set $ws4 "4:"
-set $ws5 "5:►"
+set $ws5 "5:S5-%"
 set $ws6 "6:"
 set $ws7 "7:⚙"
 set $ws8 "8:"
-set $ws9 "9:📻"
+set $ws9 "9:S9-("
+# set $ws9 "9:►"
 set $ws10 "10:EEE"
 
 # Turn on and use citx5
@@ -365,7 +366,7 @@ assign [class="kitty"] $ws1
 assign [class="(?i)firefox"] $ws2
 assign [class="Thunar|zathura"] $ws3
 assign [class="thunderbird"] $ws4
-assign [class=""] $ws5
+assign [class="virtualbox"] $ws5
 assign [class="TelegramDesktop|(?i)teams"] $ws6
 
 # automatic set focus new window if it opens on another workspace than the current:
