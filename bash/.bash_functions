@@ -210,6 +210,21 @@ function now { date +"%Y-%m-%d %H:%M:%S"; }
 function logtop { tar -xOzf "$1" | head -n "$2"; }
 function fetch_extract { curl -LO "$1" && extract "$(basename $1)"; }
 
+sync-dir() {
+    if [ "$#" -ne 2 ]; then
+        echo "Usage: sync-dir <source_directory> <destination_directory>"
+        return 1
+    fi
+
+    # Variables for paths
+    local src="$1"
+    local dest="$2"
+
+    echo "🚀 Starting optimized rsync transfer from $src to $dest..."
+
+    # Executes rsync with hard links, attributes, sparse-handling, and progress bars
+    rsync -aHAXx --sparse --info=progress2 --delete "$src" "$dest"
+}
 # ==============================
 # internet and connection
 # ==============================
