@@ -3,7 +3,6 @@ return {
 	require("system.plugins.tools.fzf"),
 	require("system.plugins.tools.vim-tmux-navigator"),
 	require("system.plugins.tools.persistence"),
-	require("system.plugins.tools.ouroboros"),
 	require("system.plugins.tools.nvim-bqf"),
 	require("system.plugins.tools.nvim-dap"),
 	require("system.plugins.tools.crates"),
