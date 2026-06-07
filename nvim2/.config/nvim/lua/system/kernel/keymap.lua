@@ -40,9 +40,13 @@ map("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Resize Right" })
 map("n", "<leader>|", "<cmd>vsplit<CR>", { desc = "Vertical Split" })
 map("n", "<leader>-", "<cmd>split<CR>", { desc = "Horizontal Split" })
 -- ─────────────────────────────────────────────────────
--- 5. FIND / SEARCH
+-- 5. FIND / SEARCH & QUICKFIX
 -- ─────────────────────────────────────────────────────
+
+-- FzfLua Navigation
 map("n", "<leader>ff", "<cmd>FzfLua files<CR>", { desc = "Find Files" })
+map("n", "<leader>fh", "<cmd>FzfLua oldfiles<CR>", { desc = "History" })
+map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Buffers" })
 
 -- FIXED: Uses fzf-lua actions mapping interface to safely populate quickfix
 map("n", "<leader>fg", function()
@@ -57,21 +61,24 @@ map("n", "<leader>fg", function()
 	})
 end, { desc = "Live Grep (Send All to Quickfix)" })
 
---
-map("n", "<leader>fh", "<cmd>FzfLua oldfiles<CR>", { desc = "History" })
-map("n", "<leader>fb", "<cmd>FzfLua buffers<CR>", { desc = "Buffers" })
+-- FIXED: Clear search highlights safely without using an expression map
+map("n", "<Esc>", "<cmd>nohlsearch<CR><Esc>", { desc = "Clear Search Highlights" })
 
--- Clear search highlights properly without breaking default Esc actions
-map("n", "<Esc>", function()
-	vim.cmd("nohlsearch")
-	return "<Esc>"
-end, { expr = true, desc = "Clear Search Highlights" })
-
--- Quickfix
-map("n", "<leader>qo", "<cmd>copen<CR>", { desc = "Quickfix: Open Window" })
+-- Quickfix (Configured to open vertically on the far right)
+map("n", "<leader>qo", "<cmd>vertical botright copen<CR>", { desc = "Quickfix: Open Vertical Window" })
 map("n", "<leader>qc", "<cmd>cclose<CR>", { desc = "Quickfix: Close Window" })
 map("n", "]q", "<cmd>cnext<CR>", { desc = "Quickfix: Next Item" })
 map("n", "[q", "<cmd>cprev<CR>", { desc = "Quickfix: Prev Item" })
+
+-- Optional: If you want `ctrl-q` from fzf-lua to also respect the vertical layout automatically,
+-- add this single autocommand block right below your mappings:
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "qf",
+	callback = function()
+		vim.cmd("wincmd L | vertical resize 50")
+	end,
+})
+-- ─────────────────────────────────────────────────────
 
 -- ─────────────────────────────────────────────────────
 -- 6. EXPLORER
