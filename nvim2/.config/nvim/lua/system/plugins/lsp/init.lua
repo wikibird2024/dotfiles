@@ -2,40 +2,40 @@ return {
 	"neovim/nvim-lspconfig",
 	event = { "BufReadPre", "BufNewFile" },
 	config = function()
-		-- 1. Kích hoạt Giao diện (Bo góc, Icons, Diagnostic)
-		-- Phải gọi hàm này đầu tiên để các thiết lập UI có hiệu lực
+		-- 1. Initialize the UI (Borders, Icons, Diagnostics)
+		-- This must be called first for UI settings to take effect
 		require("system.constitution.lsp_ui").setup()
 
-		-- 2. Guard: Đảm bảo chỉ khởi tạo một lần duy nhất mỗi session
+		-- 2. Guard: Ensure initialization happens only once per session
 		vim.g._lsp_kernel_enabled = vim.g._lsp_kernel_enabled or {}
 		local enabled = vim.g._lsp_kernel_enabled
 
-		-- 3. Load các logic Runtime và Capabilities
+		-- 3. Load Runtime logic and Capabilities
 		local on_attach = require("system.runtime.lsp_on_attach").on_attach
 		local capabilities = require("system.constitution.lsp_capabilities")
 
-		-- Danh sách các server bạn muốn dùng
+		-- List of servers to activate
 		local servers = { "texlab", "pyright", "clangd" }
-		-- "rust_analyzer"  if you wan to use it again
+		-- "rust_analyzer" if you want to use it again
 		for _, name in ipairs(servers) do
 			if not enabled[name] then
-				-- Kiểm tra xem có file cấu hình riêng cho từng server không
+				-- Check for a dedicated configuration file for each server
 				local ok, server_mod = pcall(require, "system.plugins.lsp.servers." .. name)
 
 				if ok and type(server_mod.setup) == "function" then
-					-- Nếu có file riêng, gọi hàm setup của file đó
+					-- If a dedicated file exists, call its setup function
 					server_mod.setup(on_attach, capabilities)
 				else
-					-- Nếu không có file riêng, dùng cấu hình chuẩn của Neovim 0.11
-					-- KHÔNG dùng require('lspconfig') để tránh lỗi Deprecated
-					vim.lsp.config[name] = {
+					-- Fallback to the standard Neovim 0.11 configuration setup
+					-- Calls vim.lsp.config as a function to maintain native stability
+					vim.lsp.config(name, {
 						on_attach = on_attach,
 						capabilities = capabilities,
 						root_markers = { ".git", "pyproject.toml", "package.json", "Cargo.toml" },
-					}
+					})
 				end
 
-				-- Kích hoạt LSP Server
+				-- Enable the LSP Server
 				vim.lsp.enable(name)
 				enabled[name] = true
 			end
