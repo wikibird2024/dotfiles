@@ -2,44 +2,53 @@
 # STARSHIP.TOML - COMPACT 2-LINE CONFIG (FOR YOCTO/DOCKER)
 # =======================================================================
 
-# 1. CẤU HÌNH CHUNG
+# 1. GENERAL CONFIGURATION
 add_newline = false
 
-# format: Dòng 1 chứa thông tin bên trái, dùng $fill để đẩy $time sang phải.
+# format: Line 1 contains left-aligned info, utilizing $fill to push $time to the right edge.
 format = """
-$os$username$hostname$localip$directory$git_branch$git_status$c$rust$python$nodejs$package$memory_usage$cmd_duration$fill$time
+$os$username$hostname$localip$directory$git_branch$git_status$c$rust$python$nodejs$package$memory_usage$battery$cmd_duration$fill$time
 $character"""
 
 command_timeout = 800
+scan_timeout = 500  # Increases file scanning limit to 500ms to prevent timeouts in massive repositories
 
 [line_break]
 disabled = true
 
-# 2. DẤU NHẮC LỆNH (CHARACTER)
+# 2. COMMAND PROMPT (CHARACTER)
 [character]
 success_symbol = "[❯](bold green) "
 error_symbol = "[❯](bold red) "
 vimcmd_symbol = "[❮](bold green) "
 
-# 3. KHOẢNG TRỐNG (FILL - Đẩy nội dung sang phải)
+# 3. SPACING CONTENT (FILL - Pushes elements to the right)
 [fill]
-symbol = " " # Sử dụng khoảng trắng để đẩy time về cuối dòng
+symbol = " " # Uses blank whitespace to right-align the timestamp matrix
 
-# 4. HỆ ĐIỀU HÀNH & NGƯỜI DÙNG
+# 4. OPERATING SYSTEM & USER IDENTITY
 [os]
 disabled = false
 style = "bold white"
 
+[os.symbols]
+Arch = "󰣇 "
+EndeavourOS = " "
+Linux = " "
+Ubuntu = " "
+Macos = " "
+Windows = " "
+
 [username]
 show_always = true
-format = " [$user]($style) "
+format = "[$user]($style) "
 disabled = false
 
 [hostname]
 ssh_only = true
 format = "@[$hostname](bold yellow) "
 
-# 5. THƯ MỤC (DIRECTORY)
+# 5. WORKING DIRECTORY (DIRECTORY)
 [directory]
 truncation_length = 2
 truncate_to_repo = true
@@ -47,7 +56,7 @@ style = "bold cyan"
 format = "[$path]($style)[$read_only]($read_only_style) "
 read_only = " 🔒"
 
-# 6. GIT
+# 6. VERSION CONTROL (GIT)
 [git_branch]
 symbol = " "
 style = "bold purple"
@@ -57,7 +66,7 @@ format = "on [$symbol$branch]($style) "
 style = "bold red"
 format = '([\[$all_status$ahead_behind\]]($style) )'
 
-# 7. NGÔN NGỮ LẬP TRÌNH
+# 7. PROGRAMMING LANGUAGES & PACKAGE MANAGERS
 [c]
 symbol = " "
 style = "bold blue"
@@ -77,7 +86,13 @@ symbol = "󰎙 "
 style = "bold green"
 format = "via [$symbol($version)]($style) "
 
-# 8. GIÁM SÁT HỆ THỐNG
+[package]
+disabled = false
+symbol = "󰏗 "
+style = "bold dimmed white"
+format = "is [$symbol$version]($style) "
+
+# 8. SYSTEM HARDWARE MONITORING
 [memory_usage]
 disabled = false
 threshold = 75
@@ -90,16 +105,21 @@ min_time = 1000
 format = "took [$duration](bold yellow) "
 
 [battery]
+disabled = false
 full_symbol = "󰁹 "
 charging_symbol = "󰂄 "
 discharging_symbol = "󰂃 "
-[[battery.display]]
-threshold = 15
-style = "bold red"
 
-# 9. THỜI GIAN (TIME - Right Aligned)
+# 9. TIMESTAMP MATRIX (TIME - Right Aligned)
 [time]
 disabled = false
 time_format = "%T"
 style = "bold dimmed white"
 format = "[$time]($style)"
+
+# =======================================================================
+# TOML RULES: ALL ARRAY CONFIGURATIONS MUST GO AT THE VERY END OF FILE
+# =======================================================================
+[[battery.display]]
+threshold = 15
+style = "bold red"
