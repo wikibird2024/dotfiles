@@ -21,17 +21,21 @@
 
 # --- PHẦN THÊM VÀO VÀ SỬA ĐỔI ĐỂ CHẠY ỔN ĐỊNH ---
 # Khai báo biến Workspace lên đầu để tránh lỗi bindcode
-set $ws1 "1:"
-set $ws2 "2:"
-set $ws3 "3:"
-set $ws4 "4:"
-set $ws5 "5:Work-space-5"
-set $ws6 "6:"
-set $ws7 "7:⚙"
-set $ws8 "8:"
-set $ws9 "9:Work-space-9"
-# set $ws9 "9:►"
-set $ws10 "10:EEE"
+# set $ws1 "1:"
+# set $ws2 "2:"
+# set $ws3 "3:"
+# set $ws4 "4:"
+# set $ws6 "6:"
+set $ws1 "1:[1]-Terminal"
+set $ws2 "2:[2]-TBrowser"
+set $ws3 "3:[3]-TFile"
+set $ws4 "4:[4]-TCode"
+set $ws5 "5:[5]-TWork-space-5"
+set $ws6 "6:[6]-TChat-Apps"
+set $ws7 "7:[7]-TWork-space-7"
+set $ws8 "8:[8]-TWork-space-8"
+set $ws9 "9:[9]-TWork-space-9"
+set $ws10 "10:[10]-TWork-space-10"
 
 # Turn on and use citx5
 # exec --no-startup-id fcitx5 -d
@@ -82,7 +86,7 @@ gaps inner 0
 gaps outer 3
 
 # show window title bars (not officially supported with i3gaps)
-#default_border normal
+default_border normal
 
 # window title alignment
 title_align center
