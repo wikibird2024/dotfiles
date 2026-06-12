@@ -61,7 +61,7 @@ map("n", "<leader>fg", function()
 		},
 	})
 end, { desc = "Live Grep (Send All to Quickfix)" })
-
+-- normal using G to serch
 -- FIXED: Clear search highlights safely without using an expression map
 map("n", "<Esc>", "<cmd>nohlsearch<CR><Esc>", { desc = "Clear Search Highlights" })
 
@@ -72,6 +72,25 @@ map("n", "]q", "<cmd>cnext<CR>", { desc = "Quickfix: Next Item" })
 map("n", "[q", "<cmd>cprev<CR>", { desc = "Quickfix: Prev Item" })
 
 -- Optional: If you want `ctrl-q` from fzf-lua to also respect the vertical layout automatically,
+vim.keymap.set("n", "<leader>g", function()
+    require("fzf-lua").live_grep({
+        winopts = {
+            split = "belowright new",
+        },
+        actions = {
+            ["ctrl-q"] = {
+                fn = function(selected, opts)
+                    -- 1. Run the default fzf-lua action to send items to the quickfix list
+                    require("fzf-lua").actions.file_sel_to_qf(selected, opts)
+
+                    -- 2. Force the quickfix window to move to the far left side
+                    vim.cmd("copen | wincmd H")
+                end,
+                prefix = "select-all",
+            },
+        },
+    })
+end, { desc = "Live Grep (Quickfix to left window)" })
 -- add this single autocommand block right below your mappings:
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "qf",
