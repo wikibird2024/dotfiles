@@ -1,6 +1,7 @@
 return {
 	{
 		"kevinhwang91/nvim-bqf",
+        enabled = false, -- This shuts down the plugin completely
 		ft = "qf", -- Efficient lazy loading: only load when a quickfix window opens
 		dependencies = {
 			-- Only compile/load fzf locally if it's NOT already installed on your Linux system
