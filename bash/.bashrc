@@ -113,12 +113,9 @@ fi
 eval "$(navi widget bash)"
 
 # 11 AI google studio key
-# export GEMINI_API_KEY="REMOVED_API_KEY"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-
 # export GEMINI_MODEL="gemini-2.5-flash"
-
 
 export STM32_PRG_PATH=/mnt/storage/STM32cube/bin
