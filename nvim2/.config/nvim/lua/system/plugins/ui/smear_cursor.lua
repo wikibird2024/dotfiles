@@ -1,5 +1,6 @@
 return {
 	"sphamba/smear-cursor.nvim",
+	enabled = false, -- disable this thing to test scroll issue
 	event = "VeryLazy",
 	opts = {
 		stiffness = 0.92,
