@@ -1,14 +1,14 @@
--- File này sẽ được tự động gọi bởi nvim-lspconfig trong hệ thống của bạn
+-- Loaded by lsp/init.lua via require("system.plugins.lsp.servers.texlab")
 return {
 	settings = {
 		texlab = {
 			build = {
 				executable = "latexmk",
-				args = { "-xelatex", "-interaction=nonstopmode", "-synctex=1", "%f" },
+				args       = { "-xelatex", "-interaction=nonstopmode", "-synctex=1", "%f" },
 			},
 			forwardSearch = {
 				executable = "zathura",
-				args = { "--synctex-forward", "%l:1:%f", "%p" },
+				args       = { "--synctex-forward", "%l:1:%f", "%p" },
 			},
 		},
 	},

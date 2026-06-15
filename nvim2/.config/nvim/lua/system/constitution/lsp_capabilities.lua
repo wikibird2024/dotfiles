@@ -1,12 +1,11 @@
-
 local M = {}
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
--- Hỗ trợ cho nvim-cmp (completion)
+-- Required for nvim-cmp snippet completion
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
--- Quan trọng cho Clangd: Tránh xung đột encoding giữa utf-8 và utf-16
+-- Required for clangd: avoids utf-8 / utf-16 encoding conflict
 capabilities.offsetEncoding = { "utf-16" }
 
 M.capabilities = capabilities

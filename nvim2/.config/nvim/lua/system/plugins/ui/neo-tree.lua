@@ -1,12 +1,12 @@
 return {
 	"nvim-neo-tree/neo-tree.nvim",
-	branch = "v3.x",
-	lazy = false,
+	branch   = "v3.x",
+	lazy     = false,
 	priority = 1000,
 	keys = {
 		{ "<leader>e", "<cmd>Neotree toggle<CR>", desc = "Explorer Toggle" },
-		{ "<leader>o", "<cmd>Neotree focus<CR>",  desc = "Explorer Focus" },
-		{ "<leader>r", "<cmd>Neotree reveal<CR>", desc = "Reveal File" },
+		{ "<leader>o", "<cmd>Neotree focus<CR>",  desc = "Explorer Focus"  },
+		{ "<leader>r", "<cmd>Neotree reveal<CR>", desc = "Reveal File"     },
 	},
 	dependencies = {
 		"nvim-lua/plenary.nvim",
@@ -17,7 +17,7 @@ return {
 		require("neo-tree").setup({
 			close_if_last_window = true,
 			window = {
-				width = 28, -- Mặc định Neo-tree khá rộng, cần giới hạn lại cho gọn
+				width = 28,
 				mappings = {
 					["l"] = "open",
 					["h"] = "close_node",
@@ -27,17 +27,12 @@ return {
 				},
 			},
 			filesystem = {
-				-- Tự động highlight file đang mở (Mặc định không bật sẵn)
-				follow_current_file = { enabled = true },
-				-- Tự động cập nhật cây thư mục khi tạo/xóa file bên ngoài (Cần thiết)
+				follow_current_file    = { enabled = true },
 				use_libuv_file_watcher = true,
 				filtered_items = {
-					-- Mặc định Neo-tree ẩn file . (dotfiles), phải bật lên mới thấy config
-					hide_dotfiles = false,
+					hide_dotfiles   = false,
 					hide_gitignored = false,
-					hide_by_name = {
-						".git", -- Folder này cực kỳ rác, ẩn đi cho chuyên nghiệp
-					},
+					hide_by_name    = { ".git" },
 				},
 			},
 		})
