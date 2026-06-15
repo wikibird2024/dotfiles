@@ -12,8 +12,10 @@ return {
 			-- Define your linters for each filetype.
 			lint.linters_by_ft = {
 				python = { "flake8" },
-				sh = { "shellcheck" },
-				-- Add more linters as needed.
+				sh     = { "shellcheck" },
+				lua    = { "luacheck" },
+				c      = { "cpplint" },
+				cpp    = { "cpplint" },
 			}
 
 			-- Create an autocommand to trigger linting.

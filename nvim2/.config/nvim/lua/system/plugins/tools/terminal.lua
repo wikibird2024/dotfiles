@@ -6,6 +6,16 @@ return {
 		{ "<leader>tf", "<cmd>ToggleTerm direction=float<CR>",     desc = "Float Terminal" },
 		{ "<leader>th", "<cmd>ToggleTerm direction=horizontal<CR>",desc = "Horizontal Terminal" },
 		{ "<leader>tv", "<cmd>ToggleTerm direction=vertical<CR>",  desc = "Vertical Terminal" },
+		{
+			"<leader>gg",
+			function()
+				require("toggleterm.terminal").Terminal
+					:new({ cmd = "lazygit", direction = "float", hidden = true,
+						float_opts = { border = "curved", width = math.floor(vim.o.columns * 0.95), height = math.floor(vim.o.lines * 0.95) } })
+					:toggle()
+			end,
+			desc = "Lazygit",
+		},
 	},
 	config = function()
 		require("toggleterm").setup({

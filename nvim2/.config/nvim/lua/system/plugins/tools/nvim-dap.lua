@@ -5,6 +5,7 @@ return {
 			"rcarriga/nvim-dap-ui",
 			"theHamsta/nvim-dap-virtual-text",
 			"nvim-neotest/nvim-nio",
+			"mfussenegger/nvim-dap-python",
 		},
 		keys = {
 			{ "<leader>dc",  function() require("dap").continue() end,                                                desc = "Debug: Continue" },
@@ -166,6 +167,13 @@ return {
 					stopOnEntry = false,
 				},
 			}
+
+			-- =====================================================================
+			-- PYTHON CONFIGURATION (debugpy)
+			-- =====================================================================
+			require("dap-python").setup(vim.fn.exepath("python3") ~= "" and vim.fn.exepath("python3") or "python")
+			-- pytest support
+			require("dap-python").test_runner = "pytest"
 
 			-- =====================================================================
 			-- SIGN LUMINESCENCE DEFINITIONS
