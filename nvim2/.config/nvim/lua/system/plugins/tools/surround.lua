@@ -1,33 +1,27 @@
--- ~/.config/nvim/lua/user/plugins/tools/surround.lua
-
 return {
 	{
 		"kylechui/nvim-surround",
-		version = "*", -- Sử dụng bản release mới nhất để tương thích v4
-		event = "BufReadPost",
+		version = "*",
+		event   = "BufReadPost",
 		config = function()
 			require("nvim-surround").setup({
-
 				surrounds = {
 					["("] = {
-						add = { "( ", " )" },
-						find = "%b()",
+						add    = { "( ", " )" },
+						find   = "%b()",
 						delete = "^(.?)().-(.)()$",
 					},
-
 					["{"] = {
-						add = { "{ ", " }" },
-						find = "%b{}",
+						add    = { "{ ", " }" },
+						find   = "%b{}",
 						delete = "^(.?)().-(.)()$",
 					},
-
 					["<"] = {
-						add = { "<", ">" },
-						find = "%b<>",
+						add    = { "<", ">" },
+						find   = "%b<>",
 						delete = "^(.?)().-(.)()$",
 					},
-
-					-- Giữ lại phím 'l' để bọc log cho ESP32/C
+					-- ESP32/C logging helper: wrap word as ESP_LOGI(TAG, "...");
 					["l"] = {
 						add = function()
 							return { 'ESP_LOGI(TAG, "', '");' }

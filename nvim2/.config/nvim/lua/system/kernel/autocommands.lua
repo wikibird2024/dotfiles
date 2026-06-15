@@ -1,52 +1,45 @@
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
 
--- 1. Nhóm cài đặt chung
-local general_grp = augroup("GeneralSettings", { clear = true })
+local general = augroup("GeneralSettings", { clear = true })
 
--- Tự động lưu: Chỉ lưu khi thực sự cần thiết
+-- Auto-save on leaving insert mode or losing focus (skips special/readonly buffers)
 autocmd({ "InsertLeave", "FocusLost" }, {
-	group = general_grp,
+	group    = general,
 	callback = function()
-		-- Điều kiện: File có sửa đổi, không phải file trống, và không phải file chỉ đọc
 		if vim.bo.modified and vim.fn.expand("%") ~= "" and vim.bo.buftype == "" then
 			vim.cmd("silent! update")
 		end
 	end,
 })
 
--- Highlight khi copy (Yank)
+-- Flash yanked region briefly
 autocmd("TextYankPost", {
-	group = general_grp,
+	group    = general,
 	callback = function()
 		vim.hl.on_yank({ timeout = 200 })
 	end,
 })
 
--- Xóa khoảng trắng thừa (Smart Trim) - BẢN SỬA LỖI TRIỆT ĐỂ
+-- Strip trailing whitespace on save without moving the cursor.
+-- Processes lines above and below the current line separately to avoid
+-- excessive redraws on large files.
 autocmd("BufWritePre", {
-	group = general_grp,
+	group    = general,
 	callback = function()
-		-- Không chạy trên các file đặc biệt (NvimTree, Terminal, v.v.)
-		if vim.bo.buftype ~= "" then
-			return
-		end
+		if vim.bo.buftype ~= "" then return end
 
-		local save_cursor = vim.fn.getpos(".")
-		local current_line = vim.fn.line(".")
+		local cursor    = vim.fn.getpos(".")
+		local cur_line  = vim.fn.line(".")
 		local last_line = vim.fn.line("$")
 
-		-- Xóa vùng phía trên dòng hiện tại
-		if current_line > 1 then
-			vim.cmd(string.format([[keepjumps keeppatterns 1,%ds/\s\+$//e]], current_line - 1))
+		if cur_line > 1 then
+			vim.cmd(string.format([[keepjumps keeppatterns 1,%ds/\s\+$//e]], cur_line - 1))
+		end
+		if cur_line < last_line then
+			vim.cmd(string.format([[keepjumps keeppatterns %d,%ds/\s\+$//e]], cur_line + 1, last_line))
 		end
 
-		-- Xóa vùng phía dưới dòng hiện tại (Chỉ chạy nếu dòng hiện tại chưa phải cuối cùng)
-		if current_line < last_line then
-			vim.cmd(string.format([[keepjumps keeppatterns %d,%ds/\s\+$//e]], current_line + 1, last_line))
-		end
-
-		vim.fn.setpos(".", save_cursor)
+		vim.fn.setpos(".", cursor)
 	end,
 })
-
