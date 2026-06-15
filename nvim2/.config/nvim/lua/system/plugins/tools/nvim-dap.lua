@@ -6,8 +6,29 @@ return {
 			"theHamsta/nvim-dap-virtual-text",
 			"nvim-neotest/nvim-nio",
 		},
-		-- Keep lazy loading active!
-		keys = { "<leader>d" },
+		keys = {
+			{ "<leader>dc",  function() require("dap").continue() end,                                                desc = "Debug: Continue" },
+			{ "<leader>dt",  function() require("dap").terminate() end,                                               desc = "Debug: Terminate" },
+			{ "<leader>dr",  function()
+				local dap = require("dap")
+				if not pcall(dap.restart) then dap.terminate(); vim.defer_fn(dap.continue, 150) end
+			end,                                                                                                      desc = "Debug: Restart" },
+			{ "<leader>ds",  function() require("dap").step_over() end,                                               desc = "Step Over" },
+			{ "<leader>di",  function() require("dap").step_into() end,                                               desc = "Step Into" },
+			{ "<leader>do",  function() require("dap").step_out() end,                                                desc = "Step Out" },
+			{ "<leader>drt", function() require("dap").run_to_cursor() end,                                           desc = "Run to Cursor" },
+			{ "<leader>db",  function() require("dap").toggle_breakpoint() end,                                       desc = "Breakpoint: Toggle" },
+			{ "<leader>dB",  function() require("dap").set_breakpoint(vim.fn.input("Condition: ")) end,               desc = "Breakpoint: Condition" },
+			{ "<leader>dl",  function() require("dap").set_breakpoint(nil, nil, vim.fn.input("Log: ")) end,           desc = "Log Point" },
+			{ "<leader>dh",  function() require("dap.ui.widgets").hover() end,                                        desc = "Debugger Hover" },
+			{ "<leader>de",  function() require("dapui").eval() end,                                                  desc = "Evaluate Expression" },
+			{ "<leader>de",  function() require("dapui").eval() end,                mode = "v",                       desc = "Evaluate Selection" },
+			{ "<leader>du",  function() require("dapui").toggle() end,                                                desc = "Toggle Debug UI" },
+			{ "<F5>",        function() require("dap").continue() end,                                                desc = "Debug: Continue" },
+			{ "<F10>",       function() require("dap").step_over() end,                                               desc = "Debug: Step Over" },
+			{ "<F11>",       function() require("dap").step_into() end,                                               desc = "Debug: Step Into" },
+			{ "<F12>",       function() require("dap").step_out() end,                                                desc = "Debug: Step Out" },
+		},
 		config = function()
 			local dap = require("dap")
 			local dapui = require("dapui")

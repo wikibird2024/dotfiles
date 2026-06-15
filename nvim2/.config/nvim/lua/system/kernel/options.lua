@@ -21,7 +21,7 @@ opt.tabstop = 4 -- Number of spaces a <Tab> counts for
 opt.shiftwidth = 4 -- Size of an indent
 opt.expandtab = true -- Convert tabs to spaces
 opt.autoindent = true
-opt.smartindent = false -- Make indenting smart
+opt.smartindent = false -- Disabled: treesitter handles indentation
 
 -- =============================================================================
 -- SEARCH & SYSTEM

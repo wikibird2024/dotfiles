@@ -15,7 +15,7 @@ return {
           python = { "black" },
           sh = { "shfmt" },
           json = { "jq" },
-          -- Add more formatters as needed
+          rust = { "rustfmt" },
         },
       })
     end,
