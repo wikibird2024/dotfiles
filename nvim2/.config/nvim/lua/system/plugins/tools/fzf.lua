@@ -49,12 +49,14 @@ return {
         grep = { hidden = true },
         actions = {
             files = {
-                ["ctrl-q"] = function(selected, opts) require("fzf-lua").actions.file_sel_to_qf(selected, opts) end,
-                ["alt-q"]  = function(selected, opts) require("fzf-lua").actions.file_sel_to_qf(selected, opts) end,
+                ["default"] = function(selected, opts) require("fzf-lua").actions.file_edit(selected, opts) end,
+                ["ctrl-q"]  = function(selected, opts) require("fzf-lua").actions.file_sel_to_qf(selected, opts) end,
+                ["alt-q"]   = function(selected, opts) require("fzf-lua").actions.file_sel_to_qf(selected, opts) end,
             },
             grep = {
-                ["ctrl-q"] = function(selected, opts) require("fzf-lua").actions.file_sel_to_qf(selected, opts) end,
-                ["alt-q"]  = function(selected, opts) require("fzf-lua").actions.file_sel_to_qf(selected, opts) end,
+                ["default"] = function(selected, opts) require("fzf-lua").actions.file_edit(selected, opts) end,
+                ["ctrl-q"]  = function(selected, opts) require("fzf-lua").actions.file_sel_to_qf(selected, opts) end,
+                ["alt-q"]   = function(selected, opts) require("fzf-lua").actions.file_sel_to_qf(selected, opts) end,
             },
         },
         keymap = {
