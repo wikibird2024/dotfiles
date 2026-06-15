@@ -13,6 +13,13 @@ return {
 		{ "<leader>lr",  function() vim.lsp.buf.rename() end,  desc = "Rename" },
 		{ "<leader>lf",  function() require("conform").format({ async = true }) end, desc = "Format" },
 		{ "<leader>li",  "<cmd>LspInfo<CR>",                   desc = "LSP Info" },
+		{
+			"<leader>lh",
+			function()
+				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+			end,
+			desc = "Toggle Inlay Hints",
+		},
 	},
 	config = function()
 		require("system.constitution.lsp_ui").setup()

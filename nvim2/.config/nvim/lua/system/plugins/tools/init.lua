@@ -13,4 +13,7 @@ return {
 	{ import = "system.plugins.tools.surround" },
 	{ import = "system.plugins.tools.autopairs" },
 	{ import = "system.plugins.tools.terminal" },
+	{ import = "system.plugins.tools.diffview" },
+	{ import = "system.plugins.tools.grug-far" },
+	{ import = "system.plugins.tools.ufo" },
 }

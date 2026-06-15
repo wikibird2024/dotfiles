@@ -11,11 +11,13 @@ return {
           lsp_fallback = true,
         },
         formatters_by_ft = {
-          lua = { "stylua" },
+          lua    = { "stylua" },
           python = { "black" },
-          sh = { "shfmt" },
-          json = { "jq" },
-          rust = { "rustfmt" },
+          sh     = { "shfmt" },
+          json   = { "jq" },
+          rust   = { "rustfmt" },
+          c      = { "clang_format" },
+          cpp    = { "clang_format" },
         },
       })
     end,
