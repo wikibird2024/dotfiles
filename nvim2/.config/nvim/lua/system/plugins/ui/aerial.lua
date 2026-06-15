@@ -3,6 +3,9 @@ return {
     "stevearc/aerial.nvim",
     -- FIX: Use native upstream Neovim events instead of custom frameworks
     event = { "BufReadPost", "BufNewFile" },
+    keys = {
+        { "<leader>lo", "<cmd>AerialToggle!<CR>", desc = "Outline" },
+    },
     dependencies = {
         "nvim-treesitter/nvim-treesitter",
         "nvim-tree/nvim-web-devicons"

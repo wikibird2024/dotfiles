@@ -50,11 +50,3 @@ autocmd("BufWritePre", {
 	end,
 })
 
--- 2. Tự động nạp lại cấu hình khi sửa file lua trong nvim
-autocmd("BufWritePost", {
-	group = augroup("ReloadConfig", { clear = true }),
-	pattern = { "**/lua/system/**/*.lua", "init.lua" },
-	callback = function()
-		vim.notify("Nvim Config Updated!", vim.log.levels.INFO)
-	end,
-})
