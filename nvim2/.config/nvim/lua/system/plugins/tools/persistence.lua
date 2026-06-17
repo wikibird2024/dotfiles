@@ -7,7 +7,14 @@ return {
 		-- Do NOT auto-restore here — user triggers it manually via keymaps below
 	end,
 	keys = {
-		{ "<leader>qs", function() require("persistence").load()               end, desc = "Session: Restore Current Dir" },
+		{ "<leader>qs", function()
+			local p = require("persistence")
+			if vim.fn.filereadable(p.current()) == 1 then
+				p.load()
+			else
+				vim.notify("No session for this directory", vim.log.levels.WARN)
+			end
+		end, desc = "Session: Restore Current Dir" },
 		{ "<leader>ql", function() require("persistence").load({ last = true }) end, desc = "Session: Restore Last"        },
 		{ "<leader>qd", function() require("persistence").stop()               end, desc = "Session: Don't Save on Exit"   },
 	},
