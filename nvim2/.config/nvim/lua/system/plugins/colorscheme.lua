@@ -1,114 +1,196 @@
--- List of themes you want to support
+-- =============================================================================
+-- ACTIVE THEME — change this one line to switch
+-- =============================================================================
+local active = "gruvbox8"
+
+-- =============================================================================
+-- THEME REGISTRY
+-- Each entry:
+--   plugin  : lazy.nvim plugin spec string
+--   setup() : called before vim.cmd.colorscheme() — configure the theme here
+--   name    : optional override for vim.cmd.colorscheme() (nightfox variants)
+-- =============================================================================
 local themes = {
+
 	gruvbox8 = {
 		plugin = "lifepillar/vim-gruvbox8",
-		module = nil, -- It doesn't use require("gruvbox8").setup()
-		opts = {
-			-- We handle these via vim.g in the config function below
-			contrast = "medium", -- Options: soft, medium, hard
-			italic = 1,
-		},
+		setup  = function()
+			vim.g.gruvbox_contrast_dark  = "hard"  -- soft | medium | hard
+			vim.g.gruvbox_italics        = 1
+			vim.g.gruvbox_italicize_strings = 0
+			vim.g.gruvbox_filetype_hi_groups = 1
+			vim.g.gruvbox_plugin_hi_groups   = 1
+		end,
 	},
+
 	gruvbox = {
 		plugin = "ellisonleao/gruvbox.nvim",
-		module = "gruvbox",
-		opts = {
-			contrast = "hard", -- Options: hard | medium | soft
-			overrides = {},
-		},
+		setup  = function()
+			require("gruvbox").setup({
+				contrast      = "hard",   -- soft | medium | hard
+				bold          = true,
+				italic        = { strings = false, comments = true, operators = false },
+				undercurl     = true,
+				strikethrough = true,
+			})
+		end,
 	},
-	nord = {
-		plugin = "gbprod/nord.nvim",
-		module = "nord",
-		opts = {}, -- no extra options by default
-	},
+
 	catppuccin = {
 		plugin = "catppuccin/nvim",
-		module = "catppuccin",
-		opts = {
-			flavour = "macchiato", -- Options: latte | frappe | macchiato | mocha
-		},
+		setup  = function()
+			require("catppuccin").setup({
+				flavour              = "mocha",  -- latte | frappe | macchiato | mocha
+				background           = { light = "latte", dark = "mocha" },
+				transparent_background = false,
+				integrations = {
+					cmp        = true,
+					gitsigns   = true,
+					nvimtree   = true,
+					treesitter = true,
+					notify     = false,
+					mini       = { enabled = true },
+				},
+			})
+		end,
 	},
-	everforest = {
-		plugin = "neanias/everforest-nvim",
-		module = "everforest",
-		opts = {
-			background = "hard", -- Options: hard | medium | soft
-			ui_contrast = "high", -- Options: low | high
-			diagnostic_text_highlight = 1,
-		},
-	},
-	-- Existing Additions:
+
 	tokyonight = {
 		plugin = "folke/tokyonight.nvim",
-		module = "tokyonight",
-		opts = {
-			style = "storm", -- Options: storm | night | day
-			transparent = false,
-		},
+		setup  = function()
+			require("tokyonight").setup({
+				style         = "night",  -- storm | night | moon | day
+				transparent   = false,
+				terminal_colors = true,
+				styles = {
+					comments  = { italic = true },
+					keywords  = { italic = false },
+					sidebars  = "dark",
+					floats    = "dark",
+				},
+			})
+		end,
 	},
+
 	kanagawa = {
 		plugin = "rebelot/kanagawa.nvim",
-		module = "kanagawa",
-		opts = {
-			variant = "wave", -- Options: wave | dragon | lotus
-			background = "dark",
-		},
+		setup  = function()
+			require("kanagawa").setup({
+				theme      = "wave",   -- wave | dragon | lotus
+				background = { dark = "wave", light = "lotus" },
+				compile    = false,
+				undercurl  = true,
+				commentStyle = { italic = true },
+				keywordStyle = { italic = false, bold = false },
+				statementStyle = { bold = true },
+			})
+		end,
 	},
+
+	nord = {
+		plugin = "gbprod/nord.nvim",
+		setup  = function()
+			require("nord").setup({
+				transparent      = false,
+				terminal_colors  = true,
+				diff             = { mode = "fg" },   -- fg | bg
+				borders          = true,
+				errors           = { mode = "fg" },
+				styles = {
+					comments = { italic = true },
+					keywords = { italic = false },
+				},
+			})
+		end,
+	},
+
+	everforest = {
+		plugin = "neanias/everforest-nvim",
+		setup  = function()
+			require("everforest").setup({
+				background              = "hard",  -- soft | medium | hard
+				ui_contrast             = "high",  -- low | high
+				transparent_background_level = 0,
+				diagnostic_text_highlight = true,
+				diagnostic_virtual_text   = "coloured",
+				italics                   = true,
+			})
+		end,
+	},
+
 	nightfox = {
 		plugin = "EdenEast/nightfox.nvim",
-		module = "nightfox",
-		opts = {
-			variant = "carbonfox", -- Many variants: duskfox, nordfox, etc.
-			transparent = true,
-		},
+		name   = "carbonfox",   -- carbonfox | duskfox | nordfox | terafox
+		setup  = function()
+			require("nightfox").setup({
+				options = {
+					transparent = false,
+					terminal_colors = true,
+					styles = {
+						comments = "italic",
+						keywords = "bold",
+					},
+				},
+			})
+		end,
 	},
 
-	-- === NEW ADDITIONS ===
 	onedark = {
 		plugin = "navarasu/onedark.nvim",
-		module = "onedark",
-		opts = {
-			style = "dark", -- Options: dark | warmer | cool | deep
-			transparent = false,
-			term_colors = true,
-		},
+		setup  = function()
+			require("onedark").setup({
+				style         = "darker",  -- dark | darker | cool | deep | warm | warmer
+				transparent   = false,
+				term_colors   = true,
+				ending_tildes = false,
+				code_style = {
+					comments  = "italic",
+					keywords  = "none",
+					functions = "none",
+					strings   = "none",
+					variables = "none",
+				},
+			})
+		end,
 	},
-	solarized = {
-		plugin = "shaunsingh/solarized.nvim",
-		module = "solarized",
-		opts = {
-			style = "dark", -- Options: dark | light
-			transparent = false,
-		},
+
+	rose_pine = {
+		plugin = "rose-pine/neovim",
+		name   = "rose-pine-moon",  -- rose-pine | rose-pine-moon | rose-pine-dawn
+		setup  = function()
+			require("rose-pine").setup({
+				variant        = "moon",  -- auto | main | moon | dawn
+				dark_variant   = "moon",
+				dim_inactive_windows = false,
+				extend_background_behind_borders = true,
+				styles = {
+					bold      = true,
+					italic    = true,
+					transparency = false,
+				},
+			})
+		end,
 	},
-	-- =====================
+
 }
 
--- ACTIVE THEME
---=========================================================================
-local active_theme = "gruvbox8" -- Change this name to select the active theme
--- local active_theme = "tokyonight" -- Change this name to select the active theme
--- local active_theme = "catppuccin" -- Change this name to select the active theme
-local theme_config = themes[active_theme]
---=========================================================================
+-- =============================================================================
+-- BOOTSTRAP
+-- =============================================================================
+local config = themes[active]
+assert(config, ("colorscheme.lua: unknown theme %q — check the themes table"):format(active))
 
--- Main Plugin Configuration Block (for use with a plugin manager like Lazy.nvim)
 return {
 	{
-		theme_config.plugin,
-		priority = 1000, -- Ensure the theme loads first
-		lazy = false, -- Load immediately on startup
-		config = function()
-			if theme_config.module and theme_config.opts then
-				local ok, theme_module = pcall(require, theme_config.module)
-				if ok and theme_module and type(theme_module.setup) == "function" then
-					-- Call the setup function with theme-specific options
-					theme_module.setup(theme_config.opts)
-				end
+		config.plugin,
+		name     = config.name or active,
+		priority = 1000,
+		lazy     = false,
+		config   = function()
+			if type(config.setup) == "function" then
+				config.setup()
 			end
-			-- Apply the colorscheme
-			vim.cmd.colorscheme(active_theme)
+			vim.cmd.colorscheme(config.name or active)
 		end,
 	},
 }

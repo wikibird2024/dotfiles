@@ -5,35 +5,41 @@ return {
 		config = function()
 			local ibl = require("ibl")
 
-			-- Two alternating colors for indent guides (subtle contrast)
-			local indent_highlights = { "IndentLevel1", "IndentLevel2" }
-			for i, hl in ipairs(indent_highlights) do
-				local colors = { "#555555", "#AAAAAA" }
-				vim.api.nvim_set_hl(0, hl, { fg = colors[i], nocombine = true })
+			-- Resolve colors from the active theme so they survive colorscheme switches
+			local function hl_fg(group)
+				local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = group, link = false })
+				return (ok and hl.fg) and string.format("#%06x", hl.fg) or nil
 			end
 
-			-- Bright accent for the active scope line
-			vim.api.nvim_set_hl(0, "CurrentScopeHighlight", { fg = "#FFFF00", nocombine = true })
+			-- Indent lines: use Comment fg (dim) and a slightly brighter variant
+			local dim   = hl_fg("Comment")  or "#444444"
+			local light = hl_fg("LineNr")   or "#666666"
+			-- Scope: use a muted accent rather than a blinding color
+			local scope = hl_fg("Function") or "#83a598"
+
+			vim.api.nvim_set_hl(0, "IblIndent1",    { fg = dim,   nocombine = true })
+			vim.api.nvim_set_hl(0, "IblIndent2",    { fg = light, nocombine = true })
+			vim.api.nvim_set_hl(0, "IblScopeAccent",{ fg = scope, nocombine = true })
 
 			ibl.setup({
 				indent = {
-					char              = "│",
-					tab_char          = "│",
-					highlight         = indent_highlights,
-					smart_indent_cap  = true,
+					char             = "│",
+					tab_char         = "│",
+					highlight        = { "IblIndent1", "IblIndent2" },
+					smart_indent_cap = true,
 				},
 				scope = {
 					enabled    = true,
-					show_start = true,
-					show_end   = true,
-					highlight  = "CurrentScopeHighlight",
+					show_start = false,  -- start/end underlines are noisy for most users
+					show_end   = false,
+					highlight  = "IblScopeAccent",
 				},
 				exclude = {
 					filetypes = {
-						"help", "startify", "dashboard",
-						"lazy", "neo-tree", "Trouble",
-						"markdown", "text",
-						"gitcommit", "diff",
+						"help", "alpha", "dashboard", "startify",
+						"lazy", "neo-tree", "Trouble", "trouble",
+						"markdown", "text", "gitcommit", "diff",
+						"toggleterm", "aerial",
 					},
 				},
 			})
