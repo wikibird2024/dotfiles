@@ -9,8 +9,10 @@ return {
 		{
 			"<leader>gg",
 			function()
-				require("toggleterm.terminal").Terminal
-					:new({
+				-- Reuse a single lazygit instance rather than spawning a new one each press
+				local Terminal = require("toggleterm.terminal").Terminal
+				if not vim._lazygit then
+					vim._lazygit = Terminal:new({
 						cmd       = "lazygit",
 						direction = "float",
 						hidden    = true,
@@ -20,7 +22,8 @@ return {
 							height = math.floor(vim.o.lines   * 0.95),
 						},
 					})
-					:toggle()
+				end
+				vim._lazygit:toggle()
 			end,
 			desc = "Lazygit",
 		},

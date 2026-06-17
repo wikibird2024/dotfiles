@@ -22,8 +22,7 @@ return {
 			{ "<leader>dB",  function() require("dap").set_breakpoint(vim.fn.input("Condition: ")) end,               desc = "Breakpoint: Condition" },
 			{ "<leader>dl",  function() require("dap").set_breakpoint(nil, nil, vim.fn.input("Log: ")) end,           desc = "Log Point" },
 			{ "<leader>dh",  function() require("dap.ui.widgets").hover() end,                                        desc = "Debugger Hover" },
-			{ "<leader>de",  function() require("dapui").eval() end,                                                  desc = "Evaluate Expression" },
-			{ "<leader>de",  function() require("dapui").eval() end,                mode = "v",                       desc = "Evaluate Selection" },
+			{ "<leader>de",  function() require("dapui").eval() end,                mode = { "n", "v" },              desc = "Evaluate Expression" },
 			{ "<leader>du",  function() require("dapui").toggle() end,                                                desc = "Toggle Debug UI" },
 			{ "<F5>",        function() require("dap").continue() end,                                                desc = "Debug: Continue" },
 			{ "<F10>",       function() require("dap").step_over() end,                                               desc = "Debug: Step Over" },
@@ -171,7 +170,7 @@ return {
 			-- =====================================================================
 			-- PYTHON CONFIGURATION (debugpy)
 			-- =====================================================================
-			require("dap-python").setup(vim.fn.exepath("python3") ~= "" and vim.fn.exepath("python3") or "python")
+			require("dap-python").setup(vim.fn.exepath("python3") ~= "" and vim.fn.exepath("python3") or vim.fn.exepath("python"))
 			-- pytest support
 			require("dap-python").test_runner = "pytest"
 

@@ -1,34 +1,52 @@
 local M = {}
 
 M.on_attach = function(client, bufnr)
-	-- Signature help in insert mode
-	vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, {
-		buffer = bufnr,
-		desc   = "LSP: Signature Help",
-		silent = true,
-	})
-
-	-- Inline diagnostic float
-	vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, {
-		buffer = bufnr,
-		desc   = "LSP: Show Line Diagnostics",
-		silent = true,
-	})
-
-	-- Auto-highlight symbol references under cursor
-	if client.server_capabilities.documentHighlightProvider then
-		local hl_group = vim.api.nvim_create_augroup("LspDocumentHighlight_" .. bufnr, { clear = true })
-		vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-			group    = hl_group,
-			buffer   = bufnr,
-			callback = vim.lsp.buf.document_highlight,
-		})
-		vim.api.nvim_create_autocmd("CursorMoved", {
-			group    = hl_group,
-			buffer   = bufnr,
-			callback = vim.lsp.buf.clear_references,
-		})
+	local map = function(mode, lhs, rhs, desc)
+		vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc, silent = true })
 	end
+
+	-- Signature help — using <C-s> avoids conflict with <C-k> used by nvim-cmp
+	map("i", "<C-s>", vim.lsp.buf.signature_help, "LSP: Signature Help")
+
+	-- Diagnostic float for current line
+	map("n", "<leader>d", vim.diagnostic.open_float, "LSP: Show Line Diagnostics")
+
+	-- Auto-highlight all references to the symbol under the cursor.
+	-- Guard against duplicate attach (two LSPs on one buffer) with pcall on group creation.
+	if client.server_capabilities.documentHighlightProvider then
+		local group = "LspDocumentHighlight_" .. bufnr
+		local ok, id = pcall(vim.api.nvim_create_augroup, group, { clear = false })
+		if ok then
+			-- Only create the autocmds once per buffer
+			if vim.api.nvim_get_autocmds({ group = group, buffer = bufnr }) then
+				vim.api.nvim_clear_autocmds({ group = group, buffer = bufnr })
+			end
+
+			vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+				group    = group,
+				buffer   = bufnr,
+				callback = vim.lsp.buf.document_highlight,
+			})
+
+			-- Scope the clear to this buffer only, not globally
+			vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+				group    = group,
+				buffer   = bufnr,
+				callback = function()
+					vim.lsp.buf.clear_references()
+				end,
+			})
+		end
+	end
+
+	-- Clean up all buffer-local LSP autocmds when the LSP detaches
+	vim.api.nvim_create_autocmd("LspDetach", {
+		buffer   = bufnr,
+		once     = true,
+		callback = function()
+			pcall(vim.api.nvim_del_augroup_by_name, "LspDocumentHighlight_" .. bufnr)
+		end,
+	})
 end
 
 return M

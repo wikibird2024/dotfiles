@@ -19,7 +19,7 @@ return {
 			enable_check_bracket_line = true,
 			map_cr = true,
 			map_bs = true,
-			disable_filetype = { "TelescopePrompt", "fzf", "spectre_panel", "vim", "NvimTree", "undotree" },
+			disable_filetype = { "fzf", "vim", "NvimTree", "neo-tree", "undotree", "toggleterm" },
 			fast_wrap = {
 				map             = "<M-e>",
 				chars           = { "{", "[", "(", '"', "'" },

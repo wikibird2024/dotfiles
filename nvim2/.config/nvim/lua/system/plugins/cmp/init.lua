@@ -6,12 +6,14 @@ return {
 			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
+			"hrsh7th/cmp-cmdline",
 			"saadparwaiz1/cmp_luasnip",
 			{ "L3MON4D3/LuaSnip", build = "make install_jsregexp" },
 		},
 		config = function()
 			local cmp     = require("cmp")
 			local luasnip = require("luasnip")
+			local border  = "rounded"
 
 			local ok, custom_sources = pcall(require, "system.constitution.cmp_sources")
 			local sources = (ok and type(custom_sources) == "table") and custom_sources or {
@@ -21,17 +23,44 @@ return {
 				{ name = "path"     },
 			}
 
+			local bordered = cmp.config.window.bordered({
+				border       = border,
+				winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
+			})
+
 			cmp.setup({
 				snippet = {
 					expand = function(args) luasnip.lsp_expand(args.body) end,
+				},
+				window = {
+					completion    = bordered,
+					documentation = bordered,
 				},
 				mapping = cmp.mapping.preset.insert({
 					["<C-j>"]     = cmp.mapping.select_next_item(),
 					["<C-k>"]     = cmp.mapping.select_prev_item(),
 					["<Tab>"]     = cmp.mapping.confirm({ select = true }),
 					["<C-Space>"] = cmp.mapping.complete(),
+					["<C-e>"]     = cmp.mapping.abort(),
+					["<C-d>"]     = cmp.mapping.scroll_docs(4),
+					["<C-u>"]     = cmp.mapping.scroll_docs(-4),
 				}),
 				sources = cmp.config.sources(sources),
+			})
+
+			-- Enhanced completion for / search — searches current buffer
+			cmp.setup.cmdline({ "/", "?" }, {
+				mapping = cmp.mapping.preset.cmdline(),
+				sources = { { name = "buffer" } },
+			})
+
+			-- Enhanced completion for : commands — file paths + vim commands
+			cmp.setup.cmdline(":", {
+				mapping = cmp.mapping.preset.cmdline(),
+				sources = cmp.config.sources(
+					{ { name = "path" } },
+					{ { name = "cmdline" } }
+				),
 			})
 		end,
 	},

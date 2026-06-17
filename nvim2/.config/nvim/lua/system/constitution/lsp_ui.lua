@@ -1,8 +1,9 @@
 local M = {}
 
 function M.setup()
-	local border = "single"
+	local border = "rounded"   -- matches the rest of the config
 
+	-- Diagnostic signs
 	local signs = {
 		[vim.diagnostic.severity.ERROR] = "󰅚 ",
 		[vim.diagnostic.severity.WARN]  = "󰀪 ",
@@ -13,34 +14,24 @@ function M.setup()
 	vim.diagnostic.config({
 		virtual_text = { prefix = "●", spacing = 4 },
 		signs        = { text = signs },
-		underline         = true,
-		update_in_insert  = false,
-		severity_sort     = true,
+		underline        = true,
+		update_in_insert = false,
+		severity_sort    = true,
 		float = {
 			border = border,
-			source = "always",
+			source = "if_many",   -- show source name only when multiple LSPs attached
 			header = "",
 			prefix = "",
 		},
 	})
 
-	-- Force rounded borders on all LSP floating windows (hover, signature help)
-	local orig = vim.lsp.util.open_floating_preview
-	function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
-		opts        = opts or {}
-		opts.border = opts.border or border
-		return orig(contents, syntax, opts, ...)
-	end
+	-- Bordered hover and signature-help windows via the official handler API
+	-- (Neovim 0.10+). Avoids monkey-patching vim.lsp.util.open_floating_preview.
+	vim.lsp.handlers["textDocument/hover"] =
+		vim.lsp.with(vim.lsp.handlers.hover, { border = border })
 
-	-- Apply rounded borders to nvim-cmp completion/documentation windows
-	local ok, cmp = pcall(require, "cmp")
-	if ok then
-		local bordered = cmp.config.window.bordered({
-			border      = border,
-			winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
-		})
-		cmp.setup({ window = { completion = bordered, documentation = bordered } })
-	end
+	vim.lsp.handlers["textDocument/signatureHelp"] =
+		vim.lsp.with(vim.lsp.handlers.signature_help, { border = border })
 end
 
 return M
