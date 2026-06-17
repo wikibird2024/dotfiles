@@ -9,7 +9,7 @@ M.on_attach = function(client, bufnr)
 	map("i", "<C-s>", vim.lsp.buf.signature_help, "LSP: Signature Help")
 
 	-- Diagnostic float for current line
-	map("n", "<leader>d", vim.diagnostic.open_float, "LSP: Show Line Diagnostics")
+	map("n", "<leader>xd", vim.diagnostic.open_float, "LSP: Show Line Diagnostics")
 
 	-- Auto-highlight all references to the symbol under the cursor.
 	-- Guard against duplicate attach (two LSPs on one buffer) with pcall on group creation.

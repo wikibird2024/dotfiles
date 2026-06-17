@@ -25,13 +25,8 @@ function M.setup()
 		},
 	})
 
-	-- Bordered hover and signature-help windows via the official handler API
-	-- (Neovim 0.10+). Avoids monkey-patching vim.lsp.util.open_floating_preview.
-	vim.lsp.handlers["textDocument/hover"] =
-		vim.lsp.with(vim.lsp.handlers.hover, { border = border })
-
-	vim.lsp.handlers["textDocument/signatureHelp"] =
-		vim.lsp.with(vim.lsp.handlers.signature_help, { border = border })
+	vim.lsp.buf.hover = function() vim.lsp.buf.hover({ border = border }) end
+	vim.lsp.buf.signature_help = function() vim.lsp.buf.signature_help({ border = border }) end
 end
 
 return M
