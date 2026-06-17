@@ -1,10 +1,4 @@
 return {
 	"christoomey/vim-tmux-navigator",
-	lazy = false,
-	keys = {
-		{ "<C-h>", "<cmd>TmuxNavigateLeft<cr>"  },
-		{ "<C-j>", "<cmd>TmuxNavigateDown<cr>"  },
-		{ "<C-k>", "<cmd>TmuxNavigateUp<cr>"    },
-		{ "<C-l>", "<cmd>TmuxNavigateRight<cr>" },
-	},
+	lazy = false,   -- must load at startup so <C-h/j/k/l> work before any buffer opens
 }

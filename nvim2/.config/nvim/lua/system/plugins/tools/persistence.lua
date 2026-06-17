@@ -1,6 +1,6 @@
 return {
 	"folke/persistence.nvim",
-	event = "BufReadPre",
+	event = { "VimEnter" },
 	opts  = { options = { "buffers", "curdir", "tabpages", "winsize" } },
 	keys = {
 		{ "<leader>qs", function() require("persistence").load()               end, desc = "Session: Restore Current Dir" },

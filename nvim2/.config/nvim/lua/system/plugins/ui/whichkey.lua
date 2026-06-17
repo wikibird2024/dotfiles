@@ -18,6 +18,7 @@ return {
 		})
 
 		wk.add({
+			{ "<leader>c", group = "Code",        icon = "󰅩 " },
 			{ "<leader>f", group = "Find/Search", icon = " "  },
 			{ "<leader>b", group = "Buffer",      icon = "󰓩 " },
 			{ "<leader>w", group = "Window",      icon = "󱂬 " },

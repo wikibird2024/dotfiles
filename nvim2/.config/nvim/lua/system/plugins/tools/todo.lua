@@ -9,7 +9,7 @@ return {
 	config = function()
 		require("todo-comments").setup({
 			signs         = true,
-			sign_priority = 90,
+			sign_priority = 8,
 			keywords = {
 				FIX  = { icon = " ", color = "error",   alt = { "FIXME", "BUG", "ISSUE" } },
 				TODO = { icon = " ", color = "info"    },

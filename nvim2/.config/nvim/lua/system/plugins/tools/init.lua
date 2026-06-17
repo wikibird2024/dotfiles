@@ -1,4 +1,3 @@
--- ~/.config/nvim/lua/user/plugins/tools/init.lua
 return {
 	{ import = "system.plugins.tools.fzf" },
 	{ import = "system.plugins.tools.quicker" },

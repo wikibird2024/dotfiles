@@ -9,8 +9,8 @@ return {
 	opts = {
 		enhanced_diff_hl = true,
 		view = {
-			default = { layout = "diff2_horizontal" },
-			merge_tool = { layout = "diff3_horizontal" },
+			default    = { layout = "diff2_vertical" },
+			merge_tool = { layout = "diff3_vertical" },
 		},
 	},
 }
