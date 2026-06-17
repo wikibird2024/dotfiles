@@ -10,8 +10,8 @@ opt.termguicolors  = true   -- 24-bit RGB colors
 opt.signcolumn     = "yes"  -- Always show sign column to prevent layout shifts
 opt.scrolloff      = 8      -- Keep 8 lines of context above/below cursor
 opt.mouse          = "a"    -- Mouse support in all modes
-opt.wrap           = true   -- Wrap long lines
-opt.linebreak      = true   -- Break at word boundaries
+opt.wrap           = false  -- Do not wrap long lines (scroll horizontally instead)
+opt.linebreak      = false  -- Only relevant when wrap is on
 
 -- =============================================================================
 -- TABS & INDENTATION
