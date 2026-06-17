@@ -1,15 +1,10 @@
-local specs = {}
-local scan  = vim.fn.globpath(
-	vim.fn.stdpath("config") .. "/lua/system/plugins/ui",
-	"*.lua", false, true
-)
-
-for _, file in ipairs(scan) do
-	local name = file:match(".*/([^/]+)%.lua$")
-	if name ~= "init" then
-		local mod = require("system.plugins.ui." .. name)
-		table.insert(specs, mod)
-	end
-end
-
-return specs
+return {
+	{ import = "system.plugins.ui.bufferline"  },
+	{ import = "system.plugins.ui.lualine"     },
+	{ import = "system.plugins.ui.neo-tree"    },
+	{ import = "system.plugins.ui.aerial"      },
+	{ import = "system.plugins.ui.trouble"     },
+	{ import = "system.plugins.ui.indentline"  },
+	{ import = "system.plugins.ui.whichkey"    },
+	{ import = "system.plugins.ui.smear_cursor"},
+}
