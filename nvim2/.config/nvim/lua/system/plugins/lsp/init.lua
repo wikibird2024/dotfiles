@@ -25,16 +25,44 @@ return {
 		require("system.constitution.lsp_ui").setup()
 
 		local on_attach    = require("system.runtime.lsp_on_attach").on_attach
-		local capabilities = require("system.constitution.lsp_capabilities")
+		local capabilities = require("system.constitution.lsp_capabilities").get()
+
+		-- on_attach must go through LspAttach autocmd, not vim.lsp.config()
+		-- (functions are not JSON-serializable and get sent in the initialize request)
+		vim.api.nvim_create_autocmd("LspAttach", {
+			group    = vim.api.nvim_create_augroup("UserLspAttach", { clear = true }),
+			callback = function(ev)
+				local client = vim.lsp.get_client_by_id(ev.data.client_id)
+				on_attach(client, ev.buf)
+
+				if client and client.name == "clangd" then
+					local bufnr = ev.buf
+					vim.keymap.set("n", "<leader>a", function()
+						vim.lsp.buf_request(bufnr, "textDocument/switchSourceHeader", {
+							uri = vim.uri_from_bufnr(bufnr),
+						}, function(err, result)
+							if err then
+								vim.notify("LSP Switch Error: " .. tostring(err), vim.log.levels.ERROR)
+								return
+							end
+							if not result then
+								vim.notify("No matching source/header file found", vim.log.levels.WARN)
+								return
+							end
+							vim.cmd("edit " .. vim.uri_to_fname(result))
+						end)
+					end, { buffer = bufnr, desc = "LSP: Switch Source/Header", silent = true })
+				end
+			end,
+		})
 
 		local servers = { "texlab", "pyright", "clangd" }
 		for _, name in ipairs(servers) do
 			local ok, server_mod = pcall(require, "system.plugins.lsp.servers." .. name)
 			if ok and type(server_mod.setup) == "function" then
-				server_mod.setup(on_attach, capabilities)
+				server_mod.setup(capabilities)
 			else
 				vim.lsp.config(name, {
-					on_attach    = on_attach,
 					capabilities = capabilities,
 					root_markers = { ".git", "pyproject.toml", "package.json", "Cargo.toml" },
 				})
