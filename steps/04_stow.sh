@@ -25,6 +25,7 @@ STOW_PKGS=(
     flameshot
     fontconfig
     mods
+    clang
 )
 
 for pkg in "${STOW_PKGS[@]}"; do
