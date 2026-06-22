@@ -3,6 +3,7 @@
 alias ll='ls -alFh --color=auto'
 alias la='ls -A'
 alias l='ls -CF'
+alias grep='grep --color=auto'
 
 # ============================ 🚀 GREYSTONE WORKING 🚀 ============================
 alias run-avr='mono ~/BTranHao/run-avrdudess/avrdudess.exe &'
@@ -31,6 +32,7 @@ alias vpn-status='sudo wg show'
 alias whereami='curl -s "http://ip-api.com/json/?fields=status,message,country,city,query" | jq'
 alias mac-addr='ethtool -P wlan0'
 alias mac-status='ip link show wlan0'
+alias listen="sudo ss -tulpn | grep LISTEN"
 
 alias c='clear'
 alias s-bashrc='source ~/.bashrc'
