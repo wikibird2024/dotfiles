@@ -4,7 +4,7 @@ local opt = vim.opt
 -- UI & USER EXPERIENCE
 -- =============================================================================
 opt.number         = true   -- Absolute line numbers
-opt.relativenumber = true   -- Relative line numbers for easier motion
+opt.relativenumber = false   -- Relative line numbers for easier motion
 opt.cursorline     = true   -- Highlight current line
 opt.termguicolors  = true   -- 24-bit RGB colors
 opt.signcolumn     = "yes"  -- Always show sign column to prevent layout shifts
