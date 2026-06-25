@@ -6,7 +6,7 @@ M.on_attach = function(client, bufnr)
 	end
 
 	-- Signature help — using <C-s> avoids conflict with <C-k> used by nvim-cmp
-	map("i", "<C-s>", vim.lsp.buf.signature_help, "LSP: Signature Help")
+	map("i", "<C-s>", function() vim.lsp.buf.signature_help({ border = "rounded" }) end, "LSP: Signature Help")
 
 	-- Diagnostic float for current line
 	map("n", "<leader>xd", vim.diagnostic.open_float, "LSP: Show Line Diagnostics")

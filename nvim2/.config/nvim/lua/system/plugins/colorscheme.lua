@@ -46,9 +46,13 @@ local themes = {
 				integrations = {
 					cmp        = true,
 					gitsigns   = true,
-					nvimtree   = true,
+					neotree    = true,
 					treesitter = true,
 					notify     = false,
+					which_key  = true,
+					aerial     = true,
+					trouble    = { enabled = true, mode = "lsp" },
+					illuminate = { enabled = true },
 					mini       = { enabled = true },
 				},
 			})

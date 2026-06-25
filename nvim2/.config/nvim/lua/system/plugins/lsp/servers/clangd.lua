@@ -15,7 +15,7 @@ function M.setup(capabilities)
 			"-j=1",                              -- Thread limit for low-resource environments
 			"--limit-results=20",                -- Reduce indexer cache footprint
 			"--malloc-trim",                     -- Aggressively release RAM back to OS
-			"--clang-tidy=false",                -- Disable heavy background linting
+			-- clang-tidy intentionally omitted (disabled by absence of the flag)
 			"--header-insertion=never",          -- Prevent unwanted auto-includes
 			"--completion-style=bundled",
 			"--query-driver=/usr/bin/arm-none-eabi*", -- ARM cross-compilation toolchain

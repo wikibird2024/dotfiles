@@ -25,8 +25,8 @@ function M.setup()
 		},
 	})
 
-	vim.lsp.buf.hover = function() vim.lsp.buf.hover({ border = border }) end
-	vim.lsp.buf.signature_help = function() vim.lsp.buf.signature_help({ border = border }) end
+	-- Border for hover / signature is passed directly at each call site (lsp/init.lua, lsp_on_attach.lua)
+	-- to avoid re-wrapping vim.lsp.buf.hover on every LspAttach event.
 end
 
 return M

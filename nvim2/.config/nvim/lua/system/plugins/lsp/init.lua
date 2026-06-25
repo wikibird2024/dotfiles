@@ -5,7 +5,7 @@ return {
 		{ "gd",          "<cmd>FzfLua lsp_definitions<CR>",    desc = "Definition" },
 		{ "gr",          "<cmd>FzfLua lsp_references<CR>",     desc = "References" },
 		{ "gi",          "<cmd>FzfLua lsp_implementations<CR>",desc = "Implementation" },
-		{ "K",           function() vim.lsp.buf.hover() end,   desc = "Hover" },
+		{ "K",           function() vim.lsp.buf.hover({ border = "rounded" }) end, desc = "Hover" },
 		{ "[d",          function() vim.diagnostic.goto_prev() end, desc = "Prev Diagnostic" },
 		{ "]d",          function() vim.diagnostic.goto_next() end, desc = "Next Diagnostic" },
 		{ "<leader>la",  "<cmd>FzfLua lsp_code_actions<CR>",  desc = "Code Action" },

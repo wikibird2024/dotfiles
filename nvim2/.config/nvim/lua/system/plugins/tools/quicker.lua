@@ -2,8 +2,8 @@ return {
 	"stevearc/quicker.nvim",
 	event = "FileType qf",
 	keys = {
-		{ "<leader>q", function() require("quicker").toggle()                   end, desc = "Toggle Quickfix"   },
-		{ "<leader>l", function() require("quicker").toggle({ loclist = true }) end, desc = "Toggle Loclist"    },
+		{ "<leader>xq", function() require("quicker").toggle()                   end, desc = "Toggle Quickfix" },
+		{ "<leader>xl", function() require("quicker").toggle({ loclist = true }) end, desc = "Toggle Loclist"  },
 		{
 			"]q",
 			function()
