@@ -7,14 +7,11 @@ add_newline = false
 
 # format: Line 1 contains left-aligned info, utilizing $fill to push $time to the right edge.
 format = """
-$os$username$hostname$localip$directory$git_branch$git_status$c$rust$python$nodejs$package$memory_usage$battery$cmd_duration$fill$time
+$os$username$hostname$directory$git_branch$git_status$c$rust$python$nodejs$package$memory_usage$battery$cmd_duration$fill$time
 $character"""
 
 command_timeout = 800
 scan_timeout = 500  # Increases file scanning limit to 500ms to prevent timeouts in massive repositories
-
-[line_break]
-disabled = true
 
 # 2. COMMAND PROMPT (CHARACTER)
 [character]
@@ -41,12 +38,17 @@ Windows = " "
 
 [username]
 show_always = true
+style_user = "bold green"
+style_root = "bold red"
 format = "[$user]($style) "
 disabled = false
 
 [hostname]
 ssh_only = true
 format = "@[$hostname](bold yellow) "
+
+[localip]
+disabled = true
 
 # 5. WORKING DIRECTORY (DIRECTORY)
 [directory]
@@ -74,7 +76,7 @@ format = "via [$symbol($version)]($style) "
 
 [rust]
 symbol = "🦀 "
-style = "bold orange"
+style = "bold #FFA500"
 format = "via [$symbol($version)]($style) "
 
 [python]

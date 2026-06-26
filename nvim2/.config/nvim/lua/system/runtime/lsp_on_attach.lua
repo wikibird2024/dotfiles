@@ -6,7 +6,7 @@ M.on_attach = function(client, bufnr)
 	end
 
 	-- Signature help — using <C-s> avoids conflict with <C-k> used by nvim-cmp
-	map("i", "<C-s>", vim.lsp.buf.signature_help, "LSP: Signature Help")
+	map("i", "<C-s>", function() vim.lsp.buf.signature_help({ border = "rounded" }) end, "LSP: Signature Help")
 
 	-- Diagnostic float for current line
 	map("n", "<leader>xd", vim.diagnostic.open_float, "LSP: Show Line Diagnostics")
@@ -17,10 +17,7 @@ M.on_attach = function(client, bufnr)
 		local group = "LspDocumentHighlight_" .. bufnr
 		local ok, id = pcall(vim.api.nvim_create_augroup, group, { clear = false })
 		if ok then
-			-- Only create the autocmds once per buffer
-			if vim.api.nvim_get_autocmds({ group = group, buffer = bufnr }) then
-				vim.api.nvim_clear_autocmds({ group = group, buffer = bufnr })
-			end
+			vim.api.nvim_clear_autocmds({ group = group, buffer = bufnr })
 
 			vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 				group    = group,

@@ -39,7 +39,23 @@ return {
 				mapping = cmp.mapping.preset.insert({
 					["<C-j>"]     = cmp.mapping.select_next_item(),
 					["<C-k>"]     = cmp.mapping.select_prev_item(),
-					["<Tab>"]     = cmp.mapping.confirm({ select = true }),
+					-- Unified Tab: luasnip jump takes priority, else cmp confirm, else raw Tab
+					["<Tab>"] = cmp.mapping(function(fallback)
+						if cmp.visible() and cmp.get_selected_entry() then
+							cmp.confirm({ select = false })
+						elseif luasnip.expand_or_jumpable() then
+							luasnip.expand_or_jump()
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
+					["<S-Tab>"] = cmp.mapping(function(fallback)
+						if luasnip.jumpable(-1) then
+							luasnip.jump(-1)
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
 					["<C-Space>"] = cmp.mapping.complete(),
 					["<C-e>"]     = cmp.mapping.abort(),
 					["<C-d>"]     = cmp.mapping.scroll_docs(4),

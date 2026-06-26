@@ -15,4 +15,18 @@ return {
 	{ import = "system.plugins.tools.diffview" },
 	{ import = "system.plugins.tools.grug-far" },
 	{ import = "system.plugins.tools.ufo" },
+	-- recommended additions
+	{ import = "system.plugins.tools.harpoon" },
+	{ import = "system.plugins.tools.undotree" },
+	{ import = "system.plugins.tools.neogen" },
+	{ import = "system.plugins.tools.dial" },
+	{ import = "system.plugins.tools.mini-ai" },
+	{ import = "system.plugins.tools.mini-bracketed" },
+	{ import = "system.plugins.tools.cmake-tools" },
+	{ import = "system.plugins.tools.clangd-extensions" },
+	{ import = "system.plugins.tools.kulala" },
+	{ import = "system.plugins.tools.inc-rename" },
+	{ import = "system.plugins.tools.neotest" },
+	{ import = "system.plugins.tools.overseer" },
+	{ import = "system.plugins.tools.refactoring" },
 }

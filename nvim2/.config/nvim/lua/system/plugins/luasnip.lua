@@ -19,22 +19,7 @@ return {
 			paths = { vim.fn.stdpath("config") .. "/snippets" },
 		})
 
-		-- Tab: expand snippet or jump to next field
-		vim.keymap.set({ "i", "s" }, "<Tab>", function()
-			if ls.expand_or_jumpable() then
-				ls.expand_or_jump()
-			else
-				vim.api.nvim_feedkeys(
-					vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "n", false
-				)
-			end
-		end, { silent = true })
-
-		-- Shift-Tab: jump to previous field
-		vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
-			if ls.jumpable(-1) then ls.jump(-1) end
-		end, { silent = true })
-
+		-- Tab / S-Tab are handled by cmp/init.lua to avoid conflicts
 		ls.filetype_extend("latex", { "tex", "bib" })
 	end,
 }
