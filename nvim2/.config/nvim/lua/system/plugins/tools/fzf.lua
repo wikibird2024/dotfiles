@@ -32,26 +32,39 @@ return {
 		},
 	},
 	opts = {
-		winopts = {
-			height  = 0.90,
-			width   = 0.90,
-			border  = "rounded",
-			preview = {
-				layout     = "horizontal",
-				horizontal = "right:50%",
-				scrollbar  = false,
-			},
-		},
+		winopts = function()
+			if vim.o.columns < 140 then
+				return {
+					height  = 0.90,
+					width   = 0.95,
+					border  = "rounded",
+					preview = {
+						layout    = "vertical",
+						vertical  = "down:65%",
+						scrollbar = false,
+					},
+				}
+			else
+				return {
+					height  = 0.90,
+					width   = 0.90,
+					border  = "rounded",
+					preview = {
+						layout     = "horizontal",
+						horizontal = "right:65%",
+						scrollbar  = false,
+					},
+				}
+			end
+		end,
 		files = {
 			hidden     = true,
 			cwd_prompt = false,
 			formatter  = "path.filename_first",
-			winopts    = { preview = { horizontal = "right:45%" } },
 		},
 		grep = {
-			hidden      = true,
-			path_shorten = 1,            -- trim middle path segments, keep filename
-			winopts     = { preview = { horizontal = "right:60%" } },
+			hidden       = true,
+			path_shorten = 1,
 		},
 		actions = {
 			files = {
