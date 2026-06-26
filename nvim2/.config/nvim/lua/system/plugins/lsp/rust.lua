@@ -4,7 +4,7 @@ return {
 	ft      = { "rust" },
 	config = function()
 		local on_attach    = require("system.runtime.lsp_on_attach").on_attach
-		local capabilities = require("system.constitution.lsp_capabilities")
+		local capabilities = require("system.constitution.lsp_capabilities").get()
 
 		vim.g.rustaceanvim = {
 			server = {

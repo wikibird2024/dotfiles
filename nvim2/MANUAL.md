@@ -9,24 +9,31 @@
 1. [Navigation](#1-navigation)
 2. [File Explorer](#2-file-explorer)
 3. [Fuzzy Finder](#3-fuzzy-finder)
-4. [Buffers & Windows](#4-buffers--windows)
-5. [LSP — Code Intelligence](#5-lsp--code-intelligence)
-6. [Completion & Snippets](#6-completion--snippets)
-7. [Formatting & Linting](#7-formatting--linting)
-8. [Git](#8-git)
-9. [Debugging (DAP)](#9-debugging-dap)
-10. [Terminal](#10-terminal)
-11. [Search & Replace](#11-search--replace)
-12. [Code Folding](#12-code-folding)
-13. [Editing Utilities](#13-editing-utilities)
-14. [Diagnostics & Quickfix](#14-diagnostics--quickfix)
-15. [TODO Comments](#15-todo-comments)
-16. [LaTeX](#16-latex)
-17. [Rust / Cargo](#17-rust--cargo)
-18. [Sessions](#18-sessions)
-19. [Treesitter Text Objects](#19-treesitter-text-objects)
-20. [Toggles & Misc](#20-toggles--misc)
-21. [Changing the Colorscheme](#21-changing-the-colorscheme)
+4. [File Bookmarks — Harpoon](#4-file-bookmarks--harpoon)
+5. [Buffers & Windows](#5-buffers--windows)
+6. [LSP — Code Intelligence](#6-lsp--code-intelligence)
+7. [Completion & Snippets](#7-completion--snippets)
+8. [Formatting & Linting](#8-formatting--linting)
+9. [Git](#9-git)
+10. [Debugging (DAP)](#10-debugging-dap)
+11. [CMake](#11-cmake)
+12. [Task Runner — Overseer](#12-task-runner--overseer)
+13. [Testing — Neotest](#13-testing--neotest)
+14. [Terminal](#14-terminal)
+15. [Search & Replace](#15-search--replace)
+16. [Code Folding](#16-code-folding)
+17. [Editing Utilities](#17-editing-utilities)
+18. [Diagnostics & Quickfix](#18-diagnostics--quickfix)
+19. [TODO Comments](#19-todo-comments)
+20. [LaTeX](#20-latex)
+21. [HTTP Client — Kulala](#21-http-client--kulala)
+22. [Rust / Cargo](#22-rust--cargo)
+23. [Sessions](#23-sessions)
+24. [Undo History — Undotree](#24-undo-history--undotree)
+25. [Treesitter Text Objects](#25-treesitter-text-objects)
+26. [Toggles & Misc](#26-toggles--misc)
+27. [Changing the Colorscheme](#27-changing-the-colorscheme)
+28. [Tips & Power Moves](#28-tips--power-moves)
 
 ---
 
@@ -58,11 +65,31 @@ d  s  <label>
 | `<C-k>` | Move to window above |
 | `<C-l>` | Move to right window |
 
+### mini.bracketed — extended `[` / `]` jumps
+
+Extends the `[x` / `]x` jump family with more targets:
+
+| Key | Jumps between |
+|-----|--------------|
+| `[b` / `]b` | Buffers |
+| `[c` / `]c` | Comments |
+| `[d` / `]d` | Diagnostics |
+| `[f` / `]f` | Files in directory |
+| `[i` / `]i` | Indentation levels |
+| `[j` / `]j` | Jumplist entries |
+| `[l` / `]l` | Location list entries |
+| `[q` / `]q` | Quickfix entries |
+| `[u` / `]u` | Undo history states |
+| `[w` / `]w` | Windows |
+| `[y` / `]y` | Yank history |
+
+> Note: `[C` / `]C` are used for comments (upper-case) to avoid clash with class text objects.
+
 ---
 
 ## 2. File Explorer
 
-**Plugin:** neo-tree
+### neo-tree (sidebar)
 
 | Key | Action |
 |-----|--------|
@@ -79,6 +106,29 @@ d  s  <label>
 | `v` | Open in vertical split |
 | `s` | Open in horizontal split |
 | `P` | Toggle floating preview |
+
+### oil.nvim (edit filesystem as a buffer)
+
+Press `-` to open the parent directory of the current file as an editable buffer. Rename, move, or delete files the same way you edit text — then save with `:w` to apply.
+
+| Key | Action |
+|-----|--------|
+| `-` | Open parent directory in oil |
+| `-` (again) | Go up another directory level |
+| `Enter` | Open file / enter directory |
+| `<C-s>` | Open file in vertical split |
+| `<C-h>` | Open file in horizontal split |
+| `<C-p>` | Toggle file preview |
+| `q` | Close oil buffer |
+
+**Typical rename workflow:**
+```
+-          — open current directory
+cw         — change the filename on that line
+:w         — apply the rename on disk
+```
+
+> Hidden files are shown by default. oil does not replace neo-tree — use neo-tree for browsing and oil for bulk filesystem edits.
 
 ---
 
@@ -109,7 +159,34 @@ d  s  <label>
 
 ---
 
-## 4. Buffers & Windows
+## 4. File Bookmarks — Harpoon
+
+**Plugin:** harpoon2
+
+Mark up to 4 files per project and jump between them instantly — no fuzzy search needed. Essential when you constantly switch between `.c`/`.h` pairs or a handful of hot files.
+
+| Key | Action |
+|-----|--------|
+| `<leader>ha` | Add current file to harpoon list |
+| `<leader>hh` | Open harpoon menu (edit the list) |
+| `<C-1>` | Jump to harpoon slot 1 |
+| `<C-2>` | Jump to harpoon slot 2 |
+| `<C-3>` | Jump to harpoon slot 3 |
+| `<C-4>` | Jump to harpoon slot 4 |
+| `<leader>hp` | Previous harpoon file |
+| `<leader>hn` | Next harpoon file |
+
+**Typical workflow:**
+1. Open `main.c` → `<leader>ha` (slot 1)
+2. Open `main.h` → `<leader>ha` (slot 2)
+3. Open `utils.c` → `<leader>ha` (slot 3)
+4. Now `<C-1>` / `<C-2>` / `<C-3>` teleport between them instantly.
+
+The list persists across sessions per project directory.
+
+---
+
+## 5. Buffers & Windows
 
 ### Buffer navigation
 
@@ -134,7 +211,7 @@ d  s  <label>
 
 ---
 
-## 5. LSP — Code Intelligence
+## 6. LSP — Code Intelligence
 
 LSP is active automatically for: **C, C++, Rust, Python, LaTeX**.
 
@@ -146,27 +223,39 @@ LSP is active automatically for: **C, C++, Rust, Python, LaTeX**.
 | `gr` | Find all references |
 | `gi` | Go to implementation |
 | `K` | Hover documentation |
-| `<leader>lr` | Rename symbol |
+| `<leader>lr` | Rename symbol (live preview via inc-rename) |
 | `<leader>la` | Code actions |
 | `<leader>lf` | Format current file |
 | `<leader>ld` | Go to definition (same as `gd`) |
 | `<leader>li` | Show LSP info |
 | `<leader>lh` | Toggle inlay hints on/off |
 | `<leader>lo` | Toggle code outline (aerial) |
-| `<leader>d` | Show diagnostics float for current line |
+| `<leader>xd` | Show diagnostics float for current line |
 | `[d` | Previous diagnostic |
 | `]d` | Next diagnostic |
-| `<C-k>` *(insert)* | Signature help |
+| `<C-s>` *(insert)* | Signature help |
+
+### Live rename (inc-rename)
+
+`<leader>lr` opens an `:IncRename` command pre-filled with the symbol under the cursor. As you type the new name, all references in the buffer update live before you confirm with `Enter`.
 
 ### C / C++ only
 
 | Key | Action |
 |-----|--------|
 | `<leader>a` | Switch between source (`.c`/`.cpp`) and header (`.h`) |
+| `<leader>lA` | View AST for symbol under cursor (clangd) |
+| `<leader>lT` | Type hierarchy (clangd) |
+| `<leader>lI` | Symbol info — offset, type, size (clangd) |
+| `<leader>lM` | Clangd memory usage report |
+
+### Reference highlighting (illuminate)
+
+All other occurrences of the word under cursor are highlighted automatically after a short delay (200ms). This is theme-aware and works even without LSP active. It complements the LSP document-highlight you already have.
 
 ### Diagnostics display
 
-Errors, warnings, hints and info are shown inline as virtual text with `●` prefix. The sign column shows icons:
+Errors, warnings, hints and info are shown inline as virtual text. The sign column shows icons:
 
 | Icon | Severity |
 |------|----------|
@@ -175,9 +264,13 @@ Errors, warnings, hints and info are shown inline as virtual text with `●` pre
 | `󰌶` | Hint |
 | `󰋽` | Info |
 
+### Treesitter Context (sticky header)
+
+The current function or class name is pinned to the top of the window as you scroll past it. Up to 3 lines are shown. Toggle with `<leader>uc`.
+
 ---
 
-## 6. Completion & Snippets
+## 7. Completion & Snippets
 
 ### Completion menu
 
@@ -201,7 +294,7 @@ Snippets come from the community collection (`friendly-snippets`) plus LaTeX-spe
 
 ---
 
-## 7. Formatting & Linting
+## 8. Formatting & Linting
 
 ### Auto-format on save
 
@@ -231,7 +324,7 @@ Manual format: `<leader>lf`
 
 ---
 
-## 8. Git
+## 9. Git
 
 **Plugin:** gitsigns (hunk operations) + lazygit (full UI) + diffview (file diffs)
 
@@ -281,7 +374,7 @@ dih   — delete current hunk
 
 ---
 
-## 9. Debugging (DAP)
+## 10. Debugging (DAP)
 
 **Supported:** C/C++ (via ARM OpenOCD), Rust (via codelldb), Python (via debugpy).
 
@@ -331,7 +424,99 @@ Automatically finds the binary in `target/debug/`. Falls back to a prompt if not
 
 ---
 
-## 10. Terminal
+## 11. CMake
+
+**Plugin:** cmake-tools.nvim
+
+Integrates CMake build, run, and target management directly into Neovim. Automatically sets `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON` so clangd always has a fresh `compile_commands.json`.
+
+| Key | Action |
+|-----|--------|
+| `<leader>cg` | Generate (cmake configure) |
+| `<leader>cb` | Build current target |
+| `<leader>cr` | Run current target |
+| `<leader>ct` | Select build target |
+| `<leader>cv` | Select build type (Debug / Release / RelWithDebInfo) |
+| `<leader>cc` | Clean build directory |
+| `<leader>cx` | Stop running build / process |
+
+**Typical project workflow:**
+```
+<leader>cv   — choose Debug
+<leader>cg   — configure (generates compile_commands.json)
+<leader>cb   — build
+<leader>cr   — run
+```
+
+Build output appears in a console panel at the bottom (10 lines). The build directory is `build/<buildType>` by default.
+
+---
+
+## 12. Task Runner — Overseer
+
+**Plugin:** overseer.nvim
+
+Runs arbitrary tasks (Makefile targets, shell scripts, `cargo run`, firmware flash commands) in a managed panel. Complements CMake for anything outside of cmake-tools.
+
+| Key | Action |
+|-----|--------|
+| `<leader>or` | Pick and run a task |
+| `<leader>ot` | Toggle task list panel |
+
+Also available via commands:
+
+| Command | Action |
+|---------|--------|
+| `:OverseerRun` | Run a task (same as `<leader>or`) |
+| `:OverseerToggle` | Toggle panel (same as `<leader>ot`) |
+| `:OverseerBuild` | Run the default build task |
+
+Tasks are discovered automatically from `Makefile`, `tasks.json`, shell scripts, and `cargo`. The panel shows running / finished tasks with their output. You can re-run a previous task by pressing `r` on it in the panel.
+
+---
+
+## 13. Testing — Neotest
+
+**Plugin:** neotest
+
+Runs tests inline — results appear as signs in the gutter and in a summary panel. Supports **pytest** (Python) and **cargo test** (Rust).
+
+### Keymaps
+
+| Key | Action |
+|-----|--------|
+| `<leader>tt` | Run the test nearest to the cursor |
+| `<leader>tf` | Run all tests in the current file |
+| `<leader>ts` | Toggle test summary panel |
+| `<leader>to` | Toggle test output panel |
+| `<leader>td` | Debug the nearest test (launches DAP) |
+
+### Gutter signs
+
+| Sign | Meaning |
+|------|---------|
+| ✓ (green) | Test passed |
+| ✗ (red) | Test failed |
+| ◌ (yellow) | Test running |
+| ○ (grey) | Test not yet run |
+
+### Summary panel
+
+`<leader>ts` opens a tree of all discovered tests. Navigate with `j`/`k`, press `Enter` to jump to the test, `r` to re-run it, `o` to open its output.
+
+### Python (pytest)
+
+Tests are discovered following pytest conventions: files named `test_*.py` or `*_test.py`, functions named `test_*`.
+
+### Rust (cargo test)
+
+Tests are discovered from `#[test]` annotations. Neotest calls `cargo test` for the selected test.
+
+> **Debug a test:** `<leader>td` runs the nearest test under DAP (requires `debugpy` for Python or `codelldb` for Rust to be installed).
+
+---
+
+## 14. Terminal
 
 **Plugin:** toggleterm
 
@@ -353,7 +538,7 @@ Terminals persist across toggles. Multiple terminals are tracked by ID (shown in
 
 ---
 
-## 11. Search & Replace
+## 15. Search & Replace
 
 ### Project-wide find & replace
 
@@ -373,7 +558,7 @@ Inside grug-far, fill the Search and Replace fields then use its own keybindings
 
 ---
 
-## 12. Code Folding
+## 16. Code Folding
 
 **Plugin:** nvim-ufo (LSP + Treesitter powered)
 
@@ -390,7 +575,7 @@ Folds are created automatically by the LSP or Treesitter. A count of hidden line
 
 ---
 
-## 13. Editing Utilities
+## 17. Editing Utilities
 
 ### Surround (nvim-surround)
 
@@ -419,20 +604,82 @@ cs'"     — change ' to "
 yssl     — wrap line with ESP_LOGI macro
 ```
 
+### Doc comment generation (neogen)
+
+Generates Doxygen blocks for C/C++, Google-style docstrings for Python, and rustdoc for Rust — from the function signature under the cursor.
+
+| Key | Action |
+|-----|--------|
+| `<leader>ng` | Generate docstring for symbol under cursor |
+| `<leader>nf` | Generate function doc |
+| `<leader>nc` | Generate class / struct doc |
+| `<leader>nt` | Generate type doc |
+
+**Example (C):**
+```c
+// cursor on this function, press <leader>ng:
+int add(int a, int b);
+
+// becomes:
+/**
+ * @brief
+ * @param a
+ * @param b
+ * @return int
+ */
+int add(int a, int b);
+```
+
+### Smart increment / decrement (dial.nvim)
+
+Extends `<C-a>` / `<C-x>` beyond plain numbers:
+
+| What gets cycled | Examples |
+|-----------------|---------|
+| Decimal integers | `0` → `1` |
+| Hex values | `0xff` → `0x100` |
+| Booleans | `true` ↔ `false` |
+| C logical ops | `&&` ↔ `\|\|` |
+| `yes` / `no` | cycles |
+| Semantic versions | `1.0.0` → `1.0.1` |
+| Dates | `2024-01-31` → `2024-02-01` |
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `<C-a>` | Normal / Visual | Increment |
+| `<C-x>` | Normal / Visual | Decrement |
+| `g<C-a>` | Normal / Visual | Increment staircase (each line +1 more) |
+| `g<C-x>` | Normal / Visual | Decrement staircase |
+
+### Extended text objects (mini.ai)
+
+Extends `a`/`i` with additional targets on top of the built-in ones:
+
+| Object | Selects |
+|--------|---------|
+| `aq` / `iq` | Around / inside any quote (`"`, `'`, `` ` ``) |
+| `a)` / `i)` | Around / inside parentheses (same as built-in but smarter) |
+| `a]` / `i]` | Around / inside brackets |
+| `a}` / `i}` | Around / inside braces |
+| `a>` / `i>` | Around / inside angle brackets |
+| `a?` / `i?` | Prompted — type any delimiter on the fly |
+
+Works across multiple lines (up to 500 lines by default).
+
 ### Split / Join lines (treesj)
 
 | Key | Action |
 |-----|--------|
 | `<leader>m` | Toggle between single-line and multi-line |
-| `<leader>j` | Join lines into one |
-| `<leader>s` | Split into multiple lines |
+| `<leader>cj` | Join lines into one |
+| `<leader>cs` | Split into multiple lines |
 
 **Example:**
 ```lua
 -- Before (single):
 if x then return y end
 
--- After <leader>s (split):
+-- After <leader>cs (split):
 if x then
     return y
 end
@@ -454,14 +701,14 @@ Type `:123` in command mode — the editor previews line 123 before you press En
 
 ---
 
-## 14. Diagnostics & Quickfix
+## 18. Diagnostics & Quickfix
 
 ### Quickfix / Location list (quicker)
 
 | Key | Action |
 |-----|--------|
-| `<leader>q` | Toggle quickfix list |
-| `<leader>l` | Toggle location list |
+| `<leader>xq` | Toggle quickfix list |
+| `<leader>xl` | Toggle location list |
 | `]q` | Next item (wraps around) |
 | `[q` | Previous item (wraps around) |
 
@@ -478,7 +725,7 @@ Open with `:Trouble`. Used by TODO comments and LSP diagnostics.
 
 ---
 
-## 15. TODO Comments
+## 19. TODO Comments
 
 Special comment keywords are highlighted throughout the codebase.
 
@@ -504,7 +751,7 @@ Special comment keywords are highlighted throughout the codebase.
 
 ---
 
-## 16. LaTeX
+## 20. LaTeX
 
 **Plugins:** vimtex + texlab LSP + luasnip-latex-snippets
 
@@ -521,7 +768,42 @@ LaTeX-specific snippets load automatically when editing `.tex` files.
 
 ---
 
-## 17. Rust / Cargo
+## 21. HTTP Client — Kulala
+
+**Plugin:** kulala.nvim
+
+Write HTTP requests in `.http` files and send them directly from Neovim. Useful for testing REST APIs alongside embedded tooling.
+
+**File format:**
+```http
+### Get device status
+GET http://192.168.1.100/api/status
+Content-Type: application/json
+
+### Update config
+POST http://192.168.1.100/api/config
+Content-Type: application/json
+
+{
+  "timeout": 5000,
+  "baud": 115200
+}
+```
+
+| Key | Action |
+|-----|--------|
+| `<leader>Hr` | Run request under cursor |
+| `<leader>Ha` | Run all requests in file |
+| `<leader>Hn` | Jump to next request |
+| `<leader>Hp` | Jump to previous request |
+| `<leader>Hi` | Inspect request (show resolved headers/vars) |
+| `<leader>Hc` | Copy request as cURL command |
+
+Response appears in a vertical split. Supports environment variables via `.env` files.
+
+---
+
+## 22. Rust / Cargo
 
 **Plugin:** rustaceanvim + crates.nvim
 
@@ -536,7 +818,7 @@ When editing `Cargo.toml`, crate version completion appears in the completion me
 
 ---
 
-## 18. Sessions
+## 23. Sessions
 
 **Plugin:** persistence.nvim
 
@@ -551,9 +833,36 @@ Sessions are saved automatically when you quit Neovim.
 
 ---
 
-## 19. Treesitter Text Objects
+## 24. Undo History — Undotree
+
+**Plugin:** undotree
+
+Neovim's undo is a tree, not a line — you can recover edits that were "undone" and then overwritten. Undotree makes the tree visible.
+
+| Key | Action |
+|-----|--------|
+| `<leader>uu` | Toggle undotree panel |
+
+**Inside the undotree panel:**
+
+| Key | Action |
+|-----|--------|
+| `j` / `k` | Move between undo states |
+| `Enter` | Restore the selected state |
+| `d` | Toggle diff panel |
+| `q` | Close undotree |
+
+The diff panel (bottom) shows what changed between the selected state and the current buffer.
+
+> Since `undofile = true` is set, undo history persists across Neovim restarts. You can recover edits from a previous session.
+
+---
+
+## 25. Treesitter Text Objects
 
 Use these in operator-pending or visual mode after an operator (`d`, `y`, `c`, `v`, etc.).
+
+### Built-in (treesitter-textobjects)
 
 | Text Object | Selects |
 |-------------|---------|
@@ -567,12 +876,20 @@ Use these in operator-pending or visual mode after an operator (`d`, `y`, `c`, `
 | `il` | Inner loop body |
 | `ih` | Git hunk (from gitsigns) |
 
+### Extended (mini.ai)
+
+| Text Object | Selects |
+|-------------|---------|
+| `aq` / `iq` | Around / inside any quote |
+| `a?` / `i?` | Around / inside prompted delimiter |
+
 **Examples:**
 ```
 daf   — delete entire function including signature
 yif   — yank function body only
 vac   — visually select entire class
 cii   — change inside if-block
+diq   — delete contents of any surrounding quote
 ```
 
 ### Navigation
@@ -600,12 +917,15 @@ cii   — change inside if-block
 
 ---
 
-## 20. Toggles & Misc
+## 26. Toggles & Misc
 
 | Key | Action |
 |-----|--------|
 | `<leader>us` | Toggle spell check (English) |
+| `<leader>ud` | Toggle LSP diagnostics on/off |
 | `<leader>lh` | Toggle LSP inlay hints |
+| `<leader>uc` | Toggle treesitter context (sticky header) |
+| `<leader>uu` | Toggle undotree |
 | `<Esc>` | Clear search highlights |
 | `<leader>y` | Yank to system clipboard |
 | `<leader>yp` | Paste from system clipboard |
@@ -632,14 +952,18 @@ Navigate the outline with `j`/`k`, press `Enter` to jump to that symbol.
 
 Press `<Space>` and wait 300ms — a popup shows all available keymaps grouped by prefix.
 
+### Noice (UI)
+
+Noice replaces the command line and message area with floating windows. Long messages open in a split automatically. No special keymaps needed — it works transparently. If a message is cut off, run `:Noice` to browse the full message history.
+
 ---
 
-## 21. Changing the Colorscheme
+## 27. Changing the Colorscheme
 
-Edit [colorscheme.lua](lua/system/plugins/colorscheme.lua) and change the `active_theme` variable:
+Edit [colorscheme.lua](lua/system/plugins/colorscheme.lua) and change the `active` variable on line 4:
 
 ```lua
-local active_theme = "gruvbox8"   -- change this
+local active = "gruvbox8"   -- change this
 ```
 
 **Available themes:**
@@ -647,17 +971,89 @@ local active_theme = "gruvbox8"   -- change this
 | Name | Style |
 |------|-------|
 | `gruvbox8` | Warm retro (active default) |
-| `gruvbox` | Alternative gruvbox |
+| `gruvbox` | Alternative gruvbox (ellisonleao variant) |
 | `nord` | Arctic blue |
-| `catppuccin` | Soft pastel (macchiato) |
+| `catppuccin` | Soft pastel (mocha) |
 | `everforest` | Green forest |
-| `tokyonight` | Dark purple (storm) |
+| `tokyonight` | Dark purple (night) |
 | `kanagawa` | Japanese ink (wave) |
-| `nightfox` | Dark carbon |
-| `onedark` | Classic dark |
-| `solarized` | Solarized dark |
+| `nightfox` | Dark carbon (carbonfox variant) |
+| `onedark` | Classic dark (darker variant) |
+| `rose_pine` | Muted rose (moon variant) |
 
 Save the file, then run `:Lazy sync` to install the theme if it's new, then restart Neovim.
+
+---
+
+## 28. Tips & Power Moves
+
+### Workflow combos
+
+**Find all usages → fix them all:**
+1. `<leader>f*` — grep word under cursor, all results → quickfix
+2. `<leader>xq` — open quickfix
+3. `:cdo s/old/new/g` — substitute across every entry
+
+**Bounce between related files instantly (harpoon):**
+1. Open each file → `<leader>ha` to mark it
+2. `<C-1>` / `<C-2>` / `<C-3>` to teleport, no searching
+
+**Inspect a symbol without leaving your position:**
+- `K` — hover docs
+- `<leader>xd` — show diagnostics float
+- `<leader>lI` — clangd symbol info (size, offset, type)
+- `<leader>lA` — AST view for the symbol
+- `<leader>dh` — DAP hover (during a debug session)
+- `r` then `<label>` (flash remote) — yank/delete at a distant location without moving
+
+**Generate + fill a doc comment fast:**
+1. `<leader>ng` — generate Doxygen / docstring skeleton
+2. `<Tab>` — jump through LuaSnip fields to fill each param
+
+**Refactor a function across the project:**
+1. `<leader>lr` — live rename (inc-rename: see all references update as you type, confirm with Enter)
+2. Or: `<leader>sr` — grug-far for text-based search & replace across files
+
+**Stage partial changes (hunks not files):**
+- `]h` / `[h` — navigate hunks
+- `<leader>gp` — preview hunk inline
+- `<leader>gs` in visual mode — stage only selected lines
+
+**Recover a deleted edit (undotree):**
+1. `<leader>uu` — open undotree
+2. `j`/`k` — navigate to the state before the deletion
+3. `Enter` — restore it
+
+**Run and debug a test without leaving the file:**
+1. Place cursor on a test function
+2. `<leader>tt` — run it, see the gutter sign update
+3. `<leader>to` — open output panel to read the failure
+4. `<leader>td` — re-run it under DAP to step through
+
+**Rename a file without leaving Neovim:**
+1. `-` — open oil in the directory
+2. `cw` on the filename — rename it in the buffer
+3. `:w` — apply
+
+**Embedded C debug session quickstart:**
+1. `<leader>cv` → select Debug, `<leader>cg` → configure (generates `compile_commands.json`)
+2. `<leader>cb` → build
+3. Start OpenOCD in `<leader>tf` (float terminal)
+4. `<leader>dc` → DAP picks up `.elf` automatically, connects to OpenOCD
+5. `<F10>`/`<F11>`/`<F12>` — step through
+
+### Vim fundamentals worth remembering
+
+```
+ci"   — change inside quotes
+ca{   — change around braces (includes the braces)
+gf    — go to file under cursor
+*     — search for word under cursor (forward)
+#     — search for word under cursor (backward)
+<C-o> — jump back (after gd / gr / flash)
+<C-i> — jump forward
+`.    — jump to last change position
+```
 
 ---
 
@@ -683,3 +1079,4 @@ Some features require tools installed on the system:
 | `arm-none-eabi-gdb` | Embedded C DAP | `apt install gcc-arm-none-eabi` |
 | `zathura` | PDF viewer (LaTeX) | `apt install zathura` |
 | `latexmk` | LaTeX compiler | `apt install latexmk` |
+| `pytest` | Python test runner (neotest) | `pip install pytest` |
