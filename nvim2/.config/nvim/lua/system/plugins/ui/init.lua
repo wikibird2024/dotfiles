@@ -11,4 +11,6 @@ return {
 	{ import = "system.plugins.ui.treesitter-context" },
 	{ import = "system.plugins.ui.illuminate"         },
 	{ import = "system.plugins.ui.oil"                },
+	{ import = "system.plugins.ui.notify"             },
+	{ import = "system.plugins.ui.dressing"           },
 }

@@ -10,7 +10,7 @@ return {
 		{ "]d",          function() vim.diagnostic.goto_next() end, desc = "Next Diagnostic" },
 		{ "<leader>la",  "<cmd>FzfLua lsp_code_actions<CR>",  desc = "Code Action" },
 		{ "<leader>ld",  "<cmd>FzfLua lsp_definitions<CR>",   desc = "Definition" },
-		{ "<leader>lr", function() return ":IncRename " .. vim.fn.expand("<cword>") end, expr = true, desc = "Rename" },
+		{ "<leader>lr", function() vim.lsp.buf.rename() end, desc = "Rename" },
 		{ "<leader>lf",  function() require("conform").format({ async = true }) end, desc = "Format" },
 		{ "<leader>li",  "<cmd>LspInfo<CR>",                   desc = "LSP Info" },
 		{
