@@ -5,7 +5,6 @@ return {
 	keys = {
 		{ "<leader>e", "<cmd>Neotree toggle<CR>", desc = "Explorer Toggle" },
 		{ "<leader>o", "<cmd>Neotree focus<CR>",  desc = "Explorer Focus"  },
-		{ "<leader>r", "<cmd>Neotree reveal<CR>", desc = "Reveal File"     },
 	},
 	dependencies = {
 		"nvim-lua/plenary.nvim",

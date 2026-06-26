@@ -10,4 +10,5 @@ return {
 	-- recommended additions
 	{ import = "system.plugins.ui.treesitter-context" },
 	{ import = "system.plugins.ui.illuminate"         },
+	{ import = "system.plugins.ui.oil"                },
 }

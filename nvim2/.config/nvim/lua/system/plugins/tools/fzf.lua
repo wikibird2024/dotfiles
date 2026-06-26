@@ -37,16 +37,22 @@ return {
 			width   = 0.90,
 			border  = "rounded",
 			preview = {
-				layout   = "vertical",
-				vertical = "down:50%",
+				layout     = "horizontal",
+				horizontal = "right:50%",
+				scrollbar  = false,
 			},
 		},
 		files = {
 			hidden     = true,
 			cwd_prompt = false,
 			formatter  = "path.filename_first",
+			winopts    = { preview = { horizontal = "right:45%" } },
 		},
-		grep = { hidden = true },
+		grep = {
+			hidden      = true,
+			path_shorten = 1,            -- trim middle path segments, keep filename
+			winopts     = { preview = { horizontal = "right:60%" } },
+		},
 		actions = {
 			files = {
 				["default"] = function(selected, opts) require("fzf-lua").actions.file_edit(selected, opts)      end,

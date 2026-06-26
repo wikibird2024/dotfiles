@@ -2,8 +2,8 @@ return {
 	"stevearc/quicker.nvim",
 	event = "FileType qf",
 	keys = {
-		{ "<leader>xq", function() require("quicker").toggle()                   end, desc = "Toggle Quickfix" },
-		{ "<leader>xl", function() require("quicker").toggle({ loclist = true }) end, desc = "Toggle Loclist"  },
+		{ "<leader>xq", function() require("quicker").toggle({ min_height = 6, max_height = 12 })                   end, desc = "Toggle Quickfix" },
+		{ "<leader>xl", function() require("quicker").toggle({ min_height = 6, max_height = 12, loclist = true }) end, desc = "Toggle Loclist"  },
 		{
 			"]q",
 			function()
@@ -22,8 +22,6 @@ return {
 		},
 	},
 	opts = {
-		max_height = 12,
-		min_height = 6,
 		follow     = { enabled = true },
 		borders    = {
 			vert          = "│",

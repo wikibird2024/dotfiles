@@ -17,21 +17,23 @@
 9. [Git](#9-git)
 10. [Debugging (DAP)](#10-debugging-dap)
 11. [CMake](#11-cmake)
-12. [Terminal](#12-terminal)
-13. [Search & Replace](#13-search--replace)
-14. [Code Folding](#14-code-folding)
-15. [Editing Utilities](#15-editing-utilities)
-16. [Diagnostics & Quickfix](#16-diagnostics--quickfix)
-17. [TODO Comments](#17-todo-comments)
-18. [LaTeX](#18-latex)
-19. [HTTP Client — Kulala](#19-http-client--kulala)
-20. [Rust / Cargo](#20-rust--cargo)
-21. [Sessions](#21-sessions)
-22. [Undo History — Undotree](#22-undo-history--undotree)
-23. [Treesitter Text Objects](#23-treesitter-text-objects)
-24. [Toggles & Misc](#24-toggles--misc)
-25. [Changing the Colorscheme](#25-changing-the-colorscheme)
-26. [Tips & Power Moves](#26-tips--power-moves)
+12. [Task Runner — Overseer](#12-task-runner--overseer)
+13. [Testing — Neotest](#13-testing--neotest)
+14. [Terminal](#14-terminal)
+15. [Search & Replace](#15-search--replace)
+16. [Code Folding](#16-code-folding)
+17. [Editing Utilities](#17-editing-utilities)
+18. [Diagnostics & Quickfix](#18-diagnostics--quickfix)
+19. [TODO Comments](#19-todo-comments)
+20. [LaTeX](#20-latex)
+21. [HTTP Client — Kulala](#21-http-client--kulala)
+22. [Rust / Cargo](#22-rust--cargo)
+23. [Sessions](#23-sessions)
+24. [Undo History — Undotree](#24-undo-history--undotree)
+25. [Treesitter Text Objects](#25-treesitter-text-objects)
+26. [Toggles & Misc](#26-toggles--misc)
+27. [Changing the Colorscheme](#27-changing-the-colorscheme)
+28. [Tips & Power Moves](#28-tips--power-moves)
 
 ---
 
@@ -87,7 +89,7 @@ Extends the `[x` / `]x` jump family with more targets:
 
 ## 2. File Explorer
 
-**Plugin:** neo-tree
+### neo-tree (sidebar)
 
 | Key | Action |
 |-----|--------|
@@ -104,6 +106,29 @@ Extends the `[x` / `]x` jump family with more targets:
 | `v` | Open in vertical split |
 | `s` | Open in horizontal split |
 | `P` | Toggle floating preview |
+
+### oil.nvim (edit filesystem as a buffer)
+
+Press `-` to open the parent directory of the current file as an editable buffer. Rename, move, or delete files the same way you edit text — then save with `:w` to apply.
+
+| Key | Action |
+|-----|--------|
+| `-` | Open parent directory in oil |
+| `-` (again) | Go up another directory level |
+| `Enter` | Open file / enter directory |
+| `<C-s>` | Open file in vertical split |
+| `<C-h>` | Open file in horizontal split |
+| `<C-p>` | Toggle file preview |
+| `q` | Close oil buffer |
+
+**Typical rename workflow:**
+```
+-          — open current directory
+cw         — change the filename on that line
+:w         — apply the rename on disk
+```
+
+> Hidden files are shown by default. oil does not replace neo-tree — use neo-tree for browsing and oil for bulk filesystem edits.
 
 ---
 
@@ -198,7 +223,7 @@ LSP is active automatically for: **C, C++, Rust, Python, LaTeX**.
 | `gr` | Find all references |
 | `gi` | Go to implementation |
 | `K` | Hover documentation |
-| `<leader>lr` | Rename symbol |
+| `<leader>lr` | Rename symbol (live preview via inc-rename) |
 | `<leader>la` | Code actions |
 | `<leader>lf` | Format current file |
 | `<leader>ld` | Go to definition (same as `gd`) |
@@ -209,6 +234,10 @@ LSP is active automatically for: **C, C++, Rust, Python, LaTeX**.
 | `[d` | Previous diagnostic |
 | `]d` | Next diagnostic |
 | `<C-s>` *(insert)* | Signature help |
+
+### Live rename (inc-rename)
+
+`<leader>lr` opens an `:IncRename` command pre-filled with the symbol under the cursor. As you type the new name, all references in the buffer update live before you confirm with `Enter`.
 
 ### C / C++ only
 
@@ -423,7 +452,71 @@ Build output appears in a console panel at the bottom (10 lines). The build dire
 
 ---
 
-## 12. Terminal
+## 12. Task Runner — Overseer
+
+**Plugin:** overseer.nvim
+
+Runs arbitrary tasks (Makefile targets, shell scripts, `cargo run`, firmware flash commands) in a managed panel. Complements CMake for anything outside of cmake-tools.
+
+| Key | Action |
+|-----|--------|
+| `<leader>or` | Pick and run a task |
+| `<leader>ot` | Toggle task list panel |
+
+Also available via commands:
+
+| Command | Action |
+|---------|--------|
+| `:OverseerRun` | Run a task (same as `<leader>or`) |
+| `:OverseerToggle` | Toggle panel (same as `<leader>ot`) |
+| `:OverseerBuild` | Run the default build task |
+
+Tasks are discovered automatically from `Makefile`, `tasks.json`, shell scripts, and `cargo`. The panel shows running / finished tasks with their output. You can re-run a previous task by pressing `r` on it in the panel.
+
+---
+
+## 13. Testing — Neotest
+
+**Plugin:** neotest
+
+Runs tests inline — results appear as signs in the gutter and in a summary panel. Supports **pytest** (Python) and **cargo test** (Rust).
+
+### Keymaps
+
+| Key | Action |
+|-----|--------|
+| `<leader>tt` | Run the test nearest to the cursor |
+| `<leader>tf` | Run all tests in the current file |
+| `<leader>ts` | Toggle test summary panel |
+| `<leader>to` | Toggle test output panel |
+| `<leader>td` | Debug the nearest test (launches DAP) |
+
+### Gutter signs
+
+| Sign | Meaning |
+|------|---------|
+| ✓ (green) | Test passed |
+| ✗ (red) | Test failed |
+| ◌ (yellow) | Test running |
+| ○ (grey) | Test not yet run |
+
+### Summary panel
+
+`<leader>ts` opens a tree of all discovered tests. Navigate with `j`/`k`, press `Enter` to jump to the test, `r` to re-run it, `o` to open its output.
+
+### Python (pytest)
+
+Tests are discovered following pytest conventions: files named `test_*.py` or `*_test.py`, functions named `test_*`.
+
+### Rust (cargo test)
+
+Tests are discovered from `#[test]` annotations. Neotest calls `cargo test` for the selected test.
+
+> **Debug a test:** `<leader>td` runs the nearest test under DAP (requires `debugpy` for Python or `codelldb` for Rust to be installed).
+
+---
+
+## 14. Terminal
 
 **Plugin:** toggleterm
 
@@ -445,7 +538,7 @@ Terminals persist across toggles. Multiple terminals are tracked by ID (shown in
 
 ---
 
-## 13. Search & Replace
+## 15. Search & Replace
 
 ### Project-wide find & replace
 
@@ -465,7 +558,7 @@ Inside grug-far, fill the Search and Replace fields then use its own keybindings
 
 ---
 
-## 14. Code Folding
+## 16. Code Folding
 
 **Plugin:** nvim-ufo (LSP + Treesitter powered)
 
@@ -482,7 +575,7 @@ Folds are created automatically by the LSP or Treesitter. A count of hidden line
 
 ---
 
-## 15. Editing Utilities
+## 17. Editing Utilities
 
 ### Surround (nvim-surround)
 
@@ -608,7 +701,7 @@ Type `:123` in command mode — the editor previews line 123 before you press En
 
 ---
 
-## 16. Diagnostics & Quickfix
+## 18. Diagnostics & Quickfix
 
 ### Quickfix / Location list (quicker)
 
@@ -632,7 +725,7 @@ Open with `:Trouble`. Used by TODO comments and LSP diagnostics.
 
 ---
 
-## 17. TODO Comments
+## 19. TODO Comments
 
 Special comment keywords are highlighted throughout the codebase.
 
@@ -658,7 +751,7 @@ Special comment keywords are highlighted throughout the codebase.
 
 ---
 
-## 18. LaTeX
+## 20. LaTeX
 
 **Plugins:** vimtex + texlab LSP + luasnip-latex-snippets
 
@@ -675,7 +768,7 @@ LaTeX-specific snippets load automatically when editing `.tex` files.
 
 ---
 
-## 19. HTTP Client — Kulala
+## 21. HTTP Client — Kulala
 
 **Plugin:** kulala.nvim
 
@@ -710,7 +803,7 @@ Response appears in a vertical split. Supports environment variables via `.env` 
 
 ---
 
-## 20. Rust / Cargo
+## 22. Rust / Cargo
 
 **Plugin:** rustaceanvim + crates.nvim
 
@@ -725,7 +818,7 @@ When editing `Cargo.toml`, crate version completion appears in the completion me
 
 ---
 
-## 21. Sessions
+## 23. Sessions
 
 **Plugin:** persistence.nvim
 
@@ -740,7 +833,7 @@ Sessions are saved automatically when you quit Neovim.
 
 ---
 
-## 22. Undo History — Undotree
+## 24. Undo History — Undotree
 
 **Plugin:** undotree
 
@@ -765,7 +858,7 @@ The diff panel (bottom) shows what changed between the selected state and the cu
 
 ---
 
-## 23. Treesitter Text Objects
+## 25. Treesitter Text Objects
 
 Use these in operator-pending or visual mode after an operator (`d`, `y`, `c`, `v`, etc.).
 
@@ -824,7 +917,7 @@ diq   — delete contents of any surrounding quote
 
 ---
 
-## 24. Toggles & Misc
+## 26. Toggles & Misc
 
 | Key | Action |
 |-----|--------|
@@ -859,9 +952,13 @@ Navigate the outline with `j`/`k`, press `Enter` to jump to that symbol.
 
 Press `<Space>` and wait 300ms — a popup shows all available keymaps grouped by prefix.
 
+### Noice (UI)
+
+Noice replaces the command line and message area with floating windows. Long messages open in a split automatically. No special keymaps needed — it works transparently. If a message is cut off, run `:Noice` to browse the full message history.
+
 ---
 
-## 25. Changing the Colorscheme
+## 27. Changing the Colorscheme
 
 Edit [colorscheme.lua](lua/system/plugins/colorscheme.lua) and change the `active` variable on line 4:
 
@@ -888,13 +985,13 @@ Save the file, then run `:Lazy sync` to install the theme if it's new, then rest
 
 ---
 
-## 26. Tips & Power Moves
+## 28. Tips & Power Moves
 
 ### Workflow combos
 
 **Find all usages → fix them all:**
 1. `<leader>f*` — grep word under cursor, all results → quickfix
-2. `<leader>q` — open quickfix
+2. `<leader>xq` — open quickfix
 3. `:cdo s/old/new/g` — substitute across every entry
 
 **Bounce between related files instantly (harpoon):**
@@ -914,7 +1011,7 @@ Save the file, then run `:Lazy sync` to install the theme if it's new, then rest
 2. `<Tab>` — jump through LuaSnip fields to fill each param
 
 **Refactor a function across the project:**
-1. `<leader>lr` — rename (LSP renames all references atomically)
+1. `<leader>lr` — live rename (inc-rename: see all references update as you type, confirm with Enter)
 2. Or: `<leader>sr` — grug-far for text-based search & replace across files
 
 **Stage partial changes (hunks not files):**
@@ -926,6 +1023,17 @@ Save the file, then run `:Lazy sync` to install the theme if it's new, then rest
 1. `<leader>uu` — open undotree
 2. `j`/`k` — navigate to the state before the deletion
 3. `Enter` — restore it
+
+**Run and debug a test without leaving the file:**
+1. Place cursor on a test function
+2. `<leader>tt` — run it, see the gutter sign update
+3. `<leader>to` — open output panel to read the failure
+4. `<leader>td` — re-run it under DAP to step through
+
+**Rename a file without leaving Neovim:**
+1. `-` — open oil in the directory
+2. `cw` on the filename — rename it in the buffer
+3. `:w` — apply
 
 **Embedded C debug session quickstart:**
 1. `<leader>cv` → select Debug, `<leader>cg` → configure (generates `compile_commands.json`)
@@ -971,3 +1079,4 @@ Some features require tools installed on the system:
 | `arm-none-eabi-gdb` | Embedded C DAP | `apt install gcc-arm-none-eabi` |
 | `zathura` | PDF viewer (LaTeX) | `apt install zathura` |
 | `latexmk` | LaTeX compiler | `apt install latexmk` |
+| `pytest` | Python test runner (neotest) | `pip install pytest` |

@@ -25,4 +25,8 @@ return {
 	{ import = "system.plugins.tools.cmake-tools" },
 	{ import = "system.plugins.tools.clangd-extensions" },
 	{ import = "system.plugins.tools.kulala" },
+	{ import = "system.plugins.tools.inc-rename" },
+	{ import = "system.plugins.tools.neotest" },
+	{ import = "system.plugins.tools.overseer" },
+	{ import = "system.plugins.tools.refactoring" },
 }

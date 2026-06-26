@@ -17,10 +17,7 @@ M.on_attach = function(client, bufnr)
 		local group = "LspDocumentHighlight_" .. bufnr
 		local ok, id = pcall(vim.api.nvim_create_augroup, group, { clear = false })
 		if ok then
-			-- Only create the autocmds once per buffer
-			if vim.api.nvim_get_autocmds({ group = group, buffer = bufnr }) then
-				vim.api.nvim_clear_autocmds({ group = group, buffer = bufnr })
-			end
+			vim.api.nvim_clear_autocmds({ group = group, buffer = bufnr })
 
 			vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 				group    = group,
