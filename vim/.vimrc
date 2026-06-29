@@ -1,5 +1,5 @@
 " ============================================================================
-" 1. TỰ ĐỘNG CÀI ĐẶT VIM-PLUG
+" AUTO-INSTALL VIM-PLUG
 " ============================================================================
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
@@ -10,134 +10,429 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 endif
 
 " ============================================================================
-" 2. DANH SÁCH PLUGIN (Tổng hợp: Ổn định & Thông minh)
+" PLUGINS
 " ============================================================================
 call plug#begin('~/.vim/plugged')
 
-" Giao diện & Tiện ích hệ thống
-Plug 'morhetz/gruvbox'          " Màu sắc chuyên nghiệp
-Plug 'preservim/nerdtree'        " Cây thư mục
-Plug 'vim-airline/vim-airline'  " Thanh trạng thái
-Plug 'ctrlpvim/ctrlp.vim'        " Tìm file nhanh (Ctrl + p)
-Plug 'tpope/vim-commentary'      " Comment nhanh (gcc)
-Plug 'sheerun/vim-polyglot'      " Syntax highlight đa ngôn ngữ
+" Colorscheme
+Plug 'morhetz/gruvbox'
 
-" Tính năng thông minh từ Neovim (Nhưng nhẹ & ổn định cho Vim)
-Plug 'jiangmiao/auto-pairs'       " Tự đóng ngoặc, nhảy qua dấu đóng, Smart Enter
-Plug 'dense-analysis/ale'         " Báo lỗi cú pháp (Linter) ngay khi đang gõ
-Plug 'easymotion/vim-easymotion' " Nhảy cực nhanh đến mọi vị trí trên màn hình
+" UI
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'preservim/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'ryanoasis/vim-devicons'
+Plug 'Yggdroot/indentLine'
+Plug 'mbbill/undotree'
+Plug 'preservim/tagbar'
+
+" Fuzzy finding (requires fzf on PATH)
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+" Git
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+
+" LSP + Completion + Snippets (requires Node.js >= 16)
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+" Editing
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-commentary'
+Plug 'jiangmiao/auto-pairs'
+Plug 'mg979/vim-visual-multi', {'branch': 'master'}
+Plug 'easymotion/vim-easymotion'
+Plug 'wellle/targets.vim'
+
+" Syntax / Language
+Plug 'sheerun/vim-polyglot'
+
+" Linting / Fixing
+Plug 'dense-analysis/ale'
 
 call plug#end()
 
 " ============================================================================
-" 3. CẤU HÌNH CƠ BẢN (Tối ưu Code)
+" CORE SETTINGS
 " ============================================================================
 syntax on
 filetype plugin indent on
-set number relativenumber
-set mouse=a
-set cursorline
-set tabstop=4 shiftwidth=4 expandtab smartindent
-set ignorecase smartcase
-set noswapfile undofile         " Lưu lịch sử undo ngay cả khi đóng file
+
 set encoding=utf-8
-set hidden
-set hlsearch incsearch showmatch
+set fileencoding=utf-8
+
+if has('termguicolors')
+    set termguicolors
+endif
+
+" Line numbers & cursor
+set number relativenumber
+set cursorline
+set signcolumn=yes
+set colorcolumn=100
+
+" Mouse & clipboard
+set mouse=a
 if has('clipboard')
-    " Nếu có hỗ trợ, tự động dùng clipboard hệ thống cho mọi thao tác y, d, p
     set clipboard=unnamedplus
 endif
 
-" Fix cho một số môi trường Terminal không nhận diện được DISPLAY
-if !empty($DISPLAY) || !empty($WAYLAND_DISPLAY)
-    " Đảm bảo xterm-clipboard được kích hoạt nếu có môi trường đồ họa
-    set term=xterm-256color
+" Indentation
+set tabstop=4 shiftwidth=4 expandtab smartindent autoindent shiftround
+
+" Search
+set ignorecase smartcase
+set hlsearch incsearch showmatch
+
+" UI behaviour
+set splitbelow splitright
+set scrolloff=8 sidescrolloff=8
+set laststatus=2
+set wildmenu wildmode=longest:full,full
+set wildignore+=*.o,*.pyc,*.class,.git
+set shortmess+=c
+set showcmd
+set title
+set belloff=all
+set confirm
+
+" Performance
+set lazyredraw
+set updatetime=300
+set timeoutlen=500
+set ttimeoutlen=10
+set complete-=i
+
+" Files
+set noswapfile nobackup nowritebackup
+set hidden
+set autoread autowrite
+set undofile undodir=~/.vim/undodir
+set history=10000
+
+" Folding
+set foldmethod=indent foldnestmax=5 nofoldenable
+
+" Misc
+set backspace=indent,eol,start
+set formatoptions+=j
+
+if !isdirectory(expand('~/.vim/undodir'))
+    call mkdir(expand('~/.vim/undodir'), 'p')
 endif
+
 " ============================================================================
-" 4. CẤU HÌNH TÍNH NĂNG THÔNG MINH
+" COLORSCHEME
 " ============================================================================
-
-" --- Auto-pairs (Tự động đóng ngoặc & Xuống dòng thông minh) ---
-let g:AutoPairsMapCR = 1        " Nhấn Enter giữa {} sẽ tự xuống dòng thụt lề
-let g:AutoPairsShortcutToggle = '' " Tắt phím tắt không cần thiết
-
-" --- ALE (Báo lỗi ngay khi gõ - Thay thế LSP nặng nề) ---
-let g:ale_linters = {'javascript': ['eslint'], 'python': ['flake8'], 'cpp': ['gcc']}
-let g:ale_sign_error = '●'
-let g:ale_sign_warning = '○'
-let g:ale_fix_on_save = 1
-
-" --- Giao diện ---
 set background=dark
+let g:gruvbox_contrast_dark = 'medium'
+let g:gruvbox_italic = 1
 silent! colorscheme gruvbox
+
+" ============================================================================
+" AIRLINE
+" ============================================================================
 let g:airline_powerline_fonts = 1
+let g:airline_theme = 'gruvbox'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline#extensions#coc#enabled = 1
 
-" Đổi hình dạng con trỏ
-if &term =~ '256color' || &term =~ 'xterm'
+" ============================================================================
+" NERDTREE
+" ============================================================================
+let g:NERDTreeShowHidden = 1
+let g:NERDTreeMinimalUI = 1
+let g:NERDTreeIgnore = ['\.git$', '\.pyc$', '__pycache__', 'node_modules', '\.o$']
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+" ============================================================================
+" FZF
+" ============================================================================
+let g:fzf_layout = {'down': '40%'}
+
+if executable('rg')
+    let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git"'
+elseif executable('fd')
+    let $FZF_DEFAULT_COMMAND = 'fd --type f --hidden --follow --exclude .git'
+endif
+
+" ============================================================================
+" GITGUTTER
+" ============================================================================
+let g:gitgutter_sign_added    = '+'
+let g:gitgutter_sign_modified = '~'
+let g:gitgutter_sign_removed  = '-'
+
+" ============================================================================
+" INDENTLINE
+" ============================================================================
+let g:indentLine_char = '|'
+
+" ============================================================================
+" ALE
+" ============================================================================
+let g:ale_disable_lsp = 1
+let g:ale_linters_explicit = 1
+let g:ale_linters = {'python': ['flake8'], 'javascript': ['eslint'], 'cpp': ['gcc'], 'c': ['gcc'], 'sh': ['shellcheck']}
+let g:ale_fixers = {'*': ['remove_trailing_whitespace'], 'python': ['black'], 'javascript': ['prettier'], 'cpp': ['clang-format'], 'c': ['clang-format']}
+let g:ale_fix_on_save = 1
+let g:ale_sign_error   = 'E'
+let g:ale_sign_warning = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+" ============================================================================
+" COC.NVIM — LSP, completion, snippets
+" ============================================================================
+let g:coc_global_extensions = ['coc-json', 'coc-html', 'coc-css', 'coc-tsserver', 'coc-pyright', 'coc-clangd', 'coc-lua', 'coc-snippets']
+
+" Tab for completion navigation
+inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : CheckBackspace() ? "\<Tab>" : coc#refresh()
+inoremap <expr><S-Tab> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+function! CheckBackspace() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1] =~# '\s'
+endfunction
+
+" Enter confirms selected completion
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+" Ctrl-Space triggers completion manually
+inoremap <silent><expr> <C-Space> coc#refresh()
+
+" Highlight symbol references on cursor hold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+function! ShowDocumentation()
+    if CocAction('hasProvider', 'hover')
+        call CocActionAsync('doHover')
+    else
+        call feedkeys('K', 'in')
+    endif
+endfunction
+
+" ============================================================================
+" EASYMOTION
+" ============================================================================
+let g:EasyMotion_do_mapping = 0
+let g:EasyMotion_smartcase = 1
+
+" ============================================================================
+" AUTO-PAIRS
+" ============================================================================
+let g:AutoPairsMapCR = 0
+let g:AutoPairsShortcutToggle = ''
+
+" ============================================================================
+" TAGBAR
+" ============================================================================
+let g:tagbar_autofocus = 1
+let g:tagbar_width = 30
+let g:tagbar_sort = 0
+
+" ============================================================================
+" CURSOR SHAPE
+" ============================================================================
+if &term =~ '256color\|xterm'
     let &t_SI = "\e[5 q"
+    let &t_SR = "\e[3 q"
     let &t_EI = "\e[1 q"
 endif
 
 " ============================================================================
-" 5. PHÍM TẮT THÔNG MINH (UNIFIED KEYMAPS)
+" KEYMAPS
 " ============================================================================
 let mapleader = " "
 
-" --- Thoát nhanh (Normal, Insert & Terminal) ---
+" --- Escape ---
 inoremap jk <Esc>
 inoremap kj <Esc>
 nnoremap <silent> <leader><leader> :noh<CR>
 
+" --- Terminal escape ---
 if has('nvim')
     tnoremap jk <C-\><C-n>
+    tnoremap <Esc> <C-\><C-n>
 else
     tnoremap jk <C-w>N
+    tnoremap <Esc> <C-w>N
 endif
 
-" --- Điều hướng Insert Mode (Tính năng bạn muốn) ---
-inoremap <C-l> <Right>
-inoremap <C-e> <Esc>A
-
-" --- Di chuyển cửa sổ Split (Đồng bộ Code và Terminal) ---
+" --- Window navigation ---
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-" --- Duyệt File & Buffer ---
+" --- Window resize ---
+nnoremap <C-Up>    :resize +2<CR>
+nnoremap <C-Down>  :resize -2<CR>
+nnoremap <C-Left>  :vertical resize -2<CR>
+nnoremap <C-Right> :vertical resize +2<CR>
+
+" --- Buffers ---
+nnoremap [b         :bprevious<CR>
+nnoremap ]b         :bnext<CR>
+nnoremap <leader>bd :call BufDel()<CR>
+
+" --- File explorer ---
 function! ToggleExplorer()
     if exists(':NERDTreeToggle') | exec 'NERDTreeToggle' | else | exec 'Lexplore' | endif
 endfunction
-nnoremap <leader>e :call ToggleExplorer()<CR>
-nnoremap [b :bprevious<CR>
-nnoremap ]b :bnext<CR>
-nnoremap <leader>bd :bdelete<CR>
+nnoremap <leader>e  :call ToggleExplorer()<CR>
+nnoremap <leader>E  :NERDTreeFind<CR>
 
-" --- Quản lý Terminal ---
+" --- FZF ---
+nnoremap <C-p>      :Files<CR>
+nnoremap <leader>ff :Files<CR>
+nnoremap <leader>fg :Rg<CR>
+nnoremap <leader>fb :Buffers<CR>
+nnoremap <leader>fh :History<CR>
+nnoremap <leader>fl :BLines<CR>
+nnoremap <leader>fL :Lines<CR>
+nnoremap <leader>fc :Commands<CR>
+nnoremap <leader>fm :Maps<CR>
+
+" --- COC LSP ---
+nmap <silent> gd         <Plug>(coc-definition)
+nmap <silent> gD         <Plug>(coc-declaration)
+nmap <silent> gy         <Plug>(coc-type-definition)
+nmap <silent> gi         <Plug>(coc-implementation)
+nmap <silent> gr         <Plug>(coc-references)
+nmap <silent> [g         <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g         <Plug>(coc-diagnostic-next)
+nmap <leader>rn          <Plug>(coc-rename)
+nmap <leader>ca          <Plug>(coc-codeaction-cursor)
+nmap <leader>cf          <Plug>(coc-format)
+vmap <leader>cf          <Plug>(coc-format-selected)
+nnoremap <silent> K      :call ShowDocumentation()<CR>
+nnoremap <leader>cd      :CocList diagnostics<CR>
+nnoremap <leader>cs      :CocList -I symbols<CR>
+nnoremap <leader>co      :CocList outline<CR>
+
+" COC text objects: function and class
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+" --- Git (fugitive) ---
+nnoremap <leader>gg :Git<CR>
+nnoremap <leader>gb :Git blame<CR>
+nnoremap <leader>gd :Gdiffsplit<CR>
+nnoremap <leader>gl :Git log --oneline -20<CR>
+nnoremap <leader>gp :Git push<CR>
+nnoremap <leader>gP :Git pull<CR>
+
+" Git hunk navigation (gitgutter)
+nmap [h <Plug>(GitGutterPrevHunk)
+nmap ]h <Plug>(GitGutterNextHunk)
+nmap <leader>hs <Plug>(GitGutterStageHunk)
+nmap <leader>hu <Plug>(GitGutterUndoHunk)
+nmap <leader>hp <Plug>(GitGutterPreviewHunk)
+
+" --- Undotree ---
+nnoremap <leader>u :UndotreeToggle<CR>
+
+" --- Tagbar ---
+nnoremap <leader>tb :TagbarToggle<CR>
+
+" --- Terminal ---
 if has('nvim')
-    nnoremap <leader>t :botright split +terminal | resize 10<CR>
+    nnoremap <leader>t  :botright split +terminal | resize 12<CR>
+    nnoremap <leader>tv :botright vsplit +terminal<CR>
 else
-    nnoremap <leader>t :botright terminal ++rows=10<CR>
+    nnoremap <leader>t  :botright terminal ++rows=12<CR>
+    nnoremap <leader>tv :vertical terminal<CR>
 endif
 
-" --- Tiện ích hỗ trợ Code ---
-nnoremap <leader>i gg=G''
-vnoremap <Tab> >gv
+" --- Editing ---
+nnoremap <leader>i  gg=G''
+nnoremap <leader>w  :w<CR>
+nnoremap <leader>sv :source $MYVIMRC<CR>
+nnoremap <leader>ev :edit $MYVIMRC<CR>
+nnoremap <leader>ln :call ToggleLineNumbers()<CR>
+
+" Indent blocks in visual mode
+vnoremap <Tab>   >gv
 vnoremap <S-Tab> <gv
 
-" Nhảy nhanh đến từ bất kỳ đâu (EasyMotion)
+" Move lines up/down
+nnoremap <A-j> :m .+1<CR>==
+nnoremap <A-k> :m .-2<CR>==
+vnoremap <A-j> :m '>+1<CR>gv=gv
+vnoremap <A-k> :m '<-2<CR>gv=gv
+
+" Yank to end of line (consistent with D and C)
+nnoremap Y y$
+
+" Centre screen on search results
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+" Insert mode navigation
+inoremap <C-l> <Right>
+inoremap <C-e> <Esc>A
+
+" --- EasyMotion ---
 nmap s <Plug>(easymotion-s2)
+nmap S <Plug>(easymotion-overwin-f2)
 
 " ============================================================================
-" 6. TỰ ĐỘNG HÓA
+" AUTOCOMMANDS
 " ============================================================================
-if has('nvim')
-    autocmd TermOpen * setlocal nonumber norelativenumber | startinsert
-else
-    autocmd TerminalOpen * setlocal nonumber norelativenumber | startinsert
-endif
+augroup vimrc
+    autocmd!
 
-" Tự động lưu file khi rời cửa sổ
-autocmd BufLeave,FocusLost * silent! wa
+    " Auto-save on focus lost / buffer leave
+    autocmd BufLeave,FocusLost * silent! wa
+
+    " Terminal: no line numbers, start in insert mode
+    if has('nvim')
+        autocmd TermOpen     * setlocal nonumber norelativenumber | startinsert
+    else
+        autocmd TerminalOpen * setlocal nonumber norelativenumber | startinsert
+    endif
+
+    " Restore cursor position when reopening a file
+    autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+    " Re-balance splits on resize
+    autocmd VimResized * tabdo wincmd =
+
+augroup END
+
+" ============================================================================
+" FUNCTIONS
+" ============================================================================
+
+" Close buffer without closing the window
+function! BufDel()
+    let l:buf = bufnr('%')
+    if buflisted(l:buf - 1)
+        execute 'buffer ' . (l:buf - 1)
+    elseif buflisted(l:buf + 1)
+        execute 'buffer ' . (l:buf + 1)
+    else
+        enew
+    endif
+    execute 'bdelete ' . l:buf
+endfunction
+
+" Toggle relative / absolute line numbers
+function! ToggleLineNumbers()
+    if &relativenumber
+        set norelativenumber number
+    else
+        set relativenumber number
+    endif
+endfunction
