@@ -53,6 +53,9 @@ Plug 'sheerun/vim-polyglot'
 " Linting / Fixing
 Plug 'dense-analysis/ale'
 
+" Keybinding hints
+Plug 'liuchengxu/vim-which-key'
+
 call plug#end()
 
 " ============================================================================
@@ -91,6 +94,8 @@ set hlsearch incsearch showmatch
 set splitbelow splitright
 set scrolloff=8 sidescrolloff=8
 set laststatus=2
+set cmdheight=2
+set noshowmode
 set wildmenu wildmode=longest:full,full
 set wildignore+=*.o,*.pyc,*.class,.git
 set shortmess+=c
@@ -100,7 +105,6 @@ set belloff=all
 set confirm
 
 " Performance
-set lazyredraw
 set updatetime=300
 set timeoutlen=500
 set ttimeoutlen=10
@@ -109,7 +113,7 @@ set complete-=i
 " Files
 set noswapfile nobackup nowritebackup
 set hidden
-set autoread autowrite
+set autoread
 set undofile undodir=~/.vim/undodir
 set history=10000
 
@@ -148,8 +152,6 @@ let g:airline#extensions#coc#enabled = 1
 let g:NERDTreeShowHidden = 1
 let g:NERDTreeMinimalUI = 1
 let g:NERDTreeIgnore = ['\.git$', '\.pyc$', '__pycache__', 'node_modules', '\.o$']
-autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
-
 " ============================================================================
 " FZF
 " ============================================================================
@@ -179,8 +181,6 @@ let g:indentLine_char = '|'
 let g:ale_disable_lsp = 1
 let g:ale_linters_explicit = 1
 let g:ale_linters = {'python': ['flake8'], 'javascript': ['eslint'], 'cpp': ['gcc'], 'c': ['gcc'], 'sh': ['shellcheck']}
-let g:ale_fixers = {'*': ['remove_trailing_whitespace'], 'python': ['black'], 'javascript': ['prettier'], 'cpp': ['clang-format'], 'c': ['clang-format']}
-let g:ale_fix_on_save = 1
 let g:ale_sign_error   = 'E'
 let g:ale_sign_warning = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
@@ -206,10 +206,8 @@ inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<C
 inoremap <silent><expr> <C-Space> coc#refresh()
 
 " Highlight symbol references on cursor hold
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
 function! ShowDocumentation()
-    if CocAction('hasProvider', 'hover')
+    if exists('*CocAction') && CocAction('hasProvider', 'hover')
         call CocActionAsync('doHover')
     else
         call feedkeys('K', 'in')
@@ -248,6 +246,75 @@ endif
 " KEYMAPS
 " ============================================================================
 let mapleader = " "
+
+" ============================================================================
+" VIM-WHICH-KEY
+" ============================================================================
+nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
+vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<Space>'<CR>
+call which_key#register('<Space>', 'g:which_key_map')
+
+let g:which_key_map = {}
+
+let g:which_key_map[' '] = 'clear highlight'
+let g:which_key_map['E'] = 'explorer find'
+let g:which_key_map['u'] = 'undotree'
+let g:which_key_map['w'] = 'save'
+let g:which_key_map['i'] = 'indent all'
+
+let g:which_key_map.b = { 'name': '+buffer', 'd': 'delete' }
+
+let g:which_key_map.e = { 'name': '+explorer', 'v': 'edit vimrc' }
+
+let g:which_key_map.f = {
+    \ 'name': '+find',
+    \ 'f': 'files',
+    \ 'g': 'grep',
+    \ 'b': 'buffers',
+    \ 'h': 'history',
+    \ 'l': 'buffer lines',
+    \ 'L': 'all lines',
+    \ 'c': 'commands',
+    \ 'm': 'mappings',
+    \ }
+
+let g:which_key_map.c = {
+    \ 'name': '+lsp',
+    \ 'a': 'code action',
+    \ 'f': 'format',
+    \ 'd': 'diagnostics',
+    \ 's': 'symbols',
+    \ 'o': 'outline',
+    \ }
+
+let g:which_key_map.r = { 'name': '+refactor', 'n': 'rename' }
+
+let g:which_key_map.g = {
+    \ 'name': '+git',
+    \ 'g': 'status',
+    \ 'b': 'blame',
+    \ 'd': 'diff',
+    \ 'l': 'log',
+    \ 'p': 'push',
+    \ 'P': 'pull',
+    \ }
+
+let g:which_key_map.h = {
+    \ 'name': '+hunk',
+    \ 's': 'stage',
+    \ 'u': 'undo',
+    \ 'p': 'preview',
+    \ }
+
+let g:which_key_map.l = { 'name': '+line', 'n': 'toggle numbers' }
+
+let g:which_key_map.s = { 'name': '+settings', 'v': 'reload vimrc' }
+
+let g:which_key_map.t = {
+    \ 'name': '+terminal',
+    \ 'b': 'tagbar',
+    \ 'v': 'vertical terminal',
+    \ }
 
 " --- Escape ---
 inoremap jk <Esc>
@@ -409,6 +476,12 @@ augroup vimrc
     " Re-balance splits on resize
     autocmd VimResized * tabdo wincmd =
 
+    " Close NERDTree if it's the last window
+    autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+    " Highlight symbol under cursor (coc.nvim)
+    autocmd CursorHold * if exists('*CocActionAsync') | silent call CocActionAsync('highlight') | endif
+
 augroup END
 
 " ============================================================================
@@ -418,12 +491,16 @@ augroup END
 " Close buffer without closing the window
 function! BufDel()
     let l:buf = bufnr('%')
-    if buflisted(l:buf - 1)
-        execute 'buffer ' . (l:buf - 1)
-    elseif buflisted(l:buf + 1)
-        execute 'buffer ' . (l:buf + 1)
+    let l:alt = bufnr('#')
+    if l:alt != -1 && buflisted(l:alt) && l:alt != l:buf
+        execute 'buffer ' . l:alt
     else
-        enew
+        let l:listed = filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != l:buf')
+        if !empty(l:listed)
+            execute 'buffer ' . l:listed[0]
+        else
+            enew
+        endif
     endif
     execute 'bdelete ' . l:buf
 endfunction
