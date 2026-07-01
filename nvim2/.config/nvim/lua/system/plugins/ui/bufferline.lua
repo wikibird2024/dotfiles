@@ -20,7 +20,7 @@ return {
 					show_buffer_close_icons = true,
 					show_close_icon         = false,
 					show_tab_indicators     = true,
-					separator_style         = "slope",   -- slant | slope | thin | thick
+					separator_style         = "thin",   -- slant | slope | thin | thick
 					always_show_bufferline  = true,
 					hover = {
 						enabled = true,
