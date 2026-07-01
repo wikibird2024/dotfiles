@@ -15,6 +15,8 @@ return {
 			local luasnip = require("luasnip")
 			local border  = "rounded"
 
+			vim.o.pumheight = 10
+
 			local ok, custom_sources = pcall(require, "system.constitution.cmp_sources")
 			local sources = (ok and type(custom_sources) == "table") and custom_sources or {
 				{ name = "nvim_lsp" },
@@ -34,7 +36,12 @@ return {
 				},
 				window = {
 					completion    = bordered,
-					documentation = bordered,
+					documentation = cmp.config.window.bordered({
+						border       = border,
+						winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
+						max_width    = 60,
+						max_height   = 15,
+					}),
 				},
 				mapping = cmp.mapping.preset.insert({
 					["<C-j>"]     = cmp.mapping.select_next_item(),
@@ -62,6 +69,18 @@ return {
 					["<C-u>"]     = cmp.mapping.scroll_docs(-4),
 				}),
 				sources = cmp.config.sources(sources),
+				formatting = {
+					fields = { "kind", "abbr", "menu" },
+					format = function(entry, item)
+						local widths = { abbr = 40, menu = 20 }
+						for key, width in pairs(widths) do
+							if item[key] and #item[key] > width then
+								item[key] = vim.fn.strcharpart(item[key], 0, width - 1) .. "…"
+							end
+						end
+						return item
+					end,
+				},
 			})
 
 			-- Enhanced completion for / search — searches current buffer
