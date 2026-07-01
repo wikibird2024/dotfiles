@@ -6,7 +6,7 @@ return {
 	{ import = "system.plugins.ui.trouble"            },
 	{ import = "system.plugins.ui.indentline"         },
 	{ import = "system.plugins.ui.whichkey"           },
-	{ import = "system.plugins.ui.smear_cursor"       },
+	{ import = "system.plugins.ui.beacon"             },
 	-- recommended additions
 	{ import = "system.plugins.ui.treesitter-context" },
 	{ import = "system.plugins.ui.illuminate"         },
