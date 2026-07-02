@@ -39,8 +39,8 @@ return {
 					documentation = cmp.config.window.bordered({
 						border       = border,
 						winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
-						max_width    = 60,
-						max_height   = 15,
+						max_width    = 50,
+						max_height   = 10,
 					}),
 				},
 				mapping = cmp.mapping.preset.insert({
