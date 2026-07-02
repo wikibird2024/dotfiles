@@ -1,5 +1,6 @@
 return {
 	{ import = "system.plugins.colorscheme" },
+	{ import = "system.plugins.twilight"    },
 	{ import = "system.plugins.ui"          },
 	{ import = "system.plugins.latex"       },
 	{ import = "system.plugins.lint"        },
