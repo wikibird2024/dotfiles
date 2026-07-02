@@ -14,7 +14,7 @@ return {
 			-- buffer has no parser attached (e.g. terminal/quickfix splits)
 			inactive    = true,
 		},
-		context           = 12,
+		context           = 15,
 		treesitter        = true,
 		expand            = {
 			"function",

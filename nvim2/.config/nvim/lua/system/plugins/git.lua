@@ -28,7 +28,21 @@ return {
 			map("n", "<leader>gu", gs.undo_stage_hunk, "Undo Stage Hunk")
 			map("n", "<leader>gp", gs.preview_hunk,    "Preview Hunk")
 			map("n", "<leader>gb", function() gs.blame_line({ full = true }) end, "Blame Line")
-			map("n", "<leader>gd", gs.diffthis, "Diff This")
+			map("n", "<leader>gd", function()
+				if vim.wo.diff then
+					for _, win in ipairs(vim.api.nvim_list_wins()) do
+						if vim.wo[win].diff then
+							vim.api.nvim_win_call(win, function() vim.cmd("diffoff") end)
+							local buf = vim.api.nvim_win_get_buf(win)
+							if vim.api.nvim_buf_get_name(buf):match("^gitsigns://") then
+								vim.api.nvim_win_close(win, false)
+							end
+						end
+					end
+				else
+					gs.diffthis()
+				end
+			end, "Diff This (toggle)")
 
 			-- Hunk text object
 			map({ "o", "x" }, "ih", gs.select_hunk, "Select Hunk")
