@@ -4,7 +4,7 @@ local opt = vim.opt
 -- UI & USER EXPERIENCE
 -- =============================================================================
 opt.number         = true   -- Absolute line numbers
-opt.relativenumber = false   -- Relative line numbers for easier motion
+opt.relativenumber = true   -- Relative line numbers for easier motion
 opt.cursorline     = true   -- Highlight current line
 opt.termguicolors  = true   -- 24-bit RGB colors
 opt.signcolumn     = "yes"  -- Always show sign column to prevent layout shifts
@@ -48,3 +48,7 @@ opt.spell     = false
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 vim.g.loaded_node_provider = 0
+
+-- =============================================================================vim.opt.swapfile = false
+vim.g.backup = false
+vim.g.writebackup = false
