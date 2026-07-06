@@ -3,6 +3,7 @@ return {
 	{ import = "system.plugins.twilight"    },
 	{ import = "system.plugins.ui"          },
 	{ import = "system.plugins.latex"       },
+	{ import = "system.plugins.markdown"    },
 	{ import = "system.plugins.lint"        },
 	{ import = "system.plugins.luasnip"     },
 	{ import = "system.plugins.tools"       },
