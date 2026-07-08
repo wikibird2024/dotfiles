@@ -6,7 +6,7 @@
 live_config_reload = true
 
 [window]
-decorations = "none"
+decorations = "full"
 startup_mode = "Windowed"  # Capitalized to match Alacritty's strict Enum parsing
 opacity = 1.0
 
@@ -15,7 +15,7 @@ x = 10
 y = 10
 
 [font]
-size = 11.0
+size = 10.5
 
 [font.normal]
 family = "JetBrains Mono Nerd Font"
