@@ -38,8 +38,8 @@ return {
 					filetypes = {
 						"help", "alpha", "dashboard", "startify",
 						"lazy", "neo-tree", "Trouble", "trouble",
-						"markdown", "text", "gitcommit", "diff",
-						"toggleterm", "aerial",
+						"text", "gitcommit", "diff", "aerial",
+						"toggleterm",
 					},
 				},
 			})
