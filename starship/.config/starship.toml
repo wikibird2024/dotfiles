@@ -29,6 +29,7 @@ disabled = false
 style = "bold white"
 
 [os.symbols]
+Mint = "🌿 "
 Arch = "󰣇 "
 EndeavourOS = " "
 Linux = " "
