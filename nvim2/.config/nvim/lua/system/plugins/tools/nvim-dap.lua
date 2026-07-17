@@ -21,7 +21,19 @@ return {
 			{ "<leader>db",  function() require("dap").toggle_breakpoint() end,                                       desc = "Breakpoint: Toggle" },
 			{ "<leader>dB",  function() require("dap").set_breakpoint(vim.fn.input("Condition: ")) end,               desc = "Breakpoint: Condition" },
 			{ "<leader>dl",  function() require("dap").set_breakpoint(nil, nil, vim.fn.input("Log: ")) end,           desc = "Log Point" },
-			{ "<leader>dh",  function() require("dap.ui.widgets").hover() end,                                        desc = "Debugger Hover" },
+			{ "<leader>dh",  function()
+				local closed = false
+				for _, win in ipairs(vim.api.nvim_list_wins()) do
+					local buf = vim.api.nvim_win_get_buf(win)
+					if vim.bo[buf].filetype == "dap-float" then
+						vim.api.nvim_win_close(win, true)
+						closed = true
+					end
+				end
+				if not closed then
+					require("dap.ui.widgets").hover()
+				end
+			end,                                                                                                    desc = "Debugger Hover (toggle)" },
 			{ "<leader>de",  function() require("dapui").eval() end,                mode = { "n", "v" },              desc = "Evaluate Expression" },
 			{ "<leader>du",  function() require("dapui").toggle() end,                                                desc = "Toggle Debug UI" },
 			{ "<F5>",        function() require("dap").continue() end,                                                desc = "Debug: Continue" },
@@ -102,6 +114,12 @@ return {
 				end
 			end
 
+			dap.adapters.gdb_native = {
+				type = "executable",
+				command = "gdb",
+				args = { "-i", "dap" },
+			}
+
 			dap.configurations.c = {
 				{
 					name = "Embedded Firmware (OpenOCD Target)",
@@ -125,6 +143,16 @@ return {
 						},
 					},
 					stopAtBeginningOfMainSubprogram = true,
+				},
+				{
+					name = "Native Host Debug (gdb, local, no board)",
+					type = "gdb_native",
+					request = "launch",
+					program = function()
+						return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+					end,
+					cwd = "${workspaceFolder}",
+					stopAtBeginningOfMainSubprogram = false,
 				},
 			}
 			dap.configurations.cpp = dap.configurations.c

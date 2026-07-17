@@ -31,9 +31,9 @@ style = "bold white"
 [os.symbols]
 Mint = "🌿 "
 Arch = "󰣇 "
-EndeavourOS = " "
+EndeavourOS = "  "
 Linux = " "
-Ubuntu = " "
+Ubuntu = "🌿 "
 Macos = " "
 Windows = " "
 
