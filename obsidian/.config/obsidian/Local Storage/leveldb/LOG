@@ -1,3 +1,6 @@
-2026/07/10-13:10:20.294 4cb90 Reusing MANIFEST /home/greystone/.config/obsidian/Local Storage/leveldb/MANIFEST-000001
-2026/07/10-13:10:20.322 4cb90 Recovering log #3
-2026/07/10-13:10:20.324 4cb90 Reusing old log /home/greystone/.config/obsidian/Local Storage/leveldb/000003.log 
+2026/07/17-07:17:49.572 2c43 Reusing MANIFEST /home/greystone/.config/obsidian/Local Storage/leveldb/MANIFEST-000001
+2026/07/17-07:17:49.600 2c43 Recovering log #3
+2026/07/17-07:17:49.602 2c43 Reusing old log /home/greystone/.config/obsidian/Local Storage/leveldb/000003.log 
+2026/07/17-08:48:17.620 2cd2 Level-0 table #5: started
+2026/07/17-08:48:17.621 2cd2 Level-0 table #5: 9853 bytes OK
+2026/07/17-08:48:17.623 2cd2 Delete type=0 #3
