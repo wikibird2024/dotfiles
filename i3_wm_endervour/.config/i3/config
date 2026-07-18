@@ -79,7 +79,7 @@ workspace_layout default
 new_window pixel 1
 
 # thin borders
-hide_edge_borders smart
+hide_edge_borders none
 
 # Set inner/outer gaps
 gaps inner 0

@@ -70,6 +70,25 @@ return {
 				},
 			})
 
+			-- Label dapui panes via winbar since lualine's globalstatus=true
+			-- collapses laststatus to 3 (one shared statusline), leaving each
+			-- dapui split with no indication of which pane is which.
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = { "dapui_scopes", "dapui_breakpoints", "dapui_stacks", "dapui_watches", "dapui_console", "dap-repl" },
+				group = vim.api.nvim_create_augroup("dapui_winbar_labels", { clear = true }),
+				callback = function(args)
+					local labels = {
+						dapui_scopes = "DAP Scopes",
+						dapui_breakpoints = "DAP Breakpoints",
+						dapui_stacks = "DAP Stacks",
+						dapui_watches = "DAP Watches",
+						dapui_console = "DAP Console",
+						["dap-repl"] = "DAP REPL",
+					}
+					vim.wo.winbar = "  " .. (labels[vim.bo[args.buf].filetype] or vim.fn.bufname(args.buf))
+				end,
+			})
+
 			-- Automation hooks
 			dap.listeners.after.event_initialized["dapui_config"] = function()
 				dapui.open()

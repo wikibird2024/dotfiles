@@ -65,11 +65,11 @@ return {
 			pattern  = "term://*",
 			callback = function()
 				local opts = { buffer = 0, silent = true }
-				vim.keymap.set("t", "<C-h>",     [[<C-\><C-n><C-w>h]],              opts)
-				vim.keymap.set("t", "<C-j>",     [[<C-\><C-n><C-w>j]],              opts)
-				vim.keymap.set("t", "<C-k>",     [[<C-\><C-n><C-w>k]],              opts)
-				vim.keymap.set("t", "<C-l>",     [[<C-\><C-n><C-w>l]],              opts)
-				vim.keymap.set("t", "<leader>t", [[<C-\><C-n><cmd>ToggleTerm<CR>]], opts)
+				vim.keymap.set("t", "<C-h>",     [[<C-\><C-n><cmd>TmuxNavigateLeft<CR>]],  opts)
+				vim.keymap.set("t", "<C-j>",     [[<C-\><C-n><cmd>TmuxNavigateDown<CR>]],  opts)
+				vim.keymap.set("t", "<C-k>",     [[<C-\><C-n><cmd>TmuxNavigateUp<CR>]],    opts)
+				vim.keymap.set("t", "<C-l>",     [[<C-\><C-n><cmd>TmuxNavigateRight<CR>]], opts)
+				vim.keymap.set("t", "<C-t>",     [[<C-\><C-n><cmd>ToggleTerm<CR>]], opts)
 			end,
 			desc = "Terminal window navigation",
 		})
