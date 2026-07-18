@@ -1,6 +1,6 @@
 return {
 	{ import = "system.plugins.colorscheme" },
-	{ import = "system.plugins.twilight"    },
+	{ import = "system.plugins.twilight-focus-dim" },
 	{ import = "system.plugins.ui"          },
 	{ import = "system.plugins.latex"       },
 	{ import = "system.plugins.markdown"    },
