@@ -18,6 +18,7 @@ return {
 		})
 
 		wk.add({
+			{ "<leader>a", group = "AI (Claude Code)", icon = "󰚩 " },
 			{ "<leader>c", group = "Code/CMake",     icon = "󰅩 " },
 			{ "<leader>f", group = "Find/Search",    icon = " "  },
 			{ "<leader>b", group = "Buffer",         icon = "󰓩 " },

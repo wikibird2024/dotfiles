@@ -37,7 +37,7 @@ return {
 
 				if client and client.name == "clangd" then
 					local bufnr = ev.buf
-					vim.keymap.set("n", "<leader>a", function()
+					vim.keymap.set("n", "<leader>ch", function()
 						vim.lsp.buf_request(bufnr, "textDocument/switchSourceHeader", {
 							uri = vim.uri_from_bufnr(bufnr),
 						}, function(err, result)

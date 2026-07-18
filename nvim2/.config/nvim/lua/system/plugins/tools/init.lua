@@ -29,4 +29,5 @@ return {
 	{ import = "system.plugins.tools.neotest" },
 	{ import = "system.plugins.tools.overseer" },
 	{ import = "system.plugins.tools.refactoring" },
+	{ import = "system.plugins.tools.claudecode" },
 }

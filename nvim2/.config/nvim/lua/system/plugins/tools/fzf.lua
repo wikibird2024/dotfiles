@@ -1,5 +1,6 @@
 return {
 	"ibhagwan/fzf-lua",
+	event        = "VeryLazy", -- also owns vim.ui.select via register_ui_select()
 	cmd          = "FzfLua",
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	keys = {
@@ -87,5 +88,6 @@ return {
 	},
 	config = function(_, opts)
 		require("fzf-lua").setup(opts)
+		require("fzf-lua").register_ui_select()
 	end,
 }
