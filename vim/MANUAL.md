@@ -54,10 +54,12 @@ sudo apt install universal-ctags
 |---|---|
 | `jk` / `kj` | Exit insert mode |
 | `<Space><Space>` | Clear search highlight |
-| `<leader>w` | Save file |
+| `<Esc>` | Clear search highlight (matches nvim2) |
 | `<leader>ev` | Edit vimrc |
 | `<leader>sv` | Reload vimrc |
 | `<leader>ln` | Toggle relative/absolute line numbers |
+
+> Files auto-save on `BufLeave`/`FocusLost`, so there's no dedicated save key — same as nvim2 (which relies on its own auto-save autocommand). Use `:w` for an explicit save.
 
 ### Navigation — Windows & Splits
 
@@ -66,13 +68,18 @@ sudo apt install universal-ctags
 | `Ctrl-h/j/k/l` | Move between splits |
 | `Ctrl-Up/Down` | Resize split height |
 | `Ctrl-Left/Right` | Resize split width |
+| `<leader>wv` | Vertical split |
+| `<leader>wh` | Horizontal split |
+| `<leader>wq` | Close window |
+| `<leader>wo` | Close all other windows |
+| `<leader>w=` | Equalize window sizes |
 
 ### Navigation — Buffers
 
 | Key | Action |
 |---|---|
-| `[b` | Previous buffer |
-| `]b` | Next buffer |
+| `[b` / `]b` | Previous / next buffer |
+| `<Tab>` / `<S-Tab>` | Next / previous buffer |
 | `<leader>bd` | Delete buffer (keeps window open) |
 
 ### File Explorer (NERDTree)
@@ -80,7 +87,7 @@ sudo apt install universal-ctags
 | Key | Action |
 |---|---|
 | `<leader>e` | Toggle NERDTree |
-| `<leader>E` | Reveal current file in NERDTree |
+| `<leader>r` | Reveal current file in NERDTree |
 
 Inside NERDTree: `o` open, `s` vertical split, `i` horizontal split, `ma` new file, `md` delete, `R` refresh, `I` toggle hidden files, `?` help.
 
@@ -101,6 +108,8 @@ Inside fzf popup: `Ctrl-j/k` navigate, `Enter` open, `Ctrl-v` vertical split, `C
 
 ### LSP — coc.nvim
 
+Keys mirror nvim2's native-LSP layout: `gd`/`gr`/`gi`/`K` are identical in both configs; everything else is grouped under `<leader>l*`, diagnostic nav under `[d`/`]d`, and the full diagnostics list under `<leader>x*`.
+
 | Key | Action |
 |---|---|
 | `Tab` | Next completion item |
@@ -113,13 +122,15 @@ Inside fzf popup: `Ctrl-j/k` navigate, `Enter` open, `Ctrl-v` vertical split, `C
 | `gy` | Go to type definition |
 | `gi` | Go to implementation |
 | `gr` | Show all references |
-| `[g` / `]g` | Previous / next diagnostic |
-| `<leader>rn` | Rename symbol |
-| `<leader>ca` | Code action at cursor |
-| `<leader>cf` | Format file / selection |
-| `<leader>cd` | List diagnostics |
-| `<leader>cs` | Search workspace symbols |
-| `<leader>co` | Show file outline |
+| `[d` / `]d` | Previous / next diagnostic |
+| `<leader>lr` | Rename symbol |
+| `<leader>ld` | Go to definition (alias of `gd`) |
+| `<leader>la` | Code action at cursor |
+| `<leader>lf` | Format file / selection |
+| `<leader>li` | Show coc info (`:CocInfo`) |
+| `<leader>lo` | Show file outline |
+| `<leader>ls` | Search workspace symbols |
+| `<leader>xd` | List all diagnostics |
 
 **Text objects (works with `d`, `c`, `v`, `y`):**
 
@@ -143,14 +154,16 @@ Inside fzf popup: `Ctrl-j/k` navigate, `Enter` open, `Ctrl-v` vertical split, `C
 
 ### Git — vim-fugitive
 
+Hunk actions now live under the same `<leader>g*` group as the repo commands (matches nvim2's `<leader>g*` layout, where `gs`/`gu`/`gp` are stage/undo/preview hunk).
+
 | Key | Action |
 |---|---|
 | `<leader>gg` | Open git status panel |
 | `<leader>gb` | Git blame (current file) |
 | `<leader>gd` | Diff current file against HEAD |
 | `<leader>gl` | Git log (last 20 commits, oneline) |
-| `<leader>gp` | Git push |
-| `<leader>gP` | Git pull |
+
+> No dedicated push/pull keys (nvim2 doesn't bind them either). Push/pull from inside the `:Git` status panel (`cP`/`P`), or run `:Git push` / `:Git pull` directly.
 
 Inside `:Git` status panel: `s` stage, `u` unstage, `=` toggle inline diff, `cc` commit, `dd` diff, `q` quit.
 
@@ -160,20 +173,40 @@ Inside `:Git` status panel: `s` stage, `u` unstage, `=` toggle inline diff, `cc`
 |---|---|
 | `[h` | Previous hunk |
 | `]h` | Next hunk |
-| `<leader>hs` | Stage hunk |
-| `<leader>hu` | Undo hunk |
-| `<leader>hp` | Preview hunk diff |
+| `<leader>gs` | Stage hunk |
+| `<leader>gu` | Undo hunk |
+| `<leader>gp` | Preview hunk diff |
 
 ### Editing
 
 | Key | Action |
 |---|---|
 | `<A-j>` / `<A-k>` | Move line/selection down/up |
+| `J` / `K` (visual) | Move selection down/up (matches nvim2) |
 | `Tab` (visual) | Indent selection |
 | `Shift-Tab` (visual) | Unindent selection |
+| `<` / `>` (visual) | Indent left/right, keeps selection (matches nvim2) |
 | `<leader>i` | Auto-indent entire file |
+| `<leader>y` | Yank to system clipboard |
+| `<leader>yp` | Paste from system clipboard |
 | `Y` | Yank to end of line |
 | `n` / `N` | Next/prev match (centred) |
+
+### Diagnostics / Quickfix
+
+| Key | Action |
+|---|---|
+| `<leader>xq` | Toggle quickfix list |
+| `<leader>xl` | Toggle location list |
+| `<leader>xd` | List all coc diagnostics |
+
+### Toggles
+
+| Key | Action |
+|---|---|
+| `<leader>uu` | Toggle undotree panel |
+| `<leader>us` | Toggle spell check |
+| `<leader>ud` | Toggle coc diagnostics for current buffer |
 
 ### Surround (vim-surround)
 
@@ -228,7 +261,7 @@ Extends standard text objects. Works with `d`, `c`, `v`, `y`.
 
 | Key | Action |
 |---|---|
-| `<leader>u` | Toggle undotree panel |
+| `<leader>uu` | Toggle undotree panel |
 
 Inside undotree: `j/k` navigate history, `Enter` jump to state, `d` show diff, `q` close.
 
@@ -238,14 +271,15 @@ Inside undotree: `j/k` navigate history, `Enter` jump to state, `d` show diff, `
 |---|---|
 | `<leader>tb` | Toggle tagbar panel |
 
-Inside tagbar: `Enter` jump to tag, `p` preview, `space` show prototype, `q` close. Requires `universal-ctags`.
+Inside tagbar: `Enter` jump to tag, `p` preview, `space` show prototype, `q` close. Requires `universal-ctags`. (No nvim2 equivalent — nvim2 uses aerial for outline instead, see `<leader>lo`.)
 
 ### Terminal
 
 | Key | Action |
 |---|---|
-| `<leader>t` | Open horizontal terminal (12 rows, bottom) |
+| `<leader>t` / `<leader>th` | Open horizontal terminal (12 rows, bottom) |
 | `<leader>tv` | Open vertical terminal |
+| `<leader>tf` | Open floating terminal (Neovim only) |
 | `jk` or `Esc` | Exit terminal insert mode |
 | `Ctrl-h/j/k/l` | Move between terminal and other splits |
 

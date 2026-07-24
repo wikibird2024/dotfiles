@@ -30,4 +30,5 @@ return {
 	{ import = "system.plugins.tools.overseer-task-runner" },
 	{ import = "system.plugins.tools.refactoring" },
 	{ import = "system.plugins.tools.claudecode" },
+	{ import = "system.plugins.tools.rainbow-csv" },
 }

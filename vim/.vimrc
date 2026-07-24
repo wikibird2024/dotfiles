@@ -257,14 +257,13 @@ call which_key#register('<Space>', 'g:which_key_map')
 let g:which_key_map = {}
 
 let g:which_key_map[' '] = 'clear highlight'
-let g:which_key_map['E'] = 'explorer find'
-let g:which_key_map['u'] = 'undotree'
-let g:which_key_map['w'] = 'save'
 let g:which_key_map['i'] = 'indent all'
 
 let g:which_key_map.b = { 'name': '+buffer', 'd': 'delete' }
 
 let g:which_key_map.e = { 'name': '+explorer', 'v': 'edit vimrc' }
+
+let g:which_key_map.r = 'explorer reveal'
 
 let g:which_key_map.f = {
     \ 'name': '+find',
@@ -278,41 +277,64 @@ let g:which_key_map.f = {
     \ 'm': 'mappings',
     \ }
 
-let g:which_key_map.c = {
+" LSP group — mirrors nvim2's <leader>l* layout
+let g:which_key_map.l = {
     \ 'name': '+lsp',
     \ 'a': 'code action',
     \ 'f': 'format',
-    \ 'd': 'diagnostics',
-    \ 's': 'symbols',
+    \ 'r': 'rename',
+    \ 'd': 'definition',
+    \ 'i': 'lsp info',
     \ 'o': 'outline',
+    \ 's': 'symbols',
+    \ 'n': 'toggle line numbers',
     \ }
 
-let g:which_key_map.r = { 'name': '+refactor', 'n': 'rename' }
-
+" Git group — repo commands + hunk ops, mirrors nvim2's <leader>g*
 let g:which_key_map.g = {
     \ 'name': '+git',
     \ 'g': 'status',
     \ 'b': 'blame',
     \ 'd': 'diff',
     \ 'l': 'log',
-    \ 'p': 'push',
-    \ 'P': 'pull',
+    \ 's': 'stage hunk',
+    \ 'u': 'undo hunk',
+    \ 'p': 'preview hunk',
     \ }
-
-let g:which_key_map.h = {
-    \ 'name': '+hunk',
-    \ 's': 'stage',
-    \ 'u': 'undo',
-    \ 'p': 'preview',
-    \ }
-
-let g:which_key_map.l = { 'name': '+line', 'n': 'toggle numbers' }
 
 let g:which_key_map.s = { 'name': '+settings', 'v': 'reload vimrc' }
+
+" Toggle group — mirrors nvim2's <leader>u*
+let g:which_key_map.u = {
+    \ 'name': '+toggle',
+    \ 'u': 'undotree',
+    \ 's': 'spell check',
+    \ 'd': 'diagnostics',
+    \ }
+
+" Window group — mirrors nvim2's <leader>w*
+let g:which_key_map.w = {
+    \ 'name': '+window',
+    \ 'v': 'vsplit',
+    \ 'h': 'split',
+    \ 'q': 'close',
+    \ 'o': 'only',
+    \ '=': 'equalize',
+    \ }
+
+" Diagnostics/quickfix group — mirrors nvim2's <leader>x*
+let g:which_key_map.x = {
+    \ 'name': '+diagnostics',
+    \ 'd': 'diagnostics list',
+    \ 'q': 'toggle quickfix',
+    \ 'l': 'toggle loclist',
+    \ }
 
 let g:which_key_map.t = {
     \ 'name': '+terminal',
     \ 'b': 'tagbar',
+    \ 'f': 'float terminal',
+    \ 'h': 'horizontal terminal',
     \ 'v': 'vertical terminal',
     \ }
 
@@ -320,6 +342,8 @@ let g:which_key_map.t = {
 inoremap jk <Esc>
 inoremap kj <Esc>
 nnoremap <silent> <leader><leader> :noh<CR>
+" Matches nvim2: bare Esc in normal mode also clears search highlight
+nnoremap <silent> <Esc> :nohlsearch<CR><Esc>
 
 " --- Terminal escape ---
 if has('nvim')
@@ -345,6 +369,8 @@ nnoremap <C-Right> :vertical resize +2<CR>
 " --- Buffers ---
 nnoremap [b         :bprevious<CR>
 nnoremap ]b         :bnext<CR>
+nnoremap <Tab>      :bnext<CR>
+nnoremap <S-Tab>    :bprevious<CR>
 nnoremap <leader>bd :call BufDel()<CR>
 
 " --- File explorer ---
@@ -352,7 +378,7 @@ function! ToggleExplorer()
     if exists(':NERDTreeToggle') | exec 'NERDTreeToggle' | else | exec 'Lexplore' | endif
 endfunction
 nnoremap <leader>e  :call ToggleExplorer()<CR>
-nnoremap <leader>E  :NERDTreeFind<CR>
+nnoremap <leader>r  :NERDTreeFind<CR>
 
 " --- FZF ---
 nnoremap <C-p>      :Files<CR>
@@ -366,21 +392,25 @@ nnoremap <leader>fc :Commands<CR>
 nnoremap <leader>fm :Maps<CR>
 
 " --- COC LSP ---
+" Keys mirror nvim2's native-LSP layout: gd/gr/gi/K unchanged,
+" everything else grouped under <leader>l* / diagnostics under [d]d and <leader>x*
 nmap <silent> gd         <Plug>(coc-definition)
 nmap <silent> gD         <Plug>(coc-declaration)
 nmap <silent> gy         <Plug>(coc-type-definition)
 nmap <silent> gi         <Plug>(coc-implementation)
 nmap <silent> gr         <Plug>(coc-references)
-nmap <silent> [g         <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g         <Plug>(coc-diagnostic-next)
-nmap <leader>rn          <Plug>(coc-rename)
-nmap <leader>ca          <Plug>(coc-codeaction-cursor)
-nmap <leader>cf          <Plug>(coc-format)
-vmap <leader>cf          <Plug>(coc-format-selected)
+nmap <silent> [d         <Plug>(coc-diagnostic-prev)
+nmap <silent> ]d         <Plug>(coc-diagnostic-next)
+nmap <leader>lr          <Plug>(coc-rename)
+nmap <leader>ld          <Plug>(coc-definition)
+nmap <leader>la          <Plug>(coc-codeaction-cursor)
+nmap <leader>lf          <Plug>(coc-format)
+vmap <leader>lf          <Plug>(coc-format-selected)
 nnoremap <silent> K      :call ShowDocumentation()<CR>
-nnoremap <leader>cd      :CocList diagnostics<CR>
-nnoremap <leader>cs      :CocList -I symbols<CR>
-nnoremap <leader>co      :CocList outline<CR>
+nnoremap <leader>li      :CocInfo<CR>
+nnoremap <leader>lo      :CocList outline<CR>
+nnoremap <leader>ls      :CocList -I symbols<CR>
+nnoremap <leader>xd      :CocList diagnostics<CR>
 
 " COC text objects: function and class
 xmap if <Plug>(coc-funcobj-i)
@@ -393,22 +423,27 @@ xmap ac <Plug>(coc-classobj-a)
 omap ac <Plug>(coc-classobj-a)
 
 " --- Git (fugitive) ---
+" push/pull dropped from dedicated keys (nvim2 has none either — use the
+" :Git status panel's cP/P mappings, or :Git push / :Git pull directly)
 nnoremap <leader>gg :Git<CR>
 nnoremap <leader>gb :Git blame<CR>
 nnoremap <leader>gd :Gdiffsplit<CR>
 nnoremap <leader>gl :Git log --oneline -20<CR>
-nnoremap <leader>gp :Git push<CR>
-nnoremap <leader>gP :Git pull<CR>
 
-" Git hunk navigation (gitgutter)
+" Git hunk navigation + actions (gitgutter) — folded into the <leader>g* group
+" to match nvim2 (which uses gs/gu/gp for stage/undo/preview hunk)
 nmap [h <Plug>(GitGutterPrevHunk)
 nmap ]h <Plug>(GitGutterNextHunk)
-nmap <leader>hs <Plug>(GitGutterStageHunk)
-nmap <leader>hu <Plug>(GitGutterUndoHunk)
-nmap <leader>hp <Plug>(GitGutterPreviewHunk)
+nmap <leader>gs <Plug>(GitGutterStageHunk)
+nmap <leader>gu <Plug>(GitGutterUndoHunk)
+nmap <leader>gp <Plug>(GitGutterPreviewHunk)
 
 " --- Undotree ---
-nnoremap <leader>u :UndotreeToggle<CR>
+nnoremap <leader>uu :UndotreeToggle<CR>
+
+" --- Toggles (mirrors nvim2's <leader>u* group) ---
+nnoremap <silent> <leader>us :setlocal spell! spelllang=en_us<CR>
+nnoremap <silent> <leader>ud :call ToggleCocDiagnostics()<CR>
 
 " --- Tagbar ---
 nnoremap <leader>tb :TagbarToggle<CR>
@@ -416,31 +451,57 @@ nnoremap <leader>tb :TagbarToggle<CR>
 " --- Terminal ---
 if has('nvim')
     nnoremap <leader>t  :botright split +terminal | resize 12<CR>
+    nnoremap <leader>th :botright split +terminal | resize 12<CR>
     nnoremap <leader>tv :botright vsplit +terminal<CR>
+    nnoremap <leader>tf :call OpenFloatTerm()<CR>
 else
     nnoremap <leader>t  :botright terminal ++rows=12<CR>
+    nnoremap <leader>th :botright terminal ++rows=12<CR>
     nnoremap <leader>tv :vertical terminal<CR>
 endif
 
 " --- Editing ---
 nnoremap <leader>i  gg=G''
-nnoremap <leader>w  :w<CR>
+" <leader>w save dropped — auto-save (below) covers it and frees the
+" prefix for the window group, matching nvim2 where <leader>w is window-only
 nnoremap <leader>sv :source $MYVIMRC<CR>
 nnoremap <leader>ev :edit $MYVIMRC<CR>
 nnoremap <leader>ln :call ToggleLineNumbers()<CR>
 
+" --- Windows (mirrors nvim2's <leader>w* group) ---
+nnoremap <leader>wv :vsplit<CR>
+nnoremap <leader>wh :split<CR>
+nnoremap <leader>wq :close<CR>
+nnoremap <leader>wo :only<CR>
+nnoremap <leader>w= <C-w>=
+
+" --- Diagnostics / quickfix (mirrors nvim2's <leader>x* group) ---
+nnoremap <silent> <leader>xq :call ToggleQuickfix()<CR>
+nnoremap <silent> <leader>xl :call ToggleLocList()<CR>
+
 " Indent blocks in visual mode
 vnoremap <Tab>   >gv
 vnoremap <S-Tab> <gv
+" Re-select after indent/unindent (matches nvim2)
+vnoremap < <gv
+vnoremap > >gv
 
 " Move lines up/down
 nnoremap <A-j> :m .+1<CR>==
 nnoremap <A-k> :m .-2<CR>==
 vnoremap <A-j> :m '>+1<CR>gv=gv
 vnoremap <A-k> :m '<-2<CR>gv=gv
+" Same, on J/K in visual mode (matches nvim2)
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
 
 " Yank to end of line (consistent with D and C)
 nnoremap Y y$
+
+" Clipboard (explicit binds matching nvim2, on top of clipboard=unnamedplus)
+nnoremap <leader>y  "+y
+vnoremap <leader>y  "+y
+nnoremap <leader>yp "+p
 
 " Centre screen on search results
 nnoremap n nzzzv
@@ -512,4 +573,55 @@ function! ToggleLineNumbers()
     else
         set relativenumber number
     endif
+endfunction
+
+" Toggle the quickfix list (mirrors nvim2's <leader>xq)
+function! ToggleQuickfix()
+    if getqflist({'winid': 0}).winid != 0
+        cclose
+    else
+        copen
+    endif
+endfunction
+
+" Toggle the location list (mirrors nvim2's <leader>xl)
+function! ToggleLocList()
+    if getloclist(0, {'winid': 0}).winid != 0
+        lclose
+    elseif empty(getloclist(0))
+        echo 'No location list'
+    else
+        lopen
+    endif
+endfunction
+
+" Toggle coc.nvim diagnostics for the current buffer (mirrors nvim2's <leader>ud)
+function! ToggleCocDiagnostics()
+    if get(b:, 'coc_diagnostic_disable', 0)
+        let b:coc_diagnostic_disable = 0
+        echo 'Diagnostics: ON'
+    else
+        let b:coc_diagnostic_disable = 1
+        echo 'Diagnostics: OFF'
+    endif
+    silent! call CocActionAsync('diagnosticRefresh')
+endfunction
+
+" Floating terminal (Neovim only — mirrors nvim2's <leader>tf)
+function! OpenFloatTerm()
+    let width  = float2nr(&columns * 0.8)
+    let height = float2nr(&lines * 0.8)
+    let opts = {
+        \ 'relative': 'editor',
+        \ 'width': width,
+        \ 'height': height,
+        \ 'col': (&columns - width) / 2,
+        \ 'row': (&lines - height) / 2,
+        \ 'style': 'minimal',
+        \ 'border': 'rounded',
+        \ }
+    let buf = nvim_create_buf(v:false, v:true)
+    call nvim_open_win(buf, v:true, opts)
+    terminal
+    startinsert
 endfunction
