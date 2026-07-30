@@ -13,4 +13,5 @@ return {
 	{ import = "system.plugins.ui.illuminate-highlight-word" },
 	{ import = "system.plugins.ui.notify"             },
 	{ import = "system.plugins.ui.snacks"             },
+	{ import = "system.plugins.ui.colorizer"          },
 }
