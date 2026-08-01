@@ -112,10 +112,14 @@ fi
 
 eval "$(navi widget bash)"
 
-# 11 AI google studio key
-
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 # export GEMINI_MODEL="gemini-2.5-flash"
-
 export STM32_PRG_PATH=/mnt/storage/STM32cube/bin
+
+# ~/.bashrc  (safe to push to github)
+if [ -f ~/.secrets ]; then
+  source ~/.secrets
+fi
+export PATH="/mnt/storage/ollama/bin:$PATH"
+export OLLAMA_MODELS="/mnt/storage/ollama/models"
