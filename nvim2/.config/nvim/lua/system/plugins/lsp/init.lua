@@ -37,6 +37,12 @@ return {
 
 				if client and client.name == "clangd" then
 					local bufnr = ev.buf
+
+					-- Enable inlay hints by default for C/C++ (matches Rust behavior)
+					if vim.lsp.inlay_hint then
+						vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+					end
+
 					vim.keymap.set("n", "<leader>ch", function()
 						vim.lsp.buf_request(bufnr, "textDocument/switchSourceHeader", {
 							uri = vim.uri_from_bufnr(bufnr),

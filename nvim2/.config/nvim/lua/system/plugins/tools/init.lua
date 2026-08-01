@@ -12,7 +12,6 @@ return {
 	{ import = "system.plugins.tools.surround" },
 	{ import = "system.plugins.tools.autopairs" },
 	{ import = "system.plugins.tools.terminal" },
-	{ import = "system.plugins.tools.supermaven-ai" },
 	{ import = "system.plugins.tools.diffview" },
 	{ import = "system.plugins.tools.grug-far-search-replace" },
 	{ import = "system.plugins.tools.ufo-code-folding" },
@@ -30,6 +29,6 @@ return {
 	{ import = "system.plugins.tools.neotest" },
 	{ import = "system.plugins.tools.overseer-task-runner" },
 	{ import = "system.plugins.tools.refactoring" },
-	{ import = "system.plugins.tools.claudecode" },
 	{ import = "system.plugins.tools.rainbow-csv" },
+	{ import = "system.plugins.tools.visual-multi-multicursor" },
 }
