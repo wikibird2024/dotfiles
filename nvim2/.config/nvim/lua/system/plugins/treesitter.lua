@@ -40,6 +40,11 @@ return {
 
 					if not pcall(vim.treesitter.start, ev.buf, lang) then
 						-- Parser not installed yet (auto_install replacement): fetch it, then retry.
+						-- Only for languages nvim-treesitter actually knows about — plugin UI
+						-- filetypes like "lazy"/"lazy_backdrop" aren't real parsers and would
+						-- otherwise fail install() loudly enough to trigger a hit-enter prompt.
+						if not require("nvim-treesitter.parsers")[lang] then return end
+
 						local install_ok = pcall(function()
 							require("nvim-treesitter").install({ lang }):wait(60000)
 						end)
