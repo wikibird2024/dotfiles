@@ -31,4 +31,5 @@ return {
 	{ import = "system.plugins.tools.refactoring" },
 	{ import = "system.plugins.tools.rainbow-csv" },
 	{ import = "system.plugins.tools.visual-multi-multicursor" },
+	{ import = "system.plugins.tools.copilot" },
 }
