@@ -46,9 +46,12 @@ return {
 				mapping = cmp.mapping.preset.insert({
 					["<C-j>"]     = cmp.mapping.select_next_item(),
 					["<C-k>"]     = cmp.mapping.select_prev_item(),
-					-- Unified Tab: luasnip jump takes priority, else cmp confirm, else raw Tab
+					-- Unified Tab: Copilot ghost text first, then cmp confirm, then luasnip jump, else raw Tab
 					["<Tab>"] = cmp.mapping(function(fallback)
-						if cmp.visible() and cmp.get_selected_entry() then
+						local ok_copilot, copilot_suggestion = pcall(require, "copilot.suggestion")
+						if ok_copilot and copilot_suggestion.is_visible() then
+							copilot_suggestion.accept()
+						elseif cmp.visible() and cmp.get_selected_entry() then
 							cmp.confirm({ select = false })
 						elseif luasnip.expand_or_jumpable() then
 							luasnip.expand_or_jump()
