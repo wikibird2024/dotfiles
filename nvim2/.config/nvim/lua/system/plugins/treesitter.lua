@@ -1,105 +1,103 @@
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
-		build = ":TSUpdate",
-		event = { "BufReadPost", "BufNewFile" },
+		branch = "main",
+		build  = ":TSUpdate",
+		lazy   = false, -- the main-branch rewrite explicitly does not support lazy-loading
 
-		-- FIX 1: Changed "nvim-treesitter.configs" to "nvim-treesitter.config"
-		main = "nvim-treesitter.config",
+		config = function()
+			local ensure_installed = {
+				"c",
+				"cpp",
+				"rust",
+				"python",
+				"lua",
+				"vim",
+				"vimdoc",
+				"query",
+				"cmake",
+				"markdown",
+				"markdown_inline",
+				"bash",
+				"json",
+				"bibtex",
+			}
+			require("nvim-treesitter").install(ensure_installed)
 
-		opts = function()
 			local max_filesize = 500 * 1024
 
-			return {
-				ensure_installed = {
-					"c",
-					"cpp",
-					"rust",
-					"python",
-					"lua",
-					"vim",
-					"vimdoc",
-					"query",
-					"cmake",
-					"markdown",
-					"markdown_inline",
-					"bash",
-					"json",
-					"bibtex",
-				},
+			-- The rewrite dropped the old `highlight`/`indent`/`incremental_selection` setup()
+			-- keys entirely; highlighting and indent now have to be started per-buffer by hand.
+			-- (incremental_selection has no replacement upstream, so it's just gone.)
+			vim.api.nvim_create_autocmd("FileType", {
+				group    = vim.api.nvim_create_augroup("UserTreesitterStart", { clear = true }),
+				callback = function(ev)
+					local ok, stat = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(ev.buf))
+					if ok and stat and stat.size > max_filesize then return end
 
-				sync_install = false,
-				auto_install = true,
+					local lang = vim.treesitter.language.get_lang(vim.bo[ev.buf].filetype)
+					if not lang then return end
 
-				highlight = {
-					enable = true,
-					disable = function(_, buf)
-						local ok, stat = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
-						return ok and stat and stat.size > max_filesize
-					end,
-				},
+					if not pcall(vim.treesitter.start, ev.buf, lang) then
+						-- Parser not installed yet (auto_install replacement): fetch it, then retry.
+						local install_ok = pcall(function()
+							require("nvim-treesitter").install({ lang }):wait(60000)
+						end)
+						if not install_ok or not pcall(vim.treesitter.start, ev.buf, lang) then
+							return
+						end
+					end
 
-				indent = {
-					enable = true,
-				},
-
-				incremental_selection = {
-					enable = true,
-					keymaps = {
-						init_selection = "<C-space>",
-						node_incremental = "<C-space>",
-						scope_incremental = false,
-						node_decremental = "<BS>",
-					},
-				},
-
-				textobjects = {
-					select = {
-						enable = true,
-						lookahead = true,
-						keymaps = {
-							["af"] = "@function.outer",
-							["if"] = "@function.inner",
-							["ac"] = "@class.outer",
-							["ic"] = "@class.inner",
-							["ai"] = "@conditional.outer",
-							["ii"] = "@conditional.inner",
-							["al"] = "@loop.outer",
-							["il"] = "@loop.inner",
-						},
-					},
-
-					move = {
-						enable = true,
-						set_jumps = true,
-						goto_next_start = {
-							["]f"] = "@function.outer",
-							["]c"] = "@class.outer",
-						},
-						goto_previous_start = {
-							["[f"] = "@function.outer",
-							["[c"] = "@class.outer",
-						},
-					},
-
-					swap = {
-						enable = true,
-						swap_next = {
-							["<leader>na"] = "@parameter.inner",
-						},
-						swap_previous = {
-							["<leader>pa"] = "@parameter.inner",
-						},
-					},
-				},
-			}
+					vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				end,
+			})
 		end,
-		-- FIX 2: Removed manual 'config = function(_, opts)...' block.
-		-- 'main' instructs lazy.nvim to execute require("nvim-treesitter.config").setup(opts) automatically.
 	},
 
 	{
 		"nvim-treesitter/nvim-treesitter-textobjects",
+		branch       = "main",
+		lazy         = false,
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
+
+		config = function()
+			require("nvim-treesitter-textobjects").setup({
+				select = { lookahead = true },
+				move   = { set_jumps = true },
+			})
+
+			local select = require("nvim-treesitter-textobjects.select")
+			local move   = require("nvim-treesitter-textobjects.move")
+			local swap   = require("nvim-treesitter-textobjects.swap")
+
+			local function map_select(lhs, query)
+				vim.keymap.set({ "x", "o" }, lhs, function()
+					select.select_textobject(query, "textobjects")
+				end)
+			end
+
+			map_select("af", "@function.outer")
+			map_select("if", "@function.inner")
+			map_select("ac", "@class.outer")
+			map_select("ic", "@class.inner")
+			map_select("ai", "@conditional.outer")
+			map_select("ii", "@conditional.inner")
+			map_select("al", "@loop.outer")
+			map_select("il", "@loop.inner")
+
+			local function map_move(lhs, fn, query)
+				vim.keymap.set({ "n", "x", "o" }, lhs, function()
+					fn(query, "textobjects")
+				end)
+			end
+
+			map_move("]f", move.goto_next_start,     "@function.outer")
+			map_move("]c", move.goto_next_start,     "@class.outer")
+			map_move("[f", move.goto_previous_start, "@function.outer")
+			map_move("[c", move.goto_previous_start, "@class.outer")
+
+			vim.keymap.set("n", "<leader>na", function() swap.swap_next("@parameter.inner") end)
+			vim.keymap.set("n", "<leader>pa", function() swap.swap_previous("@parameter.inner") end)
+		end,
 	},
 }

@@ -3,7 +3,6 @@ return {
 	cmd = "Copilot",
 	event = "InsertEnter",
 	opts = {
-		copilot_node_command = vim.fn.expand("~/.nvm/versions/node/v22.18.0/bin/node"),
 		suggestion = {
 			enabled = true,
 			auto_trigger = true,
@@ -17,7 +16,4 @@ return {
 		},
 		panel = { enabled = false },
 	},
-}
-
-
--- What is 
+} 

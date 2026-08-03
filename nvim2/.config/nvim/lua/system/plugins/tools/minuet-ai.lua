@@ -1,5 +1,6 @@
 return {
 	"milanglacier/minuet-ai.nvim",
+	ft = { "c", "cpp", "h" }, -- matches virtualtext.auto_trigger_ft below; without a trigger lazy.nvim never loads this plugin
 	opts = {
 		provider = "openai_fim_compatible",
 		n_completions = 1, -- resource saving for local model
