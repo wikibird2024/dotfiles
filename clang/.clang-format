@@ -25,4 +25,4 @@ IndentCaseLabels: true
 BinPackArguments: false
 BinPackParameters: false
 SortIncludes: Never
-ReflowComments: false
+ReflowComments: true
