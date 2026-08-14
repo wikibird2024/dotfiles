@@ -123,3 +123,7 @@ if [ -f ~/.secrets ]; then
 fi
 export PATH="/mnt/storage/ollama/bin:$PATH"
 export OLLAMA_MODELS="/mnt/storage/ollama/models"
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/greystone/.local/bin:$PATH"
