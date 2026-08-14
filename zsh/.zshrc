@@ -144,3 +144,7 @@ case "$TERM" in
 esac
 
 [[ -f ~/.aliases ]] && source ~/.aliases
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/greystone/.local/bin:$PATH"
