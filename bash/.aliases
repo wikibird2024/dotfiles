@@ -17,10 +17,8 @@ alias schematic='cd ~/Documents/Schematics/'
 alias cat='batcat --paging=never'
 
 alias agemini='aider --model gemini/gemini-2.5-flash'
-alias local-aider='aider --model ollama_chat/qwen2.5-coder:7b'
 
-alias ai="ollama run llama3.1:8b"
-alias aic="ollama run qwen2.5-coder:1.5b"
+alias aider1="export OLLAMA_API_BASE=http://127.0.0.1:11434 && aider --model ollama_chat/qwen2.5-coder:1.5b"
 # Config File Editors
 alias alias.e='nvim ~/.aliases'
 alias func.e='nvim ~/.bash_functions'
