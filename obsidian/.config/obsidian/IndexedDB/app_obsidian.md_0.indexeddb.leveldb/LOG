@@ -1,3 +1,6 @@
-2026/08/06-08:22:13.848 a155 Reusing MANIFEST /home/greystone/.config/obsidian/IndexedDB/app_obsidian.md_0.indexeddb.leveldb/MANIFEST-000001
-2026/08/06-08:22:13.848 a155 Recovering log #7
-2026/08/06-08:22:13.861 a155 Reusing old log /home/greystone/.config/obsidian/IndexedDB/app_obsidian.md_0.indexeddb.leveldb/000007.log 
+2026/08/14-10:43:38.364 3d310 Reusing MANIFEST /home/greystone/.config/obsidian/IndexedDB/app_obsidian.md_0.indexeddb.leveldb/MANIFEST-000001
+2026/08/14-10:43:38.364 3d310 Recovering log #7
+2026/08/14-10:43:38.385 3d310 Reusing old log /home/greystone/.config/obsidian/IndexedDB/app_obsidian.md_0.indexeddb.leveldb/000007.log 
+2026/08/14-10:53:41.332 3d3a1 Level-0 table #12: started
+2026/08/14-10:53:41.391 3d3a1 Level-0 table #12: 1662798 bytes OK
+2026/08/14-10:53:41.394 3d3a1 Delete type=0 #7
