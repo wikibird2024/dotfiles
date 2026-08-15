@@ -1,6 +1,7 @@
-2026/08/14-10:43:38.364 3d310 Reusing MANIFEST /home/greystone/.config/obsidian/IndexedDB/app_obsidian.md_0.indexeddb.leveldb/MANIFEST-000001
-2026/08/14-10:43:38.364 3d310 Recovering log #7
-2026/08/14-10:43:38.385 3d310 Reusing old log /home/greystone/.config/obsidian/IndexedDB/app_obsidian.md_0.indexeddb.leveldb/000007.log 
-2026/08/14-10:53:41.332 3d3a1 Level-0 table #12: started
-2026/08/14-10:53:41.391 3d3a1 Level-0 table #12: 1662798 bytes OK
-2026/08/14-10:53:41.394 3d3a1 Delete type=0 #7
+2026/08/15-09:35:45.790 25c4a Reusing MANIFEST /home/greystone/.config/obsidian/IndexedDB/app_obsidian.md_0.indexeddb.leveldb/MANIFEST-000001
+2026/08/15-09:35:45.790 25c4a Recovering log #11
+2026/08/15-09:35:45.790 25c4a Reusing old log /home/greystone/.config/obsidian/IndexedDB/app_obsidian.md_0.indexeddb.leveldb/000011.log 
+2026/08/15-09:35:46.106 25cd9 Compacting 1@1 + 1@2 files
+2026/08/15-09:35:46.112 25cd9 Generated table #14@1: 552 keys, 141352 bytes
+2026/08/15-09:35:46.113 25cd9 Compacted 1@1 + 1@2 files => 141352 bytes
+2026/08/15-09:35:46.114 25cd9 compacted to: files[ 0 0 1 0 0 0 0 ]
