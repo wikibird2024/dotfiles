@@ -97,7 +97,7 @@ Essential groups:
 
 ## Colorscheme
 
-Edit `nvim2/.config/nvim/lua/system/plugins/colorscheme.lua`, change `active_theme`. Available values: `gruvbox8` (default), `nord`, `catppuccin`, `everforest`, `tokyonight`, `kanagawa`, `nightfox`, `onedark`, `solarized`. After adding a new theme run `:Lazy sync` and restart nvim.
+Edit `nvim2/.config/nvim/lua/system/plugins/colorscheme.lua`, change `active_theme`. Available values: `gruvbox8` (default), `nord`, `catppuccin`, `everforest`, `tokyonight`, `kanagawa`, `nightfox`, `onedark`, `solarized`, `abyss`. After adding a new theme run `:Lazy sync` and restart nvim.
 
 ## External Tool Dependencies
 
