@@ -1,7 +1,7 @@
 -- =============================================================================
 -- ACTIVE THEME — change this one line to switch
 -- =============================================================================
-local active = "onedark"
+local active = "abyss" -- onedark | gruvbox
 
 -- =============================================================================
 -- THEME REGISTRY
@@ -171,6 +171,20 @@ local themes = {
                     strings   = "none",
                     variables = "none",
                 },
+            })
+        end,
+    },
+
+    abyss = {
+        plugin = "barrientosvctor/abyss.nvim",
+        setup  = function()
+            require("abyss").setup({
+                italic_comments        = true,
+                italic                 = false,
+                bold                   = false,
+                transparent_background = false,
+                treesitter             = true,
+                palette                = "abyss",  -- abyss | abyss-boreal
             })
         end,
     },
