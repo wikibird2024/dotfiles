@@ -28,3 +28,4 @@ Thumbs.db
 stow-*
 .aider*
 .env
+neovim/.config/github-copilot/

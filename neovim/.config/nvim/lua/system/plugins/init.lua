@@ -1,0 +1,16 @@
+return {
+	{ import = "system.plugins.colorscheme" },
+	{ import = "system.plugins.twilight-focus-dim" },
+	{ import = "system.plugins.ui"          },
+	{ import = "system.plugins.latex"       },
+	{ import = "system.plugins.markdown"    },
+	{ import = "system.plugins.lint"        },
+	{ import = "system.plugins.luasnip"     },
+	{ import = "system.plugins.tools"       },
+	{ import = "system.plugins.cmp"         },
+	{ import = "system.plugins.lsp"         },
+	{ import = "system.plugins.git"         },
+	{ import = "system.plugins.format"      },
+	{ import = "system.plugins.treesitter"  },
+	{ import = "system.plugins.ts_comment"  },
+}

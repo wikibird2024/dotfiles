@@ -1,0 +1,13 @@
+{
+  "name": "user-snippets",
+  "contributes": {
+    "snippets": [
+      { "language": "python", "path": "./python.json" },
+      { "language": "tex", "path": "./tex.json" },
+      { "language": "lua", "path": "./lua.json" },
+      { "language": "rust", "path": "./rust.json" }, // Thêm Rust
+      { "language": "cpp", "path": "./cpp.json" },   // Thêm C++
+      { "language": "c", "path": "./c.json" }        // Thêm C
+    ]
+  }
+}
