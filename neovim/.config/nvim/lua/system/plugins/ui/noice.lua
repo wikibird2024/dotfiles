@@ -4,7 +4,8 @@ return {
 	dependencies = { "MunifTanjim/nui.nvim" },
 	opts = {
 		lsp = {
-			progress  = { enabled = true },
+			-- fidget.nvim (ui/fidget-lsp-progress.lua) owns LSP progress display instead
+			progress  = { enabled = false },
 			hover     = { enabled = true, border = "rounded" },
 			signature = { enabled = true, auto_open = { enabled = true, trigger = true } },
 			-- kills "Press ENTER to continue" prompts for routine LSP messages

@@ -61,7 +61,7 @@ local themes = {
                 background            = { light = "latte", dark = "mocha" },
                 transparent_background = false,
                 integrations = {
-                    cmp        = true,
+                    blink_cmp  = true,
                     gitsigns   = true,
                     neotree    = true,
                     treesitter = true,

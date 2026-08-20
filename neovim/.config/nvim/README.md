@@ -22,14 +22,13 @@ The engine of the editor.
 The "Laws" that standardize how plugins interact.
 
 * **`lsp_ui.lua`**: Standardized UI elements (Borders, Icons, Floating windows).
-* **`lsp_capabilities.lua`**: Integration with completion and snippet engines.
-* **`cmp_sources.lua`**: Configuration for the completion engine backend.
+* **`lsp_capabilities.lua`**: Integration with the completion (blink.cmp) and snippet (luasnip) engines.
 
 ### 3. 🧩 Plugin Layer (`/plugins`)
 
 Modular features isolated by functionality.
 
-* **`lsp/` & `cmp/**`: Full IDE suite with per-server configurations.
+* **`lsp/` & `cmp/**`: Full IDE suite (mason.nvim-managed servers, blink.cmp) with per-server configurations.
 * **`tools/`**: Productivity suite (FZF, Flash, Todo, Surround, Markdown).
 * **`ui/`**: Visual enhancements (Bufferline, Lualine, Neo-tree, Smear Cursor).
 * **`git.lua` / `terminal.lua**`: Version control and terminal integration.

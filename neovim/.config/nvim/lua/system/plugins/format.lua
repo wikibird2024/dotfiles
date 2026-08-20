@@ -10,12 +10,14 @@ return {
 				},
 				formatters_by_ft = {
 					lua    = { "stylua"       },
-					python = { "black"        },
+					-- ruff (Rust, Astral) replaces black: sorts imports, then formats
+					python = { "ruff_organize_imports", "ruff_format" },
 					sh     = { "shfmt"        },
 					json   = { "jq"           },
 					rust   = { "rustfmt"      },
 					c      = { "clang_format" },
 					cpp    = { "clang_format" },
+					toml   = { "taplo"        },
 				},
 			})
 		end,

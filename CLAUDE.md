@@ -65,7 +65,11 @@ Plugin specs live under `lua/system/plugins/` and are organised by concern:
 
 ## LSP Servers
 
-Active for: **C/C++** (clangd), **Rust** (rust-analyzer via rustaceanvim), **Python** (pyright), **LaTeX** (texlab).
+Active for: **C/C++** (clangd), **Rust** (rust-analyzer via rustaceanvim), **Python** (pyright + ruff), **LaTeX** (texlab), **Lua** (lua_ls, paired with lazydev.nvim for Neovim API/plugin awareness), **Shell** (bashls), **TOML** (taplo), plus **typos_lsp** (spell-checking) across all filetypes.
+
+`clangd`, `pyright`, `texlab`, `lua_ls` (`lua-language-server`), `bashls` (`bash-language-server`), `ruff`, `typos_lsp` (`typos-lsp`), `taplo`, and the `codelldb` DAP adapter are installed automatically via `mason-tool-installer` on first launch — no manual install needed for these. `rust-analyzer` is managed by rustaceanvim itself, not mason.
+
+`ruff`, `typos-lsp`, and `taplo` are all written in Rust.
 
 C/C++ requires `compile_commands.json` in the project root for clangd to index correctly. Generate with cmake (`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`) or `bear`.
 
@@ -77,11 +81,12 @@ Formatters run on save via conform.nvim:
 |---|---|
 | C/C++ | clang-format (config: `clang/.clang-format`) |
 | Rust | rustfmt |
-| Python | black |
+| Python | ruff (organize-imports + format) |
 | Lua | stylua |
 | Shell | shfmt |
+| TOML | taplo |
 
-Linters (nvim-lint, on save): flake8 (Python), cpplint (C/C++), luacheck (Lua), shellcheck (Shell).
+Linters (nvim-lint, on save): cpplint (C/C++), luacheck (Lua), shellcheck (Shell). Python linting comes from the `ruff` LSP server instead (see LSP Servers above), not nvim-lint.
 
 ## Key Bindings Reference
 
@@ -103,11 +108,11 @@ Edit `nvim2/.config/nvim/lua/system/plugins/colorscheme.lua`, change `active_the
 
 Install missing tools before opening nvim for first time:
 ```bash
-# Linters/formatters
-pip install black flake8 cpplint debugpy
+# Linters/formatters (black/flake8 no longer needed -- replaced by mason-managed ruff)
+pip install cpplint debugpy
 cargo install stylua
 luarocks install luacheck
 apt install shellcheck shfmt clang-format lazygit
 ```
 
-DAP adapters: `codelldb` via `:MasonInstall codelldb`, `arm-none-eabi-gdb` via apt for embedded C.
+DAP adapters: `codelldb` is auto-installed by `mason-tool-installer` (see LSP Servers above); `arm-none-eabi-gdb` via apt for embedded C.

@@ -1,15 +1,15 @@
 local M = {}
 
--- Merge Neovim's default LSP capabilities with the full set that nvim-cmp
+-- Merge Neovim's default LSP capabilities with the full set that blink.cmp
 -- advertises (resolveSupport, insertReplaceSupport, etc.).
--- cmp_nvim_lsp must already be installed when this is called.
+-- blink.cmp must already be installed when this is called.
 local function make()
 	local base = vim.lsp.protocol.make_client_capabilities()
-	local ok, cmp_lsp = pcall(require, "cmp_nvim_lsp")
+	local ok, blink = pcall(require, "blink.cmp")
 	if ok then
-		return vim.tbl_deep_extend("force", base, cmp_lsp.default_capabilities())
+		return vim.tbl_deep_extend("force", base, blink.get_lsp_capabilities())
 	end
-	-- Fallback: manually ensure snippet support if cmp_nvim_lsp isn't loaded yet
+	-- Fallback: manually ensure snippet support if blink.cmp isn't loaded yet
 	base.textDocument.completion.completionItem.snippetSupport = true
 	return base
 end

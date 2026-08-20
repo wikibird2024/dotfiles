@@ -5,7 +5,7 @@ M.on_attach = function(client, bufnr)
 		vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc, silent = true })
 	end
 
-	-- Signature help — using <C-s> avoids conflict with <C-k> used by nvim-cmp
+	-- Signature help — using <C-s> avoids conflict with <C-k> used by blink.cmp
 	map("i", "<C-s>", function() vim.lsp.buf.signature_help({ border = "rounded" }) end, "LSP: Signature Help")
 
 	-- Diagnostic float for current line

@@ -19,7 +19,7 @@ return {
 			paths = { vim.fn.stdpath("config") .. "/snippets" },
 		})
 
-		-- Tab / S-Tab are handled by cmp/init.lua to avoid conflicts
+		-- Tab / S-Tab are handled by blink.cmp (cmp/init.lua) to avoid conflicts
 		ls.filetype_extend("latex", { "tex", "bib" })
 	end,
 }
