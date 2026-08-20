@@ -55,11 +55,14 @@ return {
 							vim.cmd("edit " .. vim.uri_to_fname(result))
 						end)
 					end, { buffer = bufnr, desc = "LSP: Switch Source/Header", silent = true })
+				elseif client and client.name == "ruff" then
+					-- pyright owns hover/completion/type info; ruff only lints/fixes/formats
+					client.server_capabilities.hoverProvider = false
 				end
 			end,
 		})
 
-		local servers = { "texlab", "pyright", "clangd" }
+		local servers = { "texlab", "pyright", "clangd", "lua_ls", "bashls", "ruff", "typos_lsp", "taplo" }
 		for _, name in ipairs(servers) do
 			local ok, server_mod = pcall(require, "system.plugins.lsp.servers." .. name)
 			if ok and type(server_mod.setup) == "function" then

@@ -10,7 +10,7 @@ return {
 	{ import = "system.plugins.tools.numb-line-preview" },
 	{ import = "system.plugins.tools.treesj-split-join" },
 	{ import = "system.plugins.tools.surround" },
-	{ import = "system.plugins.tools.autopairs" },
+	{ import = "system.plugins.tools.blink-pairs" },
 	{ import = "system.plugins.tools.terminal" },
 	{ import = "system.plugins.tools.diffview" },
 	{ import = "system.plugins.tools.grug-far-search-replace" },
@@ -32,4 +32,5 @@ return {
 	{ import = "system.plugins.tools.rainbow-csv" },
 	{ import = "system.plugins.tools.visual-multi-multicursor" },
 	{ import = "system.plugins.tools.copilot" },
+	{ import = "system.plugins.tools.yanky-clipboard-history" },
 }

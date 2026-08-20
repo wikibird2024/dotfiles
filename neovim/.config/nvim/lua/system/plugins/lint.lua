@@ -5,8 +5,9 @@ return {
 		config = function()
 			local lint = require("lint")
 
+			-- Python linting now comes from the ruff LSP server (lsp/servers/ruff.lua)
+			-- instead of flake8 here, to avoid showing the same findings twice.
 			lint.linters_by_ft = {
-				python = { "flake8"     },
 				sh     = { "shellcheck" },
 				lua    = { "luacheck"   },
 				c      = { "cpplint"    },

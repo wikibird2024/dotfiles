@@ -15,7 +15,7 @@ return {
 				border    = "rounded",
 			},
 			completion = {
-				cmp = { enabled = true },
+				blink = { enabled = true },
 			},
 		})
 	end,

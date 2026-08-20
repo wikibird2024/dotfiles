@@ -60,6 +60,13 @@ return {
 		-- Smooth scrolling; effectively free since snacks.nvim is already loaded.
 		scroll = { enabled = true },
 
+		-- Detect very large files and disable treesitter/LSP/other heavy features
+		-- on them to avoid freezing the editor.
+		bigfile = { enabled = true },
+
+		-- Paint file content before plugins finish loading, for a faster first paint.
+		quickfile = { enabled = true },
+
 		-- True distraction-free zen mode (layout change), separate from
 		-- twilight.nvim's dimming (<leader>z, see twilight-focus-dim.lua).
 		zen = {
