@@ -24,6 +24,22 @@ function y() {
         rm -f -- "$tmp"
     fi
 }
+
+# ===========================================
+#   Jump to folder that ranger is open (same idea as y() above, for ranger)
+# ===========================================
+function r() {
+    local tmp="$(mktemp -t ranger-cwd.XXXXXX)"
+    ranger --choosedir="$tmp" -- "${@:-$PWD}"
+    if [ -f "$tmp" ]; then
+        local cwd
+        cwd=$(<"$tmp")
+        if [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+            cd -- "$cwd"
+        fi
+        rm -f -- "$tmp"
+    fi
+}
 # ==============================
 # 0️⃣ Pyenv & ESP-IDF Management
 # ==============================

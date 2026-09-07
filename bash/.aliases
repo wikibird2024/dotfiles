@@ -204,6 +204,7 @@ alias t4='tree -L 4 -C'
 
 
 # ============================ 🦊 Git ============================
+alias gg='lazygit'
 alias grao='git remote add origin'
 alias grsu='git remote set-url origin'
 alias grv='git remote -v'
@@ -218,7 +219,7 @@ alias gcl='git clean -fd'
 alias gst='git stash'
 alias gsp='git stash pop'
 alias guncommit='git reset --soft HEAD~1'
-alias gitlog='git log --oneline --graph --decorate --all --boundary -20'
+alias gitlog='git log --oneline --graph --decorate --all'
 
 # =================================================
 # 🐳 DOCKER ULTIMATE ALIASES

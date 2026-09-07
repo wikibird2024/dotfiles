@@ -14,9 +14,9 @@ return {
 				autofocus = true,
 				border    = "rounded",
 			},
-			completion = {
-				blink = { enabled = true },
-			},
+			-- No dedicated blink.cmp source needed: crates.nvim registers its own
+			-- LSP client (lsp.enabled above), and blink's generic "lsp" source
+			-- already pulls completions from every attached client for free.
 		})
 	end,
 }

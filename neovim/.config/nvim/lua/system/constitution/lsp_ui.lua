@@ -29,6 +29,11 @@ function M.setup()
 
 	-- Border for hover / signature is passed directly at each call site (lsp/init.lua, lsp_on_attach.lua)
 	-- to avoid re-wrapping vim.lsp.buf.hover on every LspAttach event.
+
+	-- NormalFloat/FloatBorder contrast is handled once, eagerly, at startup --
+	-- see kernel/float_theme.lua. NOT here: this module only loads once
+	-- nvim-lspconfig lazy-loads on BufReadPre, which is too late for any
+	-- popup shown before a file is opened (dashboard, which-key, :Mason, ...).
 end
 
 return M
