@@ -16,12 +16,14 @@ return {
 				encode = map.gen_encode_symbols.dot("4x2"),
 			},
 			window = {
-				width    = 10,
-				winblend = 25,
+				width     = 10,
+				winblend  = 25,
+				focusable = true, -- lets mouse-click / <C-w>w focus the map, not just toggle_focus()
 			},
 		})
 	end,
 	keys = {
-		{ "<leader>uM", function() require("mini.map").toggle() end, desc = "Toggle Minimap" },
+		{ "<leader>uM", function() require("mini.map").toggle() end,       desc = "Toggle Minimap" },
+		{ "<leader>uF", function() require("mini.map").toggle_focus() end, desc = "Toggle Minimap Focus (jump with j/k/click, toggle back)" },
 	},
 }

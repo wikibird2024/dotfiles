@@ -37,11 +37,45 @@ return {
 			}
 		end
 
-		-- Rounded pill caps around a single component. No color override here
-		-- on purpose: each pill just inherits its section's a/b/c color from
-		-- lualine_theme() below, so it always matches the active colorscheme.
-		local function pill_shape()
-			return { separator = { left = "", right = "" } }
+		-- Rounded pill caps around a single component.
+		-- pill_shape()      -- no color: inherits its section's a/b/c color (routine flags)
+		-- pill_shape(color) -- bold accent pill: reserved for things that carry real meaning
+		--                      (git branch, an active recording alert) -- not decoration
+		-- pill_shape_neutral() -- same soft tone (CursorLine-derived) for every purely
+		--                         informational pill (LSP name, filetype, encoding, ...),
+		--                         so they read as one calm group instead of a rainbow
+		local function pill_shape(bg)
+			local shape = { separator = { left = "", right = "" } }
+			if bg then
+				local p = palette()
+				shape.color = { fg = p.bg, bg = bg, gui = "bold" }
+			end
+			return shape
+		end
+
+		local function pill_shape_neutral(bg)
+			local p = palette()
+			return {
+				separator = { left = "", right = "" },
+				color     = { fg = p.fg, bg = bg or p.mid },
+			}
+		end
+
+		-- One accent hue (not a different color per section -- avoids a "rainbow"
+		-- bar), lightened toward white in two steps, mirrored from both edges
+		-- toward the middle: edge sections (b, z) get the brighter step, sections
+		-- closer to the center (x, y) fade softer -- same hue throughout, just
+		-- lighter as you approach the middle.
+		local function section_tones()
+			local utils = require("system.utils")
+			-- Deliberately sourced, not theme-derived or eyeballed: this violet is
+			-- the dark-mode categorical slot from a validated design-system color
+			-- reference (contrast + harmony tested), not one of onedark's own ANSI
+			-- passthrough hues.
+			local accent = "#9085e9"
+			local edge   = utils.blend_hex(accent, 0.15) -- brighter: nearest the a/mode edge
+			local mid    = utils.blend_hex(accent, 0.35) -- softer: nearest the middle
+			return { b = edge, z = edge, x = mid, y = mid }
 		end
 
 		local function lsp_name()
@@ -92,6 +126,8 @@ return {
 			}
 		end
 
+		local tones = section_tones()
+
 		require("lualine").setup({
 			options = {
 				theme                = lualine_theme(),
@@ -106,7 +142,7 @@ return {
 			sections = {
 				lualine_a = { { "mode", separator = { left = "", right = "" } } },
 				lualine_b = {
-					vim.tbl_extend("force", { "branch", icon = "" }, pill_shape()),
+					vim.tbl_extend("force", { "branch", icon = "" }, pill_shape(tones.b)),
 					{
 						"diff",
 						colored = true,
@@ -137,23 +173,23 @@ return {
 					vim.tbl_extend("force", { search_count }, pill_shape()),
 				},
 				lualine_x = {
-					vim.tbl_extend("force", { macro_recording }, pill_shape()),
+					vim.tbl_extend("force", { macro_recording }, pill_shape(palette().replace)),
 					{ "selectioncount" },
 					vim.tbl_extend("force", {
 						"diagnostics",
 						symbols = { error = " ", warn = " ", info = " ", hint = " " },
-					}, pill_shape()),
-					vim.tbl_extend("force", { lsp_name }, pill_shape()),
-					vim.tbl_extend("force", { "filetype", icon_only = false, colored = false }, pill_shape()),
+					}, pill_shape()), -- no bg override: keep diagnostics' own per-severity colors
+					vim.tbl_extend("force", { lsp_name }, pill_shape(tones.x)),
+					vim.tbl_extend("force", { "filetype", icon_only = false, colored = false }, pill_shape(tones.x)),
 				},
 				lualine_y = {
-					vim.tbl_extend("force", { "encoding" }, pill_shape()),
-					vim.tbl_extend("force", { "fileformat", icons_enabled = true }, pill_shape()),
-					vim.tbl_extend("force", { "progress" }, pill_shape()),
+					vim.tbl_extend("force", { "encoding" }, pill_shape(tones.y)),
+					vim.tbl_extend("force", { "fileformat", icons_enabled = true }, pill_shape(tones.y)),
+					vim.tbl_extend("force", { "progress" }, pill_shape(tones.y)),
 				},
 				lualine_z = {
-					vim.tbl_extend("force", { "location", icon = "󰍍" }, pill_shape()),
-					vim.tbl_extend("force", { function() return " " .. os.date("%H:%M") end }, pill_shape()),
+					vim.tbl_extend("force", { "location", icon = "󰍍" }, pill_shape(tones.z)),
+					vim.tbl_extend("force", { function() return " " .. os.date("%H:%M") end }, pill_shape(tones.z)),
 				},
 			},
 			inactive_sections = {

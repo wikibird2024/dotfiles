@@ -19,3 +19,7 @@ require("lazy").setup({
 	defaults = { lazy = true },
 	ui       = { border = "rounded" },
 })
+
+-- Colorscheme is applied synchronously above (lazy=false, high priority in
+-- colorscheme.lua), so it's safe to read theme colors here immediately.
+require("system.kernel.float_theme").setup()
