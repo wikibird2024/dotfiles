@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 MAIN_FILE="main.tex"

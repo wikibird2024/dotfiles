@@ -95,11 +95,82 @@ install_tpm() {
     log_ok "TPM installed. Plugins will auto-install on first tmux launch."
 }
 
+# ── Rust toolchain (needed for stylua, and for any Rust work) ──
+install_rust() {
+    if has cargo; then
+        log_ok "cargo $(cargo --version) already installed."
+        return
+    fi
+    log_info "Installing Rust via rustup..."
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable >/dev/null
+    log_ok "Rust installed."
+}
+
+# ── stylua (Lua formatter, conform.nvim) ───────────────────────
+install_stylua() {
+    if has stylua; then
+        log_ok "stylua already installed."
+        return
+    fi
+    # shellcheck disable=SC1091
+    [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
+    if ! has cargo; then
+        log_warn "cargo not found — skipping stylua install."
+        return
+    fi
+    log_info "Installing stylua (cargo install)..."
+    cargo install stylua --locked
+    log_ok "stylua installed."
+}
+
+# ── luacheck (Lua linter, nvim-lint) ───────────────────────────
+install_luacheck() {
+    if has luacheck; then
+        log_ok "luacheck already installed."
+        return
+    fi
+    if ! has luarocks; then
+        log_warn "luarocks not found — skipping luacheck install."
+        return
+    fi
+    log_info "Installing luacheck (luarocks)..."
+    sudo luarocks install luacheck
+    log_ok "luacheck installed."
+}
+
+# ── lazygit (not in every distro's repos, so fetch the binary) ──
+install_lazygit() {
+    if has lazygit; then
+        log_ok "lazygit $(lazygit --version | head -1) already installed."
+        return
+    fi
+    log_info "Installing lazygit..."
+    local tmp; tmp=$(mktemp -d)
+    local ver
+    ver=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" \
+        | grep -Po '"tag_name": *"v\K[^"]*' || true)
+    if [ -z "$ver" ]; then
+        log_warn "Could not determine latest lazygit version (GitHub API rate-limited?) — skipping, install manually."
+        rm -rf "$tmp"
+        return
+    fi
+    curl -Lo "$tmp/lazygit.tar.gz" \
+        "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${ver}_Linux_x86_64.tar.gz"
+    tar -xzf "$tmp/lazygit.tar.gz" -C "$tmp" lazygit
+    sudo install "$tmp/lazygit" /usr/local/bin/lazygit
+    rm -rf "$tmp"
+    log_ok "lazygit installed."
+}
+
 install_neovim
 install_fzf
 install_fd
 install_starship
 install_zoxide
 install_tpm
+install_rust
+install_stylua
+install_luacheck
+install_lazygit
 
 log_ok "All CLI tools done."
