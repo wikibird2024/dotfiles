@@ -11,17 +11,18 @@ The primary working directory when Claude Code is invoked is `nvim2/.config/` �
 ## Bootstrap & Setup
 
 ```bash
-./bootstrap.sh              # Full setup on a new machine
-./bootstrap.sh --only-stow  # Re-deploy configs after a pull (idempotent)
-./bootstrap.sh --skip-fonts # Skip font download step
+./bootstrap.sh                  # Full setup on a new machine (bash stays the login shell)
+./bootstrap.sh --only-stow      # Re-deploy configs after a pull (idempotent)
+./bootstrap.sh --skip-fonts     # Skip font download step
+./bootstrap.sh --set-zsh-shell  # Also chsh to zsh (opt-in — off by default)
 ```
 
 Bootstrap runs five ordered steps in `steps/`:
-1. `01_packages.sh` — apt/pacman core packages
-2. `02_tools.sh` — nvim, fzf, fd, starship, zoxide, TPM
+1. `01_packages.sh` — apt/pacman core packages, nvim2 formatter/linter deps (shellcheck, shfmt, clang-format, bear, luarocks, cpplint, debugpy), and desktop apps for the i3/picom/zathura/flameshot/kitty/alacritty stow packages
+2. `02_tools.sh` — nvim, fzf, fd, starship, zoxide, TPM, rustup, stylua, luacheck, lazygit
 3. `03_fonts.sh` — Nerd Fonts
 4. `04_stow.sh` — symlink all packages
-5. `05_shell.sh` — set zsh as default shell
+5. `05_shell.sh` — set zsh as default shell (skipped unless `--set-zsh-shell` is passed — bash is the preferred login shell; zsh config/plugins still work when launched manually)
 
 All steps are idempotent.
 
@@ -106,13 +107,14 @@ Edit `nvim2/.config/nvim/lua/system/plugins/colorscheme.lua`, change `active_the
 
 ## External Tool Dependencies
 
-Install missing tools before opening nvim for first time:
+`./bootstrap.sh` installs all of these (`01_packages.sh` + `02_tools.sh`) — this list is for a manual install or when a step is skipped:
 ```bash
 # Linters/formatters (black/flake8 no longer needed -- replaced by mason-managed ruff)
-pip install cpplint debugpy
+pip install --user --break-system-packages cpplint debugpy
 cargo install stylua
 luarocks install luacheck
-apt install shellcheck shfmt clang-format lazygit
+apt install shellcheck shfmt clang-format bear
 ```
+`lazygit` isn't reliably in apt across distros, so bootstrap fetches the binary release directly instead.
 
 DAP adapters: `codelldb` is auto-installed by `mason-tool-installer` (see LSP Servers above); `arm-none-eabi-gdb` via apt for embedded C.

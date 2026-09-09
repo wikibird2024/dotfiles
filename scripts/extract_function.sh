@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 OUTPUT_FILE="function_list_by_component.txt"
