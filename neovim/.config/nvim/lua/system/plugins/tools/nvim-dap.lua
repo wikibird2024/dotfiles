@@ -130,6 +130,32 @@ return {
 			dap.configurations.cpp = dap.configurations.c
 
 			-- =====================================================================
+			-- EMBEDDED probe-rs (flash + debug + RTT, any .elf)
+			-- Configurations come from the project's .vscode/launch.json
+			-- ("type": "probe-rs-debug"), shared with VS Code's probe-rs extension.
+			-- =====================================================================
+			dap.adapters["probe-rs-debug"] = {
+				type = "server",
+				port = "${port}",
+				executable = {
+					command = "probe-rs",
+					args = { "dap-server", "--port", "${port}", "--single-session" },
+				},
+			}
+
+			-- probe-rs sends RTT output (defmt/printf) as custom events; route
+			-- them into the DAP REPL, and ack channel opens so data starts flowing.
+			dap.listeners.before["event_probe-rs-rtt-channel-config"]["probe-rs"] = function(session, body)
+				session:request("rttWindowOpened", { channelNumber = body.channelNumber, windowIsOpen = true })
+			end
+			dap.listeners.before["event_probe-rs-rtt-data"]["probe-rs"] = function(_, body)
+				require("dap.repl").append(string.format("RTT[%d]: %s", body.channelNumber, body.data))
+			end
+			dap.listeners.before["event_probe-rs-show-message"]["probe-rs"] = function(_, body)
+				require("dap.repl").append(body.message)
+			end
+
+			-- =====================================================================
 			-- NATIVE HOST RUST CONFIGURATION (codelldb Engine)
 			-- =====================================================================
 			dap.adapters.codelldb = {
