@@ -274,6 +274,10 @@ alias idffm='idf.py flash monitor'
 alias idfall='idf.py fullclean build flash monitor'
 alias idfide='idf.py install dependencies'
 
+# Spin coater board (STM32F746) -- app-only flash, keeps the bootloader's
+# boot record in sync so the board still boots on the next power cycle.
+alias flash-spin='PATH="/mnt/storage/STM32cube/bin:$PATH" python3 /mnt/storage/PhienNguyen/Spin_coating_lab/tools/flash.py /mnt/storage/PhienNguyen/Spin_coating_lab/STM32F746_RS485_UART6_App/Objects/conveyor_controller.hex'
+
 # ============================ ✨ Misc ============================
 alias please='sudo $(fc -ln -1)'
 alias now='date "+%Y-%m-%d %H:%M:%S"'

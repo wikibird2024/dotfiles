@@ -109,27 +109,18 @@ return {
 				args = { "-i", "dap" }, -- Native modern DAP protocol engine
 			}
 
-			local function smart_firmware_picker()
-				local fn = vim.fn
-				local files = fn.glob(fn.getcwd() .. "/**/*.axf", true, true)
-				local elfs = fn.glob(fn.getcwd() .. "/**/*.elf", true, true)
-				for _, v in ipairs(elfs) do
-					table.insert(files, v)
-				end
+			local embedded = require("system.utils.embedded")
 
-				if #files == 0 then
-					return fn.input("Path to binary file: ", fn.getcwd() .. "/", "file")
-				elseif #files == 1 then
-					return files[1]
-				else
-					local choices = { "Select target binary to flash/debug:" }
-					for i, f in ipairs(files) do
-						table.insert(choices, string.format("%d: %s", i, fn.fnamemodify(f, ":.")))
-					end
-					local choice = fn.inputlist(choices)
-					if choice > 0 and choice <= #files then
-						return files[choice]
-					end
+			-- GDB's DAP only reaches a remote target via attach+target, and ignores
+			-- cpptools fields like setupCommands, so reset/flash run after attach instead.
+			dap.listeners.after.attach["embedded"] = function(session)
+				if session.config.name == embedded.CONFIG_NAME then
+					embedded.after_attach(session)
+				end
+			end
+			dap.listeners.on_session["embedded"] = function(_, new)
+				if not new then
+					embedded.stop_server()
 				end
 			end
 
@@ -141,27 +132,11 @@ return {
 
 			dap.configurations.c = {
 				{
-					name = "Embedded Firmware (OpenOCD Target)",
+					name = embedded.CONFIG_NAME,
 					type = "gdb",
-					request = "launch",
-					program = smart_firmware_picker,
-					cwd = "${workspaceFolder}",
+					request = "attach",
+					program = embedded.prepare_debug, -- picks ELF, builds, starts OpenOCD
 					target = "localhost:3333",
-					remote = true,
-					setupCommands = {
-						{ text = "file", description = "Load symbols", ignoreFailures = false },
-						{
-							text = "target remote localhost:3333",
-							description = "Connect OpenOCD",
-							ignoreFailures = false,
-						},
-						{
-							text = "monitor reset halt",
-							description = "Halt core at entry reset vectors",
-							ignoreFailures = true,
-						},
-					},
-					stopAtBeginningOfMainSubprogram = true,
 				},
 				{
 					name = "Native Host Debug (gdb, local, no board)",

@@ -28,6 +28,8 @@ return {
 				map("<leader>cv", "<cmd>CMakeSelectBuildType<CR>",   "CMake: Select Type"   )
 				map("<leader>cc", "<cmd>CMakeClean<CR>",             "CMake: Clean"         )
 				map("<leader>cx", "<cmd>CMakeStop<CR>",              "CMake: Stop"          )
+				map("<leader>cf", function() require("system.utils.embedded").flash() end,        "Embedded: Build + Flash")
+				map("<leader>ce", function() require("system.utils.embedded").pick_elf(true) end,  "Embedded: Select ELF"   )
 			end,
 		})
 	end,
