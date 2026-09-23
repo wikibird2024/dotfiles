@@ -162,6 +162,24 @@ install_lazygit() {
     log_ok "lazygit installed."
 }
 
+# ── just + probe-rs (embedded build/flash/debug; templates/embedded-firmware) ──
+install_cargo_tool() {
+    local bin="$1" crate="$2"
+    if has "$bin"; then
+        log_ok "$bin already installed."
+        return
+    fi
+    # shellcheck disable=SC1091
+    [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
+    if ! has cargo; then
+        log_warn "cargo not found — skipping $bin install."
+        return
+    fi
+    log_info "Installing $bin (cargo install $crate)..."
+    cargo install "$crate" --locked
+    log_ok "$bin installed."
+}
+
 install_neovim
 install_fzf
 install_fd
@@ -172,5 +190,7 @@ install_rust
 install_stylua
 install_luacheck
 install_lazygit
+install_cargo_tool just just
+install_cargo_tool probe-rs probe-rs-tools
 
 log_ok "All CLI tools done."

@@ -1,0 +1,43 @@
+# Single source of truth for build / flash / debug.
+# VS Code (tasks.json) and Neovim (overseer) both just call these recipes.
+#
+# Per project: set CHIP (`probe-rs chip list`), ELF, and the OpenOCD target
+# (or create the project with ../new-firmware.sh, which sets all three).
+# CHIP must match "chip" in .vscode/launch.json.
+
+CHIP    := "STM32F746NG"
+PRESET  := "debug"
+ELF     := "build/" + PRESET + "/app.elf"
+OPENOCD := "-f interface/stlink.cfg -f target/stm32f7x.cfg"
+
+default:
+    @just --list
+
+# Configure CMake (writes compile_commands.json for clangd)
+configure:
+    cmake --preset {{PRESET}}
+
+# Build firmware
+build:
+    cmake --build --preset {{PRESET}}
+
+# Build + flash with probe-rs
+flash: build
+    probe-rs download --chip {{CHIP}} {{ELF}}
+    probe-rs reset --chip {{CHIP}}
+
+# Build + flash, then stream RTT/defmt logs
+run: build
+    probe-rs run --chip {{CHIP}} {{ELF}}
+
+# Fallback: flash with OpenOCD (for probes/chips probe-rs doesn't support)
+flash-openocd: build
+    openocd {{OPENOCD}} -c "program {{ELF}} verify reset exit"
+
+# (cortex-debug in launch.json starts its own OpenOCD; this is for terminal gdb)
+# Fallback: GDB server on :3333 with the core halted
+openocd:
+    openocd {{OPENOCD}} -c "init; reset halt"
+
+clean:
+    rm -rf build
