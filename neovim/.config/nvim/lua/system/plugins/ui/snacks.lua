@@ -4,8 +4,17 @@ return {
 	lazy = false,
 	keys = {
 		{ "<leader>uz", function() Snacks.zen() end, desc = "Zen Mode" },
+		{ "<leader>un", function() Snacks.notifier.hide() end,         desc = "Dismiss Notifications" },
+		{ "<leader>uN", function() Snacks.notifier.show_history() end, desc = "Notification History" },
 	},
 	opts = {
+		-- Owns vim.notify (replaces nvim-notify, see ui/notify.lua).
+		notifier = {
+			enabled = true,
+			timeout = 3000,
+			style   = "compact",
+		},
+
 		-- input only: owns vim.ui.input (rename prompts, etc).
 		-- picker is left disabled on purpose -- fzf-lua already owns
 		-- vim.ui.select and file/grep pickers; enabling snacks.picker

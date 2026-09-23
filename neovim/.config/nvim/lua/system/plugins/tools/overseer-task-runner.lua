@@ -6,6 +6,7 @@ return {
 		{ "<leader>ot", "<cmd>OverseerToggle<CR>", desc = "Overseer: Toggle Panel" },
 	},
 	opts = {
+		dap = true, -- run launch.json preLaunchTask / postDebugTask
 		task_list = {
 			direction  = "bottom",
 			min_height = 10,

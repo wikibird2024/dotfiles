@@ -6,6 +6,8 @@ return {
 			"theHamsta/nvim-dap-virtual-text",
 			"nvim-neotest/nvim-nio",
 			"mfussenegger/nvim-dap-python",
+			"jedrzejboczar/nvim-dap-cortex-debug",
+			"stevearc/overseer.nvim", -- must set up first so its dap patch (preLaunchTask) applies
 		},
 		keys = {
 			{ "<leader>dc",  function() require("dap").continue() end,                                                desc = "Debug: Continue" },
@@ -101,37 +103,11 @@ return {
 			end
 
 			-- =====================================================================
-			-- EMBEDDED C/C++ CONFIGURATION (Native DAP Engine)
+			-- EMBEDDED C/C++ (cortex-debug, same engine as VS Code)
 			-- =====================================================================
-			dap.adapters.gdb = {
-				type = "executable",
-				command = "arm-none-eabi-gdb",
-				args = { "-i", "dap" }, -- Native modern DAP protocol engine
-			}
-
-			local function smart_firmware_picker()
-				local fn = vim.fn
-				local files = fn.glob(fn.getcwd() .. "/**/*.axf", true, true)
-				local elfs = fn.glob(fn.getcwd() .. "/**/*.elf", true, true)
-				for _, v in ipairs(elfs) do
-					table.insert(files, v)
-				end
-
-				if #files == 0 then
-					return fn.input("Path to binary file: ", fn.getcwd() .. "/", "file")
-				elseif #files == 1 then
-					return files[1]
-				else
-					local choices = { "Select target binary to flash/debug:" }
-					for i, f in ipairs(files) do
-						table.insert(choices, string.format("%d: %s", i, fn.fnamemodify(f, ":.")))
-					end
-					local choice = fn.inputlist(choices)
-					if choice > 0 and choice <= #files then
-						return files[choice]
-					end
-				end
-			end
+			-- Per-project configs live in the project's .vscode/launch.json (nvim-dap
+			-- loads it automatically); preLaunchTask runs through overseer (dap = true).
+			require("dap-cortex-debug").setup()
 
 			dap.adapters.gdb_native = {
 				type = "executable",
@@ -140,29 +116,6 @@ return {
 			}
 
 			dap.configurations.c = {
-				{
-					name = "Embedded Firmware (OpenOCD Target)",
-					type = "gdb",
-					request = "launch",
-					program = smart_firmware_picker,
-					cwd = "${workspaceFolder}",
-					target = "localhost:3333",
-					remote = true,
-					setupCommands = {
-						{ text = "file", description = "Load symbols", ignoreFailures = false },
-						{
-							text = "target remote localhost:3333",
-							description = "Connect OpenOCD",
-							ignoreFailures = false,
-						},
-						{
-							text = "monitor reset halt",
-							description = "Halt core at entry reset vectors",
-							ignoreFailures = true,
-						},
-					},
-					stopAtBeginningOfMainSubprogram = true,
-				},
 				{
 					name = "Native Host Debug (gdb, local, no board)",
 					type = "gdb_native",
