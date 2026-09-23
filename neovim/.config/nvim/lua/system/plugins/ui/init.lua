@@ -21,5 +21,4 @@ return {
 	{ import = "system.plugins.ui.satellite"          },
 	{ import = "system.plugins.ui.fidget-lsp-progress" },
 	{ import = "system.plugins.ui.mini-map"            },
-	{ import = "system.plugins.ui.nvim-biscuits"       },
 }

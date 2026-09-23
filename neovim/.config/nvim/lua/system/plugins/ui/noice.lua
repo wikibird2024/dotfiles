@@ -23,7 +23,7 @@ return {
 			-- pairs with tools/inc-rename-lsp-preview.lua
 			inc_rename             = true,
 		},
-		-- ui/notify.lua already owns vim.notify end to end; noice only
+		-- snacks.notifier (ui/snacks.lua) owns vim.notify end to end; noice only
 		-- takes cmdline/popupmenu/LSP UI, never notifications.
 		notify   = { enabled = false },
 		messages = { view = "notify", view_error = "notify", view_warn = "notify" },

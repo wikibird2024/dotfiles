@@ -34,6 +34,7 @@ return {
 				"lua-language-server",
 				"bash-language-server",
 				"codelldb",
+				"cortex-debug",
 				-- Rust-written LSP/lint/format tools
 				"ruff",
 				"typos-lsp",

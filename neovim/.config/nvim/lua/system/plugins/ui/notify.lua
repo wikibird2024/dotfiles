@@ -1,5 +1,7 @@
 return {
 	"rcarriga/nvim-notify",
+	-- Trying snacks.notifier instead (ui/snacks.lua). To revert: set true here, disable notifier there.
+	enabled = false,
 	event  = "VeryLazy",
 	opts   = {
 		timeout  = 3000,

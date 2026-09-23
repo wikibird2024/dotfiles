@@ -6,6 +6,8 @@ return {
 			"theHamsta/nvim-dap-virtual-text",
 			"nvim-neotest/nvim-nio",
 			"mfussenegger/nvim-dap-python",
+			"jedrzejboczar/nvim-dap-cortex-debug",
+			"stevearc/overseer.nvim", -- must set up first so its dap patch (preLaunchTask) applies
 		},
 		keys = {
 			{ "<leader>dc",  function() require("dap").continue() end,                                                desc = "Debug: Continue" },
@@ -101,28 +103,11 @@ return {
 			end
 
 			-- =====================================================================
-			-- EMBEDDED C/C++ CONFIGURATION (Native DAP Engine)
+			-- EMBEDDED C/C++ (cortex-debug, same engine as VS Code)
 			-- =====================================================================
-			dap.adapters.gdb = {
-				type = "executable",
-				command = "arm-none-eabi-gdb",
-				args = { "-i", "dap" }, -- Native modern DAP protocol engine
-			}
-
-			local embedded = require("system.utils.embedded")
-
-			-- GDB's DAP only reaches a remote target via attach+target, and ignores
-			-- cpptools fields like setupCommands, so reset/flash run after attach instead.
-			dap.listeners.after.attach["embedded"] = function(session)
-				if session.config.name == embedded.CONFIG_NAME then
-					embedded.after_attach(session)
-				end
-			end
-			dap.listeners.on_session["embedded"] = function(_, new)
-				if not new then
-					embedded.stop_server()
-				end
-			end
+			-- Per-project configs live in the project's .vscode/launch.json (nvim-dap
+			-- loads it automatically); preLaunchTask runs through overseer (dap = true).
+			require("dap-cortex-debug").setup()
 
 			dap.adapters.gdb_native = {
 				type = "executable",
@@ -131,13 +116,6 @@ return {
 			}
 
 			dap.configurations.c = {
-				{
-					name = embedded.CONFIG_NAME,
-					type = "gdb",
-					request = "attach",
-					program = embedded.prepare_debug, -- picks ELF, builds, starts OpenOCD
-					target = "localhost:3333",
-				},
 				{
 					name = "Native Host Debug (gdb, local, no board)",
 					type = "gdb_native",
