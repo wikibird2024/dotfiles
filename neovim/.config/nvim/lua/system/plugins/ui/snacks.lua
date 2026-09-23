@@ -1,3 +1,28 @@
+-- Dashboard logo with a vertical gradient between two colours of the active
+-- colorscheme (Function -> Keyword), so it matches whatever theme is loaded.
+local function gradient_logo(self)
+	local function channels(c) return math.floor(c / 65536) % 256, math.floor(c / 256) % 256, c % 256 end
+	local from = vim.api.nvim_get_hl(0, { name = "Function", link = false }).fg or 0x7aa2f7
+	local to   = vim.api.nvim_get_hl(0, { name = "Keyword",  link = false }).fg or 0xbb9af7
+	local r1, g1, b1 = channels(from)
+	local r2, g2, b2 = channels(to)
+
+	local lines = vim.split(self.opts.preset.header, "\n")
+	local text = {}
+	for i, line in ipairs(lines) do
+		local t = (i - 1) / math.max(#lines - 1, 1)
+		local mix = function(a, b) return math.floor(a + (b - a) * t + 0.5) end
+		local hl = "SnacksDashboardLogo" .. i
+		vim.api.nvim_set_hl(0, hl, { fg = mix(r1, r2) * 65536 + mix(g1, g2) * 256 + mix(b1, b2), bold = true })
+		text[#text + 1] = { line .. (i < #lines and "\n" or ""), hl = hl }
+	end
+	local v = vim.version()
+	return {
+		{ text = text, align = "center", padding = 1 },
+		{ text = { { ("v%d.%d.%d"):format(v.major, v.minor, v.patch), hl = "Comment" } }, align = "center", padding = 2 },
+	}
+end
+
 return {
 	"folke/snacks.nvim",
 	priority = 1000,
@@ -60,7 +85,7 @@ return {
 				},
 			},
 			sections = {
-				{ section = "header" },
+				gradient_logo,
 				{ section = "keys", gap = 1, padding = 1 },
 				{ section = "startup" },
 			},
