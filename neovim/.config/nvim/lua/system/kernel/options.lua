@@ -55,3 +55,6 @@ vim.g.loaded_node_provider = 0
 opt.swapfile    = false
 opt.backup      = false
 opt.writebackup = false
+-- Off: CubeMX's "ex: printf(...)" example comment parses as a modeline (E518),
+-- re-triggered on every n/N by satellite.nvim's search autocmds.
+opt.modeline    = false
