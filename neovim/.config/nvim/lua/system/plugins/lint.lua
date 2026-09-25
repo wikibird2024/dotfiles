@@ -10,8 +10,6 @@ return {
 			lint.linters_by_ft = {
 				sh     = { "shellcheck" },
 				lua    = { "luacheck"   },
-				c      = { "cpplint"    },
-				cpp    = { "cpplint"    },
 			}
 
 			vim.api.nvim_create_autocmd({ "BufReadPost", "BufWritePost", "InsertLeave" }, {

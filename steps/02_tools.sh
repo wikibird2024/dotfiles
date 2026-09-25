@@ -192,5 +192,6 @@ install_luacheck
 install_lazygit
 install_cargo_tool just just
 install_cargo_tool probe-rs probe-rs-tools
+install_cargo_tool tms tmux-sessionizer
 
 log_ok "All CLI tools done."

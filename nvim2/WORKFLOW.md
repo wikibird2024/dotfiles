@@ -82,7 +82,7 @@ The full loop from opening the project to committing.
 
 4. Save
                        — clang-format runs automatically
-                       — cpplint lints
+                       — clangd + clang-tidy flag likely bugs (]d to jump)
                        — trailing whitespace stripped
 
 5. <leader>a           — flip to the header, declare the function

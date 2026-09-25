@@ -26,6 +26,7 @@ STOW_PKGS=(
     fontconfig
     mods
     clang
+    claude
 )
 
 for pkg in "${STOW_PKGS[@]}"; do

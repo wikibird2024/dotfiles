@@ -4,7 +4,6 @@ alias ll='ls -alFh --color=auto'
 alias la='ls -A'
 alias l='ls -CF'
 alias grep='grep --color=auto'
-alias grep='do'
 # ============================ 🚀 GREYSTONE WORKING 🚀 ============================
 alias run-avr='mono ~/BTranHao/run-avrdudess/avrdudess.exe &'
 alias qt5="/home/greystone/storage/qtcreator-5.0.3/bin/qtcreator.sh -settingspath ~/.config/QtCreator5"
@@ -12,13 +11,12 @@ alias qt5="/home/greystone/storage/qtcreator-5.0.3/bin/qtcreator.sh -settingspat
 alias agemini='aider --model gemini/gemini-3.5-flash'
 alias adeep='aider --model deepseek/deepseek-chat'
 alias agrog='aider --model groq/llama-4-scout'
+alias aor='aider --model openrouter/qwen/qwen3.8-27b:free'   # OpenRouter free tier
 alias datasheet='cd ~/Documents/Datasheets/'
 alias schematic='cd ~/Documents/Schematics/'
 alias cat='batcat --paging=never'
 
-alias agemini='aider --model gemini/gemini-2.5-flash'
 
-alias aider1="export OLLAMA_API_BASE=http://127.0.0.1:11434 && aider --model ollama_chat/qwen2.5-coder:1.5b"
 # Config File Editors
 alias alias.e='nvim ~/.aliases'
 alias func.e='nvim ~/.bash_functions'
