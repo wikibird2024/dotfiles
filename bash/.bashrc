@@ -121,8 +121,6 @@ export STM32_PRG_PATH=/mnt/storage/STM32cube/bin
 if [ -f ~/.secrets ]; then
   source ~/.secrets
 fi
-export PATH="/mnt/storage/ollama/bin:$PATH"
-export OLLAMA_MODELS="/mnt/storage/ollama/models"
 
 
 # Added by Antigravity CLI installer

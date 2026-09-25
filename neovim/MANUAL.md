@@ -318,9 +318,51 @@ Manual format: `<leader>lf`
 | Python | `flake8` |
 | Shell | `shellcheck` |
 | Lua | `luacheck` |
-| C / C++ | `cpplint` |
 
-> **Install linters:** `pip install flake8 cpplint`, `luarocks install luacheck`, `apt install shellcheck`
+> **Install linters:** `pip install flake8`, `luarocks install luacheck`, `apt install shellcheck`
+
+### C/C++ bug checks (clang-tidy through clangd)
+
+C/C++ has no nvim-lint linter. cpplint was dropped: it only checks Google style,
+which clashes with project `.clang-format` files. Bug checks come from
+**clang-tidy, run inside clangd** (`--clang-tidy` in `lsp/servers/clangd.lua`),
+so warnings show as normal LSP diagnostics and use the project's real compile
+flags from `compile_commands.json`.
+
+Which checks run is set **per project** in its `.clangd` file. Without a
+`ClangTidy` block, clangd uses its default set. Embedded C starting point:
+
+```yaml
+Diagnostics:
+  ClangTidy:
+    Add: [bugprone-*, clang-analyzer-*, misc-unused-*]
+    # insecureAPI wants memcpy_s/memset_s, which newlib does not have.
+    Remove: [bugprone-easily-swappable-parameters, clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling]
+```
+
+Skip `modernize-*` and `cppcoreguidelines-*` for C firmware: they are C++ style
+rules and flag every HAL register access and magic number.
+
+| Action | Key / command |
+|--------|---------------|
+| Next / previous warning | `]d` / `[d` |
+| Full message for the line | `<leader>xd` |
+| Apply the check's fix | `<leader>la` |
+| All warnings | `:Trouble diagnostics` |
+| Ignore one line | `// NOLINT(check-name)` at line end |
+| Turn a check off for the project | add it to `Remove:` in `.clangd` |
+
+After changing `.clangd`, run `:LspRestart`.
+
+Check a whole project from the shell (same checks, ARM cross build):
+
+```sh
+clang-tidy -p build/Debug \
+  --extra-arg=--target=arm-none-eabi \
+  --extra-arg=-isystem/usr/lib/gcc/arm-none-eabi/13.2.1/include \
+  --extra-arg=-isystem/usr/lib/gcc/arm-none-eabi/13.2.1/../../../arm-none-eabi/include \
+  -checks='-*,bugprone-*,clang-analyzer-*,misc-unused-*' <files...>
+```
 
 ---
 
@@ -1071,7 +1113,6 @@ Some features require tools installed on the system:
 | `shfmt` | Shell formatter | `go install mvdan.cc/sh/v3/cmd/shfmt@latest` |
 | `clang-format` | C/C++ formatter | `apt install clang-format` |
 | `flake8` | Python linter | `pip install flake8` |
-| `cpplint` | C/C++ linter | `pip install cpplint` |
 | `luacheck` | Lua linter | `luarocks install luacheck` |
 | `shellcheck` | Shell linter | `apt install shellcheck` |
 | `debugpy` | Python DAP adapter | `pip install debugpy` |

@@ -1,0 +1,13 @@
+excluded_dirs = [
+    "snap",
+    ".cache",
+    ".local",
+    ".cargo",
+    ".rustup",
+    "node_modules",
+    "venv",
+]
+
+[[search_dirs]]
+path = "/home/greystone"
+depth = 3

@@ -9,8 +9,6 @@ return {
 				python = { "flake8"     },
 				sh     = { "shellcheck" },
 				lua    = { "luacheck"   },
-				c      = { "cpplint"    },
-				cpp    = { "cpplint"    },
 			}
 
 			vim.api.nvim_create_autocmd({ "BufReadPost", "BufWritePost", "InsertLeave" }, {

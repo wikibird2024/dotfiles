@@ -87,7 +87,7 @@ Formatters run on save via conform.nvim:
 | Shell | shfmt |
 | TOML | taplo |
 
-Linters (nvim-lint, on save): cpplint (C/C++), luacheck (Lua), shellcheck (Shell). Python linting comes from the `ruff` LSP server instead (see LSP Servers above), not nvim-lint.
+Linters (nvim-lint, on save): luacheck (Lua), shellcheck (Shell). No C/C++ linter: cpplint only checks Google style, which clashes with project `.clang-format` files; clang-format owns C/C++ style. C/C++ bug checks come from clang-tidy run inside clangd (`--clang-tidy` in `lsp/servers/clangd.lua`); which checks run is set per project in its `.clangd` (`Diagnostics: ClangTidy:`) — see MANUAL.md "C/C++ bug checks". Python linting comes from the `ruff` LSP server instead (see LSP Servers above), not nvim-lint.
 
 ## Key Bindings Reference
 
