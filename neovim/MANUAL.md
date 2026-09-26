@@ -368,7 +368,7 @@ clang-tidy -p build/Debug \
 
 ## 9. Git
 
-**Plugin:** gitsigns (hunk operations) + lazygit (full UI) + diffview (file diffs)
+**Plugin:** lazygit (staging, commits, diffs, history) + gitsigns (in-editor hunk jump / preview / reset / blame) + diffview (merge conflicts)
 
 ### Lazygit
 
@@ -387,18 +387,15 @@ Inside lazygit: use its own keybindings (`?` for help). Press `q` to quit.
 
 ### Hunk actions
 
+Staging, commits, diffs and file history are done in lazygit (`<leader>gg`);
+these keys only cover what lazygit can't do from inside the file.
+
 | Key | Mode | Action |
 |-----|------|--------|
-| `<leader>gs` | Normal | Stage hunk |
-| `<leader>gs` | Visual | Stage selected lines |
-| `<leader>gr` | Normal | Reset hunk |
+| `<leader>gr` | Normal | Reset hunk (then `:w` to save) |
 | `<leader>gr` | Visual | Reset selected lines |
-| `<leader>gS` | Normal | Stage entire buffer |
-| `<leader>gR` | Normal | Reset entire buffer |
-| `<leader>gu` | Normal | Undo last stage |
 | `<leader>gp` | Normal | Preview hunk inline |
 | `<leader>gb` | Normal | Full blame for current line |
-| `<leader>gd` | Normal | Diff current file |
 
 **Hunk text object:** use `ih` in operator-pending / visual mode to select a hunk.
 ```
@@ -410,8 +407,7 @@ dih   — delete current hunk
 
 | Key | Action |
 |-----|--------|
-| `<leader>gD` | Open diff view for all changed files |
-| `<leader>gH` | File history for current file |
+| `<leader>gD` | Open diff view for all changed files (3-way view during a merge conflict) |
 | `<leader>gX` | Close diff view |
 
 ---
@@ -1059,7 +1055,7 @@ Save the file, then run `:Lazy sync` to install the theme if it's new, then rest
 **Stage partial changes (hunks not files):**
 - `]h` / `[h` — navigate hunks
 - `<leader>gp` — preview hunk inline
-- `<leader>gs` in visual mode — stage only selected lines
+- `<leader>gg` — stage in lazygit: `space` stages a file, `enter` opens it to stage single lines
 
 **Recover a deleted edit (undotree):**
 1. `<leader>uu` — open undotree

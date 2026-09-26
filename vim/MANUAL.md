@@ -184,15 +184,11 @@ coc-snippets provides snippets.
 |---|---|
 | `<leader>gg` | lazygit in a floating window (falls back to `:Git` if lazygit isn't installed) |
 | `[h` / `]h` | Previous / next hunk |
-| `<leader>gs` | Stage hunk |
 | `<leader>gr` | Reset hunk |
-| `<leader>gS` | Stage buffer (`:Gwrite`) |
-| `<leader>gR` | Reset buffer (`:Gread`) |
 | `<leader>gp` | Preview hunk |
 | `<leader>gb` | Blame (current file) |
-| `<leader>gd` | Diff current file against the index |
-| `<leader>gH` | File history (`:0Gclog`) |
-| `<leader>gl` | Git log (last 20 commits, oneline) |
+
+Staging, commits, diffs and history are done in lazygit (`<leader>gg`).
 
 Inside `:Git` status panel: `s` stage, `u` unstage, `=` toggle inline diff, `cc` commit, `dd` diff, `cP`/`P` push/pull, `q` quit.
 

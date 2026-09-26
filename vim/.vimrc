@@ -807,18 +807,14 @@ nnoremap <silent> <leader>dt :call DebugStop()<CR>
 nnoremap <silent> <leader>de :call DebugCommand('Evaluate')<CR>
 
 " --- Git (neovim: gitsigns + lazygit) ---
+" Staging, commits, diffs and history are done in lazygit; these keys only
+" cover what lazygit can't do from inside the file
 nnoremap <silent> <leader>gg :call OpenLazygit()<CR>
 nmap [h <Plug>(GitGutterPrevHunk)
 nmap ]h <Plug>(GitGutterNextHunk)
-nmap <leader>gs <Plug>(GitGutterStageHunk)
 nmap <leader>gr <Plug>(GitGutterUndoHunk)
 nmap <leader>gp <Plug>(GitGutterPreviewHunk)
-nnoremap <leader>gS :Gwrite<CR>
-nnoremap <leader>gR :Gread<CR>
 nnoremap <leader>gb :Git blame<CR>
-nnoremap <leader>gd :Gdiffsplit<CR>
-nnoremap <leader>gH :0Gclog<CR>
-nnoremap <leader>gl :Git log --oneline -20<CR>
 " Hunk text object (neovim: ih)
 omap ih <Plug>(GitGutterTextObjectInnerPending)
 xmap ih <Plug>(GitGutterTextObjectInnerVisual)
