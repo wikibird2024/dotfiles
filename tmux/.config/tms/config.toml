@@ -1,9 +1,15 @@
+# tms skips a folder when its full path CONTAINS any of these texts
 excluded_dirs = [
+    # every hidden folder in $HOME: tool installs and plugins (.vim, .tmux,
+    # .nvm, .fzf ...) and AI-tool backups (.gemini/history keeps a hidden git
+    # copy of each project), none of them are projects
+    "/.",
+    # old copy of ~/.gemini (same history/ backups)
+    "/dotifles--",
+    # ~/Documents and ~/storage both link to /mnt/storage; keep only storage/
+    # (sessions are named storage/...) so each project is listed once
+    "/home/greystone/Documents",
     "snap",
-    ".cache",
-    ".local",
-    ".cargo",
-    ".rustup",
     "node_modules",
     "venv",
 ]
