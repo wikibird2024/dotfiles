@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ssh block for the tmux status bar: " user@host │" in cyan when the pane's
+# ssh block for the tmux status bar: " user@host │" in orange when the pane's
 # foreground process is `ssh`, or nothing when it is not. With "plain" it
 # prints only "user@host" (for the pane header).
 # Usage: pane_ssh_target.sh <pane_tty> [plain]
@@ -29,4 +29,4 @@ if [ "$output_style" = plain ]; then
 	printf '%s' "$target"
 	exit 0
 fi
-printf '#[fg=#7dcfff,bold]\xef\x83\xac %s#[nobold] #[fg=#414868]│ ' "$target"
+printf '#[fg=#ff9e64,bold]\xef\x83\xac %s#[nobold] #[fg=#414868]│ ' "$target"
