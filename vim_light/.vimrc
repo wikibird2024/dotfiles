@@ -1,6 +1,8 @@
 " ============================================================================
 " VIM SIMPLE — zero-dependency, works on any Vim 8+ install
-" Copy to ~/.vimrc and open Vim. Nothing to install.
+" Copy to ~/.vimrc and open Vim. Nothing to install, no internet needed.
+" Features the local Vim lacks are skipped, never errors: the fuzzy popup
+" finder needs Vim 8.2+, older Vim and Neovim fall back to :find / :ls.
 " ============================================================================
 
 " ============================================================================
@@ -18,14 +20,16 @@ filetype plugin indent on
 set encoding=utf-8
 set fileencoding=utf-8
 
-if has('termguicolors')
+" True colour only when the terminal says it supports it; on an old terminal
+" or a serial console it would give wrong colours
+if has('termguicolors') && ($COLORTERM =~# 'truecolor\|24bit' || has('nvim'))
     set termguicolors
 endif
 
 " Line numbers & cursor
 set number relativenumber
 set cursorline
-set signcolumn=yes
+silent! set signcolumn=yes
 set colorcolumn=100
 
 " Mouse & clipboard
@@ -51,6 +55,9 @@ set laststatus=2
 set cmdheight=2
 set noshowmode
 set wildmenu wildmode=longest:full,full
+" Command-line completion in a popup list, fuzzy where Vim supports it
+silent! set wildoptions+=pum
+silent! set wildoptions+=fuzzy
 set wildignore+=*.o,*.pyc,*.class,**/node_modules/**,**/.git/**,*.swp
 set shortmess+=c
 set showcmd
@@ -73,10 +80,12 @@ set autoread
 set history=10000
 
 " Persistent undo (survives across sessions)
-set undofile
-set undodir=~/.vim/undodir
-if !isdirectory(expand('~/.vim/undodir'))
-    call mkdir(expand('~/.vim/undodir'), 'p')
+if has('persistent_undo')
+    set undofile
+    set undodir=~/.vim/undodir
+    if !isdirectory(expand('~/.vim/undodir'))
+        silent! call mkdir(expand('~/.vim/undodir'), 'p')
+    endif
 endif
 
 " Folding
@@ -104,6 +113,10 @@ if executable('rg')
 elseif executable('ag')
     set grepprg=ag\ --vimgrep
     set grepformat=%f:%l:%c:%m
+elseif system('grep --version') =~# 'GNU'
+    " skip binary files and .git / node_modules
+    set grepprg=grep\ -rnI\ --exclude-dir=.git\ --exclude-dir=node_modules
+    set grepformat=%f:%l:%m
 else
     set grepprg=grep\ -rn
     set grepformat=%f:%l:%m
@@ -145,7 +158,7 @@ function! UpdateGitBranch() abort
     if &buftype !=# '' | let b:git_branch = '' | return | endif
     let l:branch = system('git -C ' . shellescape(expand('%:p:h')) .
         \ ' rev-parse --abbrev-ref HEAD 2>/dev/null')
-    let b:git_branch = v:shell_error ? '' : '  ' . trim(l:branch)
+    let b:git_branch = v:shell_error ? '' : '  ' . substitute(l:branch, '\_s\+$', '', '')
 endfunction
 
 function! GitHead() abort
@@ -173,20 +186,10 @@ let g:netrw_browse_split = 4
 let g:netrw_altv        = 1
 let g:netrw_winsize     = 25
 
+" :Lexplore checks for its own sidebar window, so this stays right even
+" after the sidebar is closed with :q or <C-w>c
 function! ToggleExplorer() abort
-    if exists('g:netrw_open')
-        let i = bufnr('$')
-        while i >= 1
-            if getbufvar(i, '&filetype') ==# 'netrw'
-                silent execute 'bwipeout ' . i
-            endif
-            let i -= 1
-        endwhile
-        unlet g:netrw_open
-    else
-        let g:netrw_open = 1
-        silent Lexplore
-    endif
+    silent Lexplore
 endfunction
 
 " Move the cursor to the netrw sidebar, opening it if needed
@@ -307,6 +310,135 @@ function! OpenFloatTerm(...) abort
     endif
 endfunction
 
+" ============================================================================
+" FINDER — fuzzy popup for files, buffers and recent files (like fzf-lua),
+" built only from Vim 8.2+ popup windows and matchfuzzy(). Older Vim and
+" Neovim fall back to :find, :buffer and :browse oldfiles.
+" In the popup: type to filter | <C-j>/<C-k> or arrows move | <CR> open
+"   <C-s> split | <C-v> vsplit | <C-u> clear | <Esc> close
+" File list: git ls-files in a git repo, else rg --files, else find, else
+" Vim's own globpath() — whichever the machine has.
+" ============================================================================
+let s:has_finder = exists('*popup_create') && exists('*matchfuzzy')
+let s:finder_file_limit = 50000   " stop listing after this many files
+let s:finder_shown_limit = 300    " lines put in the popup after filtering
+let s:file_commands   = {'edit': 'edit', 'split': 'split', 'vsplit': 'vsplit'}
+let s:buffer_commands = {'edit': 'buffer', 'split': 'sbuffer', 'vsplit': 'vertical sbuffer'}
+
+function! s:ProjectFiles() abort
+    if executable('git')
+        let l:files = systemlist('git -c core.quotepath=off ls-files'
+            \ . ' --cached --others --exclude-standard 2>/dev/null')
+        if !v:shell_error
+            return l:files[: s:finder_file_limit - 1]
+        endif
+    endif
+    if executable('rg')
+        return systemlist('rg --files --hidden --glob "!.git" 2>/dev/null | head -n '
+            \ . s:finder_file_limit)
+    endif
+    if executable('find')
+        let l:files = systemlist('find . \( -name .git -o -name node_modules \) -prune'
+            \ . ' -o -type f -print 2>/dev/null | head -n ' . s:finder_file_limit)
+        return map(l:files, 'v:val[2:]')
+    endif
+    let l:files = filter(globpath('.', '**', 0, 1), '!isdirectory(v:val)')
+    return map(l:files[: s:finder_file_limit - 1], 'v:val[2:]')
+endfunction
+
+" items: list of {'text': shown in the popup, 'target': argument for the command}
+" commands: which Ex command opens an item for <CR> / <C-s> / <C-v>
+function! s:FinderOpen(title, items, commands) abort
+    let l:width  = min([100, &columns - 6])
+    let l:height = min([20, &lines - 8])
+    let s:finder = {'title': a:title, 'items': a:items, 'commands': a:commands,
+        \ 'query': '', 'shown': [], 'open_with': 'edit'}
+    let s:finder.popup = popup_create([], {
+        \ 'minwidth': l:width, 'maxwidth': l:width,
+        \ 'minheight': l:height, 'maxheight': l:height,
+        \ 'border': [], 'padding': [0, 1, 0, 1],
+        \ 'borderchars': ['─', '│', '─', '│', '╭', '╮', '╯', '╰'],
+        \ 'cursorline': 1, 'wrap': 0, 'mapping': 0,
+        \ 'filter': function('s:FinderKey'),
+        \ 'callback': function('s:FinderDone'),
+        \ })
+    call s:FinderUpdate()
+endfunction
+
+function! s:FinderUpdate() abort
+    let l:matches = empty(s:finder.query) ? s:finder.items
+        \ : matchfuzzy(s:finder.items, s:finder.query, {'key': 'text'})
+    let s:finder.shown = l:matches[: s:finder_shown_limit - 1]
+    let l:lines = empty(s:finder.shown) ? ['  no match'] : map(copy(s:finder.shown), 'v:val.text')
+    call popup_settext(s:finder.popup, l:lines)
+    call popup_setoptions(s:finder.popup, {'title': printf(' %s %d/%d  > %s▏',
+        \ s:finder.title, len(l:matches), len(s:finder.items), s:finder.query)})
+    call win_execute(s:finder.popup, 'normal! gg')
+endfunction
+
+function! s:FinderKey(popup, key) abort
+    if a:key ==# "\<Esc>" || a:key ==# "\<C-c>"
+        call popup_close(a:popup, -1)
+    elseif index(["\<CR>", "\<C-s>", "\<C-v>"], a:key) >= 0
+        let s:finder.open_with = a:key ==# "\<C-s>" ? 'split'
+            \ : a:key ==# "\<C-v>" ? 'vsplit' : 'edit'
+        call popup_close(a:popup, line('.', a:popup))
+    elseif index(["\<C-j>", "\<C-n>", "\<Down>", "\<Tab>"], a:key) >= 0
+        call win_execute(a:popup, 'normal! j')
+    elseif index(["\<C-k>", "\<C-p>", "\<Up>", "\<S-Tab>"], a:key) >= 0
+        call win_execute(a:popup, 'normal! k')
+    elseif a:key ==# "\<BS>" || a:key ==# "\<C-h>"
+        let s:finder.query = strcharpart(s:finder.query, 0, strchars(s:finder.query) - 1)
+        call s:FinderUpdate()
+    elseif a:key ==# "\<C-u>"
+        let s:finder.query = ''
+        call s:FinderUpdate()
+    elseif strchars(a:key) == 1 && char2nr(a:key) >= 32
+        let s:finder.query .= a:key
+        call s:FinderUpdate()
+    endif
+    return 1
+endfunction
+
+function! s:FinderDone(popup, line) abort
+    if a:line < 1 || a:line > len(s:finder.shown)
+        return
+    endif
+    execute s:finder.commands[s:finder.open_with] . ' ' . s:finder.shown[a:line - 1].target
+endfunction
+
+function! FindFiles() abort
+    if !s:has_finder
+        call feedkeys(':find ', 'n')
+        return
+    endif
+    let l:items = map(s:ProjectFiles(), '{"text": v:val, "target": fnameescape(v:val)}')
+    call s:FinderOpen('Files', l:items, s:file_commands)
+endfunction
+
+function! FindBuffers() abort
+    if !s:has_finder
+        call feedkeys(":ls\<CR>:buffer ", 'n')
+        return
+    endif
+    let l:items = []
+    for l:buffer in filter(range(1, bufnr('$')), 'buflisted(v:val)')
+        let l:name = bufname(l:buffer) ==# '' ? '[No Name]' : fnamemodify(bufname(l:buffer), ':~:.')
+        call add(l:items, {'text': printf('%3d  %s', l:buffer, l:name), 'target': l:buffer})
+    endfor
+    call s:FinderOpen('Buffers', l:items, s:buffer_commands)
+endfunction
+
+function! FindRecent() abort
+    if !s:has_finder
+        browse oldfiles
+        return
+    endif
+    let l:items = map(s:RecentFiles(200),
+        \ '{"text": fnamemodify(v:val, ":~"), "target": fnameescape(v:val)}')
+    call s:FinderOpen('Recent', l:items, s:file_commands)
+endfunction
+
 function! OpenLazygit() abort
     if executable('lazygit')
         call OpenFloatTerm('lazygit')
@@ -364,13 +496,14 @@ if has('nvim')
 endif
 
 " --- Terminal mode (Ctrl-h/j/k/l leave the terminal window, like nvim2) ---
+" (Vim built without +terminal has no terminal mode: nothing to map)
 if has('nvim')
     tnoremap <Esc><Esc> <C-\><C-n>
     tnoremap <C-h> <C-\><C-n><C-w>h
     tnoremap <C-j> <C-\><C-n><C-w>j
     tnoremap <C-k> <C-\><C-n><C-w>k
     tnoremap <C-l> <C-\><C-n><C-w>l
-else
+elseif has('terminal')
     tnoremap <Esc><Esc> <C-w>N
     tnoremap <C-h> <C-w>h
     tnoremap <C-j> <C-w>j
@@ -407,12 +540,12 @@ nnoremap <silent> <leader>e  :call ToggleExplorer()<CR>
 nnoremap <silent> <leader>o  :call FocusExplorer()<CR>
 nnoremap <silent> <leader>E  :Explore<CR>
 
-" --- Find (built-in :find + ** path, :grep → quickfix) ---
-nnoremap <C-p>      :find<Space>
-nnoremap <leader>ff :find<Space>
+" --- Find (popup FINDER, or :find / :ls / oldfiles on old Vim; :grep → quickfix) ---
+nnoremap <silent> <C-p>      :call FindFiles()<CR>
+nnoremap <silent> <leader>ff :call FindFiles()<CR>
 nnoremap <leader>fg :grep!<Space>
-nnoremap <leader>fb :ls<CR>:buffer<Space>
-nnoremap <leader>fh :browse oldfiles<CR>
+nnoremap <silent> <leader>fb :call FindBuffers()<CR>
+nnoremap <silent> <leader>fh :call FindRecent()<CR>
 nnoremap <leader>f* :grep! "\b<C-r><C-w>\b"<CR>
 nnoremap <leader>p  :<C-f>
 
@@ -499,10 +632,114 @@ inoremap <M-e> <Esc>A
 inoremap <C-l> <Right>
 
 " ============================================================================
+" START SCREEN — shown when Vim opens with no file. No plugin needed.
+"   f find   g grep   r recent   n new   e explorer   c config   q quit
+"   0-7 or Enter on a line opens that recent file
+" ============================================================================
+" "GINKO'S VIM LIGHT" in the "Future" style
+let s:start_logo = [
+    \ '┏━╸╻┏┓╻╻┏ ┏━┓╻┏━┓   ╻ ╻╻┏┳┓   ╻  ╻┏━╸╻ ╻╺┳╸',
+    \ '┃╺┓┃┃┗┫┣┻┓┃ ┃ ┗━┓   ┃┏┛┃┃┃┃   ┃  ┃┃╺┓┣━┫ ┃',
+    \ '┗━┛╹╹ ╹╹ ╹┗━┛ ┗━┛   ┗┛ ╹╹ ╹   ┗━╸╹┗━┛╹ ╹ ╹',
+    \ ]
+" [key, label, command run by that key]
+let s:start_actions = [
+    \ ['f', 'Find File',    ":call FindFiles()\<CR>"],
+    \ ['g', 'Find Text',    ':grep! '],
+    \ ['r', 'Recent Files', ":call FindRecent()\<CR>"],
+    \ ['n', 'New File',     ":enew\<CR>"],
+    \ ['e', 'Explorer',     ":call ToggleExplorer()\<CR>"],
+    \ ['c', 'Edit Config',  ":edit $MYVIMRC\<CR>"],
+    \ ['q', 'Quit',         ":qa\<CR>"],
+    \ ]
+let s:start_recent_count = 8
+
+" Same green → gold as the full config's logo, one shade per logo line
+function! s:DefineStartColours() abort
+    highlight StartLogo1 guifg=#6a994e ctermfg=107 gui=bold cterm=bold
+    highlight StartLogo2 guifg=#a3b34c ctermfg=143 gui=bold cterm=bold
+    highlight StartLogo3 guifg=#f2c14e ctermfg=221 gui=bold cterm=bold
+endfunction
+call s:DefineStartColours()
+
+function! s:RecentFiles(limit) abort
+    let l:files = []
+    for l:file in v:oldfiles
+        let l:path = fnamemodify(l:file, ':p')
+        if filereadable(l:path) && l:path !~# '^/tmp/\|/\.git/\|COMMIT_EDITMSG'
+            call add(l:files, l:path)
+        endif
+        if len(l:files) >= a:limit
+            break
+        endif
+    endfor
+    return l:files
+endfunction
+
+function! s:ShowStartScreen() abort
+    " Only for a bare `vim`: no file, no piped input, nothing typed yet
+    if argc() || line2byte('$') != -1 || get(s:, 'reading_stdin', 0)
+        return
+    endif
+
+    let l:left = repeat(' ', max([2, (&columns - strdisplaywidth(s:start_logo[0])) / 2]))
+    let l:lines = ['', '']
+    for l:logo_line in s:start_logo
+        call add(l:lines, l:left . l:logo_line)
+    endfor
+    call extend(l:lines, ['', '', l:left . 'Actions', ''])
+    for [l:key, l:label, l:command] in s:start_actions
+        call add(l:lines, l:left . '[' . l:key . ']  ' . l:label)
+    endfor
+
+    let b:start_recent = {}
+    let l:recent = s:RecentFiles(s:start_recent_count)
+    if !empty(l:recent)
+        call extend(l:lines, ['', l:left . 'Recent files', ''])
+        for l:index in range(len(l:recent))
+            call add(l:lines, l:left . '[' . l:index . ']  ' . fnamemodify(l:recent[l:index], ':~'))
+            let b:start_recent[len(l:lines)] = l:recent[l:index]
+        endfor
+    endif
+
+    call setline(1, l:lines)
+    setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nomodifiable
+    setlocal nonumber norelativenumber nocursorline nolist nowrap signcolumn=no colorcolumn=
+    setlocal filetype=startscreen
+
+    for l:index in range(len(s:start_logo))
+        call matchadd('StartLogo' . (l:index + 1), '\%' . (l:index + 3) . 'l\S.*')
+    endfor
+    call matchadd('Title', '^\s*\(Actions\|Recent files\)$')
+    call matchadd('Identifier', '\[\w\]')
+
+    for [l:key, l:label, l:command] in s:start_actions
+        execute 'nnoremap <buffer> <nowait> ' . l:key . ' ' . l:command
+    endfor
+    for l:index in range(len(l:recent))
+        execute 'nnoremap <buffer> <nowait> <silent> ' . l:index
+            \ . ' :edit ' . fnameescape(l:recent[l:index]) . '<CR>'
+    endfor
+    nnoremap <buffer> <silent> <CR> :call <SID>OpenStartLine()<CR>
+endfunction
+
+function! s:OpenStartLine() abort
+    let l:path = get(b:start_recent, line('.'), '')
+    if !empty(l:path)
+        execute 'edit ' . fnameescape(l:path)
+    endif
+endfunction
+
+" ============================================================================
 " AUTOCOMMANDS
 " ============================================================================
 augroup vimrc
     autocmd!
+
+    " Start screen for a bare `vim` (see START SCREEN)
+    autocmd StdinReadPre * let s:reading_stdin = 1
+    autocmd VimEnter * nested call s:ShowStartScreen()
+    autocmd ColorScheme * call s:DefineStartColours()
 
     " Auto-save on focus lost / buffer leave
     autocmd BufLeave,FocusLost * silent! wa
@@ -510,7 +747,7 @@ augroup vimrc
     " Terminal: no line numbers, start in insert mode
     if has('nvim')
         autocmd TermOpen     * setlocal nonumber norelativenumber | startinsert
-    else
+    elseif exists('##TerminalOpen')
         autocmd TerminalOpen * setlocal nonumber norelativenumber | startinsert
     endif
 

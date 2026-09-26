@@ -201,7 +201,8 @@ let g:gitgutter_sign_removed  = '-'
 " ============================================================================
 let g:indentLine_char = '|'
 " indentLine turns on conceal, which hides quotes in JSON and markup in Markdown
-let g:indentLine_fileTypeExclude = ['json', 'jsonc', 'markdown']
+" (and would draw its | guides into the start screen's padding)
+let g:indentLine_fileTypeExclude = ['json', 'jsonc', 'markdown', 'startify']
 
 " ============================================================================
 " ALE
@@ -382,10 +383,124 @@ let g:splitjoin_join_mapping = ''
 " STARTIFY — start screen like neovim's dashboard
 " ============================================================================
 let g:startify_change_to_dir = 0
+
+" "GINKO'S VIM" logo in the "ANSI Shadow" style (same font as Neovim's
+" dashboard; the font has no apostrophe, so that one is drawn to match).
+" One row when the window is wide enough, else two rows.
+let s:logo_wide = [
+    \ ' ██████╗ ██╗███╗   ██╗██╗  ██╗ ██████╗ ██╗███████╗    ██╗   ██╗██╗███╗   ███╗',
+    \ '██╔════╝ ██║████╗  ██║██║ ██╔╝██╔═══██╗╚═╝██╔════╝    ██║   ██║██║████╗ ████║',
+    \ '██║  ███╗██║██╔██╗ ██║█████╔╝ ██║   ██║   ███████╗    ██║   ██║██║██╔████╔██║',
+    \ '██║   ██║██║██║╚██╗██║██╔═██╗ ██║   ██║   ╚════██║    ╚██╗ ██╔╝██║██║╚██╔╝██║',
+    \ '╚██████╔╝██║██║ ╚████║██║  ██╗╚██████╔╝   ███████║     ╚████╔╝ ██║██║ ╚═╝ ██║',
+    \ ' ╚═════╝ ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝    ╚══════╝      ╚═══╝  ╚═╝╚═╝     ╚═╝',
+    \ ]
+let s:logo_stacked = [
+    \ ' ██████╗ ██╗███╗   ██╗██╗  ██╗ ██████╗ ██╗███████╗',
+    \ '██╔════╝ ██║████╗  ██║██║ ██╔╝██╔═══██╗╚═╝██╔════╝',
+    \ '██║  ███╗██║██╔██╗ ██║█████╔╝ ██║   ██║   ███████╗',
+    \ '██║   ██║██║██║╚██╗██║██╔═██╗ ██║   ██║   ╚════██║',
+    \ '╚██████╔╝██║██║ ╚████║██║  ██╗╚██████╔╝   ███████║',
+    \ ' ╚═════╝ ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝    ╚══════╝',
+    \ '',
+    \ '             ██╗   ██╗██╗███╗   ███╗',
+    \ '             ██║   ██║██║████╗ ████║',
+    \ '             ██║   ██║██║██╔████╔██║',
+    \ '             ╚██╗ ██╔╝██║██║╚██╔╝██║',
+    \ '              ╚████╔╝ ██║██║ ╚═╝ ██║',
+    \ '               ╚═══╝  ╚═╝╚═╝     ╚═╝',
+    \ ]
+
+function! GinkoLogo() abort
+    let l:logo = &columns >= max(map(copy(s:logo_wide), 'strdisplaywidth(v:val)')) + 4
+        \ ? s:logo_wide : s:logo_stacked
+    return startify#center(l:logo)
+endfunction
+" A string is evaluated each time the start screen is drawn, so the logo
+" follows the current window width
+let g:startify_custom_header = 'GinkoLogo()'
+
+let g:startify_files_number = 8
+let g:startify_skiplist = ['^/tmp', '\.git/', 'COMMIT_EDITMSG']
+
+" Recent files outside the current folder. Startify's own 'files' list would
+" repeat the ones already shown under 'Recent in <folder>'.
+function! s:RecentOutsideFolder() abort
+    let l:folder = getcwd() . '/'
+    let l:entries = []
+    for l:file in v:oldfiles
+        let l:path = fnamemodify(l:file, ':p')
+        if stridx(l:path, l:folder) == 0 || !filereadable(l:path)
+            \ || !empty(filter(copy(g:startify_skiplist), 'l:path =~# v:val'))
+            continue
+        endif
+        call add(l:entries, {'line': fnamemodify(l:path, ':~'), 'path': l:path})
+        if len(l:entries) >= g:startify_files_number
+            break
+        endif
+    endfor
+    return l:entries
+endfunction
+
 let g:startify_lists = [
     \ {'type': 'commands', 'header': ['   Actions']},
-    \ {'type': 'files',    'header': ['   Recent files']},
+    \ {'type': 'dir',      'header': ['   Recent in ' . fnamemodify(getcwd(), ':~')]},
+    \ {'type': function('s:RecentOutsideFolder'), 'header': ['   Recent elsewhere']},
     \ ]
+" Hide startify's own [e] empty buffer and [q] quit (the menu has n and q)
+let g:startify_enable_special = 0
+
+" Logo colours: one shade per line, leaf green at the top to autumn gold at
+" the bottom, like a ginkgo leaf. [gui colour, 256-colour terminal number]
+let s:logo_colours = [
+    \ ['#6a994e', 107], ['#86a64d', 107], ['#a3b34c', 143],
+    \ ['#bfbf4d', 143], ['#d9c14e', 185], ['#f2c14e', 221],
+    \ ]
+
+function! s:DefineLogoColours() abort
+    for l:index in range(len(s:logo_colours))
+        let [l:gui, l:cterm] = s:logo_colours[l:index]
+        execute printf('highlight GinkoLogo%d guifg=%s ctermfg=%d gui=bold cterm=bold',
+            \ l:index + 1, l:gui, l:cterm)
+    endfor
+    highlight link StartifyHeader GinkoLogo1
+endfunction
+
+" Colour each logo line on the start screen with its own shade. Each 6-line
+" block of letters runs green to gold. (startify#center only adds spaces on
+" the left, so each screen line ends with its logo line.)
+function! s:ColourLogo() abort
+    let l:shade_by_line = {}
+    for l:logo in [s:logo_wide, s:logo_stacked]
+        let l:row = 0
+        for l:logo_line in l:logo
+            if empty(l:logo_line)
+                let l:row = 0
+                continue
+            endif
+            let l:shade_by_line[l:logo_line] = l:row % len(s:logo_colours) + 1
+            let l:row += 1
+        endfor
+    endfor
+    for l:line_number in range(1, min([line('$'), 25]))
+        let l:text = substitute(getline(l:line_number), '^ *', '', '')
+        for [l:logo_line, l:shade] in items(l:shade_by_line)
+            if l:text ==# substitute(l:logo_line, '^ *', '', '')
+                call matchadd('GinkoLogo' . l:shade, '\%' . l:line_number . 'l\S.*')
+                break
+            endif
+        endfor
+    endfor
+endfunction
+
+augroup startify_colours
+    autocmd!
+    " :colorscheme clears custom highlights, so define them again after it
+    autocmd ColorScheme * call s:DefineLogoColours()
+    autocmd User Startified call s:ColourLogo()
+augroup END
+call s:DefineLogoColours()
+
 let g:startify_commands = [
     \ {'f': ['Find File',       'Files']},
     \ {'g': ['Find Text',       'Rg']},
