@@ -62,7 +62,7 @@ read_only = " 🔒"
 # 6. VERSION CONTROL (GIT)
 [git_branch]
 symbol = " "
-style = "bold purple"
+style = "bold bright-purple"  # bright: plain purple is 2.7:1 on the aubergine bg
 format = "on [$symbol$branch]($style) "
 
 [git_status]
