@@ -379,7 +379,7 @@ Same tools as Neovim's nvim-lint and conform. Files are formatted on save.
 
 ## Automatic Behaviours
 
-- **Start screen** — recent files and actions (`f` find, `g` grep, `r` recent, `s` session, `c` config, `q` quit)
+- **Start screen** — "GINKO'S VIM" logo (green → gold; on two rows in narrow windows), actions (`f` find, `g` grep, `r` recent, `n` new, `s` session, `c` config, `q` quit), recent files in this folder, then recent files elsewhere. Settings are in the STARTIFY section of `.vimrc`; see `:help startify`
 - **Auto-save** — files save when you leave insert mode or Vim loses focus
 - **Format on save** — see Linters & Formatters
 - **Trailing whitespace** — removed on save (not in Markdown)
