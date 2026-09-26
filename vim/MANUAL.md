@@ -11,10 +11,14 @@
 vim
 :PlugInstall
 
-# coc extensions (pyright, clangd, etc.) auto-install on next startup
+# coc extensions (clangd, rust-analyzer, json, snippets) auto-install on next startup
 # For tagbar symbol support
 sudo apt install universal-ctags
 ```
+
+This config mirrors the live Neovim config (`neovim/`). Language servers and
+formatters come from Neovim's mason folder (`~/.local/share/nvim/mason/bin`), so
+open Neovim once first to install them. Copilot shares Neovim's GitHub login.
 
 ---
 
@@ -22,7 +26,8 @@ sudo apt install universal-ctags
 
 | Plugin | Role |
 |---|---|
-| gruvbox | Colorscheme |
+| onedark.vim | Colorscheme (default, matches Neovim) |
+| gruvbox | Colorscheme (alternative) — switch with `s:active_theme` in `.vimrc` |
 | vim-airline | Statusline + tabline |
 | NERDTree | File explorer |
 | nerdtree-git-plugin | Git status icons in NERDTree |
@@ -42,11 +47,20 @@ sudo apt install universal-ctags
 | vim-easymotion | Jump to any position with 2 keystrokes |
 | targets.vim | Extended text objects (args, separators) |
 | vim-polyglot | Syntax highlight for 100+ languages |
-| ale | Linter + fixer (runs on save) |
+| ale | Linters + format on save (neovim: nvim-lint + conform) |
+| copilot.vim | AI suggestions (neovim: copilot.lua) |
+| vim-tmux-navigator | `Ctrl-h/j/k/l` across Vim splits and tmux panes (same plugin as Neovim) |
+| vim-startify | Start screen (neovim: snacks dashboard) |
+| context.vim | Keeps the current function header on top (neovim: treesitter-context) |
+| splitjoin.vim | Split / join code blocks (neovim: treesj) |
+| vimtex | LaTeX (same plugin as Neovim) |
+| rainbow_csv | CSV column colours (same idea as Neovim's rainbow_csv) |
 
 ---
 
 ## Keybindings
+
+Keys match the live Neovim config (`neovim/.config/nvim/lua/system/kernel/keymap.lua` and the plugin specs). Where Vim has no matching plugin (harpoon, neotest, cmake, refactoring…), the Neovim key is simply not mapped. `vim_light/.vimrc` uses the same core keys, backed by Vim's own features.
 
 ### General
 
@@ -54,83 +68,91 @@ sudo apt install universal-ctags
 |---|---|
 | `jk` / `kj` | Exit insert mode |
 | `<Space><Space>` | Clear search highlight |
-| `<Esc>` | Clear search highlight (matches nvim2) |
-| `<leader>ev` | Edit vimrc |
+| `<Esc>` | Clear search highlight (Neovim only — in terminal Vim an `<Esc>` mapping breaks arrow keys) |
+| `<leader>p` | Command palette (`:Commands`) |
+| `<leader>se` | Edit vimrc |
 | `<leader>sv` | Reload vimrc |
-| `<leader>ln` | Toggle relative/absolute line numbers |
 
-> Files auto-save on `BufLeave`/`FocusLost`, so there's no dedicated save key — same as nvim2 (which relies on its own auto-save autocommand). Use `:w` for an explicit save.
+> Files auto-save when you leave insert mode or Vim loses focus, so there's no dedicated save key — same as Neovim. Use `:w` for an explicit save.
 
-### Navigation — Windows & Splits
+### Windows & Splits
 
 | Key | Action |
 |---|---|
-| `Ctrl-h/j/k/l` | Move between splits |
+| `Ctrl-h/j/k/l` | Move between splits (also from inside a terminal) |
 | `Ctrl-Up/Down` | Resize split height |
 | `Ctrl-Left/Right` | Resize split width |
-| `<leader>wv` | Vertical split |
-| `<leader>wh` | Horizontal split |
+| `<leader>\|` / `<leader>wv` | Vertical split |
+| `<leader>-` / `<leader>wh` | Horizontal split |
 | `<leader>wq` | Close window |
 | `<leader>wo` | Close all other windows |
 | `<leader>w=` | Equalize window sizes |
 
-### Navigation — Buffers
+### Buffers
 
 | Key | Action |
 |---|---|
 | `[b` / `]b` | Previous / next buffer |
-| `<Tab>` / `<S-Tab>` | Next / previous buffer |
 | `<leader>bd` | Delete buffer (keeps window open) |
+
+> Neovim also has `<Tab>` / `<S-Tab>` for next / previous buffer. Not mapped here: in a terminal `<Tab>` is the same key as `<C-i>` (jump forward).
 
 ### File Explorer (NERDTree)
 
 | Key | Action |
 |---|---|
 | `<leader>e` | Toggle NERDTree |
+| `<leader>o` | Focus NERDTree |
 | `<leader>r` | Reveal current file in NERDTree |
 
 Inside NERDTree: `o` open, `s` vertical split, `i` horizontal split, `ma` new file, `md` delete, `R` refresh, `I` toggle hidden files, `?` help.
 
-### Fuzzy Finding (fzf)
+### Find (fzf)
 
 | Key | Action |
 |---|---|
 | `Ctrl-p` / `<leader>ff` | Find files |
-| `<leader>fg` | Grep across project (ripgrep) |
+| `<leader>fg` | Live grep across project (ripgrep) |
 | `<leader>fb` | Open buffers |
 | `<leader>fh` | File history (recently opened) |
+| `<leader>f*` | Grep word under cursor → quickfix list |
 | `<leader>fl` | Lines in current buffer |
 | `<leader>fL` | Lines across all open buffers |
-| `<leader>fc` | Available commands |
 | `<leader>fm` | Key mappings |
 
 Inside fzf popup: `Ctrl-j/k` navigate, `Enter` open, `Ctrl-v` vertical split, `Ctrl-x` horizontal split, `Ctrl-t` new tab.
 
 ### LSP — coc.nvim
 
-Keys mirror nvim2's native-LSP layout: `gd`/`gr`/`gi`/`K` are identical in both configs; everything else is grouped under `<leader>l*`, diagnostic nav under `[d`/`]d`, and the full diagnostics list under `<leader>x*`.
-
 | Key | Action |
 |---|---|
-| `Tab` | Next completion item |
-| `Shift-Tab` | Previous completion item |
-| `Enter` | Confirm selected completion |
+| `Tab` | Accept Copilot suggestion, else accept the menu item, else Tab |
+| `Ctrl-j` / `Ctrl-k` | Next / previous completion item |
+| `Enter` | New line (never accepts, like Neovim) |
+| `Ctrl-e` | Close the completion menu |
+| `Tab` / `Shift-Tab` | Next / previous snippet field (while a snippet is active) |
+| `Alt-]` / `Alt-[` | Next / previous Copilot suggestion |
+| `Ctrl-]` | Dismiss Copilot suggestion |
 | `Ctrl-Space` | Trigger completion manually |
-| `K` | Show hover documentation |
-| `gd` | Go to definition |
+| `Ctrl-s` (insert) | Signature help |
+| `K` | Hover documentation |
+| `gd` / `<leader>ld` | Go to definition |
 | `gD` | Go to declaration |
 | `gy` | Go to type definition |
 | `gi` | Go to implementation |
 | `gr` | Show all references |
 | `[d` / `]d` | Previous / next diagnostic |
-| `<leader>lr` | Rename symbol |
-| `<leader>ld` | Go to definition (alias of `gd`) |
 | `<leader>la` | Code action at cursor |
-| `<leader>lf` | Format file / selection |
-| `<leader>li` | Show coc info (`:CocInfo`) |
-| `<leader>lo` | Show file outline |
+| `<leader>lf` | Format file (same tools as format on save) |
+| `<leader>lh` | Toggle inlay hints |
+| `<leader>li` | coc info (`:CocInfo`) |
+| `<leader>lo` | Outline panel (tagbar; Neovim uses aerial) |
+| `<leader>lr` | Rename symbol |
 | `<leader>ls` | Search workspace symbols |
-| `<leader>xd` | List all diagnostics |
+| `<leader>ch` | Switch C/C++ source ↔ header (coc-clangd) |
+| `<leader>m` | Split / join code block (toggle) |
+| `<leader>cs` / `<leader>cj` | Split / join code block |
+| `<leader>Lc` / `<leader>Lv` | LaTeX compile / view (vimtex, zathura) |
 
 **Text objects (works with `d`, `c`, `v`, `y`):**
 
@@ -138,54 +160,59 @@ Keys mirror nvim2's native-LSP layout: `gd`/`gr`/`gi`/`K` are identical in both 
 |---|---|
 | `if` / `af` | Inside / around function |
 | `ic` / `ac` | Inside / around class |
+| `ih` | Git hunk (gitgutter) |
 
-**LSP extensions installed:**
+**Language servers** (same as Neovim; run from Neovim's mason folder unless noted):
 
-| Extension | Language |
+| Server | Language |
 |---|---|
-| coc-pyright | Python |
-| coc-clangd | C / C++ |
-| coc-tsserver | JavaScript / TypeScript |
-| coc-lua | Lua |
+| clangd (coc-clangd, same flags as Neovim) | C / C++ |
+| pyright + ruff | Python |
+| rust-analyzer (coc-rust-analyzer, from rustup) | Rust |
+| lua-language-server | Lua |
+| bash-language-server | Shell |
+| taplo | TOML |
+| texlab | LaTeX |
+| typos-lsp | Spelling in code, all files |
 | coc-json | JSON |
-| coc-html | HTML |
-| coc-css | CSS |
-| coc-snippets | Snippets |
 
-### Git — vim-fugitive
+coc-snippets provides snippets.
 
-Hunk actions now live under the same `<leader>g*` group as the repo commands (matches nvim2's `<leader>g*` layout, where `gs`/`gu`/`gp` are stage/undo/preview hunk).
+### Git
 
 | Key | Action |
 |---|---|
-| `<leader>gg` | Open git status panel |
-| `<leader>gb` | Git blame (current file) |
-| `<leader>gd` | Diff current file against HEAD |
+| `<leader>gg` | lazygit in a floating window (falls back to `:Git` if lazygit isn't installed) |
+| `[h` / `]h` | Previous / next hunk |
+| `<leader>gs` | Stage hunk |
+| `<leader>gr` | Reset hunk |
+| `<leader>gS` | Stage buffer (`:Gwrite`) |
+| `<leader>gR` | Reset buffer (`:Gread`) |
+| `<leader>gp` | Preview hunk |
+| `<leader>gb` | Blame (current file) |
+| `<leader>gd` | Diff current file against the index |
+| `<leader>gH` | File history (`:0Gclog`) |
 | `<leader>gl` | Git log (last 20 commits, oneline) |
 
-> No dedicated push/pull keys (nvim2 doesn't bind them either). Push/pull from inside the `:Git` status panel (`cP`/`P`), or run `:Git push` / `:Git pull` directly.
+Inside `:Git` status panel: `s` stage, `u` unstage, `=` toggle inline diff, `cc` commit, `dd` diff, `cP`/`P` push/pull, `q` quit.
 
-Inside `:Git` status panel: `s` stage, `u` unstage, `=` toggle inline diff, `cc` commit, `dd` diff, `q` quit.
-
-### Git — Hunks (gitgutter)
+### Search & Replace
 
 | Key | Action |
 |---|---|
-| `[h` | Previous hunk |
-| `]h` | Next hunk |
-| `<leader>gs` | Stage hunk |
-| `<leader>gu` | Undo hunk |
-| `<leader>gp` | Preview hunk diff |
+| `<leader>sr` | Replace word under cursor (or selection) across the project, asking at each match |
+| `<leader>sR` | Same, but asks for the text to search |
 
 ### Editing
 
 | Key | Action |
 |---|---|
-| `<A-j>` / `<A-k>` | Move line/selection down/up |
-| `J` / `K` (visual) | Move selection down/up (matches nvim2) |
-| `Tab` (visual) | Indent selection |
-| `Shift-Tab` (visual) | Unindent selection |
-| `<` / `>` (visual) | Indent left/right, keeps selection (matches nvim2) |
+| `Alt-j` / `Alt-k` | Move line/selection down/up |
+| `J` / `K` (visual) | Move selection down/up |
+| `Tab` / `Shift-Tab` (visual) | Indent / unindent selection |
+| `<` / `>` (visual) | Indent left/right, keeps selection |
+| `Alt-e` (insert) | Jump to end of line |
+| `Ctrl-l` (insert) | Move right one character |
 | `<leader>i` | Auto-indent entire file |
 | `<leader>y` | Yank to system clipboard |
 | `<leader>yp` | Paste from system clipboard |
@@ -196,17 +223,46 @@ Inside `:Git` status panel: `s` stage, `u` unstage, `=` toggle inline diff, `cc`
 
 | Key | Action |
 |---|---|
+| `<leader>xd` | Diagnostics for the current line |
+| `<leader>xx` | List all diagnostics |
 | `<leader>xq` | Toggle quickfix list |
 | `<leader>xl` | Toggle location list |
-| `<leader>xd` | List all coc diagnostics |
+| `[q` / `]q` | Previous / next quickfix item (wraps at the ends) |
+| `[t` / `]t` | Previous / next TODO / FIXME / NOTE … comment |
+| `<leader>xt` / `<leader>xT` | All TODO comments → quickfix list / fzf |
+
+### Sessions
+
+A session is saved per folder when Vim quits (like Neovim's persistence).
+
+| Key | Action |
+|---|---|
+| `<leader>qs` | Restore the session for this folder |
+| `<leader>ql` | Restore the last session |
+| `<leader>qd` | Don't save a session when quitting |
+
+### Debug (gdb)
+
+Vim's built-in termdebug stands in for Neovim's nvim-dap (gdb only, no codelldb).
+
+| Key | Action |
+|---|---|
+| `<leader>dc` | Start (asks for the program) / continue |
+| `<leader>db` | Toggle breakpoint |
+| `<leader>ds` / `<leader>di` / `<leader>do` | Step over / into / out |
+| `<leader>de` | Evaluate expression under cursor |
+| `<leader>dt` | Stop the program |
 
 ### Toggles
 
 | Key | Action |
 |---|---|
-| `<leader>uu` | Toggle undotree panel |
-| `<leader>us` | Toggle spell check |
-| `<leader>ud` | Toggle coc diagnostics for current buffer |
+| `<leader>ud` | coc diagnostics for current buffer |
+| `<leader>uc` | Function header on top (context.vim) |
+| `<leader>ul` | Relative / absolute line numbers |
+| `<leader>us` | Spell check |
+| `<leader>uu` | Undotree panel |
+| `<leader>uw` | Show whitespace characters |
 
 ### Surround (vim-surround)
 
@@ -267,35 +323,33 @@ Inside undotree: `j/k` navigate history, `Enter` jump to state, `d` show diff, `
 
 ### Tagbar
 
-| Key | Action |
-|---|---|
-| `<leader>tb` | Toggle tagbar panel |
-
-Inside tagbar: `Enter` jump to tag, `p` preview, `space` show prototype, `q` close. Requires `universal-ctags`. (No nvim2 equivalent — nvim2 uses aerial for outline instead, see `<leader>lo`.)
+Opened with `<leader>lo` (see LSP). Inside tagbar: `Enter` jump to tag, `p` preview, `space` show prototype, `q` close. Requires `universal-ctags`.
 
 ### Terminal
 
 | Key | Action |
 |---|---|
-| `<leader>t` / `<leader>th` | Open horizontal terminal (12 rows, bottom) |
-| `<leader>tv` | Open vertical terminal |
-| `<leader>tf` | Open floating terminal (Neovim only) |
-| `jk` or `Esc` | Exit terminal insert mode |
-| `Ctrl-h/j/k/l` | Move between terminal and other splits |
+| `<leader>th` | Horizontal terminal (12 rows, bottom) |
+| `<leader>tv` | Vertical terminal |
+| `<leader>tf` | Floating terminal (Vim popup / Neovim float) |
+| `Esc Esc` | Leave terminal insert mode (a single `Esc` still reaches the program) |
+| `Ctrl-h/j/k/l` | Move from the terminal to other splits |
 
 ---
 
-## Linters & Fixers (ALE)
+## Linters & Formatters (ALE)
 
-Runs automatically on save.
+Same tools as Neovim's nvim-lint and conform. Files are formatted on save.
 
-| Language | Linter | Fixer |
+| Language | Linter | Formatter (on save) |
 |---|---|---|
-| Python | flake8 | black |
-| JavaScript | eslint | prettier |
-| C / C++ | gcc | clang-format |
-| Shell | shellcheck | — |
-| All | — | remove trailing whitespace |
+| C / C++ | clangd (clang-tidy) | clang-format |
+| Python | ruff (language server) | ruff: sort imports + format |
+| Rust | rust-analyzer | rustfmt |
+| Lua | luacheck | stylua |
+| Shell | shellcheck | shfmt |
+| JSON | — | jq |
+| TOML | taplo | taplo (language server) |
 
 ---
 
@@ -325,7 +379,13 @@ Runs automatically on save.
 
 ## Automatic Behaviours
 
-- **Auto-save** — files save when focus leaves the window
+- **Start screen** — recent files and actions (`f` find, `g` grep, `r` recent, `s` session, `c` config, `q` quit)
+- **Auto-save** — files save when you leave insert mode or Vim loses focus
+- **Format on save** — see Linters & Formatters
+- **Trailing whitespace** — removed on save (not in Markdown)
+- **Yank flash** — yanked text is highlighted briefly
+- **TODO highlight** — `TODO`, `FIXME`, `HACK`, `NOTE`… followed by `:` are coloured
+- **Session save** — see Sessions
 - **Auto-pairs** — brackets, quotes, and parens close automatically
 - **Persistent undo** — undo history survives closing vim (`~/.vim/undodir/`)
 - **Cursor restore** — reopening a file jumps to your last position
