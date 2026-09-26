@@ -62,10 +62,10 @@ return {
 		end
 
 		-- One accent hue (not a different color per section -- avoids a "rainbow"
-		-- bar), lightened toward white in two steps, mirrored from both edges
-		-- toward the middle: edge sections (b, z) get the brighter step, sections
-		-- closer to the center (x, y) fade softer -- same hue throughout, just
-		-- lighter as you approach the middle.
+		-- bar), lightened toward white in three clearly separate steps from the
+		-- edge to the middle: z (and b, mirrored) full accent, y lighter, x
+		-- lightest. Steps are ~0.3 apart so neighbouring blocks stay tellable;
+		-- dark text keeps >= 5:1 contrast on all of them.
 		local function section_tones()
 			local utils = require("system.utils")
 			-- Deliberately sourced, not theme-derived or eyeballed: this violet is
@@ -73,9 +73,10 @@ return {
 			-- reference (contrast + harmony tested), not one of onedark's own ANSI
 			-- passthrough hues.
 			local accent = "#9085e9"
-			local edge   = utils.blend_hex(accent, 0.15) -- brighter: nearest the a/mode edge
-			local mid    = utils.blend_hex(accent, 0.35) -- softer: nearest the middle
-			return { b = edge, z = edge, x = mid, y = mid }
+			local edge   = accent                        -- strongest: nearest the a/mode edge
+			local mid    = utils.blend_hex(accent, 0.32) -- one step lighter
+			local center = utils.blend_hex(accent, 0.60) -- lightest: nearest the middle
+			return { b = edge, z = edge, y = mid, x = center }
 		end
 
 		local function lsp_name()
@@ -134,7 +135,7 @@ return {
 				globalstatus         = true,
 				icons_enabled        = true,
 				component_separators = { left = "", right = "" },
-				section_separators   = { left = "", right = "" },
+				section_separators   = { left = "", right = "" }, -- round side faces the middle
 				disabled_filetypes   = { statusline = { "alpha", "dashboard", "snacks_dashboard", "lazy" } },
 				ignore_focus         = { "NvimTree", "toggleterm" },
 				always_divide_middle = true,
@@ -175,10 +176,13 @@ return {
 				lualine_x = {
 					vim.tbl_extend("force", { macro_recording }, pill_shape(palette().replace)),
 					{ "selectioncount" },
-					vim.tbl_extend("force", {
+					{
 						"diagnostics",
 						symbols = { error = " ", warn = " ", info = " ", hint = " " },
-					}, pill_shape()), -- no bg override: keep diagnostics' own per-severity colors
+						-- No caps: it has no pill bg, so a cap here would only draw the next
+						-- pill's head backwards; the LSP pill brings its own left cap instead
+						separator = "",
+					},
 					vim.tbl_extend("force", { lsp_name }, pill_shape(tones.x)),
 					vim.tbl_extend("force", { "filetype", icon_only = false, colored = false }, pill_shape(tones.x)),
 				},
