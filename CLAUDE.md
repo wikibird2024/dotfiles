@@ -28,7 +28,7 @@ All steps are idempotent.
 
 ## Stow Packages (active)
 
-`nvim2`, `tmux`, `zsh`, `alacritty`, `kitty`, `starship`, `i3_wm_endervour`, `picom`, `zathura`, `flameshot`, `fontconfig`, `mods`, `clang`
+`nvim2`, `tmux`, `zsh`, `alacritty`, `kitty`, `starship`, `i3_wm_endervour`, `picom`, `zathura`, `flameshot`, `fontconfig`, `mods`, `clang`, `claude`, `vim`
 
 > `nvim/` (old config) is intentionally excluded from stow. `nvim2/` is the active Neovim config.
 

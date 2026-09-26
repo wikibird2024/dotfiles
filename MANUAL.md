@@ -1,1 +1,0 @@
-dotfiles/vim/MANUAL.md

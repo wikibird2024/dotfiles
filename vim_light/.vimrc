@@ -85,7 +85,7 @@ set foldmethod=indent foldnestmax=5 nofoldenable
 " Misc
 set backspace=indent,eol,start
 set formatoptions+=j
-set showbreak=↪\
+let &showbreak = '↪ '
 
 " ============================================================================
 " FILE FINDING — :find <name><Tab> searches the whole project tree
@@ -111,10 +111,15 @@ endif
 
 " ============================================================================
 " COLORSCHEME (built-in)
-" Other safe built-ins: elflord, slate, torte, koehler, industry
+" sorbet ships with Vim 9.0+; older Vim falls back to desert.
+" Other built-ins: habamax, retrobox, wildcharm, slate, desert
 " ============================================================================
 set background=dark
-silent! colorscheme desert
+try
+    colorscheme sorbet
+catch /E185/
+    silent! colorscheme desert
+endtry
 
 " ============================================================================
 " STATUSLINE — replaces airline with pure vimscript
@@ -134,10 +139,17 @@ function! StatusMode() abort
     endif
 endfunction
 
+" The branch is looked up once per buffer (on open, focus and write) and kept
+" in b:git_branch, so the statusline never runs git on each redraw.
+function! UpdateGitBranch() abort
+    if &buftype !=# '' | let b:git_branch = '' | return | endif
+    let l:branch = system('git -C ' . shellescape(expand('%:p:h')) .
+        \ ' rev-parse --abbrev-ref HEAD 2>/dev/null')
+    let b:git_branch = v:shell_error ? '' : '  ' . trim(l:branch)
+endfunction
+
 function! GitHead() abort
-    let l:b = system("git -C " . shellescape(expand('%:p:h')) .
-        \ " rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
-    return len(l:b) > 0 ? '  ' . l:b : ''
+    return get(b:, 'git_branch', '')
 endfunction
 
 set statusline=\ %{StatusMode()}
@@ -147,7 +159,8 @@ set statusline+=\ %m%r%h
 set statusline+=%=
 set statusline+=%y\ \|
 set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
-set statusline+=\ \|\ %l:%c\ %p%%\
+set statusline+=\ \|\ %l:%c\ %p%%
+let &statusline .= ' '
 
 " ============================================================================
 " NETRW — built-in file explorer (replaces NERDTree)
@@ -176,6 +189,17 @@ function! ToggleExplorer() abort
     endif
 endfunction
 
+" Move the cursor to the netrw sidebar, opening it if needed
+function! FocusExplorer() abort
+    for l:window in range(1, winnr('$'))
+        if getwinvar(l:window, '&filetype') ==# 'netrw'
+            execute l:window . 'wincmd w'
+            return
+        endif
+    endfor
+    call ToggleExplorer()
+endfunction
+
 " ============================================================================
 " COMPLETION — smart Tab uses built-in <C-n> keyword completion
 " Other built-in modes (use these directly in insert mode):
@@ -195,10 +219,33 @@ inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 " ============================================================================
 " QUICKFIX helpers
 " ============================================================================
-function! ToggleQF() abort
-    let l:nr = winnr('$')
-    copen
-    if l:nr == winnr('$') | cclose | endif
+function! ToggleQuickfix() abort
+    if getqflist({'winid': 0}).winid != 0
+        cclose
+    else
+        copen
+    endif
+endfunction
+
+function! ToggleLocList() abort
+    if getloclist(0, {'winid': 0}).winid != 0
+        lclose
+    elseif empty(getloclist(0))
+        echo 'No location list'
+    else
+        lopen
+    endif
+endfunction
+
+" Step through the quickfix list, wrapping at the ends
+function! QuickfixStep(forward) abort
+    try
+        execute a:forward ? 'cnext' : 'cprevious'
+    catch /E553/
+        execute a:forward ? 'cfirst' : 'clast'
+    catch /E42\|E776/
+        echo 'Quickfix list is empty'
+    endtry
 endfunction
 
 " ============================================================================
@@ -225,62 +272,166 @@ function! ToggleLineNumbers() abort
 endfunction
 
 " ============================================================================
-" KEYMAPS
+" FLOATING TERMINAL — popup window in Vim, floating window in Neovim.
+" Runs a:1 or the shell; the window closes when the program exits.
+" ============================================================================
+function! OpenFloatTerm(...) abort
+    let l:command = a:0 ? a:1 : &shell
+    let l:width  = float2nr(&columns * 0.8)
+    let l:height = float2nr(&lines * 0.8)
+    if has('nvim')
+        let l:buf = nvim_create_buf(v:false, v:true)
+        call nvim_open_win(l:buf, v:true, {
+            \ 'relative': 'editor',
+            \ 'width': l:width,
+            \ 'height': l:height,
+            \ 'col': (&columns - l:width) / 2,
+            \ 'row': (&lines - l:height) / 2,
+            \ 'style': 'minimal',
+            \ 'border': 'rounded',
+            \ })
+        call termopen(l:command, {'on_exit': {-> execute('bwipeout! ' . l:buf)}})
+        tnoremap <buffer> <Esc><Esc> <Esc><Esc>
+        startinsert
+    elseif has('popupwin') && has('terminal')
+        let l:buf = term_start(l:command, {'hidden': 1, 'term_finish': 'close'})
+        let l:popup = popup_create(l:buf, {
+            \ 'minwidth': l:width, 'maxwidth': l:width,
+            \ 'minheight': l:height, 'maxheight': l:height,
+            \ 'border': [],
+            \ 'borderchars': ['─', '│', '─', '│', '╭', '╮', '╯', '╰'],
+            \ })
+        call win_execute(l:popup, 'tnoremap <buffer> <Esc><Esc> <Esc><Esc>')
+    else
+        echo 'Floating terminal needs Neovim or Vim with +popupwin and +terminal'
+    endif
+endfunction
+
+function! OpenLazygit() abort
+    if executable('lazygit')
+        call OpenFloatTerm('lazygit')
+    else
+        echo 'lazygit is not installed'
+    endif
+endfunction
+
+" ============================================================================
+" C/C++: switch between source and header (nvim2's <leader>ch uses clangd;
+" this looks next to the file first, then anywhere on 'path')
+" ============================================================================
+function! SwitchSourceHeader() abort
+    let l:partners = {
+        \ 'c': ['h'], 'cc': ['h', 'hpp'], 'cpp': ['h', 'hpp'],
+        \ 'h': ['c', 'cpp', 'cc'], 'hpp': ['cpp', 'cc'],
+        \ }
+    for l:extension in get(l:partners, expand('%:e'), [])
+        let l:beside = expand('%:p:r') . '.' . l:extension
+        if filereadable(l:beside)
+            execute 'edit ' . fnameescape(l:beside)
+            return
+        endif
+        let l:found = findfile(expand('%:t:r') . '.' . l:extension)
+        if !empty(l:found)
+            execute 'edit ' . fnameescape(l:found)
+            return
+        endif
+    endfor
+    echo 'No matching source/header file found'
+endfunction
+
+" ============================================================================
+" KEYMAPS — same keys as nvim2 (nvim2/.config/nvim/lua/system/kernel/keymap.lua
+" and the plugin specs), using only what Vim ships with. Keys for nvim2
+" plugins that have no built-in stand-in (LSP, debugger, harpoon...) are left out.
 " ============================================================================
 let mapleader = " "
+
+" Terminal Vim sees Alt+key as Esc+key; teach it the Alt keys used below
+if !has('nvim') && !has('gui_running')
+    for s:key in ['e', 'j', 'k']
+        execute "set <M-" . s:key . ">=\e" . s:key
+    endfor
+endif
 
 " --- Escape ---
 inoremap jk <Esc>
 inoremap kj <Esc>
 nnoremap <silent> <leader><leader> :nohlsearch<CR>
-
-" --- Terminal escape ---
+" nvim2 clears the search highlight on <Esc>. Neovim only: in terminal Vim,
+" mapping <Esc> breaks arrow keys and terminal replies (which start with Esc).
 if has('nvim')
-    tnoremap <Esc><Esc> <C-\><C-n>
-else
-    tnoremap <Esc><Esc> <C-w>N
+    nnoremap <silent> <Esc> :nohlsearch<CR><Esc>
 endif
 
-" --- Window navigation ---
+" --- Terminal mode (Ctrl-h/j/k/l leave the terminal window, like nvim2) ---
+if has('nvim')
+    tnoremap <Esc><Esc> <C-\><C-n>
+    tnoremap <C-h> <C-\><C-n><C-w>h
+    tnoremap <C-j> <C-\><C-n><C-w>j
+    tnoremap <C-k> <C-\><C-n><C-w>k
+    tnoremap <C-l> <C-\><C-n><C-w>l
+else
+    tnoremap <Esc><Esc> <C-w>N
+    tnoremap <C-h> <C-w>h
+    tnoremap <C-j> <C-w>j
+    tnoremap <C-k> <C-w>k
+    tnoremap <C-l> <C-w>l
+endif
+
+" --- Buffers ---
+" nvim2 also puts next/previous buffer on <Tab>/<S-Tab>. Left out here: in a
+" terminal <Tab> is the same key as <C-i> (jump forward).
+nnoremap [b         :bprevious<CR>
+nnoremap ]b         :bnext<CR>
+nnoremap <leader>bd :call BufDel()<CR>
+
+" --- Windows ---
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-
-" --- Window resize ---
 nnoremap <C-Up>    :resize +2<CR>
 nnoremap <C-Down>  :resize -2<CR>
 nnoremap <C-Left>  :vertical resize -2<CR>
 nnoremap <C-Right> :vertical resize +2<CR>
+nnoremap <leader><Bar> :vsplit<CR>
+nnoremap <leader>-  :split<CR>
+nnoremap <leader>wv :vsplit<CR>
+nnoremap <leader>wh :split<CR>
+nnoremap <leader>wq :close<CR>
+nnoremap <leader>wo :only<CR>
+nnoremap <leader>w= <C-w>=
 
-" --- Buffers ---
-nnoremap [b         :bprevious<CR>
-nnoremap ]b         :bnext<CR>
-nnoremap <leader>bd :call BufDel()<CR>
-nnoremap <leader>bb :ls<CR>:buffer<Space>
-
-" --- File explorer ---
+" --- File explorer (netrw) ---
 nnoremap <silent> <leader>e  :call ToggleExplorer()<CR>
+nnoremap <silent> <leader>o  :call FocusExplorer()<CR>
 nnoremap <silent> <leader>E  :Explore<CR>
 
-" --- File finding (built-in :find + ** path) ---
-nnoremap <leader>ff :find<Space>
+" --- Find (built-in :find + ** path, :grep → quickfix) ---
 nnoremap <C-p>      :find<Space>
+nnoremap <leader>ff :find<Space>
+nnoremap <leader>fg :grep!<Space>
+nnoremap <leader>fb :ls<CR>:buffer<Space>
+nnoremap <leader>fh :browse oldfiles<CR>
+nnoremap <leader>f* :grep! "\b<C-r><C-w>\b"<CR>
+nnoremap <leader>p  :<C-f>
 
-" --- Grep → quickfix ---
-nnoremap <leader>fg  :grep!<Space>
-nnoremap <leader>fw  :grep! "\b<C-r><C-w>\b"<CR>:copen<CR>
+" --- Code ---
+nnoremap <leader>lf gg=G''
+nnoremap <leader>ch :call SwitchSourceHeader()<CR>
 
-" --- Quickfix ---
-nnoremap <silent> <leader>q :call ToggleQF()<CR>
-nnoremap [q  :cprevious<CR>
-nnoremap ]q  :cnext<CR>
+" --- Diagnostics / quickfix ---
+nnoremap <silent> <leader>xq :call ToggleQuickfix()<CR>
+nnoremap <silent> <leader>xl :call ToggleLocList()<CR>
+nnoremap <silent> ]q :call QuickfixStep(1)<CR>
+nnoremap <silent> [q :call QuickfixStep(0)<CR>
 nnoremap [Q  :cfirst<CR>
 nnoremap ]Q  :clast<CR>
-
-" --- Location list ---
 nnoremap [l  :lprevious<CR>
 nnoremap ]l  :lnext<CR>
+
+" --- Git ---
+nnoremap <silent> <leader>gg :call OpenLazygit()<CR>
 
 " --- Built-in LSP-like navigation (no plugin needed) ---
 " gd       → jump to local definition
@@ -291,36 +442,51 @@ nnoremap ]l  :lnext<CR>
 " <C-]>    → jump into ctags definition
 " <C-t>    → jump back from ctags
 
+" --- Search & replace (nvim2: grug-far, project wide; here: this file) ---
+nnoremap <leader>sr :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
+vnoremap <leader>sr y:%s/\V<C-r>=escape(@", '/\')<CR>//gc<Left><Left><Left>
+
+" --- Toggles ---
+nnoremap <silent> <leader>us :setlocal spell! spelllang=en_us<CR>
+nnoremap <silent> <leader>un :call ToggleLineNumbers()<CR>
+nnoremap <silent> <leader>uw :set list!<CR>
+
 " --- Terminal ---
 if has('nvim')
-    nnoremap <leader>t  :botright split +terminal<CR>:resize 12<CR>
+    nnoremap <leader>th :botright split +terminal<CR>:resize 12<CR>
     nnoremap <leader>tv :botright vsplit +terminal<CR>
 else
-    nnoremap <leader>t  :botright terminal ++rows=12<CR>
+    nnoremap <leader>th :botright terminal ++rows=12<CR>
     nnoremap <leader>tv :vertical terminal<CR>
 endif
+nnoremap <silent> <leader>tf :call OpenFloatTerm()<CR>
 
 " --- Editing ---
 nnoremap <leader>i   gg=G''
-nnoremap <leader>w   :w<CR>
+nnoremap <leader>se  :edit $MYVIMRC<CR>
 nnoremap <leader>sv  :source $MYVIMRC<CR>
-nnoremap <leader>ev  :edit $MYVIMRC<CR>
-nnoremap <leader>ln  :call ToggleLineNumbers()<CR>
-nnoremap <leader>sw  :set list!<CR>
-nnoremap <leader>sf  :set spell!<CR>
 
-" Indent blocks in visual mode
+" Indent in visual mode and keep the selection
 vnoremap <Tab>   >gv
 vnoremap <S-Tab> <gv
+vnoremap < <gv
+vnoremap > >gv
 
 " Move lines up/down
-nnoremap <A-j> :m .+1<CR>==
-nnoremap <A-k> :m .-2<CR>==
-vnoremap <A-j> :m '>+1<CR>gv=gv
-vnoremap <A-k> :m '<-2<CR>gv=gv
+nnoremap <M-j> :m .+1<CR>==
+nnoremap <M-k> :m .-2<CR>==
+vnoremap <M-j> :m '>+1<CR>gv=gv
+vnoremap <M-k> :m '<-2<CR>gv=gv
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
 
 " Yank to end of line (consistent with D and C)
 nnoremap Y y$
+
+" Clipboard
+nnoremap <leader>y  "+y
+vnoremap <leader>y  "+y
+nnoremap <leader>yp "+p
 
 " Centre screen on search results and jumps
 nnoremap n nzzzv
@@ -328,9 +494,9 @@ nnoremap N Nzzzv
 nnoremap <C-d> <C-d>zz
 nnoremap <C-u> <C-u>zz
 
-" Insert mode navigation
+" Insert mode: <M-e> jumps to end of line (nvim2), <C-l> moves right
+inoremap <M-e> <Esc>A
 inoremap <C-l> <Right>
-inoremap <C-e> <Esc>A
 
 " ============================================================================
 " AUTOCOMMANDS
@@ -361,7 +527,15 @@ augroup vimrc
     autocmd QuickFixCmdPost [^l]* cwindow
     autocmd QuickFixCmdPost l*    lwindow
 
-    " Strip trailing whitespace on save
-    autocmd BufWritePre * :%s/\s\+$//e
+    " Keep the statusline git branch up to date
+    autocmd BufEnter,FocusGained,BufWritePost * call UpdateGitBranch()
+
+    " Strip trailing whitespace on save (not Markdown, where two trailing
+    " spaces mean a line break); keeps cursor position and search history
+    autocmd BufWritePre * if &filetype !=# 'markdown' |
+        \     let s:view = winsaveview() |
+        \     keeppatterns %s/\s\+$//e |
+        \     call winrestview(s:view) |
+        \ endif
 
 augroup END
