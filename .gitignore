@@ -1,34 +1,69 @@
+# Keep the repo to hand-written config. Anything a program writes by itself
+# (caches, history, backups, downloads) stays out.
+# Check a path: git check-ignore -v <path>
 
-# History, shell runtime
-*.history
-*.bak
-*.swp
-*.tmp
+# ── Backups and editor leftovers ─────────────────────────────
+# *.bak* also catches dated copies (config.bak-20260927, .vimrc.bak.1727...)
+*.bak*
 *.old
+*.orig
+*.tmp
+*~
+*.swp
+*.swo
+.netrwhist
+Session.vim
 
-# Cache, logs, runtime
+# ── History, logs ────────────────────────────────────────────
+*.history
 *.log
+
+# ── Downloads and archives (fonts, installers: fetched by bootstrap) ──
+*.zip
+*.tar.gz
+*.tgz
+*.AppImage
+
+# ── Caches and runtime data ──────────────────────────────────
 .cache/
 .local/
+!theme/.local/
+__pycache__/
+# Electron/Chromium app data (e.g. a copied ~/.config/obsidian)
+Cache/
+Code Cache/
+GPUCache/
+DawnGraphiteCache/
+DawnWebGPUCache/
+Crashpad/
+obsidian/
+
+# ── IDE folders ──────────────────────────────────────────────
 .vscode/
 .idea/
-__pycache__/
 
-# Plugin hoặc thư mục build (ví dụ Vim, Zsh)
+# ── Plugins installed at runtime (Vim, Zsh) ──────────────────
 vim/bundle/
 vim/plugged/
-zsh/custom/plugins/
 vim/.vim/plugged/
-# OS files
+zsh/custom/plugins/
+
+# ── Secrets: this repo is public-facing ──────────────────────
+.env
+.env.*
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+*.secret
+.aider*
+neovim/.config/github-copilot/
+
+# ── OS files ─────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 
-# Ignore anything Stow shouldn't track
-
+# ── Stow and machine-specific ────────────────────────────────
 stow-*
-.aider*
-.env
-neovim/.config/github-copilot/
-
-# i3: machine-specific overrides (see i3_wm_endervour/.config/i3/local.conf.example)
+# i3: this machine only (see i3_wm_endervour/.config/i3/local.conf.example)
 i3_wm_endervour/.config/i3/local.conf

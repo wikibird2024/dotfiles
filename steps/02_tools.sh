@@ -9,16 +9,28 @@ source "$DOTFILES_DIR/lib/detect.sh"
 
 log_step "02 — CLI tools"
 
+# Release-file names differ per CPU: neovim uses x86_64/arm64,
+# lazygit uses x86_64/arm64 too (uname -m says aarch64 on ARM).
+case "$(uname -m)" in
+    x86_64) REL_ARCH=x86_64 ;;
+    aarch64 | arm64) REL_ARCH=arm64 ;;
+    *) REL_ARCH="" ;;
+esac
+
 # ── Neovim (latest stable AppImage / tarball) ─────────────────
 install_neovim() {
     if has nvim; then
         log_ok "nvim $(nvim --version | head -1) already installed."
         return
     fi
+    if [ -z "$REL_ARCH" ]; then
+        log_warn "No Neovim release for $(uname -m) — install nvim with your package manager."
+        return
+    fi
     log_info "Installing Neovim (latest stable)..."
     local tmp; tmp=$(mktemp -d)
     curl -Lo "$tmp/nvim.tar.gz" \
-        https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+        https://github.com/neovim/neovim/releases/latest/download/nvim-linux-${REL_ARCH}.tar.gz
     sudo tar -C /usr/local --strip-components=1 -xzf "$tmp/nvim.tar.gz"
     rm -rf "$tmp"
     log_ok "nvim $(nvim --version | head -1) installed."
@@ -53,7 +65,7 @@ install_fd() {
             mkdir -p "$HOME/.local/bin"
             ln -sf "$(which fdfind)" "$HOME/.local/bin/fd"
             ;;
-        pacman) sudo pacman -S --noconfirm fd ;;
+        pacman) sudo pacman -S --needed --noconfirm fd ;;
         *)
             log_warn "Install fd manually: https://github.com/sharkdp/fd"
             ;;
@@ -119,8 +131,8 @@ install_stylua() {
         return
     fi
     log_info "Installing stylua (cargo install)..."
-    cargo install stylua --locked
-    log_ok "stylua installed."
+    cargo install stylua --locked && log_ok "stylua installed." ||
+        log_warn "stylua build failed — run: cargo install stylua --locked"
 }
 
 # ── luacheck (Lua linter, nvim-lint) ───────────────────────────
@@ -144,6 +156,10 @@ install_lazygit() {
         log_ok "lazygit $(lazygit --version | head -1) already installed."
         return
     fi
+    if [ -z "$REL_ARCH" ]; then
+        log_warn "No lazygit release for $(uname -m) — install it manually."
+        return
+    fi
     log_info "Installing lazygit..."
     local tmp; tmp=$(mktemp -d)
     local ver
@@ -155,7 +171,7 @@ install_lazygit() {
         return
     fi
     curl -Lo "$tmp/lazygit.tar.gz" \
-        "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${ver}_Linux_x86_64.tar.gz"
+        "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${ver}_Linux_${REL_ARCH}.tar.gz"
     tar -xzf "$tmp/lazygit.tar.gz" -C "$tmp" lazygit
     sudo install "$tmp/lazygit" /usr/local/bin/lazygit
     rm -rf "$tmp"
@@ -176,8 +192,9 @@ install_cargo_tool() {
         return
     fi
     log_info "Installing $bin (cargo install $crate)..."
-    cargo install "$crate" --locked
-    log_ok "$bin installed."
+    # a failed build (e.g. missing system libs) must not stop the other tools
+    cargo install "$crate" --locked && log_ok "$bin installed." ||
+        log_warn "$bin build failed — run: cargo install $crate --locked"
 }
 
 install_neovim

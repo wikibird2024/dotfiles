@@ -147,6 +147,12 @@ environment {
   QT_QPA_PLATFORMTHEME "gtk3"
   QT_QPA_PLATFORMTHEME_QT6 "gtk3"
   TERMINAL "kitty"
+  // Input method (fcitx5, Vietnamese), per fcitx-im.org "Using Fcitx 5 on Wayland":
+  // Qt6 apps use Wayland's text-input first, then fcitx. Without this they go
+  // through the Qt5-style QT_IM_MODULE=fcitx path, which ate shortcuts such as
+  // Ctrl+C in Flameshot. QT_IM_MODULE / XMODIFIERS (from ~/.xprofile) stay for
+  // Qt5 and X11 apps.
+  QT_IM_MODULES "wayland;fcitx"
 }
 hotkey-overlay {
     skip-at-startup
@@ -285,6 +291,15 @@ window-rule {
     default-floating-position x=0 y=40 relative-to="top"
 }
 
+// Flameshot capture overlay: fullscreen, square corners. niri always puts a
+// fullscreen window in its own column, so the view slides to it and back; a
+// floating overlay would avoid that but sits below the bar (image offset).
+window-rule {
+    match app-id="^flameshot$"
+    open-fullscreen true
+    geometry-corner-radius 0
+}
+
 // Datasheets open beside the current window (e.g. next to nvim), half width
 window-rule {
     match app-id=r#"^org\.pwmt\.zathura$"#
@@ -376,8 +391,10 @@ binds {
     XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia" "msg" "brightness-down"; }
 
     // === Screenshots ===
-    Print hotkey-overlay-title="Screenshot: Region" { spawn "noctalia" "msg" "screenshot-region"; }
-    Ctrl+Print hotkey-overlay-title="Screenshot: Full Screen" { spawn "noctalia" "msg" "screenshot-fullscreen"; }
+    // Flameshot, default behavior: select + annotate, Ctrl+C copy, Ctrl+S save. Needs the GNOME portal,
+    // see niri/README.md "Screenshots" if it does nothing.
+    Print hotkey-overlay-title="Screenshot: Region (Flameshot)" { spawn "flameshot" "gui"; }
+    Ctrl+Print hotkey-overlay-title="Screenshot: Full Screen (Flameshot)" { spawn-sh "flameshot full -c -p ~/Pictures/Screenshots"; }
 
     // === System & Overview ===
     Mod+O repeat=false { toggle-overview; }

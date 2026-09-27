@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Step 1 — Install core system packages
-# Idempotent: apt/pacman won't reinstall already-present packages.
+# Idempotent: pacman --needed and apt skip already-installed packages.
 
 set -euo pipefail
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -20,8 +20,9 @@ PKGS_APT=(
     fontconfig                 # fc-cache for nerd fonts
     python3 python3-pip
     ninja-build cmake gettext  # needed if building nvim from source
-    # nvim2 formatters/linters (see CLAUDE.md "External Tool Dependencies")
+    # neovim formatters/linters (see CLAUDE.md "External Tool Dependencies")
     shellcheck shfmt clang-format bear luarocks
+    pkg-config libudev-dev     # cargo install probe-rs-tools (Arch: in base)
 )
 
 PKGS_PACMAN=(
@@ -43,7 +44,7 @@ case "$pm" in
         sudo apt-get install -y "${PKGS_APT[@]}"
         ;;
     pacman)
-        sudo pacman -S --noconfirm "${PKGS_PACMAN[@]}"
+        sudo pacman -S --needed --noconfirm "${PKGS_PACMAN[@]}"
         ;;
     *)
         log_warn "Unknown package manager — install packages manually."
@@ -73,7 +74,7 @@ install_desktop_pkg() {
     local pkg="$1" pm="$2"
     case "$pm" in
         apt)    sudo apt-get install -y "$pkg" ;;
-        pacman) sudo pacman -S --noconfirm "$pkg" ;;
+        pacman) sudo pacman -S --needed --noconfirm "$pkg" ;;
     esac
 }
 

@@ -4,6 +4,13 @@
 
 [general]
 live_config_reload = true
+# Colors: colors-fallback.toml, then the active profile of the `theme` package
+# (generated from its palette.conf) on top. Later imports win and missing ones
+# are skipped, so this works without the package. Switch with: theme <name>
+import = [
+    "~/.config/alacritty/colors-fallback.toml",
+    "~/.local/state/theme/alacritty.toml",
+]
 
 [window]
 decorations = "full"
@@ -39,38 +46,6 @@ y = 4
 
 [cursor]
 style = { shape = "Block", blinking = "Off" }
-
-[colors.primary]
-background = "#282828"
-foreground = "#fbf1c7"
-
-[colors.cursor]
-text = "#282828"
-cursor = "#5cf56e"
-
-[colors.selection]
-background = "#504945"
-text = "#ebdbb2"
-
-[colors.normal]
-black   = "#282828"
-red     = "#cc241d"
-green   = "#98971a"
-yellow  = "#d79921"
-blue    = "#458588"
-magenta = "#b16286"
-cyan    = "#689d6a"
-white   = "#a89984"
-
-[colors.bright]
-black   = "#928374"
-red     = "#fb4934"
-green   = "#b8bb26"
-yellow  = "#fabd2f"
-blue    = "#83a598"
-magenta = "#d3869b"
-cyan    = "#8ec07c"
-white   = "#ebdbb2"
 
 [scrolling]
 history = 10000

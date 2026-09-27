@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Personal dotfiles managed with **GNU Stow**. Each top-level directory is a stow package whose internal structure mirrors `$HOME`. Running `stow <package>` from the repo root creates symlinks in `$HOME`.
 
-The primary working directory when Claude Code is invoked is `nvim2/.config/` — the active Neovim configuration.
+The primary working directory when Claude Code is invoked is `neovim/.config/` — the active Neovim configuration.
 
 ## Bootstrap & Setup
 
@@ -18,7 +18,7 @@ The primary working directory when Claude Code is invoked is `nvim2/.config/` �
 ```
 
 Bootstrap runs five ordered steps in `steps/`:
-1. `01_packages.sh` — apt/pacman core packages, nvim2 formatter/linter deps (shellcheck, shfmt, clang-format, bear, luarocks, cpplint, debugpy), and desktop apps for the i3/picom/zathura/flameshot/kitty/alacritty stow packages
+1. `01_packages.sh` — apt/pacman core packages, neovim formatter/linter deps (shellcheck, shfmt, clang-format, bear, luarocks, cpplint, debugpy), and desktop apps for the i3/picom/zathura/flameshot/kitty/alacritty stow packages
 2. `02_tools.sh` — nvim, fzf, fd, starship, zoxide, TPM, rustup, stylua, luacheck, lazygit
 3. `03_fonts.sh` — Nerd Fonts
 4. `04_stow.sh` — symlink all packages
@@ -28,20 +28,22 @@ All steps are idempotent.
 
 ## Stow Packages (active)
 
-`nvim2`, `tmux`, `zsh`, `alacritty`, `kitty`, `starship`, `i3_wm_endervour`, `picom`, `zathura`, `flameshot`, `fontconfig`, `mods`, `clang`, `claude`, `vim`, `niri`, `noctalia`
+`neovim`, `bash`, `tmux`, `zsh`, `alacritty`, `kitty`, `starship`, `i3_wm_endervour`, `picom`, `zathura`, `flameshot`, `fontconfig`, `mods`, `clang`, `claude`, `vim`, `niri`, `noctalia`, `theme`
 
 `niri/` is the niri config: one `config.kdl` that also starts the Noctalia shell (`spawn-at-startup "noctalia"`) and binds its panels (`noctalia msg ...`). Keys, workspaces, scripts and workflow: `niri/README.md`.
 
+`theme/` holds the shared color profiles (`.config/theme/themes/<name>/`: `palette.conf` for kitty/alacritty, `tmux.conf` with `@thm_*` roles for `.tmux.conf`, `nvim` naming a `colorscheme.lua` theme) and the `theme` command (`.local/bin/theme`: `theme <name>`, `theme pick` (fzf, also tmux `prefix + T`), `theme new <name> [from]`, `theme check`) that switches all of them live, plus `hexcolor` (paints `#rrggbb` codes in their color in the terminal, like nvim-colorizer; kitty `Ctrl+Shift+I` shows the screen through it). The active profile is a symlink in `~/.local/state/theme/current` (outside the repo). Every profile file is optional, and every tool keeps its own fallback so its package works without `theme`: kitty `theme.conf`, alacritty `colors-fallback.toml`, the `@thm_*` defaults in `.tmux.conf`, and `fallback` (then built-in `habamax`) in `colorscheme.lua`, which also never errors when a theme plugin is not installed. Starship uses ANSI color names, so it follows the terminal palette.
+
 `noctalia/` holds hand-written Noctalia config (`bar.toml`). Settings changed in the Noctalia GUI go to `~/.local/state/noctalia/settings.toml` (not tracked) and override these files.
 
-> `nvim/` (old config) is intentionally excluded from stow. `nvim2/` is the active Neovim config.
+> `neovim/` is the active Neovim config. `neovim_light/` (a lighter variant) is not stowed.
 
 To re-stow a single package after editing:
 ```bash
-stow -R -t "$HOME" nvim2
+stow -R -t "$HOME" neovim
 ```
 
-## Neovim Config Architecture (`nvim2/.config/nvim/`)
+## Neovim Config Architecture (`neovim/.config/nvim/`)
 
 Entry point: `init.lua` loads three namespaces in order:
 
@@ -64,7 +66,7 @@ Plugin specs live under `lua/system/plugins/` and are organised by concern:
 | `format.lua` | conform.nvim (auto-format on save) |
 | `lint.lua` | nvim-lint (runs on save / InsertLeave) |
 | `treesitter.lua` | Treesitter parsers + text objects + selection expansion |
-| `colorscheme.lua` | Theme selection — change `active_theme` variable here |
+| `colorscheme.lua` | Theme registry; the active one comes from the `theme` profile (`fallback` if none) |
 
 **Plugin manager:** lazy.nvim (auto-bootstrapped; all plugins default `lazy = true`).
 
@@ -95,7 +97,7 @@ Linters (nvim-lint, on save): luacheck (Lua), shellcheck (Shell). No C/C++ linte
 
 ## Key Bindings Reference
 
-Leader key: `Space`. Full manual in `nvim2/MANUAL.md`.
+Leader key: `Space`. Full manual in `neovim/MANUAL.md`.
 
 Essential groups:
 - `<leader>f*` — fzf-lua (files, grep, history, buffers)
@@ -107,7 +109,7 @@ Essential groups:
 
 ## Colorscheme
 
-Edit `nvim2/.config/nvim/lua/system/plugins/colorscheme.lua`, change `active_theme`. Available values: `gruvbox8` (default), `nord`, `catppuccin`, `everforest`, `tokyonight`, `kanagawa`, `nightfox`, `onedark`, `solarized`, `abyss`. After adding a new theme run `:Lazy sync` and restart nvim.
+Colors are picked per profile with `theme <name>` (the `theme` package), which switches kitty, alacritty, tmux and Neovim together, live. A profile's `nvim` file names a key of the registry in `neovim/.config/nvim/lua/system/plugins/colorscheme.lua`, optionally with a variant passed to that theme's `setup(variant)` (e.g. `gruvbox:medium`). Without a profile Neovim uses `fallback` (`onedark`). Every registered theme is installed; after adding one to the registry run `:Lazy sync`.
 
 ## External Tool Dependencies
 

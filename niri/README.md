@@ -85,7 +85,9 @@ name so the bar shows `1 term · 2 web …` (Noctalia can show either id or name
 | Mod + X | power menu |
 | Mod + Alt + L | lock (closing the lid locks and suspends) |
 | Alt + Tab | window switcher |
-| Print / Ctrl + Print / Alt + Print | screenshot region / screen / window |
+| Print | **Flameshot** (default behavior): select a region, annotate; `Ctrl+C` copy, `Ctrl+S` save, `Esc` cancel |
+| Ctrl + Print | Flameshot full screen → saved to `~/Pictures/Screenshots` and copied |
+| Alt + Print | niri's own window screenshot |
 | volume, brightness, media keys | work, with OSD |
 
 **tmux project switching** ([tms](https://github.com/jrmoulton/tmux-sessionizer), config in `tmux/.config/tms/`)
@@ -125,6 +127,11 @@ Inside: `Ctrl + a`, `Ctrl + x` quits picocom, then Enter reconnects or `s` gives
   `Mod + Shift + <n>`, or log out and back in.
 
 ## Gotchas (why some lines exist)
+
+- **Screenshots do nothing / Flameshot hangs:** Flameshot captures through the desktop portal
+  (`xdg-desktop-portal-gnome`). If you switched from i3 to niri without a full logout, the portal
+  still runs with i3's settings and never answers. Fix: `systemctl --user restart xdg-desktop-portal`
+  (or log out fully / reboot).
 
 - The scratchpad runs in **foot**, not kitty: kitty sets its app id after the window
   opens, so the floating rule never matched.

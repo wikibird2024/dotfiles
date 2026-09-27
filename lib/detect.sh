@@ -19,7 +19,7 @@ pkg_install() {
     pm=$(detect_pkg_manager)
     case "$pm" in
         apt)    sudo apt-get install -y "$apt_pkg" ;;
-        pacman) sudo pacman -S --noconfirm "$pac_pkg" ;;
+        pacman) sudo pacman -S --needed --noconfirm "$pac_pkg" ;;
         dnf)    sudo dnf install -y "$dnf_pkg" ;;
         *)      log_error "Unknown package manager. Install '$apt_pkg' manually."; return 1 ;;
     esac
@@ -30,7 +30,7 @@ pkg_update() {
     pm=$(detect_pkg_manager)
     case "$pm" in
         apt)    sudo apt-get update -y ;;
-        pacman) sudo pacman -Sy ;;
+        pacman) sudo pacman -Syu --noconfirm ;; # full upgrade: -Sy alone is a partial upgrade (unsupported on Arch)
         dnf)    sudo dnf check-update -y || true ;;
     esac
 }
