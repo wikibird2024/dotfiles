@@ -332,8 +332,23 @@ layer-rule {
     place-within-backdrop true
 }
 
-// Blur (niri 26.04+)
+// Blur (niri 26.04+). Only visible behind semitransparent windows: the
+// terminals (kitty background_opacity / alacritty opacity 0.92).
+// Tiled terminals: xray = the blurred wallpaper, computed once and reused
+// (cheap; a tiled window has only the wallpaper behind it anyway).
 window-rule {
+    match app-id="^kitty$"
+    match app-id="^Alacritty$"
+    background-effect {
+        blur true
+        xray true
+    }
+}
+
+// Floating windows: real blur of the windows behind them (niri docs call it
+// experimental: recomputed on every change, not shown during open/close).
+window-rule {
+    match is-floating=true
     background-effect {
         blur true
         xray false

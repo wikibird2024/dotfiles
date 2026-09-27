@@ -15,7 +15,7 @@ import = [
 [window]
 decorations = "full"
 startup_mode = "Windowed"  # Capitalized to match Alacritty's strict Enum parsing
-opacity = 1.0
+opacity = 0.92  # niri blurs the wallpaper behind it (niri config.kdl)
 
 [window.padding]
 x = 10
