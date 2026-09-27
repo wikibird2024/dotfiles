@@ -150,7 +150,7 @@ pick() {
 	command -v fzf >/dev/null || die "pick needs fzf; use: theme <name>"
 	local name
 	name="$(list | fzf --prompt 'theme> ' --height 40% --reverse --no-multi \
-		--preview "cat '$THEMES'/\$(echo {} | tr -d '* ')/palette.conf 2>/dev/null" |
+		--preview "'$HOME/.local/bin/hexcolor' '$THEMES'/\$(echo {} | tr -d '* ')/palette.conf 2>/dev/null" |
 		tr -d '* ')" || exit 0
 	[ -n "$name" ] && switch "$name"
 }

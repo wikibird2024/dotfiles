@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# hexcolor — paint every #rrggbb color code in its own color, like
+# nvim-colorizer does in Neovim. Needs a true-color terminal (kitty, tmux).
+#
+#   hexcolor [file...]        print files (or stdin) with color codes painted
+#   grep thm_ ~/.tmux.conf | hexcolor
+#
+# Each code gets its color as background, with black or white text picked by
+# brightness so the code stays readable. In kitty, Ctrl+Shift+I shows the
+# screen this way (keybindings.conf).
+
+exec perl -pe '
+	s{#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})(?![0-9a-fA-F])}{
+		my ($r, $g, $b) = (hex $1, hex $2, hex $3);
+		my $fg = 0.299 * $r + 0.587 * $g + 0.114 * $b > 128 ? "30" : "97";
+		"\e[48;2;$r;$g;${b}m\e[${fg}m#$1$2$3\e[0m"
+	}ge' -- "$@"
