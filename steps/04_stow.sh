@@ -11,9 +11,10 @@ log_step "04 — Stow configs"
 cd "$DOTFILES_DIR"
 
 # ── Packages to stow ─────────────────────────────────────────
-# nvim2 is the active config. nvim (old) is intentionally excluded.
+# neovim is the active config; neovim_light (lighter variant) is not stowed.
 STOW_PKGS=(
-    nvim2
+    neovim
+    bash
     tmux
     zsh
     alacritty
@@ -30,6 +31,7 @@ STOW_PKGS=(
     vim
     niri
     noctalia
+    theme
 )
 
 # ~/.claude must be a real folder before stowing `claude`: if it is missing,
@@ -44,6 +46,15 @@ if [ -f "$HOME/.vimrc" ] && [ ! -L "$HOME/.vimrc" ]; then
     mv "$HOME/.vimrc" "$HOME/.vimrc.bak.$(date +%s)"
     log_warn "Existing ~/.vimrc moved to ~/.vimrc.bak.*"
 fi
+
+# A new machine ships its own ~/.bashrc (and maybe aliases/functions), which
+# makes stow refuse the bash package; keep them as backups instead.
+for f in .bashrc .aliases .bash_functions; do
+    if [ -f "$HOME/$f" ] && [ ! -L "$HOME/$f" ]; then
+        mv "$HOME/$f" "$HOME/$f.bak.$(date +%s)"
+        log_warn "Existing ~/$f moved to ~/$f.bak.*"
+    fi
+done
 
 # niri writes a default ~/.config/niri on first start, which makes stow refuse
 # the niri package; keep it as a backup instead.
@@ -60,6 +71,13 @@ for pkg in "${STOW_PKGS[@]}"; do
         log_warn "Package '$pkg' directory not found, skipping."
     fi
 done
+
+# ── Color profile ────────────────────────────────────────────
+# kitty, alacritty, tmux and Neovim read the active profile of the `theme`
+# package; pick the default on a new machine, keep the user's choice after.
+if [ ! -e "${XDG_STATE_HOME:-$HOME/.local/state}/theme/current" ] && [ -x "$HOME/.local/bin/theme" ]; then
+    "$HOME/.local/bin/theme" ubuntu >/dev/null && log_ok "Color profile set to ubuntu (switch with: theme <name>)."
+fi
 
 # ── Xresources (single file, not a dir) ──────────────────────
 if [ -d "$DOTFILES_DIR/Xresources" ]; then

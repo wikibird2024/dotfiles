@@ -29,4 +29,7 @@ if [ "$output_style" = plain ]; then
 	printf '%s' "$target"
 	exit 0
 fi
-printf '#[fg=#ff9e64,bold]\xef\x83\xac %s#[nobold] #[fg=#414868]│ ' "$target"
+# #() output is not format-expanded, so read the theme roles here
+orange=$(tmux show -gqv @thm_orange)
+surface=$(tmux show -gqv @thm_surface)
+printf '#[fg=%s,bold]\xef\x83\xac %s#[nobold] #[fg=%s]│ ' "${orange:-#ff9e64}" "$target" "${surface:-#414868}"

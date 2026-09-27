@@ -127,90 +127,101 @@ return {
 			}
 		end
 
-		local tones = section_tones()
-
-		require("lualine").setup({
-			options = {
-				theme                = lualine_theme(),
-				globalstatus         = true,
-				icons_enabled        = true,
-				component_separators = { left = "", right = "" },
-				section_separators   = { left = "", right = "" }, -- round side faces the middle
-				disabled_filetypes   = { statusline = { "alpha", "dashboard", "snacks_dashboard", "lazy" } },
-				ignore_focus         = { "NvimTree", "toggleterm" },
-				always_divide_middle = true,
-			},
-			sections = {
-				lualine_a = { { "mode", separator = { left = "", right = "" } } },
-				lualine_b = {
-					vim.tbl_extend("force", { "branch", icon = "" }, pill_shape(tones.b)),
-					{
-						"diff",
-						colored = true,
-						symbols = { added = " ", modified = " ", removed = " " },
-						source  = function()
-							local gs = vim.b.gitsigns_status_dict
-							if gs then
-								return { added = gs.added, modified = gs.changed, removed = gs.removed }
-							end
-						end,
-					},
+		-- Built by a function so a theme switch can rebuild it: the palette is
+		-- read from the colorscheme when the table is made, not on every redraw
+		local function build()
+			local tones = section_tones()
+			return {
+				options = {
+					theme                = lualine_theme(),
+					globalstatus         = true,
+					icons_enabled        = true,
+					component_separators = { left = "", right = "" },
+					section_separators   = { left = "", right = "" }, -- round side faces the middle
+					disabled_filetypes   = { statusline = { "alpha", "dashboard", "snacks_dashboard", "lazy" } },
+					ignore_focus         = { "NvimTree", "toggleterm" },
+					always_divide_middle = true,
 				},
-				lualine_c = {
-					{ "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
-					{
-						"filename",
-						path         = 1,
-						file_status  = true,
-						newfile_status = true,
-						symbols = {
-							modified = " ●",
-							readonly = " ",
-							unnamed  = "[No Name]",
-							newfile  = "[New]",
+				sections = {
+					lualine_a = { { "mode", separator = { left = "", right = "" } } },
+					lualine_b = {
+						vim.tbl_extend("force", { "branch", icon = "" }, pill_shape(tones.b)),
+						{
+							"diff",
+							colored = true,
+							symbols = { added = " ", modified = " ", removed = " " },
+							source  = function()
+								local gs = vim.b.gitsigns_status_dict
+								if gs then
+									return { added = gs.added, modified = gs.changed, removed = gs.removed }
+								end
+							end,
 						},
-						shorting_target = 40,
 					},
-					vim.tbl_extend("force", { search_count }, pill_shape()),
-				},
-				lualine_x = {
-					vim.tbl_extend("force", { macro_recording }, pill_shape(palette().replace)),
-					{ "selectioncount" },
-					{
-						"diagnostics",
-						symbols = { error = " ", warn = " ", info = " ", hint = " " },
-						-- No caps: it has no pill bg, so a cap here would only draw the next
-						-- pill's head backwards; the LSP pill brings its own left cap instead
-						separator = "",
+					lualine_c = {
+						{ "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
+						{
+							"filename",
+							path         = 1,
+							file_status  = true,
+							newfile_status = true,
+							symbols = {
+								modified = " ●",
+								readonly = " ",
+								unnamed  = "[No Name]",
+								newfile  = "[New]",
+							},
+							shorting_target = 40,
+						},
+						vim.tbl_extend("force", { search_count }, pill_shape()),
 					},
-					vim.tbl_extend("force", { lsp_name }, pill_shape(tones.x)),
-					vim.tbl_extend("force", { "filetype", icon_only = false, colored = false }, pill_shape(tones.x)),
+					lualine_x = {
+						vim.tbl_extend("force", { macro_recording }, pill_shape(palette().replace)),
+						{ "selectioncount" },
+						{
+							"diagnostics",
+							symbols = { error = " ", warn = " ", info = " ", hint = " " },
+							-- No caps: it has no pill bg, so a cap here would only draw the next
+							-- pill's head backwards; the LSP pill brings its own left cap instead
+							separator = "",
+						},
+						vim.tbl_extend("force", { lsp_name }, pill_shape(tones.x)),
+						vim.tbl_extend("force", { "filetype", icon_only = false, colored = false }, pill_shape(tones.x)),
+					},
+					lualine_y = {
+						vim.tbl_extend("force", { "encoding" }, pill_shape(tones.y)),
+						vim.tbl_extend("force", { "fileformat", icons_enabled = true }, pill_shape(tones.y)),
+						vim.tbl_extend("force", { "progress" }, pill_shape(tones.y)),
+					},
+					lualine_z = {
+						vim.tbl_extend("force", { "location", icon = "󰍍" }, pill_shape(tones.z)),
+						vim.tbl_extend("force", { function() return " " .. os.date("%H:%M") end }, pill_shape(tones.z)),
+					},
 				},
-				lualine_y = {
-					vim.tbl_extend("force", { "encoding" }, pill_shape(tones.y)),
-					vim.tbl_extend("force", { "fileformat", icons_enabled = true }, pill_shape(tones.y)),
-					vim.tbl_extend("force", { "progress" }, pill_shape(tones.y)),
+				inactive_sections = {
+					lualine_a = {},
+					lualine_b = {},
+					lualine_c = { { "filename", path = 1 } },
+					lualine_x = { "location" },
+					lualine_y = {},
+					lualine_z = {},
 				},
-				lualine_z = {
-					vim.tbl_extend("force", { "location", icon = "󰍍" }, pill_shape(tones.z)),
-					vim.tbl_extend("force", { function() return " " .. os.date("%H:%M") end }, pill_shape(tones.z)),
+				tabline         = {},
+				winbar          = {},
+				inactive_winbar = {},
+				extensions = {
+					"lazy", "mason", "quickfix",
+					"nvim-tree", "toggleterm", "fugitive",
 				},
-			},
-			inactive_sections = {
-				lualine_a = {},
-				lualine_b = {},
-				lualine_c = { { "filename", path = 1 } },
-				lualine_x = { "location" },
-				lualine_y = {},
-				lualine_z = {},
-			},
-			tabline         = {},
-			winbar          = {},
-			inactive_winbar = {},
-			extensions = {
-				"lazy", "mason", "quickfix",
-				"nvim-tree", "toggleterm", "fugitive",
-			},
+			}
+		end
+
+		require("lualine").setup(build())
+
+		-- `theme <name>` switches the colorscheme live (colorscheme.lua)
+		vim.api.nvim_create_autocmd("ColorScheme", {
+			group    = vim.api.nvim_create_augroup("LualineThemeSync", { clear = true }),
+			callback = function() require("lualine").setup(build()) end,
 		})
 	end,
 }

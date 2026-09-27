@@ -1,0 +1,35 @@
+# Fallback colors (the original custom Gruvbox), used when the `theme` package
+# is not installed or no profile is picked. The active profile, imported after
+# this file in alacritty.toml, overrides it.
+
+[colors.primary]
+background = "#282828"
+foreground = "#fbf1c7"
+
+[colors.cursor]
+text = "#282828"
+cursor = "#5cf56e"
+
+[colors.selection]
+background = "#504945"
+text = "#ebdbb2"
+
+[colors.normal]
+black   = "#282828"
+red     = "#cc241d"
+green   = "#98971a"
+yellow  = "#d79921"
+blue    = "#458588"
+magenta = "#b16286"
+cyan    = "#689d6a"
+white   = "#a89984"
+
+[colors.bright]
+black   = "#928374"
+red     = "#fb4934"
+green   = "#b8bb26"
+yellow  = "#fabd2f"
+blue    = "#83a598"
+magenta = "#d3869b"
+cyan    = "#8ec07c"
+white   = "#ebdbb2"
