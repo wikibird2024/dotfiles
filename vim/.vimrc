@@ -68,6 +68,12 @@ Plug 'liuchengxu/vim-which-key'
 
 call plug#end()
 
+" Install any plugins added to the list above but missing from ~/.vim/plugged
+" (the bootstrap above only runs when vim-plug itself is absent)
+autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+    \| PlugInstall --sync | source $MYVIMRC
+    \| endif
+
 " ============================================================================
 " CORE SETTINGS
 " ============================================================================
@@ -545,7 +551,9 @@ endif
 " ============================================================================
 nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
 vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<Space>'<CR>
-call which_key#register('<Space>', 'g:which_key_map')
+if !empty(globpath(&rtp, 'autoload/which_key.vim'))
+    call which_key#register('<Space>', 'g:which_key_map')
+endif
 
 let g:which_key_map = {}
 

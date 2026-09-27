@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Toggle the serial-console scratchpad (bound to Mod+grave in config.kdl).
+#   not running          -> start it (floating foot running serial-console)
+#   focused              -> hide it on the "scratch" workspace
+#   hidden / not focused -> bring it to the current workspace and focus it
+# niri has no built-in scratchpad, so "hidden" means parked on a workspace.
+set -euo pipefail
+
+APP_ID=serial-scratchpad
+HIDE_WS="5 scratchpad"
+
+win=$(niri msg --json windows |
+    jq -r --arg a "$APP_ID" 'first(.[] | select(.app_id == $a)) | "\(.id) \(.is_focused)"')
+
+if [ -z "$win" ]; then
+    # foot, not kitty: kitty sets its app-id too late for the floating window-rule
+    exec foot --app-id "$APP_ID" -o font="JetBrainsMono Nerd Font:size=10" "$HOME/.config/niri/scripts/serial-console"
+fi
+
+read -r id focused <<<"$win"
+if [ "$focused" = true ]; then
+    niri msg action move-window-to-workspace --window-id "$id" --focus false "$HIDE_WS"
+else
+    cur=$(niri msg --json workspaces | jq -r '.[] | select(.is_focused) | .idx')
+    niri msg action move-window-to-workspace --window-id "$id" --focus false "$cur"
+    niri msg action focus-window --id "$id"
+fi

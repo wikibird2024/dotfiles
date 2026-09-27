@@ -28,7 +28,11 @@ All steps are idempotent.
 
 ## Stow Packages (active)
 
-`nvim2`, `tmux`, `zsh`, `alacritty`, `kitty`, `starship`, `i3_wm_endervour`, `picom`, `zathura`, `flameshot`, `fontconfig`, `mods`, `clang`, `claude`, `vim`
+`nvim2`, `tmux`, `zsh`, `alacritty`, `kitty`, `starship`, `i3_wm_endervour`, `picom`, `zathura`, `flameshot`, `fontconfig`, `mods`, `clang`, `claude`, `vim`, `niri`, `noctalia`
+
+`niri/` is the niri config: one `config.kdl` that also starts the Noctalia shell (`spawn-at-startup "noctalia"`) and binds its panels (`noctalia msg ...`). Keys, workspaces, scripts and workflow: `niri/README.md`.
+
+`noctalia/` holds hand-written Noctalia config (`bar.toml`). Settings changed in the Noctalia GUI go to `~/.local/state/noctalia/settings.toml` (not tracked) and override these files.
 
 > `nvim/` (old config) is intentionally excluded from stow. `nvim2/` is the active Neovim config.
 

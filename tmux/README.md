@@ -32,6 +32,11 @@ $$\mathbf{Prefix = C\text{-}a \quad (Ctrl + a)}$$
 | `Prefix` $\rightarrow$ `S` | Execute emergency manual backup of all active workspace structures, layouts, and targets. |
 | `Prefix` $\rightarrow$ `Ctrl + r` | Manually restore the last successfully cached hardware session configuration. |
 | `Prefix` $\rightarrow$ `r` | Soft-reload the hardware `~/.tmux.conf` configurations directly into live sessions. |
+| `Prefix` $\rightarrow$ `F` | Project picker ([tms](https://github.com/jrmoulton/tmux-sessionizer)): fuzzy-pick a git repo under `~`, switch to its session (created if missing). |
+| `Prefix` $\rightarrow$ `f` | Session picker: switch between open sessions. |
+
+`tms` is installed by `steps/02_tools.sh` (`cargo install tmux-sessionizer`); its search
+paths and excluded folders are in `.config/tms/config.toml`.
 
 ### Zero-Prefix Pane Navigation (Vim Kinematics)
 To accelerate multitasking transitions across active terminal splits, structural pane changes do not require the prefix key sequence. Hold down the **Alt key (`M-`)** alongside standard layout directions:

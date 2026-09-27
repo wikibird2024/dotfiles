@@ -29,3 +29,6 @@ stow-*
 .aider*
 .env
 neovim/.config/github-copilot/
+
+# i3: machine-specific overrides (see i3_wm_endervour/.config/i3/local.conf.example)
+i3_wm_endervour/.config/i3/local.conf

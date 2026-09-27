@@ -1,0 +1,148 @@
+# i3status-rust config — status line for i3bar (see `bar {}` in ~/.config/i3/config)
+# Docs:   https://greshake.github.io/i3status-rust/i3status_rs/blocks/index.html
+# Themes: https://github.com/greshake/i3status-rust/blob/master/doc/themes.md
+#
+# Blocks are event-driven where possible (sound via PipeWire, net via netlink),
+# so volume keys update the bar instantly — no pkill/signal plumbing needed.
+# Validate after editing:  i3status-rs --help >/dev/null && i3status-rs ~/.config/i3status-rust/config.toml | head -3
+
+icons_format = "{icon}"
+
+[theme]
+theme = "nord-dark"
+# Flat look: every block shares the bar background and state is shown by text
+# colour only (no powerline arrows popping up on just the non-idle blocks).
+[theme.overrides]
+idle_bg = "#2e3440"
+idle_fg = "#d8dee9"
+info_bg = "#2e3440"
+info_fg = "#88c0d0"
+good_bg = "#2e3440"
+good_fg = "#a3be8c"
+warning_bg = "#2e3440"
+warning_fg = "#ebcb8b"
+critical_bg = "#2e3440"
+critical_fg = "#bf616a"
+separator = " "
+separator_bg = "#2e3440"
+separator_fg = "#4c566a"
+
+[icons]
+# Nerd Font glyphs; the bar font must be a Nerd Font (JetBrainsMono NF, from steps/03_fonts.sh)
+icons = "material-nf"
+
+# ── system ────────────────────────────────────────────────────
+[[block]]
+block = "disk_space"
+path = "/"
+info_type = "available"
+alert_unit = "GB"
+interval = 60
+warning = 20.0
+alert = 10.0
+format = " $icon $available.eng(w:1) "
+
+[[block]]
+block = "memory"
+interval = 5
+format = " $icon $mem_used_percents.eng(w:2) "
+format_alt = " $icon_swap $swap_used_percents.eng(w:2) "
+
+[[block]]
+block = "cpu"
+interval = 5
+info_cpu = 20
+warning_cpu = 50
+critical_cpu = 90
+format = " $icon $utilization "
+
+[[block]]
+block = "temperature"
+interval = 10
+format = " $icon $max "
+format_alt = " $icon $average avg, $max max "
+# colour steps: <=info blue, <=warning yellow, above warning red (there is no `critical` key)
+info = 70
+warning = 85
+
+# ── network ───────────────────────────────────────────────────
+[[block]]
+block = "net"
+format = " $icon {$ssid|wired} ^icon_net_down$speed_down.eng(w:3, prefix:K) ^icon_net_up$speed_up.eng(w:3, prefix:K) "
+format_alt = " $icon {$ssid $signal_strength|wired} $ip "
+inactive_format = " $icon down "
+missing_format = ""
+# replaces nm-applet: right-click opens nmtui (left-click toggles format)
+[[block.click]]
+button = "right"
+cmd = "kitty --class nmtui -e nmtui"
+
+# replaces the blueman tray icon: adapter power state; left-click opens blueman
+[[block]]
+block = "custom"
+command = "bluetoothctl show | grep -q 'Powered: yes' && echo '{\"icon\":\"bluetooth\",\"state\":\"Info\",\"text\":\"on\"}' || echo '{\"icon\":\"bluetooth\",\"state\":\"Idle\",\"text\":\"off\"}'"
+json = true
+interval = 10
+[[block.click]]
+button = "left"
+cmd = "blueman-manager"
+[[block.click]]
+button = "right"
+cmd = "bluetoothctl show | grep -q 'Powered: yes' && bluetoothctl power off || bluetoothctl power on"
+sync = true
+update = true
+
+# ── power ─────────────────────────────────────────────────────
+[[block]]
+block = "battery"
+interval = 30
+format = " $icon $percentage {$time_remaining.dur(hms:true, min_unit:m) |}"
+full_format = " $icon $percentage "
+missing_format = ""
+
+# power-profiles-daemon: left-click opens the rofi profile picker, then refreshes
+[[block]]
+block = "custom"
+command = "powerprofilesctl get"
+interval = 60
+format = " 󰓅 $text "
+[[block.click]]
+button = "left"
+cmd = "~/.config/i3/scripts/power-profiles"
+sync = true
+update = true
+
+# ── audio ─────────────────────────────────────────────────────
+# scroll = volume, right-click = mute (built-in); left-click opens pavucontrol
+[[block]]
+block = "sound"
+max_vol = 100
+headphones_indicator = true
+show_volume_when_muted = true
+[[block.click]]
+button = "left"
+cmd = "pavucontrol"
+
+# microphone: icon only (muted/live); left-click toggles mute
+[[block]]
+block = "sound"
+device_kind = "source"
+format = " $icon "
+[[block.click]]
+button = "left"
+action = "toggle_mute"
+
+# ── clock + session ───────────────────────────────────────────
+[[block]]
+block = "time"
+interval = 5
+format = " $icon $timestamp.datetime(f:'%a %d %b %H:%M') "
+
+[[block]]
+block = "custom"
+command = "echo 󰐥"
+interval = "once"
+format = " $text "
+[[block.click]]
+button = "left"
+cmd = "~/.config/i3/scripts/powermenu"

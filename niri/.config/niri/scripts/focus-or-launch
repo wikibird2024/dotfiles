@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Jump to an app's window if it is open, otherwise start it.
+#   focus-or-launch <app-id regex> <command> [args...]
+# Pressed again while that app is focused, it cycles through its windows
+# (e.g. several Sioyek datasheets).
+set -euo pipefail
+
+app_re=$1
+shift
+
+wins=$(niri msg --json windows)
+ids=$(jq -r --arg re "$app_re" '[.[] | select(.app_id | test($re))] | sort_by(.id) | .[].id' <<<"$wins")
+
+if [ -z "$ids" ]; then
+    exec "$@"
+fi
+
+focused=$(jq -r '.[] | select(.is_focused) | .id' <<<"$wins")
+# next window after the focused one (wraps), or the first one
+target=$(awk -v f="$focused" 'NR==1 {first=$0} found {print; exit} $0==f {found=1} END {if (!found || NR==0) print first}' <<<"$ids" | head -n1)
+[ -n "$target" ] || target=$(head -n1 <<<"$ids")
+niri msg action focus-window --id "$target"

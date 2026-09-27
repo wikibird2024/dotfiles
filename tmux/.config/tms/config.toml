@@ -8,12 +8,12 @@ excluded_dirs = [
     "/dotifles--",
     # ~/Documents and ~/storage both link to /mnt/storage; keep only storage/
     # (sessions are named storage/...) so each project is listed once
-    "/home/greystone/Documents",
+    "/home/greystone/Documents", # (only exists on the other machine)
     "snap",
     "node_modules",
     "venv",
 ]
 
 [[search_dirs]]
-path = "/home/greystone"
+path = "~"
 depth = 3
