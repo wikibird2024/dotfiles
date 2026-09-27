@@ -210,11 +210,12 @@ local themes = {
 
     rose_pine = {
         plugin = "rose-pine/neovim",
-        name   = "rose-pine-moon",  -- rose-pine | rose-pine-moon | rose-pine-dawn
-        setup  = function()
+        name   = "rose-pine",  -- draws the variant set in setup()
+        setup  = function(variant)
+            variant = variant or "moon"  -- main | moon | dawn (the `rose-pine` profile uses main)
             require("rose-pine").setup({
-                variant        = "moon",  -- auto | main | moon | dawn
-                dark_variant   = "moon",
+                variant        = variant,
+                dark_variant   = variant,
                 dim_inactive_windows = false,
                 extend_background_behind_borders = true,
                 styles = {
@@ -223,6 +224,18 @@ local themes = {
                     transparency = false,
                 },
             })
+        end,
+    },
+
+    -- Xcode's "Default (Dark)" editor theme; the `apple` profile pairs it with
+    -- the macOS dark-mode system colors in the terminal
+    xcode = {
+        plugin = "lunacookies/vim-colors-xcode",
+        name   = "xcodedark",  -- xcodedark | xcodedarkhc | xcodelight | xcodewwdc
+        setup  = function()
+            vim.g.xcodedark_green_comments = 0  -- gray comments, as in Xcode
+            vim.g.xcodedark_emph_types     = 1
+            vim.g.xcodedark_emph_funcs     = 1
         end,
     },
 

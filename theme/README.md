@@ -23,10 +23,10 @@ theme --help
 |---|---|---|---|
 | `ubuntu` | aubergine `#300a24` | `onedark` | the original kitty colors — default |
 | `gruvbox-classic` | `#282828`, green cursor | `gruvbox:medium` | the original alacritty colors |
-| `tokyonight` | `#1a1b26` | `tokyonight` | what the tmux bar was designed with |
 | `catppuccin` | `#1e1e2e` | `catppuccin` | |
-| `gruvbox` | `#1d2021` | `gruvbox` | |
 | `onedark` | `#1f2329` | `onedark` | |
+| `apple` | Xcode dark `#292a30` | `xcode` (xcodedark) | macOS dark-mode system colors |
+| `rose-pine` | `#191724` | `rose_pine:main` | dusty rose, gold, lavender; foam stands in for green |
 
 ## How it works
 
@@ -66,7 +66,7 @@ still works when copied to another machine without this package:
 ## Add or change a profile
 
 ```bash
-theme new mytheme gruvbox      # copy gruvbox as a start
+theme new mytheme gruvbox-classic  # copy gruvbox-classic as a start
 # edit ~/.config/theme/themes/mytheme/:
 #   palette.conf → terminal colors (alacritty's file is generated from it)
 #   tmux.conf    → bar colors; names are roles (what a color is for), not hues
@@ -77,11 +77,11 @@ theme mytheme
 
 `~/.config/theme` links into this repo, so new profiles land in git. To recolor one tool only,
 edit just that file (e.g. `@thm_session` in `tmux.conf` for the tmux session pill).
-Neovim variants: the part after `:` is passed to that theme's `setup(variant)` — only gruvbox uses
-it now (`soft`, `medium`, `hard`). A new Neovim theme is added to the registry in `colorscheme.lua`,
+Neovim variants: the part after `:` is passed to that theme's `setup(variant)` — gruvbox (`soft`,
+`medium`, `hard`) and rose_pine (`main`, `moon`, `dawn`) use it. A new Neovim theme is added to the registry in `colorscheme.lua`,
 then `:Lazy sync`.
 
 ## Not themed (still hard-coded)
 
-lualine's accent violet `#9085e9` (on purpose), twilight / indent-blankline / smear-cursor colors in
-Neovim, starship's Rust orange, and the niri desktop (Noctalia has its own theme settings, `Mod+,`).
+lualine's accent violet `#9085e9` (on purpose), twilight / smear-cursor colors in Neovim, and the
+niri desktop (Noctalia has its own theme settings, `Mod+,`).
