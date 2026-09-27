@@ -28,6 +28,8 @@ STOW_PKGS=(
     clang
     claude
     vim
+    niri
+    noctalia
 )
 
 # ~/.claude must be a real folder before stowing `claude`: if it is missing,
@@ -35,6 +37,20 @@ STOW_PKGS=(
 # credentials, history and sessions into git. Same for skills/ (the app adds
 # its own synced skills there).
 mkdir -p "$HOME/.claude/skills"
+
+# A real (non-symlink) ~/.vimrc makes stow refuse the vim package; keep it
+# as a backup instead.
+if [ -f "$HOME/.vimrc" ] && [ ! -L "$HOME/.vimrc" ]; then
+    mv "$HOME/.vimrc" "$HOME/.vimrc.bak.$(date +%s)"
+    log_warn "Existing ~/.vimrc moved to ~/.vimrc.bak.*"
+fi
+
+# niri writes a default ~/.config/niri on first start, which makes stow refuse
+# the niri package; keep it as a backup instead.
+if [ -d "$HOME/.config/niri" ] && [ ! -L "$HOME/.config/niri" ]; then
+    mv "$HOME/.config/niri" "$HOME/.config/niri.bak.$(date +%s)"
+    log_warn "Existing ~/.config/niri moved to ~/.config/niri.bak.*"
+fi
 
 for pkg in "${STOW_PKGS[@]}"; do
     if [ -d "$DOTFILES_DIR/$pkg" ]; then
@@ -60,6 +76,15 @@ if [ ! -e "$CLAUDE_SETTINGS" ]; then
     log_ok "Claude settings copied from template."
 else
     log_info "Claude settings already present, not overwritten."
+fi
+
+# ── Vim plugins ──────────────────────────────────────────────
+# Install every plugin in .vimrc now, so the first `vim` launch has no
+# missing-plugin errors (vim-plug itself is fetched by .vimrc).
+if command -v vim >/dev/null && [ -L "$HOME/.vimrc" ]; then
+    log_info "Installing Vim plugins..."
+    vim -Nu "$HOME/.vimrc" -es -c 'PlugInstall --sync' -c 'qa!' </dev/null >/dev/null 2>&1 &&
+        log_ok "Vim plugins installed." || log_warn "PlugInstall failed — run :PlugInstall inside vim."
 fi
 
 log_ok "Stow complete."

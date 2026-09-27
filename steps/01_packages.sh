@@ -52,12 +52,22 @@ esac
 
 log_ok "Core packages done."
 
+# ── Vim (vim stow package) ───────────────────────────────────
+# Clipboard-enabled build (+clipboard for `set clipboard=unnamedplus`) and
+# nodejs for coc.nvim. Best-effort: Arch's gvim conflicts with an installed
+# vim, which --noconfirm refuses, so a failure here must not abort bootstrap.
+case "$pm" in
+    apt) sudo apt-get install -y vim-gtk3 nodejs || log_warn "vim/nodejs install failed — install manually." ;;
+    pacman) sudo pacman -S --needed --noconfirm gvim nodejs || log_warn "gvim/nodejs install failed (replace vim with gvim manually)." ;;
+esac
+
 # ── Desktop apps (i3_wm_endervour / picom / zathura / flameshot / ─
 #    kitty / alacritty stow packages ship configs for these; install
 #    the actual programs too). Best-effort: one missing/renamed
 #    package must not abort the rest of bootstrap.
+# i3status-rust is not packaged for Debian/Ubuntu: the i3 bar falls back to i3blocks there.
 DESKTOP_PKGS_APT=(i3-wm i3status i3blocks rofi feh dunst picom zathura flameshot kitty alacritty)
-DESKTOP_PKGS_PACMAN=(i3-wm i3status i3blocks rofi feh dunst picom zathura flameshot kitty alacritty)
+DESKTOP_PKGS_PACMAN=(i3-wm i3status i3status-rust i3blocks rofi feh dunst picom zathura flameshot kitty alacritty niri noctalia xwayland-satellite foot picocom jq)
 
 install_desktop_pkg() {
     local pkg="$1" pm="$2"

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Serial console shown in the scratchpad: picocom on the first USB serial
+# port, waiting for the board if none is plugged in.
+#   quit picocom: Ctrl+A Ctrl+X      other speed: BAUD=9600 in the environment
+BAUD="${BAUD:-115200}"
+trap 'echo; exec bash' INT # Ctrl+C while waiting -> normal shell
+shopt -s nullglob
+
+while true; do
+    devs=(/dev/ttyACM* /dev/ttyUSB*)
+    dev="${devs[0]:-}"
+    if [ -z "$dev" ]; then
+        printf '\rWaiting for /dev/ttyUSB* or /dev/ttyACM* ...  (Ctrl+C: shell)'
+        sleep 1
+        continue
+    fi
+    printf '\n== %s @ %s baud   (quit: Ctrl+A Ctrl+X) ==\n' "$dev" "$BAUD"
+    picocom -q -b "$BAUD" "$dev"
+    read -rp "Disconnected. Enter: reconnect   s: shell > " ans
+    [ "$ans" = s ] && exec bash
+done

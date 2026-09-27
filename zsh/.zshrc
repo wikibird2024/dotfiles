@@ -148,3 +148,7 @@ esac
 
 # Added by Antigravity CLI installer
 export PATH="/home/greystone/.local/bin:$PATH"
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/hx/.local/bin:$PATH"

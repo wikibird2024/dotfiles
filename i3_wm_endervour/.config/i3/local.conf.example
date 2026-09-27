@@ -1,0 +1,13 @@
+# Machine-specific i3 settings. Copy to local.conf (git-ignored) and edit:
+#   cp ~/.config/i3/local.conf.example ~/.config/i3/local.conf
+# Loaded last, so anything here overrides conf.d/*.conf.
+
+# monitor layout saved from arandr
+exec --no-startup-id ~/.screenlayout/monitor.sh
+
+# wallpaper
+exec --no-startup-id sleep 1 && feh --bg-fill ~/Pictures/wallpaper/road_wallpaper.jpg
+
+# pin workspaces to outputs (names from `xrandr`)
+#workspace $ws1 output eDP1
+#workspace $ws2 output HDMI1
