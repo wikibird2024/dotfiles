@@ -11,15 +11,22 @@ return {
 				return (ok and hl.fg) and string.format("#%06x", hl.fg) or nil
 			end
 
-			-- Indent lines: use Comment fg (dim) and a slightly brighter variant
-			local dim   = hl_fg("Comment")  or "#444444"
-			local light = hl_fg("LineNr")   or "#666666"
-			-- Scope: use a muted accent rather than a blinding color
-			local scope = hl_fg("Function") or "#83a598"
+			-- A colorscheme switch clears these groups; ibl re-runs this hook on every
+			-- ColorScheme (before it checks them), so they come back in the new colors.
+			-- Setting them only once made ibl error on a switch, and that error stopped
+			-- the other ColorScheme handlers (lualine never recolored).
+			local hooks = require("ibl.hooks")
+			hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+				-- Indent lines: use Comment fg (dim) and a slightly brighter variant
+				local dim   = hl_fg("Comment")  or "#444444"
+				local light = hl_fg("LineNr")   or "#666666"
+				-- Scope: use a muted accent rather than a blinding color
+				local scope = hl_fg("Function") or "#83a598"
 
-			vim.api.nvim_set_hl(0, "IblIndent1",    { fg = dim,   nocombine = true })
-			vim.api.nvim_set_hl(0, "IblIndent2",    { fg = light, nocombine = true })
-			vim.api.nvim_set_hl(0, "IblScopeAccent",{ fg = scope, nocombine = true })
+				vim.api.nvim_set_hl(0, "IblIndent1",    { fg = dim,   nocombine = true })
+				vim.api.nvim_set_hl(0, "IblIndent2",    { fg = light, nocombine = true })
+				vim.api.nvim_set_hl(0, "IblScopeAccent",{ fg = scope, nocombine = true })
+			end)
 
 			ibl.setup({
 				indent = {
