@@ -1,52 +1,65 @@
 # =======================================================================
-# STARSHIP.TOML - COMPACT 2-LINE CONFIG (FOR YOCTO/DOCKER)
+# STARSHIP.TOML - BOXED 2-LINE PROMPT
+#   ╭╴<os> [user@host] <dir> <git> <lang icons>          <status jobs mem took time>
+#   ╰╴❯
+# Left of the line: where am I. Right of the line: what just happened.
+# Colors are ANSI names only (no hex), so the prompt follows the `theme` profile;
+# the frame uses bright-black (palette color8), the dim color of every profile.
 # =======================================================================
 
 # 1. GENERAL CONFIGURATION
-add_newline = false
+add_newline = true    # blank line before each prompt: separates one command's output from the next
 
-# format: Line 1 contains left-aligned info, utilizing $fill to push $time to the right edge.
 format = """
-$os$username$hostname$directory$git_branch$git_status$c$rust$python$nodejs$package$memory_usage$battery$cmd_duration$fill$time
-$character"""
+[╭╴](bright-black)\
+$os$username$hostname$container$directory$git_branch$git_state$git_status\
+$c$rust$python$nodejs$package\
+$fill \
+$status$jobs$memory_usage$cmd_duration$time
+[╰╴](bright-black)$character"""
 
 command_timeout = 800
-scan_timeout = 500    # Increases file scanning limit to 500ms to prevent timeouts in massive repositories
+scan_timeout = 500    # Increases file scanning limit to 500ms to prevent timeouts in massive repositories (Yocto)
 
 # 2. COMMAND PROMPT (CHARACTER)
 [character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "
-vimcmd_symbol = "[❮](bold green) "
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
 
-# 3. SPACING CONTENT (FILL - Pushes elements to the right)
+# 3. FILL - blank space pushes the right group to the edge (a drawn line was too noisy)
 [fill]
-symbol = " " # Uses blank whitespace to right-align the timestamp matrix
+symbol = " "
 
 # 4. OPERATING SYSTEM & USER IDENTITY
+# OS logos (Nerd Font) for the systems in daily use, 🌿 for Mint and Ubuntu; any other OS keeps
+# Starship's built-in emoji (🍓 Raspbian, 🌀 Debian, 🏔️ Alpine, 🐧 Linux...).
 [os]
 disabled = false
 style = "bold white"
 
 [os.symbols]
-Mint = "🌿 "
 Arch = "󰣇 "
 EndeavourOS = "󰣇 "
-Linux = " "
 Ubuntu = "🌿 "
+Mint = "🌿 "
 Macos = " "
-Windows = " "
+Windows = " "
 
+# Only shown when it matters: root, SSH, or a different user (Docker/Yocto containers)
 [username]
-show_always = true
+show_always = false
 style_user = "bold green"
 style_root = "bold red"
 format = "[$user]($style) "
-disabled = false
 
 [hostname]
 ssh_only = true
 format = "@[$hostname](bold yellow) "
+
+[container]
+style = "bold dimmed white"
+format = "[$symbol\\[$name\\]]($style) "
 
 [localip]
 disabled = true
@@ -57,37 +70,57 @@ truncation_length = 2
 truncate_to_repo = true
 style = "bold cyan"
 format = "[$path]($style)[$read_only]($read_only_style) "
-read_only = " 🔒"
+read_only = " 󰌾"
 
 # 6. VERSION CONTROL (GIT)
 [git_branch]
-symbol = " "
+symbol = " "
 style = "bold bright-purple"            # bright: plain purple is 2.7:1 on the aubergine bg
-format = "on [$symbol$branch]($style) "
+format = "[$symbol$branch]($style) "
 
+[git_state]
+style = "bold yellow"
+format = '[\($state( $progress_current/$progress_total)\)]($style) '
+
+# Counts + a color per state (powerlevel10k-style symbols): ⇡2 +3 !1 ?4
+# green = ready (to push/commit), yellow = needs attention, red = conflict, dim = minor.
+# Each item carries its own trailing space; "-" not "✘" for deleted (✘ is the exit code).
 [git_status]
-style = "bold red"
-format = '([\[$all_status$ahead_behind\]]($style) )'
+format = '([$ahead_behind$stashed$conflicted$staged$modified$renamed$deleted$typechanged$untracked]($style))'
+ahead = "[⇡$count](green) "
+behind = "[⇣$count](cyan) "
+diverged = "[⇡$ahead_count](green)[⇣$behind_count](cyan) "
+conflicted = "[~$count](bold red) "
+staged = "[+$count](green) "
+modified = "[!$count](yellow) "
+renamed = "[»$count](yellow) "
+deleted = "[-$count](yellow) "
+typechanged = "[!$count](yellow) "
+untracked = "[?$count](bright-black) "
+stashed = "[*$count](bright-black) "
 
 # 7. PROGRAMMING LANGUAGES & PACKAGE MANAGERS
+# Icons only, no versions: keeps line 1 short in tmux splits.
+# Rust/Python use color emoji so they stand out; C and Node have no emoji, so colored Nerd icons.
 [c]
 symbol = " "
 style = "bold blue"
-format = "via [$symbol($version)]($style) "
+format = "[$symbol]($style)"
 
 [rust]
 symbol = "🦀 "
-style = "bold #FFA500"
-format = "via [$symbol($version)]($style) "
+style = "bold red"
+format = "[$symbol]($style)"
 
 [python]
 symbol = "🐍 "
-format = "via [$symbol($version)]($style) "
+style = "bold yellow"
+format = '[$symbol(\($virtualenv\) )]($style)'
 
 [nodejs]
 symbol = "󰎙 "
 style = "bold green"
-format = "via [$symbol($version)]($style) "
+format = "[$symbol]($style)"
 
 [package]
 disabled = false
@@ -95,34 +128,36 @@ symbol = "󰏗 "
 style = "bold dimmed white"
 format = "is [$symbol$version]($style) "
 
-# 8. SYSTEM HARDWARE MONITORING
+# 8. RIGHT GROUP: WHAT JUST HAPPENED
+# Exit code of the last command (the red ❯ says it failed, this says how)
+[status]
+disabled = false
+symbol = "✘ "
+style = "bold red"
+format = "[$symbol$status]($style) "
+
+# Background jobs (e.g. `sioyek datasheet.pdf &`)
+[jobs]
+symbol = "✦"
+number_threshold = 1
+style = "bold blue"
+format = "[$symbol$number]($style) "
+
 [memory_usage]
 disabled = false
 threshold = 75
 symbol = "󰍛 "
 style = "bold dimmed white"
-format = "mem $symbol[$ram]($style) "
+format = "[$symbol$ram]($style) "
 
 [cmd_duration]
 min_time = 1000
 format = "took [$duration](bold yellow) "
 
-[battery]
-disabled = false
-full_symbol = "󰁹 "
-charging_symbol = "󰂄 "
-discharging_symbol = "󰂃 "
+# Battery: not in the prompt, the Noctalia bar shows it.
 
-# 9. TIMESTAMP MATRIX (TIME - Right Aligned)
 [time]
 disabled = false
 time_format = "%T"
 style = "bold dimmed white"
 format = "[$time]($style)"
-
-# =======================================================================
-# TOML RULES: ALL ARRAY CONFIGURATIONS MUST GO AT THE VERY END OF FILE
-# =======================================================================
-[[battery.display]]
-threshold = 15
-style = "bold red"
