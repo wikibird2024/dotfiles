@@ -11,7 +11,7 @@ $os$username$hostname$directory$git_branch$git_status$c$rust$python$nodejs$packa
 $character"""
 
 command_timeout = 800
-scan_timeout = 500  # Increases file scanning limit to 500ms to prevent timeouts in massive repositories
+scan_timeout = 500    # Increases file scanning limit to 500ms to prevent timeouts in massive repositories
 
 # 2. COMMAND PROMPT (CHARACTER)
 [character]
@@ -31,7 +31,7 @@ style = "bold white"
 [os.symbols]
 Mint = "🌿 "
 Arch = "󰣇 "
-EndeavourOS = "  "
+EndeavourOS = "󰣇 "
 Linux = " "
 Ubuntu = "🌿 "
 Macos = " "
@@ -62,7 +62,7 @@ read_only = " 🔒"
 # 6. VERSION CONTROL (GIT)
 [git_branch]
 symbol = " "
-style = "bold bright-purple"  # bright: plain purple is 2.7:1 on the aubergine bg
+style = "bold bright-purple"            # bright: plain purple is 2.7:1 on the aubergine bg
 format = "on [$symbol$branch]($style) "
 
 [git_status]

@@ -35,14 +35,14 @@ things (datasheet, browser, KiCad) are **niri windows**.
 
 | Key | Name | Opens there automatically |
 |---|---|---|
-| Mod + 1 | `1 term` | – (kitty/tmux/nvim; PDFs open here beside the code) |
-| Mod + 2 | `2 web` | Firefox (maximized) |
+| Mod + 1 | `1 Dev` | – (kitty/tmux/nvim; PDFs open here beside the code) |
+| Mod + 2 | `2 Browser` | Firefox (maximized) |
 | Mod + 3 | `3 design` | KiCad (eeschema, pcbnew, gerbview) |
-| Mod + 4 | `4 teams` | VS Code, Teams |
+| Mod + 4 | `4 Work Apps` | VS Code, Teams |
 | Mod + 5 | `5 scratchpad` | where the hidden serial console is parked – don't use |
 
 niri always keeps one extra empty workspace at the end. The number is part of the
-name so the bar shows `1 term · 2 web …` (Noctalia can show either id or name, not both).
+name so the bar shows `1 Dev · 2 Browser …` (Noctalia can show either id or name, not both).
 
 ## Keys
 
@@ -99,7 +99,7 @@ name so the bar shows `1 term · 2 web …` (Noctalia can show either id or name
 
 ## Workflows
 
-**Coding with a datasheet** – on `1 term`: `sioyek datasheet.pdf &` from a tmux pane. It
+**Coding with a datasheet** – on `1 Dev`: `sioyek datasheet.pdf &` from a tmux pane. It
 opens beside kitty at half width. `Mod + H / L` switches, `/REG_NAME` searches in Sioyek,
 `t` = table of contents, `Backspace` = jump back.
 
