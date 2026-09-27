@@ -258,16 +258,16 @@ recent-windows {
 }
 
 // ── My workspaces: Mod+1..4 (named ones come first, in this order) ──
-workspace "1 term"
-workspace "2 web"
+workspace "1 Dev"
+workspace "2 Browser"
 workspace "3 design"
-workspace "4 teams"
+workspace "4 Work Apps"
 // where the serial-console scratchpad hides (scripts/scratchpad)
 workspace "5 scratchpad"
 
 window-rule {
     match app-id="^firefox$"
-    open-on-workspace "2 web"
+    open-on-workspace "2 Browser"
     open-maximized true
 }
 
@@ -279,7 +279,7 @@ window-rule {
 window-rule {
     match app-id=r#"(?i)^code"#
     match app-id="^teams-for-linux$"
-    open-on-workspace "4 teams"
+    open-on-workspace "4 Work Apps"
 }
 
 // Serial console scratchpad (Mod+grave): floating drop-down at the top
