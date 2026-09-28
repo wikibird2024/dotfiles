@@ -72,6 +72,14 @@ The environment manages plugins natively using the **Tmux Plugin Manager (TPM)**
 - `tmux-plugins/tmux-resurrect`: Safely captures internal environment structural states (paths, pane locations, active windows) to disk.
 - `tmux-plugins/tmux-continuum`: Automates state snapshot intervals every **15 minutes** to protect work against power loss or hardware faults.
 
+**What comes back when tmux starts after a reboot:** sessions, windows, layouts and each
+pane's folder. Panes that ran `nvim` reopen it with the same file (`nvim -S` when the folder
+has a `Session.vim`); panes that ran `claude` run `claude --continue` (the last conversation
+in that folder, so two Claude panes in one folder both get the same one). Old screen text is
+**not** restored (`@resurrect-capture-pane-contents 'off'`): it came back as a dead copy of
+the nvim/Claude screen in a plain shell. Programs to restart: `@resurrect-processes` in
+`.tmux.conf`.
+
 ---
 
 ## 🎨 Visual Aesthetics & Status Interface
