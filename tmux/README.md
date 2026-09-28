@@ -35,6 +35,11 @@ $$\mathbf{Prefix = C\text{-}a \quad (Ctrl + a)}$$
 | `Prefix` $\rightarrow$ `F` | Project picker ([tms](https://github.com/jrmoulton/tmux-sessionizer)): fuzzy-pick a git repo under `~`, switch to its session (created if missing). |
 | `Prefix` $\rightarrow$ `f` | Session picker: switch between open sessions. |
 
+**Clipboard.** Copy mode (`v` select, `y` copy) and mouse drag copy
+through `.tmux/scripts/clipboard_copy.sh`: `wl-copy` under niri (Wayland), `xclip` under
+GNOME on Xorg / i3, picked at copy time. `set-clipboard on` also passes copies from tmux,
+nvim and Claude (OSC 52, works over ssh) to kitty. The Wayland variables are refreshed on
+every attach, so switching GNOME ↔ niri needs no tmux restart.
 `tms` is installed by `steps/02_tools.sh` (`cargo install tmux-sessionizer`); its search
 paths and excluded folders are in `.config/tms/config.toml`.
 
