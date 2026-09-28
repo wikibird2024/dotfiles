@@ -1,0 +1,246 @@
+#!/usr/bin/env bash
+# Desktop shell for niri: bar, launcher, panels, lock, media keys.
+#   shell <command>
+# Uses Noctalia when it is installed (Arch). Without it (Ubuntu 24.04 has no
+# Noctalia package) it uses apt tools: waybar, fuzzel, mako, swaylock,
+# swayidle, swaybg, cliphist, wpctl, brightnessctl, playerctl.
+# Commands: start launcher control-center settings clipboard wallpaper session
+#           lock lock-and-suspend window-switcher volume-up volume-down
+#           volume-mute mic-mute brightness-up brightness-down
+#           media-toggle media-next media-previous
+#           colors (re-read the `theme` colors; the theme command runs it)
+set -uo pipefail
+
+command=${1:?usage: shell <command>}
+self=$(readlink -f "$0")
+wallpaper_dir=~/Pictures/wallpaper
+wallpaper_link=${XDG_STATE_HOME:-~/.local/state}/niri/wallpaper
+notify_id_file=${XDG_RUNTIME_DIR:-/tmp}/niri-shell-osd-id
+palette=${XDG_STATE_HOME:-~/.local/state}/theme/current/palette.conf
+generated_dir=${XDG_CACHE_HOME:-~/.cache}/niri-shell
+
+has() { command -v "$1" >/dev/null 2>&1; }
+
+if has noctalia; then
+    case $command in
+        start) exec noctalia ;;
+        colors) exit 0 ;; # Noctalia has its own color settings
+        launcher | control-center | clipboard | wallpaper | session) exec noctalia msg panel-toggle "$command" ;;
+        settings) exec noctalia msg settings-toggle ;;
+        lock | lock-and-suspend) exec noctalia msg session "$command" ;;
+        media-*) exec noctalia msg media "${command#media-}" ;;
+        *) exec noctalia msg "$command" ;;
+    esac
+fi
+
+# ── apt tools ────────────────────────────────────────────────────────
+
+# Start a background program if it is installed and not already running.
+start_once() {
+    local program=$1
+    has "$program" || return 0
+    pgrep -u "$USER" -x "$program" >/dev/null && return 0
+    setsid -f "$@" >/dev/null 2>&1
+}
+
+# On-screen value (volume, brightness): one notification that replaces itself.
+osd() {
+    local title=$1 percent=$2 last_id
+    has notify-send || return 0
+    last_id=$(cat "$notify_id_file" 2>/dev/null || echo 0)
+    notify-send -a osd -t 1500 -h "int:value:$percent" -r "$last_id" -p "$title" "$percent%" \
+        >"$notify_id_file"
+}
+
+volume_percent() {
+    wpctl get-volume "$1" | awk '{ printf "%d", $2 * 100 }'
+}
+
+show_volume() {
+    local target=$1 name=$2
+    if wpctl get-volume "$target" | grep -q MUTED; then
+        osd "$name muted" 0
+    else
+        osd "$name" "$(volume_percent "$target")"
+    fi
+}
+
+# Colors from the active `theme` profile (palette.conf), else neutral grays.
+# mako 1.8 and fuzzel 1.9 have no include, so each tool gets a generated
+# config: the repo file plus these colors, in $generated_dir.
+write_colors() {
+    local bg=#1e1e1e fg=#e0e0e0 accent=#909090 muted=#606060 red=#cc4444 yellow=#e0b050 selection=#3a3a3a
+    if [ -f "$palette" ]; then
+        eval "$(awk '
+            $1 == "background"           { print "bg=" $2 }
+            $1 == "foreground"           { print "fg=" $2 }
+            $1 == "selection_background" { print "selection=" $2 }
+            $1 == "color1"               { print "red=" $2 }
+            $1 == "color3"               { print "yellow=" $2 }
+            $1 == "color4"               { print "accent=" $2 }
+            $1 == "color8"               { print "muted=" $2 }' "$palette" |
+            grep -E '^[a-z]+=#[0-9a-fA-F]{6}$')"
+    fi
+    mkdir -p "$generated_dir"
+
+    # for waybar-workspaces and swaylock
+    printf 'bg=%s\nfg=%s\naccent=%s\nmuted=%s\nred=%s\nselection=%s\n' \
+        "$bg" "$fg" "$accent" "$muted" "$red" "$selection" >"$generated_dir/colors.sh"
+
+    {
+        printf '@define-color %s %s;\n' bg "$bg" fg "$fg" accent "$accent" muted "$muted" \
+            red "$red" yellow "$yellow" selection "$selection"
+        cat ~/.config/waybar/style.css
+    } >"$generated_dir/waybar.css"
+
+    {
+        printf 'background-color=%sf0\ntext-color=%s\nborder-color=%s\n' "$bg" "$fg" "$accent"
+        cat ~/.config/mako/config
+        printf '\n[urgency=critical]\nborder-color=%s\n' "$red"
+        printf '\n[app-name=osd]\nprogress-color=over %s\n' "$selection"
+    } >"$generated_dir/mako.conf"
+
+    {
+        cat ~/.config/fuzzel/fuzzel.ini 2>/dev/null
+        # fuzzel 1.9 (Ubuntu 24.04) has no prompt/input colors yet
+        printf '\n[colors]\nbackground=%sf0\ntext=%sff\nmatch=%sff\n' \
+            "${bg#\#}" "${fg#\#}" "${accent#\#}"
+        printf 'selection=%sff\nselection-text=%sff\nselection-match=%sff\nborder=%sff\n' \
+            "${selection#\#}" "${fg#\#}" "${accent#\#}" "${accent#\#}"
+    } >"$generated_dir/fuzzel.ini"
+}
+
+run_fuzzel() {
+    [ -f "$generated_dir/fuzzel.ini" ] || write_colors
+    fuzzel --config "$generated_dir/fuzzel.ini" "$@"
+}
+
+# fuzzel as a menu; closes it instead when it is already open (key pressed twice).
+menu() {
+    if pgrep -u "$USER" -x fuzzel >/dev/null; then
+        pkill -u "$USER" -x fuzzel
+        return 1
+    fi
+    run_fuzzel --dmenu "$@"
+}
+
+start_wallpaper() {
+    local image
+    image=$(readlink -f "$wallpaper_link" 2>/dev/null)
+    [ -f "$image" ] || image=$(find "$wallpaper_dir" -maxdepth 1 -type f \
+        \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) 2>/dev/null | sort | head -n1)
+    [ -n "$image" ] || return 0
+    pkill -u "$USER" -x swaybg
+    start_once swaybg -m fill -i "$image"
+}
+
+case $command in
+    start)
+        write_colors
+        start_wallpaper
+        start_once waybar -s "$generated_dir/waybar.css"
+        start_once mako -c "$generated_dir/mako.conf"
+        # password prompts for apps that need admin rights (Ubuntu path, then Arch)
+        for agent in /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 \
+            /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1; do
+            [ -x "$agent" ] || continue
+            pgrep -u "$USER" -f "$agent" >/dev/null || setsid -f "$agent" >/dev/null 2>&1
+            break
+        done
+        has cliphist && has wl-paste && ! pgrep -u "$USER" -f 'wl-paste --watch cliphist' >/dev/null &&
+            setsid -f wl-paste --watch cliphist store >/dev/null 2>&1
+        # lock after 10 min, screens off after 15 min, lock before sleep
+        start_once swayidle -w \
+            timeout 600 "$self lock" \
+            timeout 900 'niri msg action power-off-monitors' \
+            before-sleep "$self lock"
+        ;;
+    launcher)
+        if pgrep -u "$USER" -x fuzzel >/dev/null; then pkill -u "$USER" -x fuzzel; else run_fuzzel; fi
+        ;;
+    control-center)
+        # GNOME Settings only shows its panels under a GNOME desktop name
+        XDG_CURRENT_DESKTOP=GNOME exec gnome-control-center
+        ;;
+    settings)
+        exec kitty -e nvim ~/.config/niri/config.kdl
+        ;;
+    clipboard)
+        choice=$(cliphist list | menu --prompt 'clipboard> ') || exit 0
+        cliphist decode <<<"$choice" | wl-copy
+        ;;
+    wallpaper)
+        name=$(find "$wallpaper_dir" -maxdepth 1 -type f \
+            \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) -printf '%f\n' |
+            sort | menu --prompt 'wallpaper> ') || exit 0
+        mkdir -p "$(dirname "$wallpaper_link")"
+        ln -sfn "$wallpaper_dir/$name" "$wallpaper_link"
+        start_wallpaper
+        ;;
+    session)
+        choice=$(printf '%s\n' Lock 'Log out' Suspend Reboot 'Power off' |
+            menu --prompt 'power> ' --lines 5) || exit 0
+        case $choice in
+            Lock) "$self" lock ;;
+            'Log out') niri msg action quit --skip-confirmation ;;
+            Suspend) systemctl suspend ;;
+            Reboot) systemctl reboot ;;
+            'Power off') systemctl poweroff ;;
+        esac
+        ;;
+    lock)
+        pgrep -u "$USER" -x swaylock >/dev/null && exit 0
+        [ -f "$generated_dir/colors.sh" ] || write_colors
+        # shellcheck source=/dev/null
+        . "$generated_dir/colors.sh"
+        swaylock -f -c "${bg#\#}" -F \
+            --inside-color "${bg#\#}" --ring-color "${accent#\#}" --key-hl-color "${fg#\#}" \
+            --line-color 00000000 --separator-color 00000000 --text-color "${fg#\#}" \
+            --inside-ver-color "${bg#\#}" --ring-ver-color "${accent#\#}" --text-ver-color "${fg#\#}" \
+            --inside-wrong-color "${bg#\#}" --ring-wrong-color "${red#\#}" --text-wrong-color "${red#\#}" \
+            --inside-clear-color "${bg#\#}" --ring-clear-color "${muted#\#}" --text-clear-color "${fg#\#}"
+        ;;
+    lock-and-suspend)
+        "$self" lock
+        systemctl suspend
+        ;;
+    window-switcher)
+        windows=$(niri msg --json windows)
+        index=$(jq -r '.[] | "\(.app_id // "?")  —  \(.title // "")"' <<<"$windows" |
+            menu --prompt 'window> ' --index) || exit 0
+        niri msg action focus-window --id "$(jq -r --argjson i "$index" '.[$i].id' <<<"$windows")"
+        ;;
+    volume-up)
+        wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+
+        show_volume @DEFAULT_AUDIO_SINK@ Volume
+        ;;
+    volume-down)
+        wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+        show_volume @DEFAULT_AUDIO_SINK@ Volume
+        ;;
+    volume-mute)
+        wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+        show_volume @DEFAULT_AUDIO_SINK@ Volume
+        ;;
+    mic-mute)
+        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+        show_volume @DEFAULT_AUDIO_SOURCE@ Microphone
+        ;;
+    brightness-up | brightness-down)
+        [ "$command" = brightness-up ] && step=5%+ || step=5%-
+        brightnessctl -q set "$step"
+        osd Brightness "$(brightnessctl -m | cut -d, -f4 | tr -d %)"
+        ;;
+    colors)
+        write_colors
+        pkill -USR2 -u "$USER" -x waybar # waybar re-reads its style
+        makoctl reload 2>/dev/null || true
+        ;;
+    media-toggle) playerctl play-pause ;;
+    media-next) playerctl next ;;
+    media-previous) playerctl previous ;;
+    *)
+        echo "shell: unknown command '$command'" >&2
+        exit 2
+        ;;
+esac

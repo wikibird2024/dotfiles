@@ -311,8 +311,9 @@ window-rule {
     open-fullscreen false
 }
 
-// ── Noctalia shell (docs.noctalia.dev/noctalia/compositor-settings/niri) ──
-spawn-at-startup "noctalia"
+// ── Shell: Noctalia if installed, else waybar/fuzzel/mako (scripts/shell) ──
+// Noctalia rules: docs.noctalia.dev/noctalia/compositor-settings/niri
+spawn-sh-at-startup "~/.config/niri/scripts/shell start"
 
 window-rule {
     geometry-corner-radius 20
@@ -378,32 +379,32 @@ blur {
 }
 
 switch-events {
-    lid-close { spawn "noctalia" "msg" "session" "lock-and-suspend"; }
+    lid-close { spawn "sh" "-c" "~/.config/niri/scripts/shell lock-and-suspend"; }
 }
 
 binds {
     // === Panels ===
-    Mod+Space hotkey-overlay-title="Application Launcher" { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
-    Mod+D hotkey-overlay-title="Application Launcher" { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
-    Mod+S hotkey-overlay-title="Control Center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
-    Mod+Comma hotkey-overlay-title="Settings" { spawn "noctalia" "msg" "settings-toggle"; }
-    Mod+V hotkey-overlay-title="Clipboard History" { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
-    Mod+Y hotkey-overlay-title="Wallpapers" { spawn "noctalia" "msg" "panel-toggle" "wallpaper"; }
-    Mod+X hotkey-overlay-title="Power Menu" { spawn "noctalia" "msg" "panel-toggle" "session"; }
-    Mod+Alt+L hotkey-overlay-title="Lock Screen" { spawn "noctalia" "msg" "session" "lock"; }
-    Alt+Tab { spawn "noctalia" "msg" "window-switcher"; }
+    Mod+Space hotkey-overlay-title="Application Launcher" { spawn-sh "~/.config/niri/scripts/shell launcher"; }
+    Mod+D hotkey-overlay-title="Application Launcher" { spawn-sh "~/.config/niri/scripts/shell launcher"; }
+    Mod+S hotkey-overlay-title="Control Center" { spawn-sh "~/.config/niri/scripts/shell control-center"; }
+    Mod+Comma hotkey-overlay-title="Settings" { spawn-sh "~/.config/niri/scripts/shell settings"; }
+    Mod+V hotkey-overlay-title="Clipboard History" { spawn-sh "~/.config/niri/scripts/shell clipboard"; }
+    Mod+Y hotkey-overlay-title="Wallpapers" { spawn-sh "~/.config/niri/scripts/shell wallpaper"; }
+    Mod+X hotkey-overlay-title="Power Menu" { spawn-sh "~/.config/niri/scripts/shell session"; }
+    Mod+Alt+L hotkey-overlay-title="Lock Screen" { spawn-sh "~/.config/niri/scripts/shell lock"; }
+    Alt+Tab { spawn-sh "~/.config/niri/scripts/shell window-switcher"; }
 
     // === Audio / brightness / media ===
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-up"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-down"; }
-    XF86AudioMute allow-when-locked=true { spawn "noctalia" "msg" "volume-mute"; }
-    XF86AudioMicMute allow-when-locked=true { spawn "noctalia" "msg" "mic-mute"; }
-    XF86AudioPlay allow-when-locked=true { spawn "noctalia" "msg" "media" "toggle"; }
-    XF86AudioPause allow-when-locked=true { spawn "noctalia" "msg" "media" "toggle"; }
-    XF86AudioNext allow-when-locked=true { spawn "noctalia" "msg" "media" "next"; }
-    XF86AudioPrev allow-when-locked=true { spawn "noctalia" "msg" "media" "previous"; }
-    XF86MonBrightnessUp allow-when-locked=true { spawn "noctalia" "msg" "brightness-up"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia" "msg" "brightness-down"; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell volume-up"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell volume-down"; }
+    XF86AudioMute allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell volume-mute"; }
+    XF86AudioMicMute allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell mic-mute"; }
+    XF86AudioPlay allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell media-toggle"; }
+    XF86AudioPause allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell media-toggle"; }
+    XF86AudioNext allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell media-next"; }
+    XF86AudioPrev allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell media-previous"; }
+    XF86MonBrightnessUp allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell brightness-up"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell brightness-down"; }
 
     // === Screenshots ===
     // Flameshot, default behavior: select + annotate, Ctrl+C copy, Ctrl+S save. Needs the GNOME portal,
