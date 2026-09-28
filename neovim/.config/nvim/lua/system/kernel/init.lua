@@ -22,4 +22,6 @@ require("lazy").setup({
 
 -- Colorscheme is applied synchronously above (lazy=false, high priority in
 -- colorscheme.lua), so it's safe to read theme colors here immediately.
+-- solid_background first: float_theme derives its colors from Normal.
+require("system.kernel.solid_background").setup()
 require("system.kernel.float_theme").setup()
