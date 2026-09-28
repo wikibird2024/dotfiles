@@ -2,15 +2,21 @@
 
 Scrollable-tiling Wayland compositor ([niri](https://github.com/niri-wm/niri)) with the
 [Noctalia](https://docs.noctalia.dev/) shell (bar, launcher, notifications, lock, wallpaper).
+Where Noctalia is not installed (Ubuntu 24.04: no package) the same keys use waybar, fuzzel,
+mako and swaylock instead, see "Ubuntu (no Noctalia)".
 Built for a terminal-first embedded workflow: kitty + tmux + nvim, datasheets, KiCad, browser.
 
 ```
 niri/.config/niri/
 ├── config.kdl              # everything: input, layout, workspaces, rules, Noctalia, binds
 └── scripts/
+    ├── shell               # bar, launcher, panels, lock, media keys: Noctalia or apt tools
+    ├── waybar-workspaces   # workspace list for waybar (Ubuntu)
     ├── scratchpad          # Mod+`  toggle the serial console
     ├── serial-console      # what runs inside it (picocom, auto-reconnect)
     └── focus-or-launch     # Mod+B / Mod+P  jump to an app or start it
+niri/.config/waybar/        # bar when Noctalia is missing (Ubuntu)
+niri/.config/mako/          # notifications + volume/brightness OSD when Noctalia is missing
 noctalia/.config/noctalia/
 └── bar.toml                # bar tweaks (workspace names as labels)
 ```
@@ -141,9 +147,50 @@ Inside: `Ctrl + a`, `Ctrl + x` quits picocom, then Enter reconnects or `s` gives
 - Scaling: niri uses 1.25 on the laptop screen; the i3 session gets the same from
   `Xft.dpi: 120` in `Xresources/.Xresources`.
 
+## Ubuntu (no Noctalia)
+
+Noctalia's apt repo only has Ubuntu 26.04 packages and a source build needs newer
+sdbus-c++ / WirePlumber than 24.04 has, so on 24.04 `scripts/shell` uses apt tools.
+Every key in `config.kdl` calls `scripts/shell <command>`; it runs Noctalia when
+`noctalia` is on `PATH`, so installing Noctalia later (e.g. after a 26.04 upgrade) needs
+no config change.
+
+| Key | Without Noctalia |
+|---|---|
+| bar | waybar (workspaces, clock, tray, sound, network, battery, power) |
+| Mod + Space / D | fuzzel |
+| Mod + S | GNOME Settings (Wi-Fi, Bluetooth, sound) |
+| Mod + , | `config.kdl` in nvim |
+| Mod + V | clipboard history (cliphist + fuzzel) |
+| Mod + Y | pick a wallpaper from `~/Pictures/wallpaper` (swaybg) |
+| Mod + X | power menu (fuzzel): lock, log out, suspend, reboot, power off |
+| Mod + Alt + L | swaylock; auto-lock after 10 min, screens off after 15 min (swayidle) |
+| Alt + Tab | window list (fuzzel) |
+| volume / brightness / media keys | wpctl / brightnessctl / playerctl, OSD from mako |
+
+Colors follow the `theme` profile (`theme <name>` recolors the bar, launcher,
+notifications and lock screen live): `scripts/shell` builds each tool's config from its
+repo file (`waybar/style.css`, `mako/config`, `fuzzel/fuzzel.ini`) plus the palette, in
+`~/.cache/niri-shell/`. Edit the repo files, never the generated ones.
+
+Ubuntu's waybar package turns `waybar.service` on for every graphical session. It
+crash-loops under GNOME/X11 and would give niri a second bar, so mask it for your user:
+`systemctl --user mask waybar.service` (`scripts/shell` starts waybar itself). The same
+script also starts the polkit agent (`policykit-1-gnome`), since its autostart entry only
+runs under XFCE/Unity/Cinnamon.
+
+**GNOME and niri side by side.** GDM shows every installed session under the ⚙ button on
+the login screen, but it hides Wayland sessions (niri) while `/etc/gdm3/custom.conf` has
+`WaylandEnable=false`. Comment that line out. To keep GNOME on X11 as before, set the
+default session to `ubuntu-xorg` ("Ubuntu on Xorg"); with Wayland on, plain `ubuntu`
+means GNOME on Wayland. Autologin always starts the last session, so turn it off
+(`AutomaticLoginEnable=False`) to choose at every login.
+
 ## Install on a new machine
 
-`./bootstrap.sh` installs `niri noctalia xwayland-satellite foot picocom jq` (Arch) and stows `niri` and
+`./bootstrap.sh` installs `niri noctalia xwayland-satellite foot picocom jq` (Arch), or on
+Ubuntu the tools in the table above plus `foot picocom jq` (niri and xwayland-satellite come
+from [pacstall](https://pacstall.dev): `pacstall -I niri xwayland-satellite`), and stows `niri` and
 `noctalia`. If niri already created `~/.config/niri`, `04_stow.sh` moves it to
 `~/.config/niri.bak.*` first. Serial access needs the `uucp` group
 (`sudo usermod -aG uucp $USER`).

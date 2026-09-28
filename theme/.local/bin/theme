@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# theme — switch kitty, alacritty, tmux and Neovim to one color profile.
+# theme — switch kitty, alacritty, tmux, Neovim and the niri bar/launcher/
+# notifications/lock (when niri runs without Noctalia) to one color profile.
 #
 #   theme                     list profiles (* = active)
 #   theme <name>              switch every tool to <name>, live
@@ -139,6 +140,12 @@ switch() {
 	# Neovim: colorscheme.lua re-reads the profile on SIGUSR1 (its fallback
 	# theme when the nvim file is missing)
 	pkill -USR1 -x nvim 2>/dev/null || true
+
+	# niri desktop without Noctalia (bar, launcher, notifications, lock): its
+	# shell script regenerates their colors from the new palette
+	if pgrep -x niri >/dev/null && [ -x "$HOME/.config/niri/scripts/shell" ]; then
+		"$HOME/.config/niri/scripts/shell" colors || true
+	fi
 
 	echo "theme: $name"
 	for m in "${missing[@]}"; do

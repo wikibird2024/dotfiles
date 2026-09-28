@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Workspace list for waybar (custom module). Waybar 0.9 on Ubuntu 24.04 has no
+# niri module, so this prints one line per change from `niri msg event-stream`.
+# Shows named workspaces and ones with windows; the focused one is bold.
+# "5 scratchpad" is hidden unless you are on it. Colors: the active `theme`
+# profile, via ~/.cache/niri-shell/colors.sh from scripts/shell.
+set -uo pipefail
+
+colors_file=${XDG_CACHE_HOME:-~/.cache}/niri-shell/colors.sh
+
+render() {
+    # re-read every time, so `theme <name>` recolors without a restart
+    local fg=#e0e0e0 accent=#909090 muted=#606060
+    # shellcheck source=/dev/null
+    [ -f "$colors_file" ] && . "$colors_file"
+    niri msg --json workspaces | jq -r --arg fg "$fg" --arg accent "$accent" --arg muted "$muted" '
+        sort_by(.output, .idx)
+        | map(select(.is_focused or ((.name != null or .active_window_id != null) and .name != "5 scratchpad")))
+        | map((.name // (.idx | tostring)) as $label
+            | if .is_focused then "<span weight=\"bold\" color=\"\($accent)\">\($label)</span>"
+              elif .active_window_id != null then "<span color=\"\($fg)\">\($label)</span>"
+              else "<span color=\"\($muted)\">\($label)</span>" end)
+        | join("  ·  ")'
+}
+
+niri msg --json event-stream | while read -r event; do
+    case $event in
+        *Workspace*) render ;;
+    esac
+done

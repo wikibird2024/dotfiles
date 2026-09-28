@@ -1,0 +1,49 @@
+// Waybar for niri when Noctalia is not installed (Ubuntu 24.04).
+// Started by ~/.config/niri/scripts/shell start. Waybar 0.9 has no niri
+// module; workspaces come from ~/.config/niri/scripts/waybar-workspaces.
+{
+    "layer": "top",
+    "position": "top",
+    "height": 30,
+    "modules-left": ["custom/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right": ["tray", "pulseaudio", "network", "battery", "custom/power"],
+
+    "custom/workspaces": {
+        "exec": "~/.config/niri/scripts/waybar-workspaces",
+        "format": "{}",
+        "on-click": "niri msg action toggle-overview"
+    },
+    "clock": {
+        "format": "{:%a %d %b  %H:%M}",
+        "tooltip-format": "<tt>{calendar}</tt>"
+    },
+    "tray": {
+        "spacing": 8
+    },
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-muted": "󰝟 muted",
+        "format-icons": { "default": ["󰕿", "󰖀", "󰕾"] },
+        "on-click": "pavucontrol",
+        "on-click-right": "~/.config/niri/scripts/shell volume-mute"
+    },
+    "network": {
+        "format-wifi": "󰖩 {essid}",
+        "format-ethernet": "󰈀",
+        "format-disconnected": "󰖪",
+        "tooltip-format": "{ifname}  {ipaddr}",
+        "on-click": "~/.config/niri/scripts/shell control-center"
+    },
+    "battery": {
+        "format": "{icon} {capacity}%",
+        "format-charging": "󰂄 {capacity}%",
+        "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"],
+        "states": { "warning": 20, "critical": 10 }
+    },
+    "custom/power": {
+        "format": "⏻",
+        "tooltip": false,
+        "on-click": "~/.config/niri/scripts/shell session"
+    }
+}
