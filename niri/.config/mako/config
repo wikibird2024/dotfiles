@@ -8,6 +8,7 @@ padding=12
 margin=10
 width=360
 default-timeout=5000
+max-history=20
 
 [urgency=critical]
 default-timeout=0
@@ -17,3 +18,10 @@ default-timeout=0
 anchor=bottom-center
 width=240
 default-timeout=1500
+
+# do-not-disturb (scripts/shell notifications-dnd): hide all but the OSD
+[mode=do-not-disturb]
+invisible=1
+
+[mode=do-not-disturb app-name=osd]
+invisible=0

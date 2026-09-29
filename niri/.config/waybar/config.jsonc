@@ -7,12 +7,14 @@
     "height": 30,
     "modules-left": ["custom/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["tray", "pulseaudio", "network", "battery", "custom/power"],
+    "modules-right": ["tray", "pulseaudio", "network", "battery", "custom/notifications", "custom/power"],
 
     "custom/workspaces": {
         "exec": "~/.config/niri/scripts/waybar-workspaces",
         "format": "{}",
-        "on-click": "niri msg action toggle-overview"
+        "on-click": "niri msg action toggle-overview",
+        "on-scroll-up": "niri msg action focus-workspace-up",
+        "on-scroll-down": "niri msg action focus-workspace-down"
     },
     "clock": {
         "format": "{:%a %d %b  %H:%M}",
@@ -40,6 +42,17 @@
         "format-charging": "󰂄 {capacity}%",
         "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"],
         "states": { "warning": 20, "critical": 10 }
+    },
+    // Bell: click = show last notification again, right click = do-not-disturb,
+    // middle click = clear all. Refreshed by `pkill -RTMIN+8 waybar`.
+    "custom/notifications": {
+        "exec": "~/.config/niri/scripts/shell notifications-icon",
+        "signal": 8,
+        "interval": "once",
+        "tooltip-format": "Left: last again · Right: do not disturb · Middle: clear all",
+        "on-click": "~/.config/niri/scripts/shell notifications-restore",
+        "on-click-right": "~/.config/niri/scripts/shell notifications-dnd",
+        "on-click-middle": "~/.config/niri/scripts/shell notifications-clear"
     },
     "custom/power": {
         "format": "⏻",

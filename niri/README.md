@@ -41,14 +41,14 @@ things (datasheet, browser, KiCad) are **niri windows**.
 
 | Key | Name | Opens there automatically |
 |---|---|---|
-| Mod + 1 | `1 Dev` | – (kitty/tmux/nvim; PDFs open here beside the code) |
-| Mod + 2 | `2 Browser` | Firefox (maximized) |
+| Mod + 1 | `1 Browser` | Firefox (maximized) |
+| Mod + 2 | `2 Dev` | – (kitty/tmux/nvim; PDFs open here beside the code) |
 | Mod + 3 | `3 design` | KiCad (eeschema, pcbnew, gerbview) |
 | Mod + 4 | `4 Work Apps` | VS Code, Teams |
 | Mod + 5 | `5 scratchpad` | where the hidden serial console is parked – don't use |
 
 niri always keeps one extra empty workspace at the end. The number is part of the
-name so the bar shows `1 Dev · 2 Browser …` (Noctalia can show either id or name, not both).
+name so the bar shows `1 Browser · 2 Dev …` (Noctalia can show either id or name, not both).
 
 ## Keys
 
@@ -68,6 +68,11 @@ name so the bar shows `1 Dev · 2 Browser …` (Noctalia can show either id or n
 | Mod + C | center column |
 | Mod + Shift + T | toggle floating |
 | Mod + O / Mod + Tab | overview (zoomed out) |
+| mouse into top-left corner | overview (hot corner) |
+| scroll on the bar's workspace list | previous / next workspace (also Mod + wheel anywhere) |
+| Mod + N | show the last notification again (bar bell: left click) |
+| Mod + Shift + N | clear all notifications (bell: middle click) |
+| Mod + Ctrl + N | do not disturb on/off, bell shows 󰂛 (bell: right click) |
 | Mod + Q | close window |
 
 **Apps**
@@ -75,7 +80,9 @@ name so the bar shows `1 Dev · 2 Browser …` (Noctalia can show either id or n
 | Key | Action |
 |---|---|
 | Mod + T / Mod + Enter | kitty |
-| Mod + Space / Mod + D | app launcher |
+| Mod + E | file manager (Nautilus, new window) |
+| Mod + D | app launcher |
+| Mod + Space | input method: English ↔ Vietnamese (fcitx5 + Bamboo), same key as GNOME |
 | **Mod + B** | Firefox: jump to it (again = next window) or start it |
 | **Mod + P** | datasheet (Sioyek/zathura): jump to it or start Sioyek |
 | **Mod + `** | serial console scratchpad (show / hide) |
@@ -94,6 +101,8 @@ name so the bar shows `1 Dev · 2 Browser …` (Noctalia can show either id or n
 | Print | **Flameshot** (default behavior): select a region, annotate; `Ctrl+C` copy, `Ctrl+S` save, `Esc` cancel |
 | Ctrl + Print | Flameshot full screen → saved to `~/Pictures/Screenshots` and copied |
 | Alt + Print | niri's own window screenshot |
+| Mod + Shift + D | GTK apps (Nautilus, file dialogs) dark ↔ light (`theme gtk`) |
+| Mod + Shift + C | pick a color on screen → its `#rrggbb` is copied (niri `pick-color`) |
 | volume, brightness, media keys | work, with OSD |
 
 **tmux project switching** ([tms](https://github.com/jrmoulton/tmux-sessionizer), config in `tmux/.config/tms/`)
@@ -105,7 +114,7 @@ name so the bar shows `1 Dev · 2 Browser …` (Noctalia can show either id or n
 
 ## Workflows
 
-**Coding with a datasheet** – on `1 Dev`: `sioyek datasheet.pdf &` from a tmux pane. It
+**Coding with a datasheet** – on `2 Dev`: `sioyek datasheet.pdf &` from a tmux pane. It
 opens beside kitty at half width. `Mod + H / L` switches, `/REG_NAME` searches in Sioyek,
 `t` = table of contents, `Backspace` = jump back.
 
@@ -138,6 +147,10 @@ Inside: `Ctrl + a`, `Ctrl + x` quits picocom, then Enter reconnects or `s` gives
   (`xdg-desktop-portal-gnome`). If you switched from i3 to niri without a full logout, the portal
   still runs with i3's settings and never answers. Fix: `systemctl --user restart xdg-desktop-portal`
   (or log out fully / reboot).
+- **Flameshot "Unable to capture screen":** Flameshot 12 only captures on GNOME/KDE/sway, so the
+  `Print` keys start it with `XDG_CURRENT_DESKTOP=GNOME`; niri answers GNOME's screenshot call.
+  The first time, the portal asks "Allow screenshot?"; allow it once. Without `qtwayland5`
+  (bootstrap installs it) Flameshot crashes when started from a shell with `QT_QPA_PLATFORM=wayland`.
 
 - The scratchpad runs in **foot**, not kitty: kitty sets its app id after the window
   opens, so the floating rule never matched.
@@ -157,8 +170,8 @@ no config change.
 
 | Key | Without Noctalia |
 |---|---|
-| bar | waybar (workspaces, clock, tray, sound, network, battery, power) |
-| Mod + Space / D | fuzzel |
+| bar | waybar (workspaces, clock, tray, sound, network, battery, power); `nm-applet` in the tray for Wi-Fi/VPN |
+| Mod + D | fuzzel |
 | Mod + S | GNOME Settings (Wi-Fi, Bluetooth, sound) |
 | Mod + , | `config.kdl` in nvim |
 | Mod + V | clipboard history (cliphist + fuzzel) |

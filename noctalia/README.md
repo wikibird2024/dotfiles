@@ -7,7 +7,7 @@ Stowed by `steps/04_stow.sh` (`stow -R -t ~ noctalia`). → `~/.config/noctalia/
 
 | File | Contents |
 |---|---|
-| `bar.toml` | workspaces widget shows names (`1 Dev`, `2 Browser`...) instead of numbers |
+| `bar.toml` | workspaces widget shows names (`1 Browser`, `2 Dev`...) instead of numbers |
 
 Noctalia merges every `*.toml` here. **Settings changed in the Settings window (`Mod+,`) go to
 `~/.local/state/noctalia/settings.toml` (not tracked) and override these files.** Keys and panels:
