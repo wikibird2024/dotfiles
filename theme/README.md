@@ -1,7 +1,9 @@
 # theme
 
 One command to switch the colors of kitty, alacritty, tmux and Neovim together, live
-(no restarts). Starship follows by itself.
+(no restarts). Starship follows by itself. GTK apps (Nautilus, file dialogs) switch to
+dark or light to match the palette background (`gsettings` color-scheme, and the
+`-dark` GTK theme such as `Yaru-dark` when installed).
 
 Stowed by `steps/04_stow.sh` → `~/.local/bin/theme`, `~/.config/theme/themes/`.
 A new machine starts on the `ubuntu` profile; after that your choice is kept.
@@ -14,6 +16,7 @@ theme gruvbox-classic       # switch everything to that profile
 theme pick                  # choose with fzf + color preview   (in tmux: prefix + T)
 theme new mytheme [from]    # new profile as a copy of [from] (default: the active one)
 theme check                 # find mistakes in every profile
+theme gtk [dark|light]      # GTK apps only; no argument = toggle (niri: Mod+Shift+D)
 theme --help
 ```
 

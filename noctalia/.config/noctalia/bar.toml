@@ -2,7 +2,7 @@
 # Changes made in the Settings window (Mod+,) go to
 # ~/.local/state/noctalia/settings.toml and override this file.
 
-# Workspace names already carry their number ("1 Dev", "2 Browser"... set in
+# Workspace names already carry their number ("1 Browser", "2 Dev"... set in
 # niri/.config/niri/config.kdl), so show the name instead of the id.
 [widget.workspaces]
 label_source = "name"

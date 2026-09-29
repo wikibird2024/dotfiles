@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # theme — switch kitty, alacritty, tmux, Neovim and the niri bar/launcher/
-# notifications/lock (when niri runs without Noctalia) to one color profile.
+# notifications/lock (when niri runs without Noctalia) and GTK apps (dark or
+# light, from the palette background) to one color profile.
 #
 #   theme                     list profiles (* = active)
 #   theme <name>              switch every tool to <name>, live
 #   theme pick                choose a profile with fzf
 #   theme new <name> [from]   start a profile as a copy of [from] (default: active)
 #   theme check               check every profile for missing or broken files
+#   theme gtk [dark|light]    GTK apps only (no argument: toggle); Mod+Shift+D in niri
 #
 # Profiles live in ~/.config/theme/themes/<name>/:
 #   palette.conf  terminal colors (kitty syntax); alacritty.toml is generated from it
@@ -49,6 +51,54 @@ list() {
 	for name in $(names); do
 		if [ "$name" = "$active" ]; then printf '* %s\n' "$name"; else printf '  %s\n' "$name"; fi
 	done
+}
+
+# GTK apps (Nautilus, file dialogs, settings) dark or light. color-scheme
+# drives GTK4/libadwaita apps; GTK3 apps need the "-dark" variant of the GTK
+# theme (Yaru -> Yaru-dark), used only when that variant is installed.
+set_gtk() {
+	local mode="$1" theme base wanted
+	command -v gsettings >/dev/null || return 0
+	theme="$(gsettings get org.gnome.desktop.interface gtk-theme | tr -d "'")"
+	base="${theme%-dark}"
+	if [ "$mode" = dark ]; then wanted="$base-dark"; else wanted="$base"; fi
+	gsettings set org.gnome.desktop.interface color-scheme "prefer-$mode"
+	if [ "$wanted" != "$theme" ] && { [ -d "/usr/share/themes/$wanted" ] || [ -d "$HOME/.themes/$wanted" ]; }; then
+		gsettings set org.gnome.desktop.interface gtk-theme "$wanted"
+	fi
+}
+
+# GTK mode to match the palette background. Without a palette: no change.
+set_gtk_from_palette() {
+	local palette="$1" bg brightness
+	[ -f "$palette" ] || return 0
+	bg="$(awk '$1 == "background" { print $2; exit }' "$palette")"
+	[[ "$bg" =~ ^#[0-9a-fA-F]{6}$ ]] || return 0
+	# perceived brightness 0-255
+	brightness=$(((0x${bg:1:2} * 299 + 0x${bg:3:2} * 587 + 0x${bg:5:2} * 114) / 1000))
+	if [ "$brightness" -lt 128 ]; then set_gtk dark; else set_gtk light; fi
+}
+
+# theme gtk dark|light|toggle: GTK apps only; terminals, tmux and Neovim keep
+# the profile colors. The next `theme <name>` sets GTK from its palette again.
+gtk() {
+	local mode="${1:-toggle}"
+	command -v gsettings >/dev/null || die "gtk needs gsettings"
+	if [ "$mode" = toggle ]; then
+		if [ "$(gsettings get org.gnome.desktop.interface color-scheme)" = "'prefer-dark'" ]; then
+			mode=light
+		else
+			mode=dark
+		fi
+	fi
+	case "$mode" in
+	dark | light) set_gtk "$mode" ;;
+	*) die "usage: theme gtk [dark|light|toggle]" ;;
+	esac
+	echo "theme: GTK apps $mode"
+	if command -v notify-send >/dev/null; then
+		notify-send -t 2000 "GTK apps: $mode" "Restart an open app if it keeps the old look" || true
+	fi
 }
 
 # kitty palette.conf -> alacritty [colors] table
@@ -147,6 +197,8 @@ switch() {
 		"$HOME/.config/niri/scripts/shell" colors || true
 	fi
 
+	set_gtk_from_palette "$dir/palette.conf"
+
 	echo "theme: $name"
 	for m in "${missing[@]}"; do
 		echo "  no $m in this profile: that tool uses its fallback colors" >&2
@@ -228,6 +280,7 @@ case "${1:-}" in
 pick) pick ;;
 new) new "${2:-}" "${3:-}" ;;
 check) check ;;
+gtk) gtk "${2:-}" ;;
 -h | --help) sed -n '2,/^$/s/^# \{0,1\}//p' "$0" ;;
 *) switch "$1" ;;
 esac

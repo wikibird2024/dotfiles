@@ -72,6 +72,16 @@ for pkg in "${STOW_PKGS[@]}"; do
     fi
 done
 
+# ── niri: mask Ubuntu's waybar.service ───────────────────────
+# It crash-loops under GNOME/X11 and gives niri a second bar; niri's
+# scripts/shell starts waybar itself. A /dev/null link is what
+# `systemctl --user mask` makes, and it needs no running user session.
+if [ -f /usr/lib/systemd/user/waybar.service ]; then
+    mkdir -p "$HOME/.config/systemd/user"
+    ln -sfn /dev/null "$HOME/.config/systemd/user/waybar.service"
+    log_ok "waybar.service masked (niri starts waybar itself)."
+fi
+
 # ── Color profile ────────────────────────────────────────────
 # kitty, alacritty, tmux and Neovim read the active profile of the `theme`
 # package; pick the default on a new machine, keep the user's choice after.

@@ -8,6 +8,8 @@
 #           lock lock-and-suspend window-switcher volume-up volume-down
 #           volume-mute mic-mute brightness-up brightness-down
 #           media-toggle media-next media-previous
+#           notifications-restore notifications-clear notifications-dnd
+#           notifications-icon (bell for the bar)
 #           colors (re-read the `theme` colors; the theme command runs it)
 set -uo pipefail
 
@@ -25,6 +27,7 @@ if has noctalia; then
     case $command in
         start) exec noctalia ;;
         colors) exit 0 ;; # Noctalia has its own color settings
+        notifications-*) exit 0 ;; # Noctalia has its own notification panel
         launcher | control-center | clipboard | wallpaper | session) exec noctalia msg panel-toggle "$command" ;;
         settings) exec noctalia msg settings-toggle ;;
         lock | lock-and-suspend) exec noctalia msg session "$command" ;;
@@ -140,6 +143,8 @@ case $command in
         start_wallpaper
         start_once waybar -s "$generated_dir/waybar.css"
         start_once mako -c "$generated_dir/mako.conf"
+        # network icon in the waybar tray (Wi-Fi, VPN); --indicator = tray protocol waybar reads
+        start_once nm-applet --indicator
         # password prompts for apps that need admin rights (Ubuntu path, then Arch)
         for agent in /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 \
             /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1; do
@@ -235,6 +240,19 @@ case $command in
         write_colors
         pkill -USR2 -u "$USER" -x waybar # waybar re-reads its style
         makoctl reload 2>/dev/null || true
+        ;;
+    notifications-restore) makoctl restore ;;
+    notifications-clear) makoctl dismiss --all ;;
+    notifications-dnd)
+        if makoctl mode | grep -qx do-not-disturb; then
+            makoctl mode -r do-not-disturb >/dev/null
+        else
+            makoctl mode -a do-not-disturb >/dev/null
+        fi
+        pkill -RTMIN+8 -u "$USER" -x waybar # redraw the bell
+        ;;
+    notifications-icon)
+        if makoctl mode 2>/dev/null | grep -qx do-not-disturb; then echo "󰂛"; else echo "󰂚"; fi
         ;;
     media-toggle) playerctl play-pause ;;
     media-next) playerctl next ;;

@@ -6,9 +6,10 @@ config-notification {
     disable-failed
 }
 
+// Push the mouse into the top-left corner: open/close the overview.
 gestures {
     hot-corners {
-        off
+        top-left
     }
 }
 
@@ -153,9 +154,25 @@ environment {
   // Ctrl+C in Flameshot. QT_IM_MODULE / XMODIFIERS (from ~/.xprofile) stay for
   // Qt5 and X11 apps.
   QT_IM_MODULES "wayland;fcitx"
+  // ~/.profile sets these to ibus for GNOME (IBus + Bamboo there). Under niri
+  // fcitx5 (+ Bamboo) is the input method: GTK apps use Wayland's text-input,
+  // so GTK_IM_MODULE is unset; Qt5 and X11 apps talk to fcitx directly.
+  GTK_IM_MODULE null
+  QT_IM_MODULE "fcitx"
+  XMODIFIERS "@im=fcitx"
+  // Java (Swing/AWT) apps such as STM32CubeMX: without this they assume a
+  // window manager that wraps windows in frames, so the content does not
+  // follow a resize (grey or cut-off area).
+  _JAVA_AWT_WM_NONREPARENTING "1"
 }
 hotkey-overlay {
     skip-at-startup
+}
+// Same cursor as GNOME (gsettings cursor-theme / cursor-size), so native and
+// X11 apps (CubeMX, KiCad) show the same cursor at the same size.
+cursor {
+    xcursor-theme "Adwaita"
+    xcursor-size 24
 }
 prefer-no-csd
 screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
@@ -258,8 +275,8 @@ recent-windows {
 }
 
 // ── My workspaces: Mod+1..4 (named ones come first, in this order) ──
-workspace "1 Dev"
-workspace "2 Browser"
+workspace "1 Browser"
+workspace "2 Dev"
 workspace "3 design"
 workspace "4 Work Apps"
 // where the serial-console scratchpad hides (scripts/scratchpad)
@@ -267,7 +284,7 @@ workspace "5 scratchpad"
 
 window-rule {
     match app-id="^firefox$"
-    open-on-workspace "2 Browser"
+    open-on-workspace "1 Browser"
     open-maximized true
 }
 
@@ -314,6 +331,8 @@ window-rule {
 // ── Shell: Noctalia if installed, else waybar/fuzzel/mako (scripts/shell) ──
 // Noctalia rules: docs.noctalia.dev/noctalia/compositor-settings/niri
 spawn-sh-at-startup "~/.config/niri/scripts/shell start"
+// Vietnamese input (Bamboo); Mod+Space switches English <-> Vietnamese
+spawn-at-startup "fcitx5" "-d" "--replace"
 
 window-rule {
     geometry-corner-radius 20
@@ -384,7 +403,8 @@ switch-events {
 
 binds {
     // === Panels ===
-    Mod+Space hotkey-overlay-title="Application Launcher" { spawn-sh "~/.config/niri/scripts/shell launcher"; }
+    // same key as GNOME's input-source switch; the launcher is Mod+D
+    Mod+Space hotkey-overlay-title="Input Method: English <-> Vietnamese" { spawn "fcitx5-remote" "-t"; }
     Mod+D hotkey-overlay-title="Application Launcher" { spawn-sh "~/.config/niri/scripts/shell launcher"; }
     Mod+S hotkey-overlay-title="Control Center" { spawn-sh "~/.config/niri/scripts/shell control-center"; }
     Mod+Comma hotkey-overlay-title="Settings" { spawn-sh "~/.config/niri/scripts/shell settings"; }
@@ -408,18 +428,30 @@ binds {
 
     // === Screenshots ===
     // Flameshot, default behavior: select + annotate, Ctrl+C copy, Ctrl+S save. Needs the GNOME portal,
-    // see niri/README.md "Screenshots" if it does nothing.
-    Print hotkey-overlay-title="Screenshot: Region (Flameshot)" { spawn "flameshot" "gui"; }
-    Ctrl+Print hotkey-overlay-title="Screenshot: Full Screen (Flameshot)" { spawn-sh "flameshot full -c -p ~/Pictures/Screenshots"; }
+    // see niri/README.md "Screenshots" if it does nothing. Flameshot 12 only knows how to capture on
+    // GNOME/KDE/sway ("Unable to capture screen" on niri), so it is told it runs on GNOME: it then
+    // asks the portal, and niri answers the GNOME screenshot call.
+    Print hotkey-overlay-title="Screenshot: Region (Flameshot)" { spawn "env" "XDG_CURRENT_DESKTOP=GNOME" "flameshot" "gui"; }
+    Ctrl+Print hotkey-overlay-title="Screenshot: Full Screen (Flameshot)" { spawn-sh "XDG_CURRENT_DESKTOP=GNOME flameshot full -c -p ~/Pictures/Screenshots"; }
+    // GTK apps dark <-> light (terminals, tmux and Neovim keep the theme profile)
+    Mod+Shift+D hotkey-overlay-title="Toggle Dark Mode (GTK apps)" { spawn-sh "~/.local/bin/theme gtk"; }
+    // click a pixel: its #rrggbb goes to the clipboard (Escape cancels)
+    Mod+Shift+C hotkey-overlay-title="Pick Color (copy hex)" { spawn-sh "hex=$(niri msg pick-color | awk '/^Hex:/ {print $2}') && [ -n \"$hex\" ] && wl-copy \"$hex\" && notify-send -t 3000 'Color copied' \"$hex\""; }
 
     // === System & Overview ===
     Mod+O repeat=false { toggle-overview; }
     Mod+Tab repeat=false { toggle-overview; }
+
+    // Notifications: show the last closed one again, clear all, do-not-disturb
+    Mod+N hotkey-overlay-title="Notification: Show Last Again" { spawn-sh "~/.config/niri/scripts/shell notifications-restore"; }
+    Mod+Shift+N hotkey-overlay-title="Notification: Clear All" { spawn-sh "~/.config/niri/scripts/shell notifications-clear"; }
+    Mod+Ctrl+N hotkey-overlay-title="Notification: Do Not Disturb" { spawn-sh "~/.config/niri/scripts/shell notifications-dnd"; }
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // === Application Launchers ===
     Mod+T hotkey-overlay-title="Open Terminal" { spawn "kitty"; }
     Mod+Return hotkey-overlay-title="Open Terminal" { spawn "kitty"; }
+    Mod+E hotkey-overlay-title="Open File Manager" { spawn "nautilus" "--new-window"; }
     Mod+Grave hotkey-overlay-title="Serial Console (scratchpad)" { spawn-sh "~/.config/niri/scripts/scratchpad"; }
     // Focus-or-launch: jump to the app if open (again = next window), else start it
     Mod+B hotkey-overlay-title="Browser (focus or launch)" { spawn-sh "~/.config/niri/scripts/focus-or-launch '^firefox$' firefox"; }
