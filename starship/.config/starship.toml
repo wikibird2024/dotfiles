@@ -4,19 +4,19 @@
 #   ╰╴❯
 # Left of the line: where am I. Right of the line: what just happened.
 # Colors are ANSI names only (no hex), so the prompt follows the `theme` profile;
-# the frame uses bright-black (palette color8), the dim color of every profile.
+# the frame uses faint (dimmed) bright-black (palette color8), the dim color of every profile.
 # =======================================================================
 
 # 1. GENERAL CONFIGURATION
 add_newline = true    # blank line before each prompt: separates one command's output from the next
 
 format = """
-[╭╴](bright-black)\
+[╭╴](dimmed bright-black)\
 $os$username$hostname$container$directory$git_branch$git_state$git_status\
 $c$rust$python$nodejs$package\
 $fill \
 $status$jobs$memory_usage$cmd_duration$time
-[╰╴](bright-black)$character"""
+[╰╴](dimmed bright-black)$character"""
 
 command_timeout = 800
 scan_timeout = 500    # Increases file scanning limit to 500ms to prevent timeouts in massive repositories (Yocto)

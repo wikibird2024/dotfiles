@@ -1,0 +1,16 @@
+# Satty: screenshot editor for niri (Print / Ctrl+Print in niri config.kdl:
+# slurp picks the area, grim takes it, satty opens it for arrows/boxes/text).
+# Only settings that differ from satty's defaults. Reference: satty README.
+[general]
+# Esc = copy to clipboard and close (like Flameshot's Ctrl+C then close)
+actions-on-escape = ["save-to-clipboard", "exit"]
+# Enter = copy and close too
+actions-on-enter = ["save-to-clipboard", "exit"]
+early-exit = ["all"]
+copy-command = "wl-copy"
+# Ctrl+S saves here (same folder as niri's own screenshots)
+output-filename = "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+initial-tool = "arrow"
+corner-roundness = 6
+brush-smooth-history-size = 5
+no-window-decoration = true

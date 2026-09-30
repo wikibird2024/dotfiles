@@ -135,6 +135,25 @@ install_stylua() {
         log_warn "stylua build failed — run: cargo install stylua --locked"
 }
 
+# ── satty (screenshot editor for niri: Print = slurp + grim + satty) ──
+# Built with cargo: the release binary needs a newer glibc than Ubuntu 24.04.
+# Needs libgtk-4-dev, libadwaita-1-dev, libepoxy-dev (01_packages.sh).
+install_satty() {
+    if has satty; then
+        log_ok "satty already installed."
+        return
+    fi
+    # shellcheck disable=SC1091
+    [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
+    if ! has cargo; then
+        log_warn "cargo not found — skipping satty install."
+        return
+    fi
+    log_info "Installing satty (cargo install)..."
+    cargo install satty --locked && log_ok "satty installed." ||
+        log_warn "satty build failed — run: cargo install satty --locked"
+}
+
 # ── luacheck (Lua linter, nvim-lint) ───────────────────────────
 install_luacheck() {
     if has luacheck; then
@@ -205,6 +224,7 @@ install_zoxide
 install_tpm
 install_rust
 install_stylua
+install_satty
 install_luacheck
 install_lazygit
 install_cargo_tool just just

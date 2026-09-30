@@ -3,7 +3,7 @@
 #   shell <command>
 # Uses Noctalia when it is installed (Arch). Without it (Ubuntu 24.04 has no
 # Noctalia package) it uses apt tools: waybar, fuzzel, mako, swaylock,
-# swayidle, swaybg, cliphist, wpctl, brightnessctl, playerctl.
+# swayidle, swaybg, cliphist, wpctl, brightnessctl, playerctl, sfwbar (dock).
 # Commands: start launcher control-center settings clipboard wallpaper session
 #           lock lock-and-suspend window-switcher volume-up volume-down
 #           volume-mute mic-mute brightness-up brightness-down
@@ -111,6 +111,12 @@ write_colors() {
         printf 'selection=%sff\nselection-text=%sff\nselection-match=%sff\nborder=%sff\n' \
             "${selection#\#}" "${fg#\#}" "${accent#\#}" "${accent#\#}"
     } >"$generated_dir/fuzzel.ini"
+
+    {
+        printf '@define-color %s %s;\n' bg "$bg" fg "$fg" accent "$accent" muted "$muted" \
+            selection "$selection"
+        cat ~/.config/sfwbar/dock.css 2>/dev/null
+    } >"$generated_dir/dock.css"
 }
 
 run_fuzzel() {
@@ -145,6 +151,8 @@ case $command in
         start_once mako -c "$generated_dir/mako.conf"
         # network icon in the waybar tray (Wi-Fi, VPN); --indicator = tray protocol waybar reads
         start_once nm-applet --indicator
+        # auto-hiding dock on the left edge (~/.config/sfwbar), for people who don't know the keys
+        start_once sfwbar -c "$generated_dir/dock.css"
         # password prompts for apps that need admin rights (Ubuntu path, then Arch)
         for agent in /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 \
             /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1; do
@@ -154,10 +162,10 @@ case $command in
         done
         has cliphist && has wl-paste && ! pgrep -u "$USER" -f 'wl-paste --watch cliphist' >/dev/null &&
             setsid -f wl-paste --watch cliphist store >/dev/null 2>&1
-        # lock after 10 min, screens off after 15 min, lock before sleep
+        # lock after 5 min (company rule: max 5 min), screens off after 6 min, lock before sleep
         start_once swayidle -w \
-            timeout 600 "$self lock" \
-            timeout 900 'niri msg action power-off-monitors' \
+            timeout 300 "$self lock" \
+            timeout 360 'niri msg action power-off-monitors' \
             before-sleep "$self lock"
         ;;
     launcher)
@@ -240,6 +248,11 @@ case $command in
         write_colors
         pkill -USR2 -u "$USER" -x waybar # waybar re-reads its style
         makoctl reload 2>/dev/null || true
+        # sfwbar reads its css only at start
+        if pkill -u "$USER" -x sfwbar; then
+            sleep 0.3
+            start_once sfwbar -c "$generated_dir/dock.css"
+        fi
         ;;
     notifications-restore) makoctl restore ;;
     notifications-clear) makoctl dismiss --all ;;

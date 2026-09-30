@@ -71,7 +71,8 @@ esac
 # waybar/fuzzel/mako/swaylock... instead. niri itself comes from pacstall on Ubuntu (see niri/README.md).
 DESKTOP_PKGS_APT=(i3-wm i3status i3blocks rofi feh dunst picom zathura flameshot kitty alacritty
     waybar fuzzel mako-notifier swaylock swayidle swaybg brightnessctl playerctl cliphist wl-clipboard
-    libnotify-bin foot picocom jq qtwayland5)
+    libnotify-bin foot picocom jq qtwayland5 sfwbar
+    slurp grim libgtk-4-dev libadwaita-1-dev libepoxy-dev)
 DESKTOP_PKGS_PACMAN=(i3-wm i3status i3status-rust i3blocks rofi feh dunst picom zathura flameshot kitty alacritty niri noctalia xwayland-satellite foot picocom jq)
 
 install_desktop_pkg() {
