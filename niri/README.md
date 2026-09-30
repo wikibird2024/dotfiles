@@ -17,6 +17,8 @@ niri/.config/niri/
     └── focus-or-launch     # Mod+B / Mod+P  jump to an app or start it
 niri/.config/waybar/        # bar when Noctalia is missing (Ubuntu)
 niri/.config/mako/          # notifications + volume/brightness OSD when Noctalia is missing
+niri/.config/sfwbar/        # auto-hiding dock on the left edge when Noctalia is missing
+niri/.config/satty/         # screenshot editor settings (Print)
 noctalia/.config/noctalia/
 └── bar.toml                # bar tweaks (workspace names as labels)
 ```
@@ -80,7 +82,7 @@ name so the bar shows `1 Browser · 2 Dev …` (Noctalia can show either id or n
 | Key | Action |
 |---|---|
 | Mod + T / Mod + Enter | kitty |
-| Mod + E | file manager (Nautilus, new window) |
+| Mod + E | file manager (Thunar, same as Super+E in GNOME), floating 60% × 70% |
 | Mod + D | app launcher |
 | Mod + Space | input method: English ↔ Vietnamese (fcitx5 + Bamboo), same key as GNOME |
 | **Mod + B** | Firefox: jump to it (again = next window) or start it |
@@ -98,10 +100,11 @@ name so the bar shows `1 Browser · 2 Dev …` (Noctalia can show either id or n
 | Mod + X | power menu |
 | Mod + Alt + L | lock (closing the lid locks and suspends) |
 | Alt + Tab | window switcher |
-| Print | **Flameshot** (default behavior): select a region, annotate; `Ctrl+C` copy, `Ctrl+S` save, `Esc` cancel |
-| Ctrl + Print | Flameshot full screen → saved to `~/Pictures/Screenshots` and copied |
+| Print | select an area (slurp) → edit in **satty** (arrows, boxes, text); `Esc`/`Enter` copy and close, `Ctrl+S` save to `~/Pictures/Screenshots` |
+| Insert / Mod + Shift + S | same as Print. Insert is what this keyboard's PrtSc key sends without Fn (GNOME uses Insert too) |
+| Ctrl + Print | full screen → edit in satty (same keys) |
 | Alt + Print | niri's own window screenshot |
-| Mod + Shift + D | GTK apps (Nautilus, file dialogs) dark ↔ light (`theme gtk`) |
+| Mod + Shift + D | GTK apps (Thunar, file dialogs) dark ↔ light (`theme gtk`) |
 | Mod + Shift + C | pick a color on screen → its `#rrggbb` is copied (niri `pick-color`) |
 | volume, brightness, media keys | work, with OSD |
 
@@ -143,14 +146,12 @@ Inside: `Ctrl + a`, `Ctrl + x` quits picocom, then Enter reconnects or `s` gives
 
 ## Gotchas (why some lines exist)
 
-- **Screenshots do nothing / Flameshot hangs:** Flameshot captures through the desktop portal
-  (`xdg-desktop-portal-gnome`). If you switched from i3 to niri without a full logout, the portal
-  still runs with i3's settings and never answers. Fix: `systemctl --user restart xdg-desktop-portal`
-  (or log out fully / reboot).
-- **Flameshot "Unable to capture screen":** Flameshot 12 only captures on GNOME/KDE/sway, so the
-  `Print` keys start it with `XDG_CURRENT_DESKTOP=GNOME`; niri answers GNOME's screenshot call.
-  The first time, the portal asks "Allow screenshot?"; allow it once. Without `qtwayland5`
-  (bootstrap installs it) Flameshot crashes when started from a shell with `QT_QPA_PLATFORM=wayland`.
+- **Why satty, not Flameshot:** Flameshot captures through the desktop portal, and on niri that
+  failed here: 12.1 read niri's screenshot file before it was fully written ("Screenshot
+  aborted" on busy screens), and 14.0 closed its overlay at once. grim + slurp + satty is what
+  niri users usually run (niri discussion #1737): the picture is taken before any window opens.
+  satty is built with `cargo install satty --locked` (bootstrap does it) because its release
+  binary needs a newer glibc than Ubuntu 24.04.
 
 - The scratchpad runs in **foot**, not kitty: kitty sets its app id after the window
   opens, so the floating rule never matched.
@@ -171,19 +172,20 @@ no config change.
 | Key | Without Noctalia |
 |---|---|
 | bar | waybar (workspaces, clock, tray, sound, network, battery, power); `nm-applet` in the tray for Wi-Fi/VPN |
+| left screen edge | dock (sfwbar): Apps, Files, Browser, Terminal, Settings, open windows, Power. Hidden until the pointer touches the edge; tooltips name the key for each button, so guests need no shortcuts |
 | Mod + D | fuzzel |
 | Mod + S | GNOME Settings (Wi-Fi, Bluetooth, sound) |
 | Mod + , | `config.kdl` in nvim |
 | Mod + V | clipboard history (cliphist + fuzzel) |
 | Mod + Y | pick a wallpaper from `~/Pictures/wallpaper` (swaybg) |
 | Mod + X | power menu (fuzzel): lock, log out, suspend, reboot, power off |
-| Mod + Alt + L | swaylock; auto-lock after 10 min, screens off after 15 min (swayidle) |
+| Mod + Alt + L | swaylock; auto-lock after 5 min, screens off after 6 min (swayidle) |
 | Alt + Tab | window list (fuzzel) |
 | volume / brightness / media keys | wpctl / brightnessctl / playerctl, OSD from mako |
 
 Colors follow the `theme` profile (`theme <name>` recolors the bar, launcher,
 notifications and lock screen live): `scripts/shell` builds each tool's config from its
-repo file (`waybar/style.css`, `mako/config`, `fuzzel/fuzzel.ini`) plus the palette, in
+repo file (`waybar/style.css`, `mako/config`, `fuzzel/fuzzel.ini`, `sfwbar/dock.css`) plus the palette, in
 `~/.cache/niri-shell/`. Edit the repo files, never the generated ones.
 
 Ubuntu's waybar package turns `waybar.service` on for every graphical session. It

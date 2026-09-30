@@ -4,6 +4,26 @@ These rules apply to every project. A project's own `CLAUDE.md` adds project
 facts (pins, protocol, build commands) and its casing style; it does not
 replace these rules unless it says so explicitly.
 
+## English check (do this first, every reply)
+
+Goal: help the user improve their English. English is not their first
+language. Applies to every message they write in English, in every project
+and session.
+
+Before answering, start the reply with a short block:
+
+> **Your English:** <their message, fixed: grammar, spelling, word choice>
+> **More natural:** <how a native speaker would usually say it>
+> **Notes:** <1-3 short points on the main mistakes, only if useful>
+
+- Keep the block short. For a long message, fix the key sentences only.
+- If the message is already correct and natural, write one line:
+  `**Your English:** ✅ good`.
+- Don't fix code, commands, paths, logs or pasted text - only the user's own
+  words.
+- Then answer the question as usual. The fixed wording never changes what
+  the user asked for; if the meaning is unclear, ask.
+
 ## Naming and wording
 
 Goal: a name should be clear to a new reader without asking. "Good enough and

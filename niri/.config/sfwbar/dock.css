@@ -1,0 +1,65 @@
+/* Dock look (GTK3 CSS). scripts/shell puts the `theme` colors in front as
+   @define-color bg/fg/accent/muted/selection and writes the result to
+   ~/.cache/niri-shell/dock.css. Edit this file, never the generated one. */
+
+window {
+  -GtkWidget-direction: left; /* the edge the dock sits on */
+  background-color: transparent;
+}
+
+grid#layout {
+  -GtkWidget-direction: bottom; /* stack buttons top to bottom */
+  -GtkWidget-valign: center;
+  margin: 6px;
+  padding: 6px;
+  /* raised panel: 55% of the way from the background to the selection color,
+     so it stands out from windows but stays in the theme */
+  background-color: alpha(mix(@bg, @selection, 0.55), 0.98); /* 1 = solid */
+  border: 1px solid alpha(@accent, 0.6);
+  border-radius: 14px;
+}
+
+button,
+button#taskbar_normal,
+button#taskbar_active {
+  background-image: none;
+  background-color: transparent;
+  border: none;
+  border-image: none;
+  box-shadow: none;
+  border-radius: 10px;
+  padding: 6px;
+  margin: 2px 0;
+  color: @fg; /* symbolic icons (Apps, Power) take the text color */
+}
+
+button:hover,
+button#taskbar_normal:hover {
+  background-color: alpha(@fg, 0.12);
+}
+
+button#taskbar_active {
+  background-color: alpha(@accent, 0.35);
+}
+
+button image,
+button#taskbar_normal image,
+button#taskbar_active image {
+  min-width: 36px;
+  min-height: 36px;
+}
+
+/* open-window list: a line above it separates it from the app buttons */
+grid#windows {
+  -GtkWidget-direction: bottom;
+  border-top: 1px solid alpha(@muted, 0.6);
+  border-bottom: 1px solid alpha(@muted, 0.6);
+  padding: 4px 0;
+  margin: 4px 0;
+}
+
+tooltip,
+tooltip label {
+  background-color: @bg;
+  color: @fg;
+}

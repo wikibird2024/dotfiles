@@ -238,9 +238,19 @@ window-rule {
     match app-id=r#"^gnome-calculator$"#
     match app-id=r#"^galculator$"#
     match app-id=r#"^blueman-manager$"#
-    match app-id=r#"^org\.gnome\.Nautilus$"#
     match app-id=r#"^xdg-desktop-portal$"#
     open-floating true
+}
+
+// File manager (Super+E): floating, but big enough to work in (60% x 70% of the
+// screen, centered). Resize: Super+Minus/Equal (width), Super+Shift+Minus/Equal
+// (height), or Super + right-drag. Super+Shift+T tiles it.
+window-rule {
+    // Thunar's app id is "thunar" or "org.xfce.Thunar" depending on version
+    match app-id=r#"(?i)^(thunar|org\.xfce\.thunar)$"#
+    open-floating true
+    default-column-width { proportion 0.6; }
+    default-window-height { proportion 0.7; }
 }
 window-rule {
     match app-id=r#"^steam$"# title=r#"^notificationtoasts_\d+_desktop$"#
@@ -308,12 +318,19 @@ window-rule {
     default-floating-position x=0 y=40 relative-to="top"
 }
 
-// Flameshot capture overlay: fullscreen, square corners. niri always puts a
-// fullscreen window in its own column, so the view slides to it and back; a
-// floating overlay would avoid that but sits below the bar (image offset).
+// satty (screenshot editor, Print): a floating window over the tiles
+window-rule {
+    match app-id="^org\\.satty\\.satty$"
+    match app-id="^com\\.gabm\\.satty$"
+    open-floating true
+}
+
+// Flameshot capture overlay (no key bound; Print uses satty): square corners.
+// Flameshot 14 makes its overlay fullscreen by itself; forcing it with
+// open-fullscreen as well makes the overlay close at once ("Screenshot
+// aborted"), so don't add that back.
 window-rule {
     match app-id="^flameshot$"
-    open-fullscreen true
     geometry-corner-radius 0
 }
 
@@ -427,12 +444,16 @@ binds {
     XF86MonBrightnessDown allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell brightness-down"; }
 
     // === Screenshots ===
-    // Flameshot, default behavior: select + annotate, Ctrl+C copy, Ctrl+S save. Needs the GNOME portal,
-    // see niri/README.md "Screenshots" if it does nothing. Flameshot 12 only knows how to capture on
-    // GNOME/KDE/sway ("Unable to capture screen" on niri), so it is told it runs on GNOME: it then
-    // asks the portal, and niri answers the GNOME screenshot call.
-    Print hotkey-overlay-title="Screenshot: Region (Flameshot)" { spawn "env" "XDG_CURRENT_DESKTOP=GNOME" "flameshot" "gui"; }
-    Ctrl+Print hotkey-overlay-title="Screenshot: Full Screen (Flameshot)" { spawn-sh "XDG_CURRENT_DESKTOP=GNOME flameshot full -c -p ~/Pictures/Screenshots"; }
+    // grim + slurp + satty (the usual niri setup): slurp picks the area, grim takes it, satty
+    // opens it to draw arrows/boxes/text. In satty: Esc or Enter = copy and close, Ctrl+S = save
+    // to ~/Pictures/Screenshots (niri/.config/satty/config.toml). Escape in slurp cancels.
+    // Errors go to ~/.cache/niri-shell/screenshot.log.
+    Print hotkey-overlay-title="Screenshot: Area + Edit (satty)" { spawn-sh "{ date; area=$(slurp -d) && grim -t ppm -g \"$area\" - | satty -f -; echo \"exit=$?\"; } >>~/.cache/niri-shell/screenshot.log 2>&1"; }
+    // same as Print. Insert = this keyboard's PrtSc key without Fn (GNOME binds Flameshot to
+    // Insert for the same reason); Super+Shift+S for keyboards without a Print key
+    Insert hotkey-overlay-title="Screenshot: Area + Edit (satty)" { spawn-sh "{ date; area=$(slurp -d) && grim -t ppm -g \"$area\" - | satty -f -; echo \"exit=$?\"; } >>~/.cache/niri-shell/screenshot.log 2>&1"; }
+    Mod+Shift+S hotkey-overlay-title="Screenshot: Area + Edit (satty)" { spawn-sh "{ date; area=$(slurp -d) && grim -t ppm -g \"$area\" - | satty -f -; echo \"exit=$?\"; } >>~/.cache/niri-shell/screenshot.log 2>&1"; }
+    Ctrl+Print hotkey-overlay-title="Screenshot: Full Screen + Edit (satty)" { spawn-sh "{ date; grim -t ppm - | satty -f -; echo \"exit=$?\"; } >>~/.cache/niri-shell/screenshot.log 2>&1"; }
     // GTK apps dark <-> light (terminals, tmux and Neovim keep the theme profile)
     Mod+Shift+D hotkey-overlay-title="Toggle Dark Mode (GTK apps)" { spawn-sh "~/.local/bin/theme gtk"; }
     // click a pixel: its #rrggbb goes to the clipboard (Escape cancels)
@@ -451,7 +472,7 @@ binds {
     // === Application Launchers ===
     Mod+T hotkey-overlay-title="Open Terminal" { spawn "kitty"; }
     Mod+Return hotkey-overlay-title="Open Terminal" { spawn "kitty"; }
-    Mod+E hotkey-overlay-title="Open File Manager" { spawn "nautilus" "--new-window"; }
+    Mod+E hotkey-overlay-title="Open File Manager" { spawn "thunar"; }
     Mod+Grave hotkey-overlay-title="Serial Console (scratchpad)" { spawn-sh "~/.config/niri/scripts/scratchpad"; }
     // Focus-or-launch: jump to the app if open (again = next window), else start it
     Mod+B hotkey-overlay-title="Browser (focus or launch)" { spawn-sh "~/.config/niri/scripts/focus-or-launch '^firefox$' firefox"; }
