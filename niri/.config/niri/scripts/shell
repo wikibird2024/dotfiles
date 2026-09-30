@@ -39,11 +39,13 @@ fi
 # ── apt tools ────────────────────────────────────────────────────────
 
 # Start a background program if it is installed and not already running.
+# Input from /dev/null too: a program that kept the caller's terminal (e.g. the
+# tmux theme popup, `theme` -> `shell colors`) would stop that popup closing.
 start_once() {
     local program=$1
     has "$program" || return 0
     pgrep -u "$USER" -x "$program" >/dev/null && return 0
-    setsid -f "$@" >/dev/null 2>&1
+    setsid -f "$@" </dev/null >/dev/null 2>&1
 }
 
 # On-screen value (volume, brightness): one notification that replaces itself.
@@ -157,11 +159,11 @@ case $command in
         for agent in /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 \
             /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1; do
             [ -x "$agent" ] || continue
-            pgrep -u "$USER" -f "$agent" >/dev/null || setsid -f "$agent" >/dev/null 2>&1
+            pgrep -u "$USER" -f "$agent" >/dev/null || setsid -f "$agent" </dev/null >/dev/null 2>&1
             break
         done
         has cliphist && has wl-paste && ! pgrep -u "$USER" -f 'wl-paste --watch cliphist' >/dev/null &&
-            setsid -f wl-paste --watch cliphist store >/dev/null 2>&1
+            setsid -f wl-paste --watch cliphist store </dev/null >/dev/null 2>&1
         # lock after 5 min (company rule: max 5 min), screens off after 6 min, lock before sleep
         start_once swayidle -w \
             timeout 300 "$self lock" \
