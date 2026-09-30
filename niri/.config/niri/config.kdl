@@ -325,15 +325,6 @@ window-rule {
     open-floating true
 }
 
-// Flameshot capture overlay (no key bound; Print uses satty): square corners.
-// Flameshot 14 makes its overlay fullscreen by itself; forcing it with
-// open-fullscreen as well makes the overlay close at once ("Screenshot
-// aborted"), so don't add that back.
-window-rule {
-    match app-id="^flameshot$"
-    geometry-corner-radius 0
-}
-
 // Datasheets open beside the current window (e.g. next to nvim), half width
 window-rule {
     match app-id=r#"^org\.pwmt\.zathura$"#
