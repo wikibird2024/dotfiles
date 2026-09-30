@@ -23,6 +23,7 @@ window#waybar {
 #network,
 #battery,
 #custom-notifications,
+#custom-auto-shutdown,
 #custom-power {
     background: alpha(@bg, 0.9);
     border: 1px solid alpha(@accent, 0.35);
@@ -42,6 +43,11 @@ window#waybar {
 
 #clock {
     font-weight: bold;
+}
+
+/* auto shutdown is on: stands out so it is never forgotten */
+#custom-auto-shutdown {
+    color: @yellow;
 }
 
 #pulseaudio.muted,

@@ -171,14 +171,14 @@ no config change.
 
 | Key | Without Noctalia |
 |---|---|
-| bar | waybar (workspaces, clock, tray, sound, network, battery, power); `nm-applet` in the tray for Wi-Fi/VPN |
+| bar | waybar (workspaces, clock, tray, sound, network, battery, power); click the network pill for Wi-Fi/VPN (GNOME Settings) |
 | left screen edge | dock (sfwbar): Apps, Files, Browser, Terminal, Settings, open windows, Power. Hidden until the pointer touches the edge; tooltips name the key for each button, so guests need no shortcuts |
 | Mod + D | fuzzel |
 | Mod + S | GNOME Settings (Wi-Fi, Bluetooth, sound) |
 | Mod + , | `config.kdl` in nvim |
 | Mod + V | clipboard history (cliphist + fuzzel) |
 | Mod + Y | pick a wallpaper from `~/Pictures/wallpaper` (swaybg) |
-| Mod + X | power menu (fuzzel): lock, log out, suspend, reboot, power off |
+| Mod + X | power menu (fuzzel): lock, log out, suspend, reboot, power off, auto shutdown on/off |
 | Mod + Alt + L | swaylock; auto-lock after 5 min, screens off after 6 min (swayidle) |
 | Alt + Tab | window list (fuzzel) |
 | volume / brightness / media keys | wpctl / brightnessctl / playerctl, OSD from mako |
@@ -193,6 +193,26 @@ Edit the repo files, never the generated ones.
 Look: the wallpaper (swaybg) stays still behind the workspaces in the overview; the
 launcher has a shadow and a blurred background.
 Notifications are hidden from screen shares and recordings (`block-out-from "screencast"`).
+
+**Auto shutdown** (`~/.local/bin/auto-shutdown`, from `niri/.local/bin/`): powers the PC off
+when you have been away and nothing is busy. **Off by default, and off again after every
+reboot**, so it only runs on the evenings you turn it on. Switch it in the **power menu
+(Mod+X)**: "Auto shutdown: turn on (after 30 min idle)" / "turn off". While it is on the bar
+shows a yellow `󰐥 30m`; clicking it opens the power menu.
+
+```
+auto-shutdown on [minutes]    # other idle time than the menu's 30 min
+auto-shutdown off
+auto-shutdown status          # on/off and what keeps the PC busy
+auto-shutdown busy make -j8   # the PC stays on until this command ends
+```
+
+- Idle = no keyboard/mouse (swayidle calls it after 1 min). A playing video blocks idle.
+- Busy = any `systemd-inhibit` lock on idle: `auto-shutdown busy`, every Claude Code session
+  that is working (hooks `UserPromptSubmit` / `Stop` / `SessionEnd` in `~/.claude/settings.json`,
+  the lock also ends when that Claude exits), or a remote (ssh) login. Busy → check again every 5 min.
+- Then a notification "Shutting down in 2 min"; any key or mouse move cancels it.
+- Only under niri without Noctalia (swayidle runs from `scripts/shell start`).
 
 Ubuntu's waybar package turns `waybar.service` on for every graphical session. It
 crash-loops under GNOME/X11 and would give niri a second bar, so mask it for your user:
