@@ -998,6 +998,26 @@ Press `<Space>` and wait 300ms — a popup shows all available keymaps grouped b
 
 Noice replaces the command line and message area with floating windows. Long messages open in a split automatically. No special keymaps needed — it works transparently. If a message is cut off, run `:Noice` to browse the full message history.
 
+### Focus dimming — twilight.nvim (removed)
+
+Removed on 2026-09-30 (not needed any more). Kept here so you know it exists.
+
+[folke/twilight.nvim](https://github.com/folke/twilight.nvim) dims all code except the
+block the cursor is in, so you can focus on one function. It used treesitter to find
+the block (`function`, `method`, `table`, `if_statement`) and kept up to 15 lines of it
+bright; everything else was faded to 25%.
+
+| Was | Action |
+|-----|--------|
+| `<leader>z` | Toggle twilight (`:Twilight`, `:TwilightEnable`, `:TwilightDisable`) |
+
+This light config has no replacement (the full config has snacks zen mode on `<leader>uz`).
+
+To bring it back, add `lua/system/plugins/twilight-focus-dim.lua` again (it is in git
+history) and its `import` line in `lua/system/plugins/init.lua`, then run `:Lazy sync`.
+Keep `dimming.inactive = true`: with `false`, twilight runs treesitter on other windows
+and crashes on a buffer with no parser (terminal, quickfix).
+
 ---
 
 ## 27. Changing the Colorscheme

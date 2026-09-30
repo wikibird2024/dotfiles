@@ -101,8 +101,8 @@ return {
 		-- Paint file content before plugins finish loading, for a faster first paint.
 		quickfile = { enabled = true },
 
-		-- True distraction-free zen mode (layout change), separate from
-		-- twilight.nvim's dimming (<leader>z, see twilight-focus-dim.lua).
+		-- True distraction-free zen mode (layout change); its dim toggle
+		-- fades code outside the current scope (replaces twilight.nvim).
 		zen = {
 			enabled = true,
 			toggles = { dim = true },

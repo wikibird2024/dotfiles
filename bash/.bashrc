@@ -19,6 +19,15 @@ case "$PROMPT_COMMAND" in
 *) PROMPT_COMMAND="${__history_append_cmd}${PROMPT_COMMAND:+; $PROMPT_COMMAND}" ;;
 esac
 
+# Mouse reporting off at every prompt. A program that dies without cleaning up
+# (nvim crash, dropped ssh) leaves it on, and then every scroll or mouse move
+# prints codes like "65;49;30M" at the prompt. The shell never uses the mouse.
+__mouse_reporting_off='printf "\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l"'
+case "$PROMPT_COMMAND" in
+*"$__mouse_reporting_off"*) ;;
+*) PROMPT_COMMAND="${__mouse_reporting_off}; ${PROMPT_COMMAND}" ;;
+esac
+
 # 3. PATH MANAGEMENT
 path_prepend() {
     case ":$PATH:" in
