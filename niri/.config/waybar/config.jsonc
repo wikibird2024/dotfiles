@@ -7,11 +7,13 @@
     "height": 30,
     "modules-left": ["custom/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["tray", "pulseaudio", "network", "battery", "custom/notifications", "custom/power"],
+    "modules-right": ["tray", "pulseaudio", "network", "battery", "custom/notifications", "custom/auto-shutdown", "custom/power"],
 
     "custom/workspaces": {
         "exec": "~/.config/niri/scripts/waybar-workspaces",
         "format": "{}",
+        // no tooltip: it would repeat the workspace list right under the bar
+        "tooltip": false,
         "on-click": "niri msg action toggle-overview",
         "on-scroll-up": "niri msg action focus-workspace-up",
         "on-scroll-down": "niri msg action focus-workspace-down"
@@ -32,9 +34,10 @@
     },
     "network": {
         "format-wifi": "󰖩 {essid}",
-        "format-ethernet": "󰈀",
-        "format-disconnected": "󰖪",
+        "format-ethernet": "󰈀 LAN",
+        "format-disconnected": "󰖪 offline",
         "tooltip-format": "{ifname}  {ipaddr}",
+        // Wi-Fi, VPN and wired settings (GNOME Settings); no nm-applet tray icon
         "on-click": "~/.config/niri/scripts/shell control-center"
     },
     "battery": {
@@ -53,6 +56,15 @@
         "on-click": "~/.config/niri/scripts/shell notifications-restore",
         "on-click-right": "~/.config/niri/scripts/shell notifications-dnd",
         "on-click-middle": "~/.config/niri/scripts/shell notifications-clear"
+    },
+    // Shown only while auto shutdown is on (turned on/off in the power menu, Mod+X).
+    // Click: the power menu.
+    // Refreshed by `pkill -RTMIN+9 waybar` from ~/.local/bin/auto-shutdown.
+    "custom/auto-shutdown": {
+        "exec": "~/.local/bin/auto-shutdown bar",
+        "signal": 9,
+        "interval": "once",
+        "on-click": "~/.config/niri/scripts/shell session"
     },
     "custom/power": {
         "format": "⏻",

@@ -156,8 +156,6 @@ case $command in
         start_wallpaper
         start_once waybar -s "$generated_dir/waybar.css"
         start_once mako -c "$generated_dir/mako.conf"
-        # network icon in the waybar tray (Wi-Fi, VPN); --indicator = tray protocol waybar reads
-        start_once nm-applet --indicator
         # auto-hiding dock on the left edge (~/.config/sfwbar), for people who don't know the keys
         start_once sfwbar -c "$generated_dir/dock.css"
         # password prompts for apps that need admin rights (Ubuntu path, then Arch)
@@ -169,8 +167,10 @@ case $command in
         done
         has cliphist && has wl-paste && ! pgrep -u "$USER" -f 'wl-paste --watch cliphist' >/dev/null &&
             setsid -f wl-paste --watch cliphist store </dev/null >/dev/null 2>&1
-        # lock after 5 min (company rule: max 5 min), screens off after 6 min, lock before sleep
+        # lock after 5 min (company rule: max 5 min), screens off after 6 min, lock before sleep;
+        # after 1 min idle, auto-shutdown starts its countdown (only if turned on, Mod+Ctrl+X)
         start_once swayidle -w \
+            timeout 60 "$HOME/.local/bin/auto-shutdown idle" resume "$HOME/.local/bin/auto-shutdown resume" \
             timeout 300 "$self lock" \
             timeout 360 'niri msg action power-off-monitors' \
             before-sleep "$self lock"
@@ -198,14 +198,26 @@ case $command in
         start_wallpaper
         ;;
     session)
-        choice=$(printf '%s\n' Lock 'Log out' Suspend Reboot 'Power off' |
-            menu --prompt 'power> ' --lines 5) || exit 0
+        items=(Lock 'Log out' Suspend Reboot 'Power off')
+        # auto shutdown (~/.local/bin/auto-shutdown) is switched only here
+        auto_shutdown=~/.local/bin/auto-shutdown
+        if [ -x "$auto_shutdown" ]; then
+            if "$auto_shutdown" is-on; then
+                items+=('Auto shutdown: turn off')
+            else
+                items+=('Auto shutdown: turn on (after 30 min idle)')
+            fi
+        fi
+        choice=$(printf '%s\n' "${items[@]}" |
+            menu --prompt 'power> ' --lines "${#items[@]}") || exit 0
         case $choice in
             Lock) "$self" lock ;;
             'Log out') niri msg action quit --skip-confirmation ;;
             Suspend) systemctl suspend ;;
             Reboot) systemctl reboot ;;
             'Power off') systemctl poweroff ;;
+            'Auto shutdown: turn off') "$auto_shutdown" off ;;
+            'Auto shutdown: turn on'*) "$auto_shutdown" on 30 ;;
         esac
         ;;
     lock)
