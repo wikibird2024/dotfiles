@@ -184,9 +184,15 @@ no config change.
 | volume / brightness / media keys | wpctl / brightnessctl / playerctl, OSD from mako |
 
 Colors follow the `theme` profile (`theme <name>` recolors the bar, launcher,
-notifications and lock screen live): `scripts/shell` builds each tool's config from its
-repo file (`waybar/style.css`, `mako/config`, `fuzzel/fuzzel.ini`, `sfwbar/dock.css`) plus the palette, in
-`~/.cache/niri-shell/`. Edit the repo files, never the generated ones.
+notifications, lock screen and niri's focus ring live): `scripts/shell` builds
+each tool's config from its repo file (`waybar/style.css`, `mako/config`, `fuzzel/fuzzel.ini`,
+`sfwbar/dock.css`) plus the palette, in `~/.cache/niri-shell/`; the focus
+ring comes from `colors.kdl` there, which `config.kdl` includes (niri reloads it by itself).
+Edit the repo files, never the generated ones.
+
+Look: the wallpaper (swaybg) stays still behind the workspaces in the overview; the
+launcher has a shadow and a blurred background.
+Notifications are hidden from screen shares and recordings (`block-out-from "screencast"`).
 
 Ubuntu's waybar package turns `waybar.service` on for every graphical session. It
 crash-loops under GNOME/X11 and would give niri a second bar, so mask it for your user:

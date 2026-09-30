@@ -2,9 +2,6 @@
 // "/-" comments out the following node.
 // Check the wiki for a full description of the configuration:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Introduction
-config-notification {
-    disable-failed
-}
 
 // Push the mouse into the top-left corner: open/close the overview.
 gestures {
@@ -211,15 +208,6 @@ animations {
 // Window rules let you adjust behavior for individual windows.
 // Find more information on the wiki:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Window-Rules
-// Work around WezTerm's initial configure bug
-// by setting an empty default-column-width.
-window-rule {
-    // This regular expression is intentionally made as specific as possible,
-    // since this is the default config, and we want no false positives.
-    // You can get away with just app-id="wezterm" if you want.
-    match app-id=r#"^org\.wezfurlong\.wezterm$"#
-    default-column-width {}
-}
 window-rule {
     match app-id=r#"^org\.gnome\."#
     draw-border-with-background false
@@ -253,12 +241,6 @@ window-rule {
     default-window-height { proportion 0.7; }
 }
 window-rule {
-    match app-id=r#"^steam$"# title=r#"^notificationtoasts_\d+_desktop$"#
-    default-floating-position x=10 y=10 relative-to="bottom-right"
-    open-focused false
-}
-window-rule {
-    match app-id=r#"^org\.wezfurlong\.wezterm$"#
     match app-id="Alacritty"
     match app-id="zen"
     match app-id="com.mitchellh.ghostty"
@@ -274,11 +256,11 @@ debug {
     honor-xdg-activation-with-invalid-serial
 }
 
-// Override to disable super+tab
+// niri's own switcher, only for windows of the same app. Mod+Tab is the
+// overview and Alt+Tab the shell's window switcher (binds below), so they
+// are left out here.
 recent-windows {
     binds {
-        Alt+Tab         { next-window scope="output"; }
-        Alt+Shift+Tab   { previous-window scope="output"; }
         Alt+grave       { next-window filter="app-id"; }
         Alt+Shift+grave { previous-window filter="app-id"; }
     }
@@ -354,10 +336,39 @@ window-rule {
     default-window-height { fixed 920; }
 }
 
-// Stationary wallpaper behind the overview
+// Stationary wallpaper behind the overview (Noctalia's, or swaybg's from scripts/shell)
 layer-rule {
     match namespace="^noctalia-wallpaper"
+    match namespace="^wallpaper$"
     place-within-backdrop true
+}
+
+// Focus ring colors from the active `theme` profile: scripts/shell (colors)
+// writes this file; niri reloads when it changes. Missing (Noctalia, or before
+// the first start): niri's default colors.
+include optional=true "~/.cache/niri-shell/colors.kdl"
+
+// Launcher (fuzzel): soft shadow, blurred background
+layer-rule {
+    match namespace="^launcher$"
+    geometry-corner-radius 12
+    shadow {
+        on
+        softness 30
+        spread 3
+        offset x=0 y=5
+        color "#0007"
+    }
+    background-effect {
+        blur true
+        xray false
+    }
+}
+
+// Notifications (mako) stay off screen shares and recordings (Teams, OBS)
+layer-rule {
+    match namespace="^notifications$"
+    block-out-from "screencast"
 }
 
 // Blur (niri 26.04+). Only visible behind semitransparent windows: the
@@ -467,7 +478,7 @@ binds {
     Mod+Grave hotkey-overlay-title="Serial Console (scratchpad)" { spawn-sh "~/.config/niri/scripts/scratchpad"; }
     // Focus-or-launch: jump to the app if open (again = next window), else start it
     Mod+B hotkey-overlay-title="Browser (focus or launch)" { spawn-sh "~/.config/niri/scripts/focus-or-launch '^firefox$' firefox"; }
-    Mod+P hotkey-overlay-title="PDF / datasheet (focus or launch)" { spawn-sh "~/.config/niri/scripts/focus-or-launch '^(sioyek|org.pwmt.zathura)$' sioyek"; }
+    Mod+P hotkey-overlay-title="PDF / datasheet (focus or launch)" { spawn-sh "~/.config/niri/scripts/focus-or-launch '^(sioyek|org.pwmt.zathura)$' \"$(command -v sioyek || echo zathura)\""; }
 
     // === Security ===
     Mod+Shift+E { quit; }

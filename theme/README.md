@@ -86,5 +86,5 @@ then `:Lazy sync`.
 
 ## Not themed (still hard-coded)
 
-lualine's accent violet `#9085e9` (on purpose), twilight / smear-cursor colors in Neovim, and the
+lualine's accent violet `#9085e9` (on purpose), smear-cursor colors in Neovim, and the
 niri desktop (Noctalia has its own theme settings, `Mod+,`).

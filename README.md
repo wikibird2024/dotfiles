@@ -62,7 +62,7 @@ Arch and Debian/Ubuntu. Details and flags: [`steps/README.md`](steps/README.md).
 | [`steps`](steps/README.md), [`lib`](lib/README.md) | the bootstrap stages and their helpers |
 | [`templates`](templates/README.md) | embedded firmware project skeleton (`new-firmware.sh`), Claude settings seed |
 | [`scripts`](scripts/README.md) | one-off helpers and older installers |
-| [`project_scripts`](project_scripts/README.md) | build/test/deploy examples from a work project |
+| [`project_scripts`](project_scripts/README.md) | build/test templates for CMake projects (firmware or PC tool), deploy example |
 | [`asterisk`](asterisk/README.md) | Asterisk PBX config (copy to `/etc/asterisk`) |
 | [`doc`](doc/README.md) | notes |
 

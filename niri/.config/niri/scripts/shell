@@ -107,8 +107,9 @@ write_colors() {
 
     {
         cat ~/.config/fuzzel/fuzzel.ini 2>/dev/null
-        # fuzzel 1.9 (Ubuntu 24.04) has no prompt/input colors yet
-        printf '\n[colors]\nbackground=%sf0\ntext=%sff\nmatch=%sff\n' \
+        # fuzzel 1.9 (Ubuntu 24.04) has no prompt/input colors yet.
+        # Background 85% opaque (d9): niri blurs what is behind it (layer-rule launcher)
+        printf '\n[colors]\nbackground=%sd9\ntext=%sff\nmatch=%sff\n' \
             "${bg#\#}" "${fg#\#}" "${accent#\#}"
         printf 'selection=%sff\nselection-text=%sff\nselection-match=%sff\nborder=%sff\n' \
             "${selection#\#}" "${fg#\#}" "${accent#\#}" "${accent#\#}"
@@ -119,6 +120,10 @@ write_colors() {
             selection "$selection"
         cat ~/.config/sfwbar/dock.css 2>/dev/null
     } >"$generated_dir/dock.css"
+
+    # niri focus ring: config.kdl includes this file and reloads when it changes
+    printf 'layout {\n    focus-ring {\n        active-color "%s"\n        inactive-color "%s"\n        urgent-color "%s"\n    }\n}\n' \
+        "$accent" "$muted" "$red" >"$generated_dir/colors.kdl"
 }
 
 run_fuzzel() {
