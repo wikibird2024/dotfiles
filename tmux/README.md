@@ -34,6 +34,7 @@ $$\mathbf{Prefix = C\text{-}a \quad (Ctrl + a)}$$
 | `Prefix` $\rightarrow$ `r` | Soft-reload the hardware `~/.tmux.conf` configurations directly into live sessions. |
 | `Prefix` $\rightarrow$ `F` | Project picker ([tms](https://github.com/jrmoulton/tmux-sessionizer)): fuzzy-pick a git repo under `~`, switch to its session (created if missing). |
 | `Prefix` $\rightarrow$ `f` | Session picker: switch between open sessions. |
+| `Prefix` $\rightarrow$ `g` | Lazygit in a popup, opened in the current pane's directory (`q` closes it). |
 
 **Clipboard.** Copy mode (`v` select, `y` copy) and mouse drag copy
 through `.tmux/scripts/clipboard_copy.sh`: `wl-copy` under niri (Wayland), `xclip` under

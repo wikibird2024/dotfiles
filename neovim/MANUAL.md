@@ -377,6 +377,7 @@ clang-tidy -p build/Debug \
 | `<leader>gg` | Open lazygit in a full-screen float |
 
 Inside lazygit: use its own keybindings (`?` for help). Press `q` to quit.
+Outside nvim (any tmux pane): `prefix g` opens lazygit in a tmux popup for that pane's directory.
 
 ### Hunk navigation
 

@@ -4,7 +4,10 @@
 # Uses Noctalia when it is installed (Arch). Without it (Ubuntu 24.04 has no
 # Noctalia package) it uses apt tools: waybar, fuzzel, mako, swaylock,
 # swayidle, swaybg, cliphist, wpctl, brightnessctl, playerctl, sfwbar (dock).
-# Commands: start launcher control-center settings clipboard wallpaper session
+# Per machine, `shell use waybar` keeps the apt tools even with Noctalia
+# installed (`shell use noctalia` goes back); the choice is kept in
+# ~/.local/state/niri/shell, outside the repo.
+# Commands: use start launcher control-center settings clipboard wallpaper session
 #           lock lock-and-suspend window-switcher volume-up volume-down
 #           volume-mute mic-mute brightness-up brightness-down
 #           media-toggle media-next media-previous
@@ -23,7 +26,43 @@ generated_dir=${XDG_CACHE_HOME:-~/.cache}/niri-shell
 
 has() { command -v "$1" >/dev/null 2>&1; }
 
-if has noctalia; then
+# Which shell this machine runs: the saved choice, else Noctalia if installed.
+choice_file=${XDG_STATE_HOME:-~/.local/state}/niri/shell
+backend=$(cat "$choice_file" 2>/dev/null)
+case $backend in
+    noctalia | waybar) ;;
+    *) has noctalia && backend=noctalia || backend=waybar ;;
+esac
+[ "$backend" = noctalia ] && ! has noctalia && backend=waybar
+
+if [ "$command" = use ]; then
+    new=${2:-}
+    case $new in
+        noctalia | waybar) ;;
+        *)
+            echo "usage: shell use noctalia|waybar   (now: $backend)" >&2
+            exit 2
+            ;;
+    esac
+    if [ "$new" = noctalia ] && ! has noctalia; then
+        echo "shell: noctalia is not installed" >&2
+        exit 1
+    fi
+    mkdir -p "$(dirname "$choice_file")"
+    echo "$new" >"$choice_file"
+    # stop both sets, then start the chosen one detached from this terminal
+    pkill -u "$USER" -x noctalia
+    for program in waybar mako sfwbar swayidle swaybg; do pkill -u "$USER" -x "$program"; done
+    pkill -u "$USER" -f 'wl-paste --watch cliphist'
+    # the theme focus ring is only kept up to date for waybar
+    [ "$new" = noctalia ] && rm -f "$generated_dir/colors.kdl"
+    sleep 0.3
+    setsid -f "$self" start </dev/null >/dev/null 2>&1
+    echo "niri shell: $new"
+    exit 0
+fi
+
+if [ "$backend" = noctalia ]; then
     case $command in
         start) exec noctalia ;;
         colors) exit 0 ;; # Noctalia has its own color settings

@@ -472,8 +472,10 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // === Application Launchers ===
-    Mod+T hotkey-overlay-title="Open Terminal" { spawn "kitty"; }
-    Mod+Return hotkey-overlay-title="Open Terminal" { spawn "kitty"; }
+    // Mod+Enter: kitty attached to tmux session "main" (created if missing), so
+    // every window shows the same session; Mod+T: plain kitty for a second view
+    Mod+Return hotkey-overlay-title="Terminal (tmux main)" { spawn "kitty" "-e" "tmux" "new-session" "-A" "-s" "main"; }
+    Mod+T hotkey-overlay-title="Terminal (plain)" { spawn "kitty"; }
     Mod+E hotkey-overlay-title="Open File Manager" { spawn "thunar"; }
     Mod+Grave hotkey-overlay-title="Serial Console (scratchpad)" { spawn-sh "~/.config/niri/scripts/scratchpad"; }
     // Focus-or-launch: jump to the app if open (again = next window), else start it
