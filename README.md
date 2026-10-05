@@ -54,6 +54,7 @@ Arch and Debian/Ubuntu. Details and flags: [`steps/README.md`](steps/README.md).
 | [`clang`](clang/README.md) | `.clang-format` C/C++ style | stow |
 | [`mods`](mods/README.md) | AI on the command line | stow |
 | [`claude`](claude/README.md) | Claude Code global rules and skills | stow |
+| [`git`](git/README.md) | `.gitconfig` (delta), global ignore; secret check before commit | stow |
 
 **Setup and extras**
 

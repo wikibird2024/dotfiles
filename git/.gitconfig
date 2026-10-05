@@ -1,0 +1,19 @@
+# Shared git settings for every machine (stow package `git`).
+# Name, email and work-only settings go in ~/.gitconfig.local, included at the
+# end so it can override anything here. Example: git/.gitconfig.local.example
+
+[init]
+	defaultBranch = main
+[core]
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	line-numbers = true
+	side-by-side = true
+[merge]
+	conflictstyle = zdiff3
+
+[include]
+	path = ~/.gitconfig.local

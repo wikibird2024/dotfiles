@@ -1,0 +1,4 @@
+# Files in this package that must not be linked into $HOME
+# (this file replaces stow's defaults, so README is listed too)
+^/README.*
+^/\.gitconfig\.local\.example$

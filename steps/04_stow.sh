@@ -32,6 +32,7 @@ STOW_PKGS=(
     niri
     noctalia
     theme
+    git
 )
 
 # ~/.claude must be a real folder before stowing `claude`: if it is missing,
@@ -55,6 +56,22 @@ for f in .bashrc .aliases .bash_functions; do
         log_warn "Existing ~/$f moved to ~/$f.bak.*"
     fi
 done
+
+# A real ~/.gitconfig holds this machine's name and email: it becomes
+# ~/.gitconfig.local (included by git/.gitconfig) so nothing is lost.
+if [ -f "$HOME/.gitconfig" ] && [ ! -L "$HOME/.gitconfig" ]; then
+    if [ ! -e "$HOME/.gitconfig.local" ]; then
+        mv "$HOME/.gitconfig" "$HOME/.gitconfig.local"
+        log_warn "Existing ~/.gitconfig moved to ~/.gitconfig.local (name, email kept)."
+    else
+        mv "$HOME/.gitconfig" "$HOME/.gitconfig.bak.$(date +%s)"
+        log_warn "Existing ~/.gitconfig moved to ~/.gitconfig.bak.*"
+    fi
+fi
+if [ -f "$HOME/.config/git/ignore" ] && [ ! -L "$HOME/.config/git/ignore" ]; then
+    mv "$HOME/.config/git/ignore" "$HOME/.config/git/ignore.bak.$(date +%s)"
+    log_warn "Existing ~/.config/git/ignore moved to ~/.config/git/ignore.bak.*"
+fi
 
 # niri writes a default ~/.config/niri on first start, which makes stow refuse
 # the niri package; keep it as a backup instead.
@@ -81,6 +98,9 @@ if [ -f /usr/lib/systemd/user/waybar.service ]; then
     ln -sfn /dev/null "$HOME/.config/systemd/user/waybar.service"
     log_ok "waybar.service masked (niri starts waybar itself)."
 fi
+
+# ── This repo's pre-commit hook (secret check, .githooks/) ────
+git -C "$DOTFILES_DIR" config core.hooksPath .githooks && log_ok "Secret check before commit enabled."
 
 # ── Color profile ────────────────────────────────────────────
 # kitty, alacritty, tmux and Neovim read the active profile of the `theme`

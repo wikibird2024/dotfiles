@@ -1,0 +1,9 @@
+# Copy to ~/.gitconfig.local and fill in. Not tracked: one per machine.
+
+[user]
+	name = Your Name
+	email = you@example.com
+
+# Work server with its own CA certificate (keep the .pem out of git)
+# [http "https://mlserver.local"]
+# 	sslCAInfo = ~/.config/git/mlserver-ca.pem

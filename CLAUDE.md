@@ -28,7 +28,9 @@ All steps are idempotent.
 
 ## Stow Packages (active)
 
-`neovim`, `bash`, `tmux`, `zsh`, `alacritty`, `kitty`, `starship`, `i3_wm_endervour`, `picom`, `zathura`, `flameshot`, `fontconfig`, `mods`, `clang`, `claude`, `vim`, `niri`, `noctalia`, `theme`
+`neovim`, `bash`, `tmux`, `zsh`, `alacritty`, `kitty`, `starship`, `i3_wm_endervour`, `picom`, `zathura`, `flameshot`, `fontconfig`, `mods`, `clang`, `claude`, `vim`, `niri`, `noctalia`, `theme`, `git`
+
+`git/` is the shared `.gitconfig`; name, email and work-only settings live in the untracked `~/.gitconfig.local` (it includes that last). This repo's `.githooks/pre-commit` runs `ripsecrets` on staged files to block API keys (the repo is public); `04_stow.sh` enables it with `core.hooksPath`. Never commit keys: they go in `~/.secrets`.
 
 `niri/` is the niri config: one `config.kdl` that starts the desktop shell and binds its panels through `scripts/shell`, which runs Noctalia when installed and otherwise waybar/fuzzel/mako/swaylock (per machine, `scripts/shell use waybar|noctalia` overrides that; saved in `~/.local/state/niri/shell`) (Ubuntu 24.04 has no Noctalia package; their configs are in `niri/.config/waybar` and `niri/.config/mako`). Keys, workspaces, scripts and workflow: `niri/README.md`.
 
