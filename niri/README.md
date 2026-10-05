@@ -82,7 +82,8 @@ name so the bar shows `1 Browser · 2 Dev …` (Noctalia can show either id or n
 
 | Key | Action |
 |---|---|
-| Mod + T / Mod + Enter | kitty |
+| Mod + Enter | kitty attached to tmux session `main` (created if missing; every window shows that same session) |
+| Mod + T | plain kitty (no tmux) |
 | Mod + E | file manager (Thunar, same as Super+E in GNOME), floating 60% × 70% |
 | Mod + D | app launcher |
 | Mod + Space | input method: English ↔ Vietnamese (fcitx5 + Bamboo), same key as GNOME |
@@ -170,6 +171,10 @@ Every key in `config.kdl` calls `scripts/shell <command>`; it runs Noctalia when
 `noctalia` is on `PATH`, so installing Noctalia later (e.g. after a 26.04 upgrade) needs
 no config change.
 
+The same tools work on Arch: `~/.config/niri/scripts/shell use waybar` switches this
+machine to them even with Noctalia installed (`shell use noctalia` goes back). The choice
+is saved in `~/.local/state/niri/shell` (not in the repo), so each machine keeps its own.
+
 | Key | Without Noctalia |
 |---|---|
 | bar | waybar (workspaces, clock, tray, sound, network, battery, power); click the network pill for Wi-Fi/VPN (GNOME Settings) |
@@ -214,7 +219,7 @@ auto-shutdown busy make -j8   # the PC stays on until this command ends
   that is working (hooks `UserPromptSubmit` / `Stop` / `SessionEnd` in `~/.claude/settings.json`,
   the lock also ends when that Claude exits), or a remote (ssh) login. Busy → check again every 5 min.
 - Then a notification "Shutting down in 2 min"; any key or mouse move cancels it.
-- Only under niri without Noctalia (swayidle runs from `scripts/shell start`).
+- Only under niri with the waybar set (swayidle runs from `scripts/shell start`).
 
 Ubuntu's waybar package turns `waybar.service` on for every graphical session. It
 crash-loops under GNOME/X11 and would give niri a second bar, so mask it for your user:
