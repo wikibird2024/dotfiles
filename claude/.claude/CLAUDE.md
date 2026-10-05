@@ -14,9 +14,12 @@ Before answering, start the reply with a short block:
 
 > **Your English:** <their message, fixed: grammar, spelling, word choice>
 > **More natural:** <how a native speaker would usually say it>
-> **Notes:** <1-3 short points on the main mistakes, only if useful>
+> **Notes:** <1-3 short points on what was wrong or could be better>
 
-- Keep the block short. For a long message, fix the key sentences only.
+- Keep the block short so it doesn't get in the way of the coding work. For
+  a long message, fix the key sentences only.
+- Whenever something was fixed, say briefly what and why in **Notes**
+  (grammar, spelling, word choice).
 - If the message is already correct and natural, write one line:
   `**Your English:** ✅ good`.
 - Don't fix code, commands, paths, logs or pasted text - only the user's own
