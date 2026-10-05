@@ -35,6 +35,8 @@ $$\mathbf{Prefix = C\text{-}a \quad (Ctrl + a)}$$
 | `Prefix` $\rightarrow$ `F` | Project picker ([tms](https://github.com/jrmoulton/tmux-sessionizer)): fuzzy-pick a git repo under `~`, switch to its session (created if missing). |
 | `Prefix` $\rightarrow$ `f` | Session picker: switch between open sessions. |
 | `Prefix` $\rightarrow$ `g` | Lazygit in a popup, opened in the current pane's directory (`q` closes it). |
+| `Prefix` $\rightarrow$ `t` | Quick shell in a popup, opened in the current pane's directory (`exit` or `Ctrl+D` closes it). Replaces the default big clock. |
+| `Prefix` $\rightarrow$ `e` | File manager ([yazi](https://github.com/sxyazi/yazi)) in a popup, opened in the current pane's directory (`q` closes it). |
 
 **Clipboard.** Copy mode (`v` select, `y` copy) and mouse drag copy
 through `.tmux/scripts/clipboard_copy.sh`: `wl-copy` under niri (Wayland), `xclip` under

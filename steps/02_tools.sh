@@ -280,6 +280,7 @@ install_lazygit
 install_cargo_tool just just
 install_cargo_tool probe-rs probe-rs-tools
 install_cargo_tool tms tmux-sessionizer
+install_cargo_tool yazi yazi-fm # file manager, tmux prefix + e
 # git: delta is the pager in git/.gitconfig; ripsecrets runs in .githooks/pre-commit
 install_cargo_tool delta git-delta
 install_cargo_tool ripsecrets ripsecrets
