@@ -3,7 +3,7 @@
 #   shell <command>
 # Uses Noctalia when it is installed (Arch). Without it (Ubuntu 24.04 has no
 # Noctalia package) it uses apt tools: waybar, fuzzel, mako, swaylock,
-# swayidle, swaybg, cliphist, wpctl, brightnessctl, playerctl, sfwbar (dock).
+# swayidle, swaybg, cliphist, wpctl, brightnessctl, playerctl, rudo (dock).
 # Commands: start launcher control-center settings clipboard wallpaper session
 #           lock lock-and-suspend window-switcher volume-up volume-down
 #           volume-mute mic-mute brightness-up brightness-down
@@ -115,11 +115,15 @@ write_colors() {
             "${selection#\#}" "${fg#\#}" "${accent#\#}" "${accent#\#}"
     } >"$generated_dir/fuzzel.ini"
 
-    {
-        printf '@define-color %s %s;\n' bg "$bg" fg "$fg" accent "$accent" muted "$muted" \
-            selection "$selection"
-        cat ~/.config/sfwbar/dock.css 2>/dev/null
-    } >"$generated_dir/dock.css"
+    # rudo reads only ~/.config/rudo/style.css and re-reads it when it changes;
+    # write a temp file and rename, so it never loads a half-written one
+    if [ -f ~/.config/rudo/dock.css ]; then
+        {
+            printf '@define-color %s %s;\n' bg "$bg" fg "$fg" accent "$accent" muted "$muted" \
+                selection "$selection"
+            cat ~/.config/rudo/dock.css
+        } >~/.config/rudo/.style.css.new && mv ~/.config/rudo/.style.css.new ~/.config/rudo/style.css
+    fi
 
     # niri focus ring: config.kdl includes this file and reloads when it changes
     printf 'layout {\n    focus-ring {\n        active-color "%s"\n        inactive-color "%s"\n        urgent-color "%s"\n    }\n}\n' \
@@ -156,8 +160,8 @@ case $command in
         start_wallpaper
         start_once waybar -s "$generated_dir/waybar.css"
         start_once mako -c "$generated_dir/mako.conf"
-        # auto-hiding dock on the left edge (~/.config/sfwbar), for people who don't know the keys
-        start_once sfwbar -c "$generated_dir/dock.css"
+        # dock on the left edge, always shown (~/.config/rudo), for people who don't know the keys
+        start_once rudo
         # password prompts for apps that need admin rights (Ubuntu path, then Arch)
         for agent in /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 \
             /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1; do
@@ -266,12 +270,7 @@ case $command in
     colors)
         write_colors
         pkill -USR2 -u "$USER" -x waybar # waybar re-reads its style
-        makoctl reload 2>/dev/null || true
-        # sfwbar reads its css only at start
-        if pkill -u "$USER" -x sfwbar; then
-            sleep 0.3
-            start_once sfwbar -c "$generated_dir/dock.css"
-        fi
+        makoctl reload 2>/dev/null || true # rudo re-reads style.css by itself
         ;;
     notifications-restore) makoctl restore ;;
     notifications-clear) makoctl dismiss --all ;;

@@ -17,7 +17,8 @@ niri/.config/niri/
     └── focus-or-launch     # Mod+B / Mod+P  jump to an app or start it
 niri/.config/waybar/        # bar when Noctalia is missing (Ubuntu)
 niri/.config/mako/          # notifications + volume/brightness OSD when Noctalia is missing
-niri/.config/sfwbar/        # auto-hiding dock on the left edge when Noctalia is missing
+niri/.config/rudo/          # dock on the left edge when Noctalia is missing: settings, pins, dock.css
+niri/.local/share/          # dock launchers (All apps, Settings) + its fallback app icon
 niri/.config/satty/         # screenshot editor settings (Print)
 noctalia/.config/noctalia/
 └── bar.toml                # bar tweaks (workspace names as labels)
@@ -172,7 +173,7 @@ no config change.
 | Key | Without Noctalia |
 |---|---|
 | bar | waybar (workspaces, clock, tray, sound, network, battery, power); click the network pill for Wi-Fi/VPN (GNOME Settings) |
-| left screen edge | dock (sfwbar): Apps, Files, Browser, Terminal, Settings, open windows, Power. Hidden until the pointer touches the edge; tooltips name the key for each button, so guests need no shortcuts |
+| left screen edge | dock ([rudo](https://github.com/skorotkiewicz/rudo)), always shown; windows open to the right of it, never over it. Pinned apps (All apps, Files, Browser, Terminal, Settings), then other open apps, Power menu, and the grid button to pin an app. A pill under an icon = it is open (accent = focused). Click = go to it or start it; right click = its windows, **Pin to Dock** / **Unpin from Dock**; drag a pinned icon to reorder. Pins are saved in `rudo/pins.json` (in the repo), size and position in `rudo/settings.json` (`icon_size`, rudo reloads it live) |
 | Mod + D | fuzzel |
 | Mod + S | GNOME Settings (Wi-Fi, Bluetooth, sound) |
 | Mod + , | `config.kdl` in nvim |
@@ -186,7 +187,8 @@ no config change.
 Colors follow the `theme` profile (`theme <name>` recolors the bar, launcher,
 notifications, lock screen and niri's focus ring live): `scripts/shell` builds
 each tool's config from its repo file (`waybar/style.css`, `mako/config`, `fuzzel/fuzzel.ini`,
-`sfwbar/dock.css`) plus the palette, in `~/.cache/niri-shell/`; the focus
+`rudo/dock.css`) plus the palette, in `~/.cache/niri-shell/` (the dock's goes to
+`~/.config/rudo/style.css`, not tracked, as rudo reads only that); the focus
 ring comes from `colors.kdl` there, which `config.kdl` includes (niri reloads it by itself).
 Edit the repo files, never the generated ones.
 

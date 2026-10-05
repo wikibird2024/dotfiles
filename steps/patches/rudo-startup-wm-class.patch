@@ -1,0 +1,80 @@
+rudo: match windows to apps by StartupWMClass, and keep NoDisplay entries
+for that matching (not for pinning), so e.g. VirtualBox windows get an icon.
+Applied by install_rudo in steps/02_tools.sh.
+
+diff --git a/src/catalog.rs b/src/catalog.rs
+index b07f156..89a7095 100644
+--- a/src/catalog.rs
++++ b/src/catalog.rs
+@@ -46,16 +46,22 @@ impl AppCatalog {
+         installed.sort_by_cached_key(|app| app.display_name().to_string().to_lowercase());
+ 
+         for app in installed {
+-            if !app.should_show() {
+-                continue;
+-            }
++            // Hidden entries (NoDisplay, e.g. VirtualBox's VM window) are kept
++            // so their windows still get an icon, but not offered for pinning.
++            let shown = app.should_show();
+ 
+             let Some(id) = app.id().map(|id| id.to_string()) else {
+                 continue;
+             };
+ 
+             let icon = app.icon();
+-            let executable = basename(app.executable());
++            // only for shown entries: a hidden one may have no Exec, and
++            // gio's executable() then reads a null string and crashes
++            let executable = if shown {
++                basename(app.executable())
++            } else {
++                None
++            };
+             let name = app.display_name().to_string();
+ 
+             let mut search_keys = vec![normalize_key(&id), normalize_key(&name)];
+@@ -72,13 +78,21 @@ impl AppCatalog {
+                 search_keys,
+             };
+ 
++            // StartupWMClass names the app_id its windows use (e.g.
++            // "VirtualBox Manager" for virtualbox.desktop); register it first
++            // so it wins over a display name shared by several entries.
++            if let Some(wm_class) = startup_wm_class(&id) {
++                register_alias(&mut aliases, &wm_class, &id);
++            }
+             register_alias(&mut aliases, &id, &id);
+             if let Some(exec) = executable.as_deref() {
+                 register_alias(&mut aliases, exec, &id);
+             }
+             register_alias(&mut aliases, &record.name, &id);
+ 
+-            ordered.push(id.clone());
++            if shown {
++                ordered.push(id.clone());
++            }
+             apps.insert(id, record);
+         }
+ 
+@@ -189,6 +203,21 @@ fn normalize_key(value: &str) -> String {
+         .to_lowercase()
+ }
+ 
++/// `StartupWMClass` of an installed desktop entry, read from the XDG data dirs.
++fn startup_wm_class(desktop_id: &str) -> Option<String> {
++    let key_file = glib::KeyFile::new();
++    key_file
++        .load_from_data_dirs(
++            format!("applications/{desktop_id}"),
++            glib::KeyFileFlags::NONE,
++        )
++        .ok()?;
++    key_file
++        .string("Desktop Entry", "StartupWMClass")
++        .ok()
++        .map(|class| class.to_string())
++}
++
+ fn basename(path: impl AsRef<Path>) -> Option<String> {
+     path.as_ref()
+         .file_name()

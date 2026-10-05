@@ -1,0 +1,23 @@
+{
+  "autohide": {
+    "enabled": false,
+    "delay_secs": 3
+  },
+  "show_pin_button": true,
+  "icon_size": 28,
+  "position": "left",
+  "outputs": "first",
+  "animation_duration_ms": 180,
+  "menu": {
+    "enabled": true,
+    "icon": "system-shutdown-symbolic",
+    "position": "end",
+    "items": [
+      {"label": "Lock", "icon": "system-lock-screen-symbolic", "command": "~/.config/niri/scripts/shell lock", "confirm": false},
+      {"label": "Log out", "icon": "system-log-out-symbolic", "command": "niri msg action quit --skip-confirmation", "confirm": true},
+      {"label": "Restart", "icon": "system-reboot-symbolic", "command": "systemctl reboot", "confirm": true},
+      {"label": "Power off", "icon": "system-shutdown-symbolic", "command": "systemctl poweroff", "confirm": true},
+      {"label": "More (suspend, auto shutdown)", "icon": "view-more-symbolic", "command": "~/.config/niri/scripts/shell session", "confirm": false}
+    ]
+  }
+}

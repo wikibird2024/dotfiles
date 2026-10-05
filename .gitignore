@@ -28,6 +28,8 @@ Session.vim
 .cache/
 .local/
 !theme/.local/
+!claude/.local/
+!niri/.local/
 __pycache__/
 # Electron/Chromium app data (e.g. a copied ~/.config/obsidian)
 Cache/

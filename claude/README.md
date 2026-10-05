@@ -9,6 +9,6 @@ these files are linked and Claude Code's own data (credentials, history) never e
 |---|---|
 | `.claude/CLAUDE.md` | rules for every project (naming, wording, ...) |
 | `.claude/skills/project-status/SKILL.md` | `/project-status`: read-only report on the current repo (git, build, tests, open work) |
+| `.local/bin/claude-personal` | wrapper script isolating personal credentials to `~/.claude-personal` |
 
-`~/.claude/settings.json` is **not** linked: Claude Code writes to it. A new machine gets a copy of
-`templates/claude/settings.json` once.
+`~/.claude/settings.json` and `~/.claude-personal/settings.json` are **not** linked: Claude Code writes to them. A new machine gets a copy of `templates/claude/settings.json` once.

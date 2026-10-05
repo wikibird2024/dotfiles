@@ -216,6 +216,56 @@ install_cargo_tool() {
         log_warn "$bin build failed — run: cargo install $crate --locked"
 }
 
+# ── rudo (left dock for niri without Noctalia, niri/.config/rudo) ──
+# Needs gtk4-layer-shell, which Ubuntu 24.04 does not package: build it into
+# ~/.local (no sudo) and link rudo to it with an rpath. Arch: Noctalia has a dock.
+RUDO_TAG=v0.3.2
+GTK4_LAYER_SHELL_TAG=v1.3.0
+install_rudo() {
+    if has rudo; then
+        log_ok "rudo already installed."
+        return
+    fi
+    has niri || { log_info "niri not installed — skipping rudo."; return; }
+    has noctalia && { log_info "Noctalia has its own dock — skipping rudo."; return; }
+    # shellcheck disable=SC1091
+    [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
+    if ! has cargo; then
+        log_warn "cargo not found — skipping rudo install."
+        return
+    fi
+    local lib
+    lib="$HOME/.local/lib/$(gcc -dumpmachine 2>/dev/null || echo x86_64-linux-gnu)"
+    if ! PKG_CONFIG_PATH="$lib/pkgconfig" pkg-config --exists gtk4-layer-shell-0; then
+        log_info "Building gtk4-layer-shell $GTK4_LAYER_SHELL_TAG into ~/.local..."
+        has meson || pip install --user --break-system-packages meson
+        local tmp; tmp=$(mktemp -d)
+        if ! (git clone -q --depth 1 -b "$GTK4_LAYER_SHELL_TAG" \
+            https://github.com/wmww/gtk4-layer-shell "$tmp/src" &&
+            meson setup "$tmp/build" "$tmp/src" --prefix "$HOME/.local" --libdir "$lib" \
+                --buildtype release -Dintrospection=false -Dvapi=false \
+                -Dexamples=false -Ddocs=false -Dtests=false >/dev/null &&
+            ninja -C "$tmp/build" install >/dev/null); then
+            rm -rf "$tmp"
+            log_warn "gtk4-layer-shell build failed (needs libwayland-dev wayland-protocols libgtk-4-dev) — skipping rudo."
+            return
+        fi
+        rm -rf "$tmp"
+    fi
+    # with steps/patches/rudo-*.patch (window -> app icon matching)
+    log_info "Installing rudo $RUDO_TAG (cargo install, patched)..."
+    local src; src=$(mktemp -d)
+    if git clone -q --depth 1 -b "$RUDO_TAG" https://github.com/skorotkiewicz/rudo "$src" &&
+        git -C "$src" apply "$DOTFILES_DIR"/steps/patches/rudo-*.patch &&
+        PKG_CONFIG_PATH="$lib/pkgconfig" RUSTFLAGS="-C link-args=-Wl,-rpath,$lib" \
+            cargo install --path "$src" --locked; then
+        log_ok "rudo installed."
+    else
+        log_warn "rudo build failed — see install_rudo in steps/02_tools.sh"
+    fi
+    rm -rf "$src"
+}
+
 install_neovim
 install_fzf
 install_fd
@@ -230,5 +280,6 @@ install_lazygit
 install_cargo_tool just just
 install_cargo_tool probe-rs probe-rs-tools
 install_cargo_tool tms tmux-sessionizer
+install_rudo
 
 log_ok "All CLI tools done."

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=All apps
+Comment=Search and open an app (Super+D)
+Icon=system-search-symbolic
+Exec=sh -c '~/.config/niri/scripts/shell launcher'
+Terminal=false

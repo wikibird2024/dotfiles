@@ -1,0 +1,12 @@
+{
+  "pins": [
+    "niri-apps.desktop",
+    "thunar.desktop",
+    "firefox_firefox.desktop",
+    "kitty.desktop",
+    "com-st-microxplorer-maingui-STM32CubeMX.desktop",
+    "anydesk.desktop",
+    "Alacritty.desktop",
+    "drawio.desktop"
+  ]
+}

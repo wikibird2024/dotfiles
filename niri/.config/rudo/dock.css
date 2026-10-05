@@ -1,0 +1,77 @@
+/* Dock look (rudo, GTK4 CSS), loaded after rudo's own theme.
+   scripts/shell puts the `theme` colors in front as @define-color
+   bg/fg/accent/muted/selection and writes ~/.config/rudo/style.css (rudo
+   re-reads it live). Edit this file, never style.css. */
+
+.dock-surface {
+  padding: 6px 4px;
+  border-radius: 14px;
+  /* raised panel: 55% of the way from the background to the selection color */
+  background: alpha(mix(@bg, @selection, 0.55), 0.98);
+  border: 1px solid alpha(@accent, 0.6);
+  box-shadow: none;
+}
+
+.dock-item,
+.picker-button,
+.menu-button {
+  min-width: 38px;
+  min-height: 38px;
+  border-radius: 10px;
+  background: transparent;
+  color: @fg; /* symbolic icons (+, power) take the text color */
+}
+
+.dock-item:hover,
+.picker-button:hover,
+.menu-button:hover {
+  background: alpha(@fg, 0.12);
+  border-color: transparent;
+}
+
+/* same flat look open or not: the pill below says it is open */
+.dock-item.is-running {
+  background: transparent;
+}
+
+.dock-item.is-active {
+  background: alpha(@accent, 0.35);
+  border-color: alpha(@accent, 0.6);
+}
+
+/* small pill under a running app, wider for the focused one; rudo stretches
+   it to the item width, so the side margins set its length */
+.dock-indicator {
+  min-height: 3px;
+  margin: 0 15px;
+  background: alpha(@fg, 0.6);
+}
+
+.dock-indicator.is-active {
+  margin: 0 10px;
+  background: @accent;
+}
+
+/* line between pinned apps and other open apps */
+.dock-separator.is-vertical {
+  min-width: 26px;
+  min-height: 1px;
+  margin: 2px 0;
+  background: alpha(@fg, 0.3);
+  opacity: 1;
+}
+
+/* "pin an app" button: dashed outline so it does not look like an app */
+.picker-button {
+  border: 1px dashed alpha(@fg, 0.35);
+  opacity: 0.7;
+}
+
+.picker-button:hover {
+  border-color: alpha(@accent, 0.8);
+  opacity: 1;
+}
+
+.launch-spinner {
+  color: @accent;
+}

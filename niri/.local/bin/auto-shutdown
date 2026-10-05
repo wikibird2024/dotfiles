@@ -1,0 +1,187 @@
+#!/usr/bin/env bash
+# Shut the PC down when you have been away for a while and nothing is busy.
+# OFF by default, and off again after every reboot (state lives in /run).
+#   auto-shutdown on [minutes]   turn on: power off after <minutes> idle (default 30)
+#   auto-shutdown off            turn off (also cancels a countdown)
+#   auto-shutdown is-on          exit 0 when on (for the power menu)
+#   auto-shutdown status         on/off, and what is keeping the PC busy
+#   auto-shutdown busy <command> run a command; the PC stays on until it ends
+# "Busy" = any systemd-inhibit lock on "idle": `busy`, each working Claude Code
+# session (hooks in ~/.claude/settings.json), or other programs. A remote login
+# (ssh) also counts. Idle = no keyboard/mouse (swayidle, niri only); a playing
+# video blocks idle by itself. Any input cancels the countdown.
+# Internal (swayidle, Claude hooks, waybar): idle resume watch claude-start claude-stop bar
+set -uo pipefail
+
+state_dir=${XDG_RUNTIME_DIR:-/tmp/auto-shutdown-$UID}/auto-shutdown
+enabled_file=$state_dir/enabled # holds the idle minutes
+watcher_file=$state_dir/watcher.pid
+notify_file=$state_dir/notify.id
+self=$(readlink -f "$0")
+# swayidle calls `idle` after this many seconds without input (niri scripts/shell)
+idle_start_sec=60
+recheck_sec=300
+warning_sec=120
+
+mkdir -p "$state_dir"
+
+is_enabled() { [ -f "$enabled_file" ]; }
+
+notify() {
+    command -v notify-send >/dev/null || return 0
+    notify-send -a auto-shutdown "$@"
+}
+
+refresh_bar() { pkill -RTMIN+9 -u "$USER" -x waybar 2>/dev/null || true; }
+
+close_warning() {
+    [ -f "$notify_file" ] || return 0
+    makoctl dismiss -n "$(cat "$notify_file")" 2>/dev/null
+    rm -f "$notify_file"
+}
+
+# Stop a waiting countdown (the whole process group, so its `sleep` too).
+stop_watcher() {
+    local pid
+    pid=$(cat "$watcher_file" 2>/dev/null) && kill -- "-$pid" 2>/dev/null
+    rm -f "$watcher_file"
+    close_warning
+}
+
+# Print one line per reason the PC must stay on; nothing = free to power off.
+busy_reasons() {
+    # logind locks as JSON: [what, who, why, mode, uid, pid]
+    busctl --json=short call org.freedesktop.login1 /org/freedesktop/login1 \
+        org.freedesktop.login1.Manager ListInhibitors 2>/dev/null |
+        jq -r '.data[0][] | select((.[0] | split(":") | index("idle")) and .[3] == "block")
+            | "lock: \(.[1]) (pid \(.[5])): \(.[2])"'
+    loginctl list-sessions --no-legend 2>/dev/null | while read -r session _; do
+        [ "$(loginctl show-session "$session" -p Remote --value 2>/dev/null)" = yes ] &&
+            echo "remote login: session $session"
+    done
+}
+
+# Nearest parent process called "claude" (hooks run under it), else our parent.
+claude_pid() {
+    local pid=$PPID comm
+    while [ "$pid" -gt 1 ]; do
+        comm=$(cat "/proc/$pid/comm" 2>/dev/null) || break
+        [ "$comm" = claude ] && { echo "$pid"; return; }
+        pid=$(awk '{ print $4 }' "/proc/$pid/stat" 2>/dev/null) || break
+    done
+    echo "$PPID"
+}
+
+command=${1:-status}
+shift || true
+
+case $command in
+    on)
+        minutes=${1:-30}
+        if ! [[ $minutes =~ ^[0-9]+$ ]] || [ "$minutes" -lt 2 ]; then
+            echo "auto-shutdown: minutes must be a number >= 2" >&2
+            exit 2
+        fi
+        echo "$minutes" >"$enabled_file"
+        notify "Auto shutdown ON" "Power off after $minutes min idle, when nothing is busy. Power menu (Mod+X) turns it off."
+        echo "auto-shutdown: on, after $minutes min idle"
+        refresh_bar
+        ;;
+    off)
+        rm -f "$enabled_file"
+        stop_watcher
+        notify "Auto shutdown OFF"
+        echo "auto-shutdown: off"
+        refresh_bar
+        ;;
+    is-on)
+        is_enabled
+        ;;
+    status)
+        if is_enabled; then
+            echo "on: power off after $(cat "$enabled_file") min idle"
+        else
+            echo "off (turn on: auto-shutdown on [minutes])"
+        fi
+        [ -f "$watcher_file" ] && echo "idle now: countdown running"
+        reasons=$(busy_reasons)
+        if [ -n "$reasons" ]; then
+            echo "busy:"
+            while IFS= read -r line; do echo "  $line"; done <<<"$reasons"
+        else
+            echo "busy: nothing"
+        fi
+        [ "${XDG_CURRENT_DESKTOP:-}" = niri ] || echo "note: idle is only watched under niri (swayidle)"
+        ;;
+    busy)
+        [ $# -gt 0 ] || { echo "usage: auto-shutdown busy <command> [args...]" >&2; exit 2; }
+        exec systemd-inhibit --what=idle --mode=block --who=busy --why="$*" "$@"
+        ;;
+    idle)
+        # swayidle: no input for $idle_start_sec
+        is_enabled || exit 0
+        stop_watcher
+        setsid -f "$self" watch </dev/null >/dev/null 2>&1
+        ;;
+    resume)
+        # swayidle: input again
+        stop_watcher
+        ;;
+    watch)
+        echo $$ >"$watcher_file"
+        minutes=$(cat "$enabled_file" 2>/dev/null) || exit 0
+        sleep $((minutes * 60 - idle_start_sec - warning_sec > 0 ? minutes * 60 - idle_start_sec - warning_sec : 0))
+        while is_enabled; do
+            if [ -n "$(busy_reasons)" ]; then
+                sleep "$recheck_sec"
+                continue
+            fi
+            notify -u critical -p "Shutting down in $((warning_sec / 60)) min" \
+                "Move the mouse or press a key to cancel. Power menu (Mod+X) turns auto shutdown off." \
+                >"$notify_file"
+            sleep "$warning_sec"
+            # still idle, still on, and nothing started meanwhile
+            if ! is_enabled || [ -n "$(busy_reasons)" ]; then
+                close_warning
+                continue
+            fi
+            rm -f "$watcher_file" "$enabled_file" "$notify_file"
+            systemctl poweroff
+            exit 0
+        done
+        rm -f "$watcher_file"
+        ;;
+    claude-start)
+        # UserPromptSubmit hook: hold an idle lock while this Claude session works.
+        # The lock ends with the Claude process, so a crash cannot keep the PC on.
+        session=$(jq -r '.session_id // empty' 2>/dev/null)
+        lock_file=$state_dir/claude-${session:-unknown}.pid
+        pid=$(cat "$lock_file" 2>/dev/null) && kill -0 "$pid" 2>/dev/null && exit 0
+        owner=$(claude_pid)
+        # shellcheck disable=SC2016 # $$ $1 $2 belong to the inner bash
+        setsid -f bash -c 'echo $$ >"$1"; exec systemd-inhibit --what=idle --mode=block --who=claude \
+            --why="Claude Code session is working" tail --pid="$2" -f /dev/null' \
+            _ "$lock_file" "$owner" </dev/null >/dev/null 2>&1
+        exit 0
+        ;;
+    claude-stop)
+        # Stop / SessionEnd hook: this session is done
+        session=$(jq -r '.session_id // empty' 2>/dev/null)
+        lock_file=$state_dir/claude-${session:-unknown}.pid
+        # process group: systemd-inhibit and its tail
+        pid=$(cat "$lock_file" 2>/dev/null) && kill -- "-$pid" 2>/dev/null
+        rm -f "$lock_file"
+        exit 0
+        ;;
+    bar)
+        # waybar custom module: line 1 text, line 2 tooltip; empty hides the module
+        if is_enabled; then
+            minutes=$(cat "$enabled_file")
+            printf '󰐥 %sm\nAuto shutdown ON: power off after %s min idle. Click: power menu (turn it off there)\n' "$minutes" "$minutes"
+        fi
+        ;;
+    *)
+        echo "auto-shutdown: unknown command '$command' (on off is-on status busy)" >&2
+        exit 2
+        ;;
+esac

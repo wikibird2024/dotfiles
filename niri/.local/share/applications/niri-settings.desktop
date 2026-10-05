@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Settings
+Comment=Wi-Fi, Bluetooth, sound, display (Super+S)
+Icon=org.gnome.Settings
+Exec=sh -c '~/.config/niri/scripts/shell control-center'
+Terminal=false

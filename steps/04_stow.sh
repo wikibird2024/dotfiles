@@ -38,7 +38,7 @@ STOW_PKGS=(
 # stow would link the whole folder into this repo and Claude Code would write
 # credentials, history and sessions into git. Same for skills/ (the app adds
 # its own synced skills there).
-mkdir -p "$HOME/.claude/skills"
+mkdir -p "$HOME/.claude/skills" "$HOME/.claude-personal/skills"
 
 # A real (non-symlink) ~/.vimrc makes stow refuse the vim package; keep it
 # as a backup instead.
@@ -104,6 +104,17 @@ if [ ! -e "$CLAUDE_SETTINGS" ]; then
     log_ok "Claude settings copied from template."
 else
     log_info "Claude settings already present, not overwritten."
+fi
+
+# ── Claude Personal profile (linked instructions, copied settings) ─
+CLAUDE_PERSONAL_DIR="$HOME/.claude-personal"
+if [ -d "$CLAUDE_PERSONAL_DIR" ]; then
+    ln -sf "$DOTFILES_DIR/claude/.claude/CLAUDE.md" "$CLAUDE_PERSONAL_DIR/CLAUDE.md"
+    ln -sf "$DOTFILES_DIR/claude/.claude/skills/project-status" "$CLAUDE_PERSONAL_DIR/skills/project-status"
+    if [ ! -e "$CLAUDE_PERSONAL_DIR/settings.json" ]; then
+        cp "$DOTFILES_DIR/templates/claude/settings.json" "$CLAUDE_PERSONAL_DIR/settings.json"
+        log_ok "Claude personal settings copied from template."
+    fi
 fi
 
 # ── Vim plugins ──────────────────────────────────────────────
