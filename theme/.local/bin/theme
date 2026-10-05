@@ -208,7 +208,8 @@ switch() {
 pick() {
 	command -v fzf >/dev/null || die "pick needs fzf; use: theme <name>"
 	local name
-	name="$(list | fzf --prompt 'theme> ' --height 40% --reverse --no-multi \
+	# 40% suits a plain terminal; the tmux popup (prefix + T) passes 100%
+	name="$(list | fzf --prompt 'theme> ' --height "${THEME_PICK_HEIGHT:-40%}" --reverse --no-multi \
 		--preview "'$HOME/.local/bin/hexcolor' '$THEMES'/\$(echo {} | tr -d '* ')/palette.conf 2>/dev/null" |
 		tr -d '* ')" || exit 0
 	[ -n "$name" ] && switch "$name"
