@@ -7,6 +7,8 @@
     "com-st-microxplorer-maingui-STM32CubeMX.desktop",
     "anydesk.desktop",
     "Alacritty.desktop",
-    "drawio.desktop"
+    "drawio.desktop",
+    "telegram-desktop_telegram-desktop.desktop",
+    "code_code.desktop"
   ]
 }
