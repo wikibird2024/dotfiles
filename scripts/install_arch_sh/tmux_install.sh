@@ -19,7 +19,7 @@ fi
 # Backup existing config
 if [[ -f ~/.tmux.conf ]]; then
     echo "💾 Backing up existing config..."
-    cp ~/.tmux.conf ~/.tmux.conf.bak.$(date +%s)
+    cp ~/.tmux.conf ~/.tmux.conf.bak."$(date +%s)"
 fi
 
 # Copy config

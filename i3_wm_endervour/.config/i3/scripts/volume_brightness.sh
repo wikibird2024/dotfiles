@@ -4,7 +4,6 @@
 # changed to use brightnessctl [xbacklight is non functional on modern hardware]
 # by joekamprad [Aug 2025]
 
-bar_color="#7f7fff"
 volume_step=1
 brightness_step=5
 max_volume=100

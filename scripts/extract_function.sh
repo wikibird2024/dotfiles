@@ -1,7 +1,7 @@
 #!/bin/bash
 
 OUTPUT_FILE="function_list_by_component.txt"
-> "$OUTPUT_FILE"
+: >"$OUTPUT_FILE"
 
 echo "🔍 Extracting function declarations from headers..." >> "$OUTPUT_FILE"
 echo "=====================================================" >> "$OUTPUT_FILE"

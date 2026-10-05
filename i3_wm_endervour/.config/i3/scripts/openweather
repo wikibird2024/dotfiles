@@ -109,6 +109,7 @@ load_config() {
     
     # Load from config file if it exists
     if [[ -f "$CONFIG_FILE" ]]; then
+        # shellcheck source=/dev/null
         source "$CONFIG_FILE"
     fi
     

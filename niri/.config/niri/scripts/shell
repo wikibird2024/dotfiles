@@ -113,7 +113,7 @@ show_volume() {
 # mako 1.8 and fuzzel 1.9 have no include, so each tool gets a generated
 # config: the repo file plus these colors, in $generated_dir.
 write_colors() {
-    local bg=#1e1e1e fg=#e0e0e0 accent=#909090 muted=#606060 red=#cc4444 yellow=#e0b050 selection=#3a3a3a
+    local bg='#1e1e1e' fg='#e0e0e0' accent='#909090' muted='#606060' red='#cc4444' yellow='#e0b050' selection='#3a3a3a'
     if [ -f "$palette" ]; then
         eval "$(awk '
             $1 == "background"           { print "bg=" $2 }

@@ -52,6 +52,7 @@ Options:
 -l\tList available interfaces in /proc/net/dev
 -h\tShow this help text
 " && exit 0;;
+        *) exit 1 ;; # getopts already printed the error
     esac
 done
 

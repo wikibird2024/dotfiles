@@ -53,6 +53,7 @@ else
 fi
 
 echo "🔁 [6/6] Reloading shell configuration..."
+# shellcheck source=/dev/null
 source "$CONFIG_FILE"
 
 echo "✅ Installation completed successfully!"

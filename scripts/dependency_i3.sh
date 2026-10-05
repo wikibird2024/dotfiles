@@ -141,4 +141,4 @@ log_info "Detecting hardware sensors (lm_sensors)..."
 log_warn "You may want to run 'sudo sensors-detect' manually after this script to configure your hardware sensors."
 
 log_info "All dependencies installed successfully!"
-log_info "Please restart i3 ($mod+Shift+r) or log out and log back in to apply all changes."
+log_info "Please restart i3 (\$mod+Shift+r) or log out and log back in to apply all changes."

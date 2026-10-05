@@ -10,7 +10,7 @@ colors_file=${XDG_CACHE_HOME:-~/.cache}/niri-shell/colors.sh
 
 render() {
     # re-read every time, so `theme <name>` recolors without a restart
-    local fg=#e0e0e0 accent=#909090 muted=#606060
+    local fg='#e0e0e0' accent='#909090' muted='#606060'
     # shellcheck source=/dev/null
     [ -f "$colors_file" ] && . "$colors_file"
     niri msg --json workspaces | jq -r --arg fg "$fg" --arg accent "$accent" --arg muted "$muted" '

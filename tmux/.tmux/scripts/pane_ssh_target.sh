@@ -16,6 +16,7 @@ optspec="46AaCfGgKkMNnqsTtVvXxYyb:c:D:e:F:I:i:J:L:l:m:O:o:p:Q:R:S:W:w:B:E:"
 set -- $ssh_args
 shift # drop the program name "ssh"
 OPTIND=1
+# shellcheck disable=SC2034 # opt is required by getopts, never read
 while getopts "$optspec" opt 2>/dev/null; do :; done
 shift $((OPTIND - 1))
 target="$1"
