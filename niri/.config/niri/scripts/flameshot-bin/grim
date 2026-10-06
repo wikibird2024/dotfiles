@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-# grim as Flameshot 13.3 sees it: scripts/screenshot puts this folder first on
-# Flameshot's PATH. 13.3 loads grim's picture without the screen scale, so at
-# scale 1.25 (laptop screen) the overlay looks zoomed in. `-s 1` makes grim save
-# the picture at the logical size, which is what Flameshot expects.
-here=$(dirname "$0")
-PATH=$(tr ':' '\n' <<<"$PATH" | grep -vxF "$here" | paste -sd:)
-exec grim -s 1 "$@"

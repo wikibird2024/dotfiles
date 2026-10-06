@@ -146,10 +146,9 @@ environment {
   QT_QPA_PLATFORMTHEME_QT6 "gtk3"
   TERMINAL "kitty"
   // Input method (fcitx5, Vietnamese), per fcitx-im.org "Using Fcitx 5 on Wayland":
-  // Qt6 apps use Wayland's text-input first, then fcitx. Without this they go
-  // through the Qt5-style QT_IM_MODULE=fcitx path, which ate shortcuts such as
-  // Ctrl+C in Flameshot. QT_IM_MODULE / XMODIFIERS (from ~/.xprofile) stay for
-  // Qt5 and X11 apps.
+  // Qt 6.7+ apps use Wayland's text-input first, then fcitx, instead of the
+  // Qt5-style QT_IM_MODULE=fcitx path. QT_IM_MODULE / XMODIFIERS (from
+  // ~/.xprofile) stay for Qt5 and X11 apps.
   QT_IM_MODULES "wayland;fcitx"
   // ~/.profile sets these to ibus for GNOME (IBus + Bamboo there). Under niri
   // fcitx5 (+ Bamboo) is the input method: GTK apps use Wayland's text-input,
@@ -307,21 +306,6 @@ window-rule {
     open-floating true
 }
 
-// Flameshot overlay (Print): Flameshot asks for fullscreen, which opens a new column
-// and scrolls the view there and back (niri discussion #3751). Floating, not
-// fullscreen, at the screen's top-left, it covers the screen and the tiles stay put
-// (workaround from flameshot issue #4948).
-window-rule {
-    match app-id="^flameshot$"
-    open-floating true
-    open-fullscreen false
-    default-floating-position x=0 y=0 relative-to="top-left"
-    geometry-corner-radius 0
-    border { off; }
-    focus-ring { off; }
-    shadow { off; }
-}
-
 // Datasheets open beside the current window (e.g. next to nvim), half width
 window-rule {
     match app-id=r#"^org\.pwmt\.zathura$"#
@@ -461,15 +445,15 @@ binds {
     XF86MonBrightnessDown allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell brightness-down"; }
 
     // === Screenshots ===
-    // Flameshot 13.3 (scripts/screenshot): it takes the picture with grim, then opens its
-    // overlay to pick an area and draw on it. Ctrl+C copies, Ctrl+S saves to
-    // ~/Pictures/Screenshots, Esc cancels. Without Flameshot 13.x the script falls back to
-    // slurp + grim + satty. Errors go to ~/.cache/niri-shell/screenshot.log.
-    Print hotkey-overlay-title="Screenshot: Area + Edit (Flameshot)" { spawn-sh "~/.config/niri/scripts/screenshot area"; }
-    // same as Print. Insert = this keyboard's PrtSc key without Fn (GNOME binds Flameshot to
-    // Insert for the same reason); Super+Shift+S for keyboards without a Print key
-    Insert hotkey-overlay-title="Screenshot: Area + Edit (Flameshot)" { spawn-sh "~/.config/niri/scripts/screenshot area"; }
-    Mod+Shift+S hotkey-overlay-title="Screenshot: Area + Edit (Flameshot)" { spawn-sh "~/.config/niri/scripts/screenshot area"; }
+    // scripts/screenshot: slurp picks the area, grim takes the picture, satty opens it
+    // to draw on. Ctrl+C or Enter copies and closes, Ctrl+S saves to
+    // ~/Pictures/Screenshots, Esc cancels. Errors go to ~/.cache/niri-shell/screenshot.log.
+    Print hotkey-overlay-title="Screenshot: Area + Edit (satty)" { spawn-sh "~/.config/niri/scripts/screenshot area"; }
+    // same as Print. Insert = this keyboard's PrtSc key without Fn (GNOME binds its
+    // screenshot key to Insert for the same reason); Super+Shift+S for keyboards without
+    // a Print key
+    Insert hotkey-overlay-title="Screenshot: Area + Edit (satty)" { spawn-sh "~/.config/niri/scripts/screenshot area"; }
+    Mod+Shift+S hotkey-overlay-title="Screenshot: Area + Edit (satty)" { spawn-sh "~/.config/niri/scripts/screenshot area"; }
     Ctrl+Print hotkey-overlay-title="Screenshot: Full Screen (save + copy)" { spawn-sh "~/.config/niri/scripts/screenshot full"; }
     // GTK apps dark <-> light (terminals, tmux and Neovim keep the theme profile)
     Mod+Shift+D hotkey-overlay-title="Toggle Dark Mode (GTK apps)" { spawn-sh "~/.local/bin/theme gtk"; }

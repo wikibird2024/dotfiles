@@ -1,59 +1,28 @@
 #!/usr/bin/env bash
 # Screenshot keys for niri (Print, Insert, Mod+Shift+S, Ctrl+Print).
-#   screenshot area   pick an area and draw on it (Ctrl+C copy, Ctrl+S save)
+#   screenshot area   pick an area (slurp), then draw on it in satty
+#                     (Ctrl+C / Enter copy and close, Ctrl+S save, Esc cancel)
 #   screenshot full   whole screen, saved to ~/Pictures/Screenshots and copied
-# Uses Flameshot 13.x with its grim mode: grim takes the picture, so the desktop
-# portal (which fails on niri) is never used. Other Flameshot versions have no
-# grim mode (see niri/README.md "Why Flameshot 13.3"), so then it falls back to
-# slurp + grim + satty. Output goes to ~/.cache/niri-shell/screenshot.log.
+# Flameshot is not used on niri: Wayland builds without USE_WAYLAND_CLIPBOARD
+# remove the whole copy feature (flameshot issue #2848) — see niri/README.md.
+# Output goes to ~/.cache/niri-shell/screenshot.log.
 set -uo pipefail
 
 mode=${1:?usage: screenshot area|full}
 save_dir=~/Pictures/Screenshots
-config=${XDG_CONFIG_HOME:-~/.config}/flameshot/flameshot.ini
-# not resolved with readlink: it must match the PATH entry the grim wrapper removes
-grim_wrapper_dir=$(dirname "$0")/flameshot-bin
 
 mkdir -p "$save_dir" ~/.cache/niri-shell
 exec >>~/.cache/niri-shell/screenshot.log 2>&1
 echo "== $(date) $mode"
 
-# Sets key=value under [General]. Flameshot rewrites this file from its settings
-# window (that also replaces the stow symlink), so the keys are checked every time.
-set_flameshot_option() {
-    local key=$1 value=$2
-    mkdir -p "$(dirname "$config")"
-    [ -f "$config" ] || printf '[General]\n' >"$config"
-    if grep -qx "$key=$value" "$config"; then
-        return
-    elif grep -q "^$key=" "$config"; then
-        sed -i --follow-symlinks "s|^$key=.*|$key=$value|" "$config"
-    elif grep -qx '\[General\]' "$config"; then
-        sed -i --follow-symlinks "/^\[General\]\$/a $key=$value" "$config"
-    else
-        printf '[General]\n%s=%s\n' "$key" "$value" >>"$config"
-    fi
-}
-
-if flameshot --version 2>/dev/null | grep -q 'v13\.'; then
-    set_flameshot_option useGrimAdapter true
-    set_flameshot_option disabledGrimWarning true
-    # The Flameshot daemon keeps the PATH it was started with. One started
-    # without the grim wrapper (e.g. before this script) is stopped first.
-    for pid in $(pgrep -u "$USER" -x flameshot); do
-        tr '\0' '\n' <"/proc/$pid/environ" | grep -qxF "PATH=$grim_wrapper_dir:$PATH" || kill "$pid"
-    done
-    export PATH="$grim_wrapper_dir:$PATH"
-    case $mode in
-        area) flameshot gui -p "$save_dir" ;;
-        full) flameshot full -c -p "$save_dir" ;;
-        *) echo "usage: screenshot area|full" && exit 2 ;;
-    esac
-else
-    case $mode in
-        area) area=$(slurp -d) && grim -t ppm -g "$area" - | satty -f - ;;
-        full) grim -t ppm - | satty -f - ;;
-        *) echo "usage: screenshot area|full" && exit 2 ;;
-    esac
-fi
+case $mode in
+    area)
+        area=$(slurp -d) && grim -t ppm -g "$area" - | satty -f -
+        ;;
+    full)
+        picture="$save_dir/Screenshot from $(date '+%Y-%m-%d %H-%M-%S').png"
+        grim "$picture" && wl-copy --type image/png <"$picture"
+        ;;
+    *) echo "usage: screenshot area|full" && exit 2 ;;
+esac
 echo "exit=$?"

@@ -2,9 +2,9 @@
 # slurp picks the area, grim takes it, satty opens it for arrows/boxes/text).
 # Only settings that differ from satty's defaults. Reference: satty README.
 [general]
-# Esc = copy to clipboard and close (like Flameshot's Ctrl+C then close)
-actions-on-escape = ["save-to-clipboard", "exit"]
-# Enter = copy and close too
+# Esc = cancel without copying; Ctrl+C (satty's own key) copies and closes
+actions-on-escape = ["exit"]
+# Enter = copy and close
 actions-on-enter = ["save-to-clipboard", "exit"]
 early-exit = ["all"]
 copy-command = "wl-copy"
