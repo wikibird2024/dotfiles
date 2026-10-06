@@ -1,13 +1,19 @@
 # flameshot
 
-Settings for [Flameshot](https://flameshot.org), the screenshot tool used in the i3 session
-and the niri session (Print → `flameshot gui`, Ctrl+Print → `flameshot full`, bound in
-`niri/.config/niri/config.kdl`). On niri it captures through the desktop portal — see the
-screenshot note in `niri/README.md` if it hangs.
+Settings for [Flameshot](https://flameshot.org), the screenshot tool used in GNOME, i3 and niri.
+On niri the keys call `niri/.config/niri/scripts/screenshot` (Print → `flameshot gui`,
+Ctrl+Print → `flameshot full`, both with `-p ~/Pictures/Screenshots`).
 
 Stowed by `steps/04_stow.sh` (`stow -R -t ~ flameshot`). → `~/.config/flameshot/flameshot.ini`
 
-No tray icon, files named `YYYY-MM-DD_HH-MM-SS`, copy to clipboard after saving, no welcome screen.
+No tray icon, files named `YYYY-MM-DD_HH-MM-SS`, no welcome screen, no "Screenshot aborted"
+pop-up. `useGrimAdapter=true` makes Flameshot capture with grim on niri instead of the
+desktop portal (GNOME and i3 run on X11 and ignore it).
 
-**Note:** `savePath=/home/user/Pictures/Screenshots` uses a placeholder user name. The niri binds
-pass `-p ~/Pictures/Screenshots` so they don't depend on it; fix it if you save from other places.
+**Version:** niri needs Flameshot **13.x** (13.3.0): Ubuntu's 12.1 was built without grim mode
+and 14.0+ removed it. `steps/02_tools.sh` (`install_flameshot13`) installs the 13.3.0 deb and
+holds it so `apt upgrade` keeps it. Details: `niri/README.md` "Why Flameshot 13.3".
+
+**Note:** Flameshot rewrites `flameshot.ini` when you change a setting in its window, which
+replaces the stow link with a plain file. The niri script puts the grim settings back each
+time; copy other changes back to this repo by hand.

@@ -307,6 +307,21 @@ window-rule {
     open-floating true
 }
 
+// Flameshot overlay (Print): Flameshot asks for fullscreen, which opens a new column
+// and scrolls the view there and back (niri discussion #3751). Floating, not
+// fullscreen, at the screen's top-left, it covers the screen and the tiles stay put
+// (workaround from flameshot issue #4948).
+window-rule {
+    match app-id="^flameshot$"
+    open-floating true
+    open-fullscreen false
+    default-floating-position x=0 y=0 relative-to="top-left"
+    geometry-corner-radius 0
+    border { off; }
+    focus-ring { off; }
+    shadow { off; }
+}
+
 // Datasheets open beside the current window (e.g. next to nvim), half width
 window-rule {
     match app-id=r#"^org\.pwmt\.zathura$"#
@@ -446,16 +461,16 @@ binds {
     XF86MonBrightnessDown allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell brightness-down"; }
 
     // === Screenshots ===
-    // grim + slurp + satty (the usual niri setup): slurp picks the area, grim takes it, satty
-    // opens it to draw arrows/boxes/text. In satty: Esc or Enter = copy and close, Ctrl+S = save
-    // to ~/Pictures/Screenshots (niri/.config/satty/config.toml). Escape in slurp cancels.
-    // Errors go to ~/.cache/niri-shell/screenshot.log.
-    Print hotkey-overlay-title="Screenshot: Area + Edit (satty)" { spawn-sh "{ date; area=$(slurp -d) && grim -t ppm -g \"$area\" - | satty -f -; echo \"exit=$?\"; } >>~/.cache/niri-shell/screenshot.log 2>&1"; }
+    // Flameshot 13.3 (scripts/screenshot): it takes the picture with grim, then opens its
+    // overlay to pick an area and draw on it. Ctrl+C copies, Ctrl+S saves to
+    // ~/Pictures/Screenshots, Esc cancels. Without Flameshot 13.x the script falls back to
+    // slurp + grim + satty. Errors go to ~/.cache/niri-shell/screenshot.log.
+    Print hotkey-overlay-title="Screenshot: Area + Edit (Flameshot)" { spawn-sh "~/.config/niri/scripts/screenshot area"; }
     // same as Print. Insert = this keyboard's PrtSc key without Fn (GNOME binds Flameshot to
     // Insert for the same reason); Super+Shift+S for keyboards without a Print key
-    Insert hotkey-overlay-title="Screenshot: Area + Edit (satty)" { spawn-sh "{ date; area=$(slurp -d) && grim -t ppm -g \"$area\" - | satty -f -; echo \"exit=$?\"; } >>~/.cache/niri-shell/screenshot.log 2>&1"; }
-    Mod+Shift+S hotkey-overlay-title="Screenshot: Area + Edit (satty)" { spawn-sh "{ date; area=$(slurp -d) && grim -t ppm -g \"$area\" - | satty -f -; echo \"exit=$?\"; } >>~/.cache/niri-shell/screenshot.log 2>&1"; }
-    Ctrl+Print hotkey-overlay-title="Screenshot: Full Screen + Edit (satty)" { spawn-sh "{ date; grim -t ppm - | satty -f -; echo \"exit=$?\"; } >>~/.cache/niri-shell/screenshot.log 2>&1"; }
+    Insert hotkey-overlay-title="Screenshot: Area + Edit (Flameshot)" { spawn-sh "~/.config/niri/scripts/screenshot area"; }
+    Mod+Shift+S hotkey-overlay-title="Screenshot: Area + Edit (Flameshot)" { spawn-sh "~/.config/niri/scripts/screenshot area"; }
+    Ctrl+Print hotkey-overlay-title="Screenshot: Full Screen (save + copy)" { spawn-sh "~/.config/niri/scripts/screenshot full"; }
     // GTK apps dark <-> light (terminals, tmux and Neovim keep the theme profile)
     Mod+Shift+D hotkey-overlay-title="Toggle Dark Mode (GTK apps)" { spawn-sh "~/.local/bin/theme gtk"; }
     // click a pixel: its #rrggbb goes to the clipboard (Escape cancels)

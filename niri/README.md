@@ -14,12 +14,14 @@ niri/.config/niri/
     ├── waybar-workspaces   # workspace list for waybar (Ubuntu)
     ├── scratchpad          # Mod+`  toggle the serial console
     ├── serial-console      # what runs inside it (picocom, auto-reconnect)
-    └── focus-or-launch     # Mod+B / Mod+P  jump to an app or start it
+    ├── focus-or-launch     # Mod+B / Mod+P  jump to an app or start it
+    ├── screenshot          # Print / Ctrl+Print: Flameshot 13.3, else satty
+    └── flameshot-bin/grim  # grim for Flameshot (fixes the zoom at scale 1.25)
 niri/.config/waybar/        # bar when Noctalia is missing (Ubuntu)
 niri/.config/mako/          # notifications + volume/brightness OSD when Noctalia is missing
 niri/.config/rudo/          # dock on the left edge when Noctalia is missing: settings, pins, dock.css
 niri/.local/share/          # dock launchers (All apps, Settings) + its fallback app icon
-niri/.config/satty/         # screenshot editor settings (Print)
+niri/.config/satty/         # screenshot editor settings (Print fallback without Flameshot 13)
 noctalia/.config/noctalia/
 └── bar.toml                # bar tweaks (workspace names as labels)
 ```
@@ -102,9 +104,9 @@ name so the bar shows `1 Browser · 2 Dev …` (Noctalia can show either id or n
 | Mod + X | power menu |
 | Mod + Alt + L | lock (closing the lid locks and suspends) |
 | Alt + Tab | window switcher |
-| Print | select an area (slurp) → edit in **satty** (arrows, boxes, text); `Esc`/`Enter` copy and close, `Ctrl+S` save to `~/Pictures/Screenshots` |
+| Print | **Flameshot**: select an area, draw on it; `Ctrl+C` copy, `Ctrl+S` save to `~/Pictures/Screenshots`, `Esc` cancel (satty when Flameshot 13.x is missing) |
 | Insert / Mod + Shift + S | same as Print. Insert is what this keyboard's PrtSc key sends without Fn (GNOME uses Insert too) |
-| Ctrl + Print | full screen → edit in satty (same keys) |
+| Ctrl + Print | full screen, saved to `~/Pictures/Screenshots` and copied |
 | Alt + Print | niri's own window screenshot |
 | Mod + Shift + D | GTK apps (Thunar, file dialogs) dark ↔ light (`theme gtk`) |
 | Mod + Shift + C | pick a color on screen → its `#rrggbb` is copied (niri `pick-color`) |
@@ -148,12 +150,23 @@ Inside: `Ctrl + a`, `Ctrl + x` quits picocom, then Enter reconnects or `s` gives
 
 ## Gotchas (why some lines exist)
 
-- **Why satty, not Flameshot:** Flameshot captures through the desktop portal, and on niri that
-  failed here: 12.1 read niri's screenshot file before it was fully written ("Screenshot
-  aborted" on busy screens), and 14.0 closed its overlay at once. grim + slurp + satty is what
-  niri users usually run (niri discussion #1737): the picture is taken before any window opens.
-  satty is built with `cargo install satty --locked` (bootstrap does it) because its release
-  binary needs a newer glibc than Ubuntu 24.04.
+- **Why Flameshot 13.3 (not 12.1, 14 or 15):** Flameshot either takes the picture through
+  the desktop portal or runs grim itself (`useGrimAdapter=true`). The portal fails on niri:
+  Ubuntu's 12.1 (built without grim) read niri's file before it was fully written
+  ("Screenshot aborted"), and 14.0+ removed grim mode. 13.3 is the last release with it, so
+  bootstrap installs the 13.3.0 deb from GitHub and holds it (`apt-mark hold flameshot`;
+  `unhold` to undo). `scripts/screenshot` writes the grim settings into
+  `~/.config/flameshot/flameshot.ini` before each run (Flameshot rewrites that file and
+  replaces the stow link). Without 13.x (e.g. Arch) it uses grim + slurp + satty, the usual
+  niri setup (niri discussion #1737); satty is built with `cargo install satty --locked`
+  because its release binary needs a newer glibc than Ubuntu 24.04.
+- The Flameshot overlay asks for fullscreen, which made niri open a new column and scroll
+  there and back. The `flameshot` window rule opens it floating and not fullscreen at the
+  top-left instead (flameshot issue #4948). Don't add `open-fullscreen true`: it made
+  the overlay close at once.
+- 13.3 shows grim's picture without the screen scale (zoomed in at scale 1.25).
+  `scripts/flameshot-bin/grim` adds `-s 1`; the script stops a Flameshot daemon that
+  was started without it on its `PATH`.
 
 - The scratchpad runs in **foot**, not kitty: kitty sets its app id after the window
   opens, so the floating rule never matched.

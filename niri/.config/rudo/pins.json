@@ -9,6 +9,7 @@
     "Alacritty.desktop",
     "drawio.desktop",
     "telegram-desktop_telegram-desktop.desktop",
-    "code_code.desktop"
+    "code_code.desktop",
+    "org.qt-project.qtcreator.desktop"
   ]
 }
