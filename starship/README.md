@@ -1,6 +1,6 @@
 # starship
 
-Config for the [Starship](https://starship.rs) shell prompt (bash and zsh).
+Config for the [Starship](https://starship.rs) shell prompt (bash).
 
 Stowed by `steps/04_stow.sh` (`stow -R -t ~ starship`). → `~/.config/starship.toml`
 

@@ -38,7 +38,6 @@ Arch and Debian/Ubuntu. Details and flags: [`steps/README.md`](steps/README.md).
 | [`xfce4_terminal`](xfce4_terminal/README.md) | Xfce terminal | manual stow |
 | [`tmux`](tmux/README.md) | tmux + tms project switcher | stow |
 | [`bash`](bash/README.md) | login shell: `.bashrc`, aliases, functions | stow |
-| [`zsh`](zsh/README.md) | optional zsh | stow |
 | [`starship`](starship/README.md) | prompt | stow |
 
 **Editors and tools**

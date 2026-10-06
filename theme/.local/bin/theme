@@ -206,6 +206,10 @@ switch() {
 }
 
 pick() {
+	# The tmux popup (prefix + T) runs outside an interactive shell, so the
+	# PATH entry .bashrc adds for fzf is missing there. Bootstrap
+	# installs fzf in ~/.fzf/bin; use it when fzf is not on PATH.
+	command -v fzf >/dev/null || PATH="$HOME/.fzf/bin:$PATH"
 	command -v fzf >/dev/null || die "pick needs fzf; use: theme <name>"
 	local name
 	# 40% suits a plain terminal; the tmux popup (prefix + T) passes 100%

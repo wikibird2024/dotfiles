@@ -9,7 +9,6 @@
 # ===========================================
 #   Jump to folder that yazi is open
 # ===========================================
-# Add this to your ~/.bashrc or ~/.zshrc
 # Add this to ~/.bashrc
 function y() {
     # Changed lowercase x to uppercase X, and separated the template from -t

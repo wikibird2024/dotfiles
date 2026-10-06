@@ -35,10 +35,6 @@ case "$SHELL_NAME" in
     CONFIG_FILE="$HOME/.bashrc"
     SOURCE_LINE='[ -f ~/.fzf.bash ] && source ~/.fzf.bash'
     ;;
-  zsh)
-    CONFIG_FILE="$HOME/.zshrc"
-    SOURCE_LINE='[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh'
-    ;;
   *)
     echo "⚠️ Unsupported shell ($SHELL_NAME). Please add FZF source manually."
     exit 1

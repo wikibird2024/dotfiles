@@ -21,7 +21,6 @@ alias cat='batcat --paging=never'
 alias alias.e='nvim ~/.aliases'
 alias func.e='nvim ~/.bash_functions'
 alias bash.e='nvim ~/.bashrc'
-alias zsh.e='nvim ~/.zshrc'
 
 # vpn connect alias
 alias vpn-up='sudo wg-quick up wg0 || (sudo wg-quick down wg0)'
@@ -34,7 +33,6 @@ alias listen="sudo ss -tulpn | grep LISTEN"
 
 alias c='clear'
 alias s-bashrc='source ~/.bashrc'
-alias s-zsh='source ~/.zshrc'
 
 # Disk burning
 alias usb-burn="sudo dd status=progress conv=fsync bs=4M"

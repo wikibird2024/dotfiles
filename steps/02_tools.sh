@@ -40,13 +40,20 @@ install_neovim() {
 install_fzf() {
     if has fzf; then
         log_ok "fzf $(fzf --version) already installed."
-        return
+    else
+        log_info "Installing fzf..."
+        rm -rf "$HOME/.fzf"
+        git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
+        "$HOME/.fzf/install" --all --no-update-rc >/dev/null
+        log_ok "fzf installed."
     fi
-    log_info "Installing fzf..."
-    rm -rf "$HOME/.fzf"
-    git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
-    "$HOME/.fzf/install" --all --no-update-rc >/dev/null
-    log_ok "fzf installed."
+    # ~/.fzf/bin is only on PATH in interactive shells. A symlink in
+    # ~/.local/bin makes fzf visible everywhere: tmux popups, launchers,
+    # scripts run outside a shell.
+    if [ -x "$HOME/.fzf/bin/fzf" ]; then
+        mkdir -p "$HOME/.local/bin"
+        ln -sf "$HOME/.fzf/bin/fzf" "$HOME/.local/bin/fzf"
+    fi
 }
 
 # ── fd ────────────────────────────────────────────────────────

@@ -16,7 +16,6 @@ STOW_PKGS=(
     neovim
     bash
     tmux
-    zsh
     alacritty
     kitty
     starship

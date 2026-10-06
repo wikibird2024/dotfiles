@@ -14,21 +14,19 @@ The primary working directory when Claude Code is invoked is `neovim/.config/` �
 ./bootstrap.sh                  # Full setup on a new machine (bash stays the login shell)
 ./bootstrap.sh --only-stow      # Re-deploy configs after a pull (idempotent)
 ./bootstrap.sh --skip-fonts     # Skip font download step
-./bootstrap.sh --set-zsh-shell  # Also chsh to zsh (opt-in — off by default)
 ```
 
-Bootstrap runs five ordered steps in `steps/`:
+Bootstrap runs four ordered steps in `steps/`:
 1. `01_packages.sh` — apt/pacman core packages, neovim formatter/linter deps (shellcheck, shfmt, clang-format, bear, luarocks, cpplint, debugpy), and desktop apps for the i3/picom/zathura/flameshot/kitty/alacritty stow packages
 2. `02_tools.sh` — nvim, fzf, fd, starship, zoxide, TPM, rustup, stylua, luacheck, lazygit
 3. `03_fonts.sh` — Nerd Fonts
 4. `04_stow.sh` — symlink all packages
-5. `05_shell.sh` — set zsh as default shell (skipped unless `--set-zsh-shell` is passed — bash is the preferred login shell; zsh config/plugins still work when launched manually)
 
 All steps are idempotent.
 
 ## Stow Packages (active)
 
-`neovim`, `bash`, `tmux`, `zsh`, `alacritty`, `kitty`, `starship`, `i3_wm_endervour`, `picom`, `zathura`, `flameshot`, `fontconfig`, `mods`, `clang`, `claude`, `vim`, `niri`, `noctalia`, `theme`, `git`
+`neovim`, `bash`, `tmux`, `alacritty`, `kitty`, `starship`, `i3_wm_endervour`, `picom`, `zathura`, `flameshot`, `fontconfig`, `mods`, `clang`, `claude`, `vim`, `niri`, `noctalia`, `theme`, `git`
 
 `git/` is the shared `.gitconfig`; name, email and work-only settings live in the untracked `~/.gitconfig.local` (it includes that last). This repo's `.githooks/pre-commit` runs `ripsecrets` on staged files to block API keys (the repo is public); `04_stow.sh` enables it with `core.hooksPath`. Never commit keys: they go in `~/.secrets`.
 

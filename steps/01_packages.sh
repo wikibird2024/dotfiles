@@ -14,7 +14,7 @@ pkg_update
 # ── Essentials ────────────────────────────────────────────────
 PKGS_APT=(
     git curl wget unzip build-essential
-    stow zsh
+    stow
     xclip xsel wl-clipboard   # clipboard backends
     ripgrep                    # rg (used by nvim live grep)
     fontconfig                 # fc-cache for nerd fonts
@@ -27,7 +27,7 @@ PKGS_APT=(
 
 PKGS_PACMAN=(
     git curl wget unzip base-devel
-    stow zsh
+    stow
     xclip xsel wl-clipboard
     ripgrep
     fontconfig

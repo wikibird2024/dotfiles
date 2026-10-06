@@ -22,7 +22,7 @@ fi
 "$ESP_IDF_DIR"/install.sh
 
 # ---- Thiết lập environment ----
-echo "Thiết lập environment, bạn có thể add dòng này vào ~/.bashrc hoặc ~/.zshrc"
+echo "Thiết lập environment, bạn có thể add dòng này vào ~/.bashrc"
 echo "source $ESP_IDF_DIR/export.sh"
 source "$ESP_IDF_DIR/export.sh"
 

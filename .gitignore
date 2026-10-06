@@ -44,11 +44,10 @@ obsidian/
 .vscode/
 .idea/
 
-# ── Plugins installed at runtime (Vim, Zsh) ──────────────────
+# ── Plugins installed at runtime (Vim) ───────────────────────
 vim/bundle/
 vim/plugged/
 vim/.vim/plugged/
-zsh/custom/plugins/
 
 # ── Secrets: this repo is public-facing ──────────────────────
 .env

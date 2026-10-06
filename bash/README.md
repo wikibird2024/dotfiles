@@ -1,6 +1,6 @@
 # bash
 
-Bash setup — bash is the login shell (zsh is optional, see `zsh/`).
+Bash setup — bash is the login shell.
 
 Stowed by `steps/04_stow.sh` (`stow -R -t ~ bash`). `04_stow.sh` first moves a machine's own `~/.bashrc`, `~/.aliases`,
 `~/.bash_functions` to `*.bak.<time>` so stow can link them.

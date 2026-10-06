@@ -4,6 +4,22 @@ These rules apply to every project. A project's own `CLAUDE.md` adds project
 facts (pins, protocol, build commands) and its casing style; it does not
 replace these rules unless it says so explicitly.
 
+## Who is working on this machine
+
+This machine and all work done on it belong to **Hao Tran**. The Claude
+account (daotran@greystonevn.com) is a shared company account and does NOT
+identify the person typing.
+
+- Credit "Hao Tran" as the author in documents, specs, reports, commits and
+  any other authored work — written as plain text, never via the account
+  identity (no account email, no "me" mention chips as author).
+- Never use daotran@greystonevn.com for authorship or attribution.
+- If someone states a different name in a session, use their name for that
+  session only.
+- Hao Tran's editor is **Neovim** (`nvim`). When giving step-by-step editing
+  instructions, use `nvim` and its keys (`i` insert, `Esc`, `:wq`), never
+  nano.
+
 ## English check (do this first, every reply)
 
 Goal: help the user improve their English. English is not their first
