@@ -161,6 +161,40 @@ install_satty() {
         log_warn "satty build failed — run: cargo install satty --locked"
 }
 
+# ── Flameshot 13.3 (screenshots on niri; see niri/README.md "Flameshot on niri") ──
+# 13.x is the only line that can capture with grim (useGrimAdapter): Ubuntu's 12.1
+# was built without it and 14.0+ removed it, and both then go through the desktop
+# portal, which fails on niri. The deb from the release page is held so
+# `apt upgrade` keeps it. Ubuntu 24.04 amd64 only; Arch keeps pacman's version and
+# niri falls back to satty there.
+FLAMESHOT_VERSION=13.3.0
+install_flameshot13() {
+    if [ "$(detect_pkg_manager)" != apt ]; then
+        return
+    fi
+    if flameshot --version 2>/dev/null | grep -q 'v13\.'; then
+        log_ok "Flameshot $(flameshot --version | grep -o 'v[0-9.]*' | head -1) already installed."
+        return
+    fi
+    # shellcheck disable=SC1091
+    if [ "$(. /etc/os-release && echo "${VERSION_ID:-}")" != 24.04 ] || [ "$REL_ARCH" != x86_64 ]; then
+        log_warn "No Flameshot $FLAMESHOT_VERSION deb for this system — niri screenshots use satty."
+        return
+    fi
+    log_info "Installing Flameshot $FLAMESHOT_VERSION (deb from GitHub)..."
+    local tmp; tmp=$(mktemp -d)
+    local deb="flameshot-${FLAMESHOT_VERSION}-1.ubuntu-24.04.amd64.deb"
+    if curl -fLo "$tmp/$deb" \
+        "https://github.com/flameshot-org/flameshot/releases/download/v${FLAMESHOT_VERSION}/$deb" &&
+        sudo apt-get install -y --allow-downgrades "$tmp/$deb"; then
+        sudo apt-mark hold flameshot >/dev/null
+        log_ok "Flameshot $FLAMESHOT_VERSION installed and held."
+    else
+        log_warn "Flameshot $FLAMESHOT_VERSION install failed — niri screenshots use satty."
+    fi
+    rm -rf "$tmp"
+}
+
 # ── luacheck (Lua linter, nvim-lint) ───────────────────────────
 install_luacheck() {
     if has luacheck; then
@@ -205,8 +239,10 @@ install_lazygit() {
 }
 
 # ── just + probe-rs (embedded build/flash/debug; templates/embedded-firmware) ──
+# install_cargo_tool BIN CRATE [cargo args, e.g. --git URL for a crate not on crates.io]
 install_cargo_tool() {
     local bin="$1" crate="$2"
+    shift 2
     if has "$bin"; then
         log_ok "$bin already installed."
         return
@@ -219,8 +255,8 @@ install_cargo_tool() {
     fi
     log_info "Installing $bin (cargo install $crate)..."
     # a failed build (e.g. missing system libs) must not stop the other tools
-    cargo install "$crate" --locked && log_ok "$bin installed." ||
-        log_warn "$bin build failed — run: cargo install $crate --locked"
+    cargo install "$crate" --locked "$@" && log_ok "$bin installed." ||
+        log_warn "$bin build failed — run: cargo install $crate --locked $*"
 }
 
 # ── rudo (left dock for niri without Noctalia, niri/.config/rudo) ──
@@ -282,6 +318,7 @@ install_tpm
 install_rust
 install_stylua
 install_satty
+install_flameshot13
 install_luacheck
 install_lazygit
 install_cargo_tool just just
@@ -291,6 +328,9 @@ install_cargo_tool yazi yazi-fm # file manager, tmux prefix + e
 # git: delta is the pager in git/.gitconfig; ripsecrets runs in .githooks/pre-commit
 install_cargo_tool delta git-delta
 install_cargo_tool ripsecrets ripsecrets
+# niri: keep the clipboard after an app closes; drag files from the terminal to apps
+install_cargo_tool wl-clip-persist wl-clip-persist --git https://github.com/Linus789/wl-clip-persist
+install_cargo_tool ripdrag ripdrag # needs libgtk-4-dev (01_packages.sh)
 install_rudo
 
 log_ok "All CLI tools done."

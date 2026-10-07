@@ -23,6 +23,7 @@ STOW_PKGS=(
     picom
     zathura
     flameshot
+    thunar
     fontconfig
     mods
     clang
@@ -70,6 +71,13 @@ fi
 if [ -f "$HOME/.config/git/ignore" ] && [ ! -L "$HOME/.config/git/ignore" ]; then
     mv "$HOME/.config/git/ignore" "$HOME/.config/git/ignore.bak.$(date +%s)"
     log_warn "Existing ~/.config/git/ignore moved to ~/.config/git/ignore.bak.*"
+fi
+
+# Thunar writes its own uca.xml (right-click actions) on first start, which makes
+# stow refuse the thunar package; keep it as a backup instead.
+if [ -f "$HOME/.config/Thunar/uca.xml" ] && [ ! -L "$HOME/.config/Thunar/uca.xml" ]; then
+    mv "$HOME/.config/Thunar/uca.xml" "$HOME/.config/Thunar/uca.xml.bak.$(date +%s)"
+    log_warn "Existing ~/.config/Thunar/uca.xml moved to ~/.config/Thunar/uca.xml.bak.*"
 fi
 
 # niri writes a default ~/.config/niri on first start, which makes stow refuse

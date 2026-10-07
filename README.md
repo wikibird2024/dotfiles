@@ -49,7 +49,8 @@ Arch and Debian/Ubuntu. Details and flags: [`steps/README.md`](steps/README.md).
 | [`vim`](vim/README.md) | full Vim with plugins | stow |
 | [`vim_light`](vim_light/README.md) | zero-dependency `.vimrc` to copy anywhere | copy |
 | [`zathura`](zathura/README.md) | PDF viewer | stow |
-| [`flameshot`](flameshot/README.md) | screenshots (i3) | stow |
+| [`flameshot`](flameshot/README.md) | screenshots (GNOME, i3, niri) | stow |
+| [`thunar`](thunar/README.md) | file manager right-click actions: Copy Path (pastes into a terminal), Open Terminal Here | stow |
 | [`clang`](clang/README.md) | `.clang-format` C/C++ style | stow |
 | [`mods`](mods/README.md) | AI on the command line | stow |
 | [`claude`](claude/README.md) | Claude Code global rules and skills | stow |

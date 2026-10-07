@@ -1,28 +1,80 @@
 #!/usr/bin/env bash
-# Screenshot keys for niri (Print, Insert, Mod+Shift+S, Ctrl+Print).
-#   screenshot area   pick an area (slurp), then draw on it in satty
-#                     (Ctrl+C / Enter copy and close, Ctrl+S save, Esc cancel)
+# Screenshot keys for niri (config.kdl, "Screenshots").
+#   screenshot copy   pick an area in Flameshot and draw on it; Enter copies it
 #   screenshot full   whole screen, saved to ~/Pictures/Screenshots and copied
-# Flameshot is not used on niri: Wayland builds without USE_WAYLAND_CLIPBOARD
-# remove the whole copy feature (flameshot issue #2848) — see niri/README.md.
+# Esc cancels and leaves the clipboard alone.
+# Flameshot's own copy never reaches the clipboard on niri (its background
+# process has no focused window), so `copy` takes the picture with --raw and
+# hands it to wl-copy, the usual community fix. With --raw Flameshot only has
+# Enter (no Ctrl+C / Ctrl+S); saving is niri's own screenshot tool (Mod+Insert).
+# Needs Flameshot 13.x for its grim mode (see niri/README.md "Flameshot on niri");
+# without it, copy falls back to slurp + grim + satty.
 # Output goes to ~/.cache/niri-shell/screenshot.log.
 set -uo pipefail
 
-mode=${1:?usage: screenshot area|full}
+mode=${1:?usage: screenshot copy|full}
 save_dir=~/Pictures/Screenshots
+config=${XDG_CONFIG_HOME:-~/.config}/flameshot/flameshot.ini
+# not resolved with readlink: it must match the PATH entry the grim wrapper removes
+grim_wrapper_dir=$(dirname "$0")/flameshot-bin
 
 mkdir -p "$save_dir" ~/.cache/niri-shell
 exec >>~/.cache/niri-shell/screenshot.log 2>&1
 echo "== $(date) $mode"
 
+# Sets key=value under [General]. Flameshot rewrites this file from its settings
+# window (that also replaces the stow symlink), so the keys are checked every time.
+set_flameshot_option() {
+    local key=$1 value=$2
+    mkdir -p "$(dirname "$config")"
+    [ -f "$config" ] || printf '[General]\n' >"$config"
+    if grep -qxF "$key=$value" "$config"; then
+        return
+    elif grep -q "^$key=" "$config"; then
+        sed -i --follow-symlinks "s|^$key=.*|$key=$value|" "$config"
+    elif grep -qx '\[General\]' "$config"; then
+        sed -i --follow-symlinks "/^\[General\]\$/a $key=$value" "$config"
+    else
+        printf '[General]\n%s=%s\n' "$key" "$value" >>"$config"
+    fi
+}
+
+new_picture_path() {
+    echo "$save_dir/Screenshot from $(date '+%Y-%m-%d %H-%M-%S').png"
+}
+
+if [ "$mode" = full ]; then
+    picture=$(new_picture_path)
+    grim "$picture" && wl-copy --type image/png <"$picture"
+    echo "exit=$?"
+    exit
+fi
+
+if ! flameshot --version 2>/dev/null | grep -q 'v13\.'; then
+    case $mode in
+        copy) area=$(slurp -d) && grim -t ppm -g "$area" - | satty -f - ;;
+        *) echo "usage: screenshot copy|full" && exit 2 ;;
+    esac
+    echo "exit=$?"
+    exit
+fi
+
+set_flameshot_option useGrimAdapter true
+set_flameshot_option disabledGrimWarning true
+# Flameshot runs grim through this PATH (the scale fix in flameshot-bin/grim)
+export PATH="$grim_wrapper_dir:$PATH"
+
 case $mode in
-    area)
-        area=$(slurp -d) && grim -t ppm -g "$area" - | satty -f -
+    copy)
+        picture=$(mktemp --suffix=.png)
+        flameshot gui --raw >"$picture"
+        # empty = Esc; an empty wl-copy would wipe the clipboard
+        if [ -s "$picture" ]; then
+            wl-copy --type image/png <"$picture" &&
+                notify-send -t 2000 "Screenshot copied"
+        fi
+        rm -f "$picture"
         ;;
-    full)
-        picture="$save_dir/Screenshot from $(date '+%Y-%m-%d %H-%M-%S').png"
-        grim "$picture" && wl-copy --type image/png <"$picture"
-        ;;
-    *) echo "usage: screenshot area|full" && exit 2 ;;
+    *) echo "usage: screenshot copy|full" && exit 2 ;;
 esac
 echo "exit=$?"

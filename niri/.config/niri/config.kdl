@@ -299,11 +299,27 @@ window-rule {
     default-floating-position x=0 y=40 relative-to="top"
 }
 
-// satty (screenshot editor, Print): a floating window over the tiles
+// satty (screenshot editor, Print fallback without Flameshot 13): floating over the tiles
 window-rule {
     match app-id="^org\\.satty\\.satty$"
     match app-id="^com\\.gabm\\.satty$"
     open-floating true
+}
+
+// Flameshot overlay (Print): Flameshot asks for fullscreen, which opens a new column
+// and scrolls the view there and back (niri discussion #3751). Floating, not
+// fullscreen, at the screen's top-left, it covers the screen and the tiles stay put
+// (workaround from flameshot issue #4948). Don't add `open-fullscreen true`: it made
+// the overlay close at once.
+window-rule {
+    match app-id="^flameshot$"
+    open-floating true
+    open-fullscreen false
+    default-floating-position x=0 y=0 relative-to="top-left"
+    geometry-corner-radius 0
+    border { off; }
+    focus-ring { off; }
+    shadow { off; }
 }
 
 // Datasheets open beside the current window (e.g. next to nvim), half width
@@ -322,6 +338,9 @@ window-rule {
 spawn-sh-at-startup "~/.config/niri/scripts/shell start"
 // Vietnamese input (Bamboo); Mod+Space switches English <-> Vietnamese
 spawn-at-startup "fcitx5" "-d" "--replace"
+// Keep what you copied after its app closes: on Wayland the copied data lives in
+// that app (copy a file in Thunar, close Thunar, and the paste was empty). Both shells.
+spawn-at-startup "wl-clip-persist" "--clipboard" "regular"
 
 window-rule {
     geometry-corner-radius 20
@@ -445,15 +464,20 @@ binds {
     XF86MonBrightnessDown allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell brightness-down"; }
 
     // === Screenshots ===
-    // scripts/screenshot: slurp picks the area, grim takes the picture, satty opens it
-    // to draw on. Ctrl+C or Enter copies and closes, Ctrl+S saves to
-    // ~/Pictures/Screenshots, Esc cancels. Errors go to ~/.cache/niri-shell/screenshot.log.
-    Print hotkey-overlay-title="Screenshot: Area + Edit (satty)" { spawn-sh "~/.config/niri/scripts/screenshot area"; }
+    // Copy: scripts/screenshot runs Flameshot 13.3 (grim takes the picture, then its overlay
+    // to pick an area and draw on it); Enter copies, Esc cancels. Without Flameshot 13.x it
+    // falls back to satty.
+    // Errors go to ~/.cache/niri-shell/screenshot.log.
+    Print hotkey-overlay-title="Screenshot: Area + Edit → Copy (Flameshot)" { spawn-sh "~/.config/niri/scripts/screenshot copy"; }
     // same as Print. Insert = this keyboard's PrtSc key without Fn (GNOME binds its
     // screenshot key to Insert for the same reason); Super+Shift+S for keyboards without
     // a Print key
-    Insert hotkey-overlay-title="Screenshot: Area + Edit (satty)" { spawn-sh "~/.config/niri/scripts/screenshot area"; }
-    Mod+Shift+S hotkey-overlay-title="Screenshot: Area + Edit (satty)" { spawn-sh "~/.config/niri/scripts/screenshot area"; }
+    Insert hotkey-overlay-title="Screenshot: Area + Edit → Copy (Flameshot)" { spawn-sh "~/.config/niri/scripts/screenshot copy"; }
+    Mod+Shift+S hotkey-overlay-title="Screenshot: Area + Edit → Copy (Flameshot)" { spawn-sh "~/.config/niri/scripts/screenshot copy"; }
+    // Save: niri's own screenshot tool (drag an area; Space or Enter saves to
+    // ~/Pictures/Screenshots and also copies, Esc cancels). Mod+Insert needs no Fn.
+    Mod+Insert hotkey-overlay-title="Screenshot: Area → Save (niri)" { screenshot; }
+    Mod+Print hotkey-overlay-title="Screenshot: Area → Save (niri)" { screenshot; }
     Ctrl+Print hotkey-overlay-title="Screenshot: Full Screen (save + copy)" { spawn-sh "~/.config/niri/scripts/screenshot full"; }
     // GTK apps dark <-> light (terminals, tmux and Neovim keep the theme profile)
     Mod+Shift+D hotkey-overlay-title="Toggle Dark Mode (GTK apps)" { spawn-sh "~/.local/bin/theme gtk"; }

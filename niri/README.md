@@ -15,12 +15,13 @@ niri/.config/niri/
     ├── scratchpad          # Mod+`  toggle the serial console
     ├── serial-console      # what runs inside it (picocom, auto-reconnect)
     ├── focus-or-launch     # Mod+B / Mod+P  jump to an app or start it
-    └── screenshot          # Print / Ctrl+Print: slurp + grim + satty
+    ├── screenshot          # Print (copy) / Ctrl+Print: Flameshot (satty fallback)
+    └── flameshot-bin/grim  # grim for Flameshot (fixes the zoom at scale 1.25)
 niri/.config/waybar/        # bar when Noctalia is missing (Ubuntu)
 niri/.config/mako/          # notifications + volume/brightness OSD when Noctalia is missing
 niri/.config/rudo/          # dock on the left edge when Noctalia is missing: settings, pins, dock.css
 niri/.local/share/          # dock launchers (All apps, Settings) + its fallback app icon
-niri/.config/satty/         # screenshot editor settings (Print)
+niri/.config/satty/         # screenshot editor settings (Print without Flameshot 13)
 noctalia/.config/noctalia/
 └── bar.toml                # bar tweaks (workspace names as labels)
 ```
@@ -103,8 +104,9 @@ name so the bar shows `1 Browser · 2 Dev …` (Noctalia can show either id or n
 | Mod + X | power menu |
 | Mod + Alt + L | lock (closing the lid locks and suspends) |
 | Alt + Tab | window switcher |
-| Print | **satty**: select an area (slurp), draw on it; `Ctrl+C` or `Enter` copy and close, `Ctrl+S` save to `~/Pictures/Screenshots`, `Esc` cancel |
+| Print | **Flameshot**: select an area, draw on it; `Enter` **copies** it, `Esc` cancels |
 | Insert / Mod + Shift + S | same as Print. Insert is what this keyboard's PrtSc key sends without Fn (GNOME uses Insert too) |
+| Mod + Insert / Mod + Print | **save**: niri's own screenshot tool, drag an area, `Space`/`Enter` saves to `~/Pictures/Screenshots` (and copies), `Esc` cancels |
 | Ctrl + Print | full screen, saved to `~/Pictures/Screenshots` and copied |
 | Alt + Print | niri's own window screenshot |
 | Mod + Shift + D | GTK apps (Thunar, file dialogs) dark ↔ light (`theme gtk`) |
@@ -149,14 +151,32 @@ Inside: `Ctrl + a`, `Ctrl + x` quits picocom, then Enter reconnects or `s` gives
 
 ## Gotchas (why some lines exist)
 
-- **Why satty, not Flameshot:** Flameshot cannot copy on niri. Builds without
-  `USE_WAYLAND_CLIPBOARD` remove the whole copy feature on Wayland — no `Ctrl+C`, no
-  copy button (flameshot issue #2848) — and that flag needs a KDE Qt6 library Ubuntu
-  24.04 does not ship, so no deb or local build can have it. Its portal capture also
-  fails on niri. So `scripts/screenshot` uses the usual niri setup instead:
-  slurp + grim + satty (niri discussion #1737), with satty's `copy-command = wl-copy`.
-  satty is built with `cargo install satty --locked` because its release binary needs
-  a newer glibc than Ubuntu 24.04. Flameshot itself stays for GNOME and i3 (X11).
+- **Flameshot on niri:** four things break with a plain `flameshot gui`, and
+  `scripts/screenshot` works around each (Flameshot 13.3; GNOME and i3 use it on X11 as is):
+  - Capture: the desktop portal fails on niri. Flameshot 13.x can run grim itself
+    (`useGrimAdapter=true`); Ubuntu's 12.1 was built without that and 14.0+ removed it, so
+    bootstrap installs the 13.3.0 deb and holds it (`apt-mark hold flameshot`).
+  - Copy: Flameshot's own copy (Ctrl+C) never reaches the clipboard — its background
+    process has no focused window (flameshot #2848, #3556; tested here with
+    `flameshot full -c`). So Print runs `flameshot gui --raw` and passes the picture to
+    `wl-copy`, the usual community fix. With `--raw` Flameshot drops its Copy and Save
+    buttons and only `Enter` is left, so saving is a separate key: niri's own screenshot
+    tool (Mod+Insert), which writes to `screenshot-path`.
+  - The overlay asks for fullscreen, which made niri open a column and scroll there and
+    back (niri discussion #3751); the `flameshot` window rule opens it floating instead
+    (flameshot #4948).
+  - 13.3 shows grim's picture without the screen scale (zoomed in at 1.25);
+    `scripts/flameshot-bin/grim` adds `-s 1`.
+  The script writes the grim keys into `~/.config/flameshot/flameshot.ini` on each run
+  (Flameshot rewrites that file). Without Flameshot 13.x (e.g. Arch) it uses slurp + grim +
+  satty (niri discussion #1737); satty is built with `cargo install satty --locked` because
+  its release binary needs a newer glibc than Ubuntu 24.04.
+
+- **Clipboard keeper:** on Wayland the copied data lives in the app you copied from, so
+  closing it emptied the clipboard (copy in Thunar, close Thunar, paste gives nothing).
+  `wl-clip-persist --clipboard regular` (started in `config.kdl`, both shells) copies it
+  into itself so it stays. `cliphist` is only the history (Mod+V); it does not keep the
+  clipboard alive. Built with `cargo install --git` (not on crates.io; Arch has a package).
 
 - The scratchpad runs in **foot**, not kitty: kitty sets its app id after the window
   opens, so the floating rule never matched.

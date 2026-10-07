@@ -93,6 +93,14 @@ for f in "${fzf_paths[@]}"; do
     [ -f "$f" ] && . "$f" && break
 done
 
+# Ctrl+T (insert paths) and Alt+C (cd) list with fd: faster, shows dotfiles,
+# skips .git and what .gitignore lists
+if command -v fd >/dev/null 2>&1; then
+    export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
+    export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
+    export FZF_ALT_C_COMMAND='fd --type d --hidden --exclude .git'
+fi
+
 # 9. ALIASES
 [[ -f ~/.aliases ]] && . ~/.aliases
 
