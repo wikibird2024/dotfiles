@@ -37,6 +37,11 @@ return {
 				provider = "snacks",
 				split_side = "right",
 				split_width_percentage = 0.35,
+				-- snacks paints terminals with NormalFloat (the gray popup color from
+				-- kernel/float_theme.lua); a split should look like the editor.
+				snacks_win_opts = {
+					wo = { winhighlight = "Normal:Normal,NormalNC:NormalNC" },
+				},
 			},
 		},
 		config = function(_, opts)
