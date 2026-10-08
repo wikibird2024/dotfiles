@@ -22,6 +22,8 @@ niri/.config/mako/          # notifications + volume/brightness OSD when Noctali
 niri/.config/rudo/          # dock on the left edge when Noctalia is missing: settings, pins, dock.css
 niri/.local/share/          # dock launchers (All apps, Settings) + its fallback app icon
 niri/.config/satty/         # screenshot editor settings (Print without Flameshot 13)
+niri/.config/systemd/user/niri.service.d/oomd.conf
+                            # out of memory: systemd-oomd kills the heavy app, not niri (no logout)
 noctalia/.config/noctalia/
 └── bar.toml                # bar tweaks (workspace names as labels)
 ```
