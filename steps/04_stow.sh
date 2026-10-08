@@ -33,6 +33,7 @@ STOW_PKGS=(
     noctalia
     theme
     git
+    kanata
 )
 
 # ~/.claude must be a real folder before stowing `claude`: if it is missing,
@@ -40,6 +41,10 @@ STOW_PKGS=(
 # credentials, history and sessions into git. Same for skills/ (the app adds
 # its own synced skills there).
 mkdir -p "$HOME/.claude/skills" "$HOME/.claude-personal/skills"
+
+# Same for ~/.config/systemd/user (kanata ships a unit there): systemd and
+# `systemctl --user enable` write into it, so it must not be a link into the repo.
+mkdir -p "$HOME/.config/systemd/user"
 
 # A real (non-symlink) ~/.vimrc makes stow refuse the vim package; keep it
 # as a backup instead.
@@ -106,6 +111,41 @@ if [ -f /usr/lib/systemd/user/waybar.service ]; then
     log_ok "waybar.service masked (niri starts waybar itself)."
 fi
 
+# ── kanata: Caps Lock tap = Esc, hold = Ctrl (kanata/) ───────
+# One-time root setup so kanata can run as a user service: a system group owns
+# /dev/uinput (udevd ignores non-system groups), the module loads at boot, and
+# the user can read keyboards (input) and write the virtual one (uinput).
+# Each step runs sudo only when something is missing, so re-runs ask nothing.
+KANATA_BIN="$HOME/.cargo/bin/kanata"
+UINPUT_RULE='KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"'
+if [ -x "$KANATA_BIN" ]; then
+    getent group uinput >/dev/null || sudo groupadd --system uinput
+    if [ "$(cat /etc/udev/rules.d/99-uinput.rules 2>/dev/null)" != "$UINPUT_RULE" ]; then
+        echo "$UINPUT_RULE" | sudo tee /etc/udev/rules.d/99-uinput.rules >/dev/null
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=uinput
+    fi
+    if [ "$(cat /etc/modules-load.d/uinput.conf 2>/dev/null)" != "uinput" ]; then
+        echo uinput | sudo tee /etc/modules-load.d/uinput.conf >/dev/null
+        sudo modprobe uinput
+    fi
+    for group in input uinput; do
+        [[ " $(id -nG "$USER") " == *" $group "* ]] || sudo usermod -aG "$group" "$USER"
+    done
+    # What `systemctl --user enable` makes; needs no running user session.
+    mkdir -p "$HOME/.config/systemd/user/default.target.wants"
+    ln -sfn ../kanata.service "$HOME/.config/systemd/user/default.target.wants/kanata.service"
+    # Start now only if this login already has the groups; else at next login.
+    if [[ " $(id -nG) " == *" input "* && " $(id -nG) " == *" uinput "* ]]; then
+        systemctl --user daemon-reload 2>/dev/null &&
+            systemctl --user start kanata 2>/dev/null &&
+            log_ok "kanata running (Caps: tap Esc, hold Ctrl)." ||
+            log_warn "kanata did not start — see: journalctl --user -u kanata"
+    else
+        log_warn "kanata enabled; log out and back in once so the input/uinput groups apply."
+    fi
+fi
+
 # ── This repo's pre-commit hook (secret check, .githooks/) ────
 git -C "$DOTFILES_DIR" config core.hooksPath .githooks && log_ok "Secret check before commit enabled."
 
@@ -137,7 +177,7 @@ fi
 CLAUDE_PERSONAL_DIR="$HOME/.claude-personal"
 if [ -d "$CLAUDE_PERSONAL_DIR" ]; then
     ln -sf "$DOTFILES_DIR/claude/.claude/CLAUDE.md" "$CLAUDE_PERSONAL_DIR/CLAUDE.md"
-    ln -sf "$DOTFILES_DIR/claude/.claude/skills/project-status" "$CLAUDE_PERSONAL_DIR/skills/project-status"
+    ln -sfn "$DOTFILES_DIR/claude/.claude/skills/project-status" "$CLAUDE_PERSONAL_DIR/skills/project-status"
     if [ ! -e "$CLAUDE_PERSONAL_DIR/settings.json" ]; then
         cp "$DOTFILES_DIR/templates/claude/settings.json" "$CLAUDE_PERSONAL_DIR/settings.json"
         log_ok "Claude personal settings copied from template."

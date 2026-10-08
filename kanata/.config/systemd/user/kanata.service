@@ -1,0 +1,12 @@
+[Unit]
+Description=kanata keyboard remapper (Caps Lock: tap Esc, hold Ctrl)
+Documentation=https://github.com/jtroo/kanata
+
+[Service]
+# Needs the user in the input and uinput groups (steps/04_stow.sh sets that up).
+ExecStart=%h/.cargo/bin/kanata --cfg %h/.config/kanata/kanata.kbd
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

@@ -18,7 +18,7 @@ The primary working directory when Claude Code is invoked is `neovim/.config/` �
 
 Bootstrap runs four ordered steps in `steps/`:
 1. `01_packages.sh` — apt/pacman core packages, neovim formatter/linter deps (shellcheck, shfmt, clang-format, bear, luarocks, cpplint, debugpy), and desktop apps for the i3/picom/zathura/flameshot/kitty/alacritty stow packages
-2. `02_tools.sh` — nvim, fzf, fd, starship, zoxide, TPM, rustup, stylua, satty, Flameshot 13.3 (deb, held by apt; niri screenshots need its grim mode), luacheck, lazygit, and cargo tools (just, probe-rs, tms, yazi, delta, ripsecrets, wl-clip-persist, ripdrag, rudo)
+2. `02_tools.sh` — nvim, fzf, fd, starship, zoxide, TPM, rustup, stylua, satty, Flameshot 13.3 (deb, held by apt; niri screenshots need its grim mode), luacheck, lazygit, and cargo tools (just, probe-rs, tms, yazi, delta, ripsecrets, wl-clip-persist, ripdrag, rudo, kanata)
 3. `03_fonts.sh` — Nerd Fonts
 4. `04_stow.sh` — symlink all packages
 
@@ -26,7 +26,7 @@ All steps are idempotent.
 
 ## Stow Packages (active)
 
-`neovim`, `bash`, `tmux`, `alacritty`, `kitty`, `starship`, `i3_wm_endervour`, `picom`, `zathura`, `flameshot`, `thunar`, `fontconfig`, `mods`, `clang`, `claude`, `vim`, `niri`, `noctalia`, `theme`, `git`
+`neovim`, `bash`, `tmux`, `alacritty`, `kitty`, `starship`, `i3_wm_endervour`, `picom`, `zathura`, `flameshot`, `thunar`, `fontconfig`, `mods`, `clang`, `claude`, `vim`, `niri`, `noctalia`, `theme`, `git`, `kanata`
 
 `git/` is the shared `.gitconfig`; name, email and work-only settings live in the untracked `~/.gitconfig.local` (it includes that last). This repo's `.githooks/pre-commit` runs `ripsecrets` on staged files to block API keys (the repo is public); `04_stow.sh` enables it with `core.hooksPath`. Never commit keys: they go in `~/.secrets`.
 
@@ -35,6 +35,8 @@ All steps are idempotent.
 `theme/` holds the shared color profiles (`.config/theme/themes/<name>/`: `palette.conf` for kitty/alacritty, `tmux.conf` with `@thm_*` roles for `.tmux.conf`, `nvim` naming a `colorscheme.lua` theme) and the `theme` command (`.local/bin/theme`: `theme <name>`, `theme pick` (fzf, also tmux `prefix + T`), `theme new <name> [from]`, `theme check`) that switches all of them live (plus GTK dark/light mode from the palette background, and, under niri without Noctalia, the bar/launcher/notifications/lock/focus ring via `niri/.config/niri/scripts/shell colors`), plus `hexcolor` (paints `#rrggbb` codes in their color in the terminal, like nvim-colorizer; kitty `Ctrl+Shift+I` shows the screen through it). The active profile is a symlink in `~/.local/state/theme/current` (outside the repo). Every profile file is optional, and every tool keeps its own fallback so its package works without `theme`: kitty `theme.conf`, alacritty `colors-fallback.toml`, the `@thm_*` defaults in `.tmux.conf`, and `fallback` (then built-in `habamax`) in `colorscheme.lua`, which also never errors when a theme plugin is not installed. Starship uses ANSI color names, so it follows the terminal palette.
 
 `thunar/` holds Thunar's right-click actions (`uca.xml`: Open Terminal Here, Copy Path) and `copy-path` (`.local/bin`), which copies paths shell-quoted for pasting into a terminal. Thunar rewrites `uca.xml` from its GUI, which replaces the stow link.
+
+`kanata/` makes Caps Lock **tap = Esc, hold = Ctrl** in X11, Wayland and the TTY: `kanata.kbd` plus a user systemd unit. `04_stow.sh` does the one-time root setup it needs (system group `uinput`, `/etc/udev/rules.d/99-uinput.rules`, `/etc/modules-load.d/uinput.conf`, user in `input`+`uinput`; re-login once) and enables the unit. The XKB `caps:escape` in `xorg/` and GNOME stays as the fallback when kanata is stopped. Emergency stop: `LCtrl+Space+Esc`.
 
 `noctalia/` holds hand-written Noctalia config (`bar.toml`). Settings changed in the Noctalia GUI go to `~/.local/state/noctalia/settings.toml` (not tracked) and override these files.
 

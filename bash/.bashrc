@@ -140,9 +140,6 @@ if [ -f ~/.secrets ]; then
 fi
 
 
-# Added by Antigravity CLI installer
-export PATH="/home/greystone/.local/bin:$PATH"
-
 # -------------------------------------------------------------
 # 1. Always prefer Ninja over Make
 export CMAKE_GENERATOR="Ninja"
@@ -150,7 +147,3 @@ export CMAKE_GENERATOR="Ninja"
 # 2. Always export compile_commands.json for clangd/LSP
 export CMAKE_EXPORT_COMPILE_COMMANDS="ON"
 
-
-
-# Added by Antigravity CLI installer
-export PATH="/home/hx/.local/bin:$PATH"

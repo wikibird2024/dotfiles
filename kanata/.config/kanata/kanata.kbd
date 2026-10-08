@@ -1,0 +1,17 @@
+;; Caps Lock: tap = Esc, hold = Ctrl. Works in X11, Wayland and the TTY.
+;; Emergency stop (if a bad config locks the keyboard): LCtrl+Space+Esc.
+
+(defcfg
+  ;; keys not listed in defsrc still pass through
+  process-unmapped-keys yes
+)
+
+(defsrc
+  caps
+)
+
+;; tap-hold-press: Ctrl turns on as soon as another key is pressed while Caps
+;; is down, so a fast Caps+C is Ctrl+C. Caps alone, released within 200 ms = Esc.
+(deflayer base
+  (tap-hold-press 200 200 esc lctl)
+)

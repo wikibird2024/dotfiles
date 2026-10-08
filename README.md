@@ -25,7 +25,8 @@ Arch and Debian/Ubuntu. Details and flags: [`steps/README.md`](steps/README.md).
 | [`i3_wm_endervour`](i3_wm_endervour/README.md) | i3 X11 session, bar, scripts | stow |
 | [`picom`](picom/README.md) | compositor for i3 | stow |
 | [`Xresources`](Xresources/README.md) | X11 cursor, fonts, 1.25× DPI | stow |
-| [`xorg`](xorg/README.md) | Caps Lock → Escape for X11 | `sudo stow -t / xorg` |
+| [`kanata`](kanata/README.md) | Caps Lock: tap = Esc, hold = Ctrl (X11, Wayland, TTY) | stow |
+| [`xorg`](xorg/README.md) | Caps Lock → Escape for X11 (fallback when kanata is stopped) | `sudo stow -t / xorg` |
 | [`fontconfig`](fontconfig/README.md) | font rendering | stow |
 | [`theme`](theme/README.md) | `theme <name>`: one color profile for kitty, alacritty, tmux, Neovim | stow |
 

@@ -331,6 +331,7 @@ install_cargo_tool ripsecrets ripsecrets
 # niri: keep the clipboard after an app closes; drag files from the terminal to apps
 install_cargo_tool wl-clip-persist wl-clip-persist --git https://github.com/Linus789/wl-clip-persist
 install_cargo_tool ripdrag ripdrag # needs libgtk-4-dev (01_packages.sh)
+install_cargo_tool kanata kanata # Caps Lock: tap Esc, hold Ctrl (kanata/)
 install_rudo
 
 log_ok "All CLI tools done."

@@ -10,3 +10,7 @@ sudo stow -t / xorg        # or: sudo cp xorg/etc/X11/xorg.conf.d/00-keyboard.co
 
 Applies to X11 sessions (i3) after restarting X. niri ignores it — set the same under
 `input { keyboard { xkb { options "caps:escape" } } }` in `niri/.config/niri/config.kdl` if wanted.
+
+With [`kanata`](../kanata/README.md) running, Caps is **tap = Esc, hold = Ctrl** everywhere;
+kanata never sends the raw Caps key, so this setting only matters as the fallback when kanata
+is stopped.
