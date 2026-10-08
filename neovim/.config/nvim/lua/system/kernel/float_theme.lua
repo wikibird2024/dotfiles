@@ -23,7 +23,7 @@ function M.setup()
 
 		local is_light  = utils.hex_luminance(normal_bg) > 0.18
 		local direction = is_light and -1 or 1
-		local float_bg  = utils.blend_hex(normal_bg, 0.30 * direction)
+		local float_bg  = utils.blend_hex(normal_bg, 0.12 * direction) -- 0.30 washed popup text out
 		local border_fg = utils.blend_hex(normal_bg, 0.45 * direction)
 
 		vim.api.nvim_set_hl(0, "NormalFloat", { bg = float_bg })
