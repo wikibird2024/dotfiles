@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 export CLAUDE_CONFIG_DIR="$HOME/.claude-personal"
+# Pro subscription only: an API key or cloud provider here would be billed per token.
+unset ANTHROPIC_API_KEY ANTHROPIC_AUTH_TOKEN CLAUDE_CODE_USE_BEDROCK CLAUDE_CODE_USE_VERTEX
 exec claude "$@"
