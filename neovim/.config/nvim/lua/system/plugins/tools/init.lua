@@ -32,5 +32,6 @@ return {
 	{ import = "system.plugins.tools.rainbow-csv" },
 	{ import = "system.plugins.tools.visual-multi-multicursor" },
 	{ import = "system.plugins.tools.copilot" },
+	{ import = "system.plugins.tools.claudecode" },
 	{ import = "system.plugins.tools.yanky-clipboard-history" },
 }
