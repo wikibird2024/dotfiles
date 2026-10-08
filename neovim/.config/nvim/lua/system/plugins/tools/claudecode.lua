@@ -32,7 +32,10 @@ return {
 			{ "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>",   desc = "AI: Deny Diff" },
 		},
 		opts = {
-			terminal_cmd = vim.fn.expand("~/.local/bin/claude-personal"),
+			-- Without the tmux variables: Claude talks to nvim's terminal, not tmux. With them it
+			-- wraps clipboard copies (OSC 52) for tmux, which nvim prints as "52;c;<base64>" text.
+			-- nvim keeps $TMUX (vim-tmux-navigator needs it).
+			terminal_cmd = "env -u TMUX -u TMUX_PANE -u TERM_PROGRAM " .. vim.fn.expand("~/.local/bin/claude-personal"),
 			terminal = {
 				provider = "snacks",
 				split_side = "right",
