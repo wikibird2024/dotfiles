@@ -20,7 +20,7 @@ return {
 			{ "<leader>ds",  function() require("dap").step_over() end,                                               desc = "Step Over" },
 			{ "<leader>di",  function() require("dap").step_into() end,                                               desc = "Step Into" },
 			{ "<leader>do",  function() require("dap").step_out() end,                                                desc = "Step Out" },
-			{ "<leader>drt", function() require("dap").run_to_cursor() end,                                           desc = "Run to Cursor" },
+			{ "<leader>dC",  function() require("dap").run_to_cursor() end,                                           desc = "Run to Cursor" },
 			{ "<leader>db",  function() require("dap").toggle_breakpoint() end,                                       desc = "Breakpoint: Toggle" },
 			{ "<leader>dB",  function() require("dap").set_breakpoint(vim.fn.input("Condition: ")) end,               desc = "Breakpoint: Condition" },
 			{ "<leader>dl",  function() require("dap").set_breakpoint(nil, nil, vim.fn.input("Log: ")) end,           desc = "Log Point" },

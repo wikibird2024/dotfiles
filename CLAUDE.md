@@ -30,7 +30,7 @@ All steps are idempotent.
 
 `git/` is the shared `.gitconfig`; name, email and work-only settings live in the untracked `~/.gitconfig.local` (it includes that last). This repo's `.githooks/pre-commit` runs `ripsecrets` on staged files to block API keys (the repo is public); `04_stow.sh` enables it with `core.hooksPath`. Never commit keys: they go in `~/.secrets`.
 
-`niri/` is the niri config: one `config.kdl` that starts the desktop shell and binds its panels through `scripts/shell`, which runs Noctalia when installed and otherwise waybar/fuzzel/mako/swaylock (per machine, `scripts/shell use waybar|noctalia` overrides that; saved in `~/.local/state/niri/shell`) (Ubuntu 24.04 has no Noctalia package; their configs are in `niri/.config/waybar` and `niri/.config/mako`). Keys, workspaces, scripts and workflow: `niri/README.md`.
+`niri/` is the niri config: one `config.kdl` that starts the desktop shell and binds its panels through `scripts/shell`, which runs Noctalia when installed and otherwise waybar/fuzzel/swaync/swaylock (per machine, `scripts/shell use waybar|noctalia` overrides that; saved in `~/.local/state/niri/shell`) (Ubuntu 24.04 has no Noctalia package; their configs are in `niri/.config/waybar` and `niri/.config/swaync`). Keys, workspaces, scripts and workflow: `niri/README.md`.
 
 `theme/` holds the shared color profiles (`.config/theme/themes/<name>/`: `palette.conf` for kitty/alacritty, `tmux.conf` with `@thm_*` roles for `.tmux.conf`, `nvim` naming a `colorscheme.lua` theme) and the `theme` command (`.local/bin/theme`: `theme <name>`, `theme pick` (fzf, also tmux `prefix + T`), `theme new <name> [from]`, `theme check`) that switches all of them live (plus GTK dark/light mode from the palette background, and, under niri without Noctalia, the bar/launcher/notifications/lock/focus ring via `niri/.config/niri/scripts/shell colors`), plus `hexcolor` (paints `#rrggbb` codes in their color in the terminal, like nvim-colorizer; kitty `Ctrl+Shift+I` shows the screen through it). The active profile is a symlink in `~/.local/state/theme/current` (outside the repo). Every profile file is optional, and every tool keeps its own fallback so its package works without `theme`: kitty `theme.conf`, alacritty `colors-fallback.toml`, the `@thm_*` defaults in `.tmux.conf`, and `fallback` (then built-in `habamax`) in `colorscheme.lua`, which also never errors when a theme plugin is not installed. Starship uses ANSI color names, so it follows the terminal palette.
 
@@ -76,11 +76,13 @@ Plugin specs live under `lua/system/plugins/` and are organised by concern:
 
 ## LSP Servers
 
-Active for: **C/C++** (clangd), **Rust** (rust-analyzer via rustaceanvim), **Python** (pyright + ruff), **LaTeX** (texlab), **Lua** (lua_ls, paired with lazydev.nvim for Neovim API/plugin awareness), **Shell** (bashls), **TOML** (taplo), plus **typos_lsp** (spell-checking) across all filetypes.
+Active for: **C/C++** (clangd), **Rust** (rust-analyzer via rustaceanvim), **Python** (pyright + ruff), **LaTeX** (texlab), **Lua** (lua_ls, paired with lazydev.nvim for Neovim API/plugin awareness), **Shell** (bashls), **TOML** (taplo), **C#** (roslyn_ls, nvim-lspconfig's config for the Roslyn server), plus **typos_lsp** (spell-checking) across all filetypes.
 
-`clangd`, `pyright`, `texlab`, `lua_ls` (`lua-language-server`), `bashls` (`bash-language-server`), `ruff`, `typos_lsp` (`typos-lsp`), `taplo`, and the `codelldb` DAP adapter are installed automatically via `mason-tool-installer` on first launch — no manual install needed for these. `rust-analyzer` is managed by rustaceanvim itself, not mason.
+`clangd`, `pyright`, `texlab`, `lua_ls` (`lua-language-server`), `bashls` (`bash-language-server`), `ruff`, `typos_lsp` (`typos-lsp`), `taplo`, `roslyn_ls` (`roslyn-language-server`), `csharpier`, and the `codelldb` and `netcoredbg` DAP adapters are installed automatically via `mason-tool-installer` on first launch — no manual install needed for these. `rust-analyzer` is managed by rustaceanvim itself, not mason.
 
 `ruff`, `typos-lsp`, and `taplo` are all written in Rust.
+
+C# needs `dotnet` on PATH (`~/.dotnet`, set in `bash/.bashrc` with `DOTNET_ROOT`): the Roslyn server and CSharpier are .NET tools, and Mason installs them with `dotnet tool`. Roslyn opens the `.sln` it finds above the file. `.axaml` (Avalonia window files) is set to the `xml` filetype in `kernel/autocommands.lua`.
 
 C/C++ requires `compile_commands.json` in the project root for clangd to index correctly. Generate with cmake (`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`) or `bear`.
 
@@ -96,6 +98,7 @@ Formatters run on save via conform.nvim:
 | Lua | stylua |
 | Shell | shfmt |
 | TOML | taplo |
+| C# | csharpier, **only in projects with a `.csharpierrc`** (on other code it would rewrite about half the lines) |
 
 Linters (nvim-lint, on save): luacheck (Lua), shellcheck (Shell). No C/C++ linter: cpplint only checks Google style, which clashes with project `.clang-format` files; clang-format owns C/C++ style. C/C++ bug checks come from clang-tidy run inside clangd (`--clang-tidy` in `lsp/servers/clangd.lua`); which checks run is set per project in its `.clangd` (`Diagnostics: ClangTidy:`) — see MANUAL.md "C/C++ bug checks". Python linting comes from the `ruff` LSP server instead (see LSP Servers above), not nvim-lint.
 
@@ -127,4 +130,4 @@ apt install shellcheck shfmt clang-format bear
 ```
 `lazygit` isn't reliably in apt across distros, so bootstrap fetches the binary release directly instead.
 
-DAP adapters: `codelldb` is auto-installed by `mason-tool-installer` (see LSP Servers above); `arm-none-eabi-gdb` via apt for embedded C.
+DAP adapters: `codelldb` and `netcoredbg` (C#: `dap.configurations.cs` picks the project's `bin/Debug/<framework>/<Name>.dll`; build first) are auto-installed by `mason-tool-installer` (see LSP Servers above); `arm-none-eabi-gdb` via apt for embedded C. Tests: neotest adapters for Python, Rust and .NET (`neotest-dotnet`).

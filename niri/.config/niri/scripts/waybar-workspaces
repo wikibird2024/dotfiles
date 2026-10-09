@@ -23,8 +23,11 @@ render() {
         | join("  ·  ")'
 }
 
-niri msg --json event-stream | while read -r event; do
+# Reading from <(...) instead of a pipe, and `|| exit`: when waybar goes away
+# (reload, restart) the next render fails and this script ends, instead of
+# piling up a copy per reload. Only workspace events, not window titles.
+while read -r event; do
     case $event in
-        *Workspace*) render ;;
+        '{"Workspace'*) render || exit 0 ;;
     esac
-done
+done < <(niri msg --json event-stream)

@@ -36,14 +36,21 @@ refresh_bar() { pkill -RTMIN+9 -u "$USER" -x waybar 2>/dev/null || true; }
 
 close_warning() {
     [ -f "$notify_file" ] || return 0
-    makoctl dismiss -n "$(cat "$notify_file")" 2>/dev/null
+    # plain D-Bus call: works with any notification daemon (swaync, mako)
+    gdbus call --session --dest org.freedesktop.Notifications \
+        --object-path /org/freedesktop/Notifications \
+        --method org.freedesktop.Notifications.CloseNotification "$(cat "$notify_file")" >/dev/null 2>&1
     rm -f "$notify_file"
 }
 
 # Stop a waiting countdown (the whole process group, so its `sleep` too).
+# Also by name: a watcher started a moment ago may not have written its pid yet,
+# and one left running would power off even while you work.
 stop_watcher() {
     local pid
-    pid=$(cat "$watcher_file" 2>/dev/null) && kill -- "-$pid" 2>/dev/null
+    for pid in $(cat "$watcher_file" 2>/dev/null) $(pgrep -u "$USER" -f "$self watch\$"); do
+        kill -- "-$pid" 2>/dev/null
+    done
     rm -f "$watcher_file"
     close_warning
 }

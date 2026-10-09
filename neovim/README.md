@@ -134,7 +134,6 @@ Powered by `ToggleTerm`. All active terminal panes automatically map custom dire
 
 ### Normal Mode Activations
 * `<leader>t` : Toggle Standard Default Terminal View
-* `<leader>tf` : Open Terminal in a centered **Floating** window overlay
 * `<leader>th` : Open Terminal in a **Horizontal** split layout
 * `<leader>tv` : Open Terminal in a **Vertical** split layout
 

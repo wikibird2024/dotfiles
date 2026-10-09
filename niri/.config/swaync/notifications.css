@@ -1,0 +1,156 @@
+/* swaync: notification popups and the panel under the bar's bell.
+ * @bg @fg @accent @muted @red @selection come from the active `theme` profile:
+ * scripts/shell writes them above this file into style.css next to it
+ * (generated, not in git), the file swaync reads. */
+* {
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 13px;
+}
+
+.floating-notifications,
+.blank-window,
+.control-center-list {
+    background: transparent;
+}
+
+/* one notification card (popup and in the panel) */
+.notification-row {
+    outline: none;
+}
+
+.notification {
+    background: alpha(@bg, 0.95);
+    color: @fg;
+    border: 1px solid alpha(@accent, 0.35);
+    border-radius: 12px;
+    margin: 6px 10px;
+    padding: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.notification.critical {
+    border-color: @red;
+}
+
+.notification-content {
+    padding: 10px;
+}
+
+.summary {
+    font-weight: bold;
+    color: @fg;
+}
+
+.time {
+    color: @muted;
+    margin-right: 24px;
+}
+
+.body {
+    color: @fg;
+}
+
+.close-button {
+    background: alpha(@fg, 0.1);
+    color: @fg;
+    border-radius: 100%;
+    margin: 8px;
+    min-width: 22px;
+    min-height: 22px;
+    padding: 0;
+}
+
+.close-button:hover {
+    background: @red;
+    color: @bg;
+}
+
+.notification-default-action,
+.notification-action {
+    background: transparent;
+    color: @fg;
+    border: none;
+    border-radius: 12px;
+}
+
+.notification-default-action:hover,
+.notification-action:hover {
+    background: alpha(@selection, 0.6);
+}
+
+/* buttons such as "Install" under the text */
+.notification-action {
+    border-top: 1px solid alpha(@accent, 0.2);
+    border-radius: 0;
+}
+
+.notification-action:first-child {
+    border-bottom-left-radius: 12px;
+}
+
+.notification-action:last-child {
+    border-bottom-right-radius: 12px;
+}
+
+/* volume / brightness bar */
+progressbar trough {
+    background: alpha(@fg, 0.15);
+    min-height: 6px;
+    border-radius: 3px;
+}
+
+progressbar progress {
+    background: @accent;
+    min-height: 6px;
+    border-radius: 3px;
+}
+
+/* the panel (click the bell) */
+.control-center {
+    background: alpha(@bg, 0.95);
+    color: @fg;
+    border: 1px solid alpha(@accent, 0.35);
+    border-radius: 12px;
+}
+
+.control-center-list-placeholder {
+    color: @muted;
+}
+
+.widget-title {
+    color: @fg;
+    font-weight: bold;
+    margin: 10px 14px 4px 14px;
+}
+
+.widget-title > button {
+    background: alpha(@fg, 0.08);
+    color: @fg;
+    border: 1px solid alpha(@accent, 0.35);
+    border-radius: 8px;
+    padding: 2px 10px;
+}
+
+.widget-title > button:hover {
+    background: alpha(@selection, 0.8);
+}
+
+.widget-dnd {
+    color: @fg;
+    margin: 4px 14px 8px 14px;
+}
+
+.widget-dnd > switch {
+    background: alpha(@fg, 0.15);
+    border: none;
+    border-radius: 12px;
+}
+
+.widget-dnd > switch:checked {
+    background: @accent;
+}
+
+.widget-dnd > switch slider {
+    background: @fg;
+    border-radius: 12px;
+}

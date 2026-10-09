@@ -40,7 +40,10 @@ path_prepend "$HOME/.cargo/bin"
 path_prepend "$HOME/.local/bin"
 path_prepend "$HOME/bin"
 path_prepend "/usr/local/texlive/2025/bin/x86_64-linux"
+path_prepend "$HOME/.dotnet"       # .NET SDK installed by dotnet-install.sh
+path_prepend "$HOME/.dotnet/tools" # dotnet tools (dotnet tool install -g)
 export PATH
+[ -d "$HOME/.dotnet" ] && export DOTNET_ROOT="$HOME/.dotnet"
 
 # 4. ENVIRONMENT
 export EDITOR=nvim

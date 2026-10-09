@@ -592,7 +592,6 @@ else
     nnoremap <leader>th :botright terminal ++rows=12<CR>
     nnoremap <leader>tv :vertical terminal<CR>
 endif
-nnoremap <silent> <leader>tf :call OpenFloatTerm()<CR>
 
 " --- Editing ---
 nnoremap <leader>i   gg=G''

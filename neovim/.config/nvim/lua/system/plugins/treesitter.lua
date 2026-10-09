@@ -16,6 +16,8 @@ return {
 				"vimdoc",
 				"query",
 				"cmake",
+				"c_sharp",
+				"xml", -- .csproj, .props, .axaml
 				"markdown",
 				"markdown_inline",
 				"bash",
@@ -101,8 +103,8 @@ return {
 			map_move("[f", move.goto_previous_start, "@function.outer")
 			map_move("[c", move.goto_previous_start, "@class.outer")
 
-			vim.keymap.set("n", "<leader>na", function() swap.swap_next("@parameter.inner") end)
-			vim.keymap.set("n", "<leader>pa", function() swap.swap_previous("@parameter.inner") end)
+			vim.keymap.set("n", "<leader>c]", function() swap.swap_next("@parameter.inner") end, { desc = "Swap Parameter with Next" })
+			vim.keymap.set("n", "<leader>c[", function() swap.swap_previous("@parameter.inner") end, { desc = "Swap Parameter with Previous" })
 		end,
 	},
 }

@@ -35,6 +35,10 @@ return {
 				"bash-language-server",
 				"codelldb",
 				"cortex-debug",
+				-- C# (.NET tools; need `dotnet` on PATH, see bash/.bashrc)
+				"roslyn-language-server",
+				"csharpier",
+				"netcoredbg",
 				-- Rust-written LSP/lint/format tools
 				"ruff",
 				"typos-lsp",

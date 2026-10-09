@@ -2,7 +2,7 @@
 # Desktop shell for niri: bar, launcher, panels, lock, media keys.
 #   shell <command>
 # Uses Noctalia when it is installed (Arch). Without it (Ubuntu 24.04 has no
-# Noctalia package) it uses apt tools: waybar, fuzzel, mako, swaylock,
+# Noctalia package) it uses apt tools: waybar, fuzzel, swaync, swaylock,
 # swayidle, swaybg, cliphist, wpctl, brightnessctl, playerctl, rudo (dock).
 # Per machine, `shell use waybar` keeps the apt tools even with Noctalia
 # installed (`shell use noctalia` goes back); the choice is kept in
@@ -11,8 +11,7 @@
 #           lock lock-and-suspend window-switcher volume-up volume-down
 #           volume-mute mic-mute brightness-up brightness-down
 #           media-toggle media-next media-previous
-#           notifications-restore notifications-clear notifications-dnd
-#           notifications-icon (bell for the bar)
+#           notifications-panel notifications-clear notifications-dnd
 #           colors (re-read the `theme` colors; the theme command runs it)
 set -uo pipefail
 
@@ -52,7 +51,8 @@ if [ "$command" = use ]; then
     echo "$new" >"$choice_file"
     # stop both sets, then start the chosen one detached from this terminal
     pkill -u "$USER" -x noctalia
-    for program in waybar mako rudo swayidle swaybg; do pkill -u "$USER" -x "$program"; done
+    systemctl --user stop niri-waybar.service niri-swayidle.service swaync.service 2>/dev/null
+    for program in waybar swaync rudo swayidle swaybg; do pkill -u "$USER" -x "$program"; done
     pkill -u "$USER" -f 'wl-paste --watch cliphist'
     # the theme focus ring is only kept up to date for waybar
     [ "$new" = noctalia ] && rm -f "$generated_dir/colors.kdl"
@@ -87,13 +87,29 @@ start_once() {
     setsid -f "$@" </dev/null >/dev/null 2>&1
 }
 
+# Long-running parts (bar, idle timer): the user units niri-waybar and
+# niri-swayidle (niri/.config/systemd/user/), which restart after a crash and log
+# to the journal (journalctl --user -u niri-waybar). Not enabled, so only niri
+# starts them; they stop with the session.
+start_service() {
+    local name=$1
+    has "$name" || return 0
+    systemctl --user is-active --quiet "niri-$name.service" && return 0
+    # a copy started the old way (by hand, or before the units existed) would double up
+    pkill -u "$USER" -x "$name"
+    systemctl --user reset-failed "niri-$name.service" 2>/dev/null
+    systemctl --user start "niri-$name.service"
+}
+
 # On-screen value (volume, brightness): one notification that replaces itself.
 osd() {
     local title=$1 percent=$2 last_id
     has notify-send || return 0
-    last_id=$(cat "$notify_id_file" 2>/dev/null || echo 0)
-    notify-send -a osd -t 1500 -h "int:value:$percent" -r "$last_id" -p "$title" "$percent%" \
-        >"$notify_id_file"
+    last_id=$(cat "$notify_id_file" 2>/dev/null)
+    [[ $last_id =~ ^[0-9]+$ ]] || last_id=0
+    # the synchronous hint: swaync draws the value as a bar only with it
+    notify-send -a osd -t 1500 -h "int:value:$percent" -h string:x-canonical-private-synchronous:osd \
+        -r "$last_id" -p "$title" "$percent%" >"$notify_id_file"
 }
 
 volume_percent() {
@@ -110,8 +126,9 @@ show_volume() {
 }
 
 # Colors from the active `theme` profile (palette.conf), else neutral grays.
-# mako 1.8 and fuzzel 1.9 have no include, so each tool gets a generated
-# config: the repo file plus these colors, in $generated_dir.
+# waybar and fuzzel 1.9 get a generated config: the repo file plus these
+# colors, in $generated_dir. rudo and swaync read only a fixed style.css, so
+# theirs is written next to the repo file (not tracked).
 write_colors() {
     local bg='#1e1e1e' fg='#e0e0e0' accent='#909090' muted='#606060' red='#cc4444' yellow='#e0b050' selection='#3a3a3a'
     if [ -f "$palette" ]; then
@@ -138,13 +155,6 @@ write_colors() {
     } >"$generated_dir/waybar.css"
 
     {
-        printf 'background-color=%sf0\ntext-color=%s\nborder-color=%s\n' "$bg" "$fg" "$accent"
-        cat ~/.config/mako/config
-        printf '\n[urgency=critical]\nborder-color=%s\n' "$red"
-        printf '\n[app-name=osd]\nprogress-color=over %s\n' "$selection"
-    } >"$generated_dir/mako.conf"
-
-    {
         cat ~/.config/fuzzel/fuzzel.ini 2>/dev/null
         # fuzzel 1.9 (Ubuntu 24.04) has no prompt/input colors yet.
         # Background 85% opaque (d9): niri blurs what is behind it (layer-rule launcher)
@@ -162,6 +172,15 @@ write_colors() {
                 selection "$selection"
             cat ~/.config/rudo/dock.css
         } >~/.config/rudo/.style.css.new && mv ~/.config/rudo/.style.css.new ~/.config/rudo/style.css
+    fi
+
+    # swaync (notifications) reads ~/.config/swaync/style.css; `shell colors` reloads it
+    if [ -f ~/.config/swaync/notifications.css ]; then
+        {
+            printf '@define-color %s %s;\n' bg "$bg" fg "$fg" accent "$accent" muted "$muted" \
+                red "$red" selection "$selection"
+            cat ~/.config/swaync/notifications.css
+        } >~/.config/swaync/.style.css.new && mv ~/.config/swaync/.style.css.new ~/.config/swaync/style.css
     fi
 
     # niri focus ring: config.kdl includes this file and reloads when it changes
@@ -184,21 +203,26 @@ menu() {
 }
 
 start_wallpaper() {
-    local image
+    local image old
     image=$(readlink -f "$wallpaper_link" 2>/dev/null)
     [ -f "$image" ] || image=$(find "$wallpaper_dir" -maxdepth 1 -type f \
         \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) 2>/dev/null | sort | head -n1)
     [ -n "$image" ] || return 0
-    pkill -u "$USER" -x swaybg
-    start_once swaybg -m fill -i "$image"
+    has swaybg || return 0
+    old=$(pgrep -u "$USER" -x swaybg)
+    setsid -f swaybg -m fill -i "$image" </dev/null >/dev/null 2>&1
+    # shellcheck disable=SC2086 # one pid per word
+    [ -n "$old" ] && { sleep 0.3; kill $old 2>/dev/null; }
 }
 
 case $command in
     start)
         write_colors
         start_wallpaper
-        start_once waybar -s "$generated_dir/waybar.css"
-        start_once mako -c "$generated_dir/mako.conf"
+        start_service waybar
+        # notifications: the package's own unit (D-Bus starts the same one), which
+        # restarts after a crash and reads ~/.config/swaync/
+        has swaync && systemctl --user start swaync.service
         # dock on the left edge, always shown (~/.config/rudo), for people who don't know the keys
         start_once rudo
         # password prompts for apps that need admin rights (Ubuntu path, then Arch)
@@ -210,13 +234,8 @@ case $command in
         done
         has cliphist && has wl-paste && ! pgrep -u "$USER" -f 'wl-paste --watch cliphist' >/dev/null &&
             setsid -f wl-paste --watch cliphist store </dev/null >/dev/null 2>&1
-        # lock after 5 min (company rule: max 5 min), screens off after 6 min, lock before sleep;
-        # after 1 min idle, auto-shutdown starts its countdown (only if turned on, Mod+Ctrl+X)
-        start_once swayidle -w \
-            timeout 60 "$HOME/.local/bin/auto-shutdown idle" resume "$HOME/.local/bin/auto-shutdown resume" \
-            timeout 300 "$self lock" \
-            timeout 360 'niri msg action power-off-monitors' \
-            before-sleep "$self lock"
+        # lock after 5 min (company rule), screens off after 6 min: niri-swayidle.service
+        start_service swayidle
         ;;
     launcher)
         if pgrep -u "$USER" -x fuzzel >/dev/null; then pkill -u "$USER" -x fuzzel; else run_fuzzel; fi
@@ -309,21 +328,13 @@ case $command in
     colors)
         write_colors
         pkill -USR2 -u "$USER" -x waybar # waybar re-reads its style
-        makoctl reload 2>/dev/null || true # rudo re-reads style.css by itself
+        swaync-client -rs -sw >/dev/null 2>&1 || true # rudo re-reads style.css by itself
         ;;
-    notifications-restore) makoctl restore ;;
-    notifications-clear) makoctl dismiss --all ;;
-    notifications-dnd)
-        if makoctl mode | grep -qx do-not-disturb; then
-            makoctl mode -r do-not-disturb >/dev/null
-        else
-            makoctl mode -a do-not-disturb >/dev/null
-        fi
-        pkill -RTMIN+8 -u "$USER" -x waybar # redraw the bell
-        ;;
-    notifications-icon)
-        if makoctl mode 2>/dev/null | grep -qx do-not-disturb; then echo "󰂛"; else echo "󰂚"; fi
-        ;;
+    # swaync: the panel under the bar's bell (also Mod+N), clear all, do-not-disturb.
+    # -sw: do nothing when swaync is not running, instead of waiting for it.
+    notifications-panel) swaync-client -t -sw ;;
+    notifications-clear) swaync-client -C -sw ;;
+    notifications-dnd) swaync-client -d -sw >/dev/null ;;
     media-toggle) playerctl play-pause ;;
     media-next) playerctl next ;;
     media-previous) playerctl previous ;;

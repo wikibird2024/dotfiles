@@ -3,7 +3,6 @@ return {
 	version = "*",
 	keys = {
 		{ "<leader>t",  "<cmd>ToggleTerm<CR>",                     desc = "Terminal"            },
-		{ "<leader>tf", "<cmd>ToggleTerm direction=float<CR>",      desc = "Float Terminal"      },
 		{ "<leader>th", "<cmd>ToggleTerm direction=horizontal<CR>", desc = "Horizontal Terminal" },
 		{ "<leader>tv", "<cmd>ToggleTerm direction=vertical<CR>",   desc = "Vertical Terminal"   },
 		{

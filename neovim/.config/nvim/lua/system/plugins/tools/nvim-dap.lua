@@ -19,7 +19,7 @@ return {
 			{ "<leader>ds",  function() require("dap").step_over() end,                                               desc = "Step Over" },
 			{ "<leader>di",  function() require("dap").step_into() end,                                               desc = "Step Into" },
 			{ "<leader>do",  function() require("dap").step_out() end,                                                desc = "Step Out" },
-			{ "<leader>drt", function() require("dap").run_to_cursor() end,                                           desc = "Run to Cursor" },
+			{ "<leader>dC",  function() require("dap").run_to_cursor() end,                                           desc = "Run to Cursor" },
 			{ "<leader>db",  function() require("dap").toggle_breakpoint() end,                                       desc = "Breakpoint: Toggle" },
 			{ "<leader>dB",  function() require("dap").set_breakpoint(vim.fn.input("Condition: ")) end,               desc = "Breakpoint: Condition" },
 			{ "<leader>dl",  function() require("dap").set_breakpoint(nil, nil, vim.fn.input("Log: ")) end,           desc = "Log Point" },
@@ -190,6 +190,37 @@ return {
 					end,
 					cwd = "${workspaceFolder}",
 					stopOnEntry = false,
+				},
+			}
+
+			-- =====================================================================
+			-- C# / .NET CONFIGURATION (netcoredbg, from Mason)
+			-- Build first (dotnet build); then pick the project's .dll from
+			-- bin/Debug/<framework>/ (the IL file, not the small launcher).
+			-- =====================================================================
+			dap.adapters.coreclr = {
+				type = "executable",
+				command = "netcoredbg",
+				args = { "--interpreter=vscode" },
+			}
+
+			dap.configurations.cs = {
+				{
+					name = "Launch .NET (netcoredbg)",
+					type = "coreclr",
+					request = "launch",
+					program = function()
+						local dlls = vim.fn.glob(vim.fn.getcwd() .. "/**/bin/Debug/*/*.dll", false, true)
+						dlls = vim.tbl_filter(function(dll)
+							-- the project's own dll: <Name>/bin/Debug/<fw>/<Name>.dll
+							return vim.fn.fnamemodify(dll, ":t:r") == vim.fn.fnamemodify(dll, ":h:h:h:h:t")
+						end, dlls)
+						if #dlls == 1 then
+							return dlls[1]
+						end
+						return vim.fn.input("Path to dll: ", dlls[1] or (vim.fn.getcwd() .. "/"), "file")
+					end,
+					cwd = "${workspaceFolder}",
 				},
 			}
 

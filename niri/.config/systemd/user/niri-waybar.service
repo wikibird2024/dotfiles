@@ -1,0 +1,15 @@
+# The bar for niri without Noctalia. Started by ~/.config/niri/scripts/shell start
+# (not enabled: GNOME must not get it). Restarts after a crash; its messages:
+# journalctl --user -u niri-waybar
+[Unit]
+Description=waybar for niri (scripts/shell)
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/waybar -s %h/.cache/niri-shell/waybar.css
+Restart=on-failure
+RestartSec=2
+# stop only waybar, not the apps opened from it (htop, settings); its helper
+# scripts (workspaces, bell) end by themselves once waybar is gone
+KillMode=process

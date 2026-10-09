@@ -675,7 +675,6 @@ let g:which_key_map.x = {
 
 let g:which_key_map.t = {
     \ 'name': '+terminal',
-    \ 'f': 'float terminal',
     \ 'h': 'horizontal terminal',
     \ 'v': 'vertical terminal',
     \ }
@@ -849,7 +848,6 @@ else
     nnoremap <leader>th :botright terminal ++rows=12<CR>
     nnoremap <leader>tv :vertical terminal<CR>
 endif
-nnoremap <silent> <leader>tf :call OpenFloatTerm()<CR>
 
 " --- Editing ---
 nnoremap <leader>i  gg=G''
@@ -1178,7 +1176,7 @@ function! QuickfixStep(forward) abort
     endtry
 endfunction
 
-" Floating terminal running a:1 or the shell (mirrors neovim's <leader>tf).
+" Floating terminal running a:1 or the shell (used by <leader>gg for lazygit).
 " Vim uses a popup window, Neovim a floating window. The window closes when
 " the program exits.
 function! OpenFloatTerm(...) abort

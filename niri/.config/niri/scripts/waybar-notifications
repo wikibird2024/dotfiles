@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Bell for waybar (custom module, return-type json): swaync's state, one JSON line
+# per change; the count is hidden when it is 0.
+# waybar ignores SIGPIPE and its helpers inherit that, so a plain
+# `swaync-client -swb | jq` never notices waybar is gone and piles up on every
+# waybar restart. Here a failed write ends the script, and the exit trap stops
+# swaync-client.
+set -uo pipefail
+
+exec {events}< <(swaync-client -swb)
+client=$!
+trap 'kill "$client" 2>/dev/null' EXIT
+
+while read -r line <&"$events"; do
+    jq -c '.text = (if .text == "0" then "" else " " + .text end)' <<<"$line" || exit 0
+done

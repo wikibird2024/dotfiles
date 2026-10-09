@@ -46,7 +46,8 @@ mkdir -p "$HOME/.claude/skills" "$HOME/.claude-personal/skills"
 # `systemctl --user enable` write into it, so it must not be a link into the repo.
 # Drop-in folders (*.service.d) must be real folders too: systemd skips a
 # drop-in folder that is a symlink, so stow must link the files inside instead.
-mkdir -p "$HOME/.config/systemd/user" "$HOME/.config/systemd/user/niri.service.d"
+mkdir -p "$HOME/.config/systemd/user" "$HOME/.config/systemd/user/niri.service.d" \
+    "$HOME/.config/systemd/user/swaync.service.d"
 
 # A real (non-symlink) ~/.vimrc makes stow refuse the vim package; keep it
 # as a backup instead.

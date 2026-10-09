@@ -3,7 +3,7 @@
 Scrollable-tiling Wayland compositor ([niri](https://github.com/niri-wm/niri)) with the
 [Noctalia](https://docs.noctalia.dev/) shell (bar, launcher, notifications, lock, wallpaper).
 Where Noctalia is not installed (Ubuntu 24.04: no package) the same keys use waybar, fuzzel,
-mako and swaylock instead, see "Ubuntu (no Noctalia)".
+swaync and swaylock instead, see "Ubuntu (no Noctalia)".
 Built for a terminal-first embedded workflow: kitty + tmux + nvim, datasheets, KiCad, browser.
 
 ```
@@ -12,18 +12,22 @@ niri/.config/niri/
 └── scripts/
     ├── shell               # bar, launcher, panels, lock, media keys: Noctalia or apt tools
     ├── waybar-workspaces   # workspace list for waybar (Ubuntu)
+    ├── waybar-notifications # the bar's bell: swaync state and unread count
     ├── scratchpad          # Mod+`  toggle the serial console
     ├── serial-console      # what runs inside it (picocom, auto-reconnect)
     ├── focus-or-launch     # Mod+B / Mod+P  jump to an app or start it
     ├── screenshot          # Print (copy) / Ctrl+Print: Flameshot (satty fallback)
     └── flameshot-bin/grim  # grim for Flameshot (fixes the zoom at scale 1.25)
 niri/.config/waybar/        # bar when Noctalia is missing (Ubuntu)
-niri/.config/mako/          # notifications + volume/brightness OSD when Noctalia is missing
+niri/.config/swaync/        # notifications, their panel and the volume/brightness OSD when Noctalia is missing
 niri/.config/rudo/          # dock on the left edge when Noctalia is missing: settings, pins, dock.css
 niri/.local/share/          # dock launchers (All apps, Settings) + its fallback app icon
 niri/.config/satty/         # screenshot editor settings (Print without Flameshot 13)
 niri/.config/systemd/user/niri.service.d/oomd.conf
                             # out of memory: systemd-oomd kills the heavy app, not niri (no logout)
+niri/.config/systemd/user/niri-{waybar,swayidle}.service
+                            # bar and idle timer (5-min lock) when Noctalia is missing; started by
+                            # scripts/shell, restarted after a crash
 noctalia/.config/noctalia/
 └── bar.toml                # bar tweaks (workspace names as labels)
 ```
@@ -73,13 +77,14 @@ name so the bar shows `1 Browser · 2 Dev …` (Noctalia can show either id or n
 | Mod + W | tabbed column (stack datasheets, flip with J/K) |
 | Mod + [ / ] | pull neighbour window into this column / push out |
 | Mod + C | center column |
+| Mod + Ctrl + W / M | screen share: show this window / this monitor. In Teams/Meet share "niri Dynamic Cast Target" once, then switch with these keys without stopping the share; Mod + Ctrl + Shift + W shows nothing |
 | Mod + Shift + T | toggle floating |
 | Mod + O / Mod + Tab | overview (zoomed out) |
 | mouse into top-left corner | overview (hot corner) |
 | scroll on the bar's workspace list | previous / next workspace (also Mod + wheel anywhere) |
-| Mod + N | show the last notification again (bar bell: left click) |
+| Mod + N | notification panel under the bell, with Clear all and Do not disturb (bell: click) |
 | Mod + Shift + N | clear all notifications (bell: middle click) |
-| Mod + Ctrl + N | do not disturb on/off, bell shows 󰂛 (bell: right click) |
+| Mod + Ctrl + N | do not disturb on/off, bell shows 󰂛; critical alerts still show (bell: right click) |
 | Mod + Q | close window |
 
 **Apps**
@@ -88,14 +93,14 @@ name so the bar shows `1 Browser · 2 Dev …` (Noctalia can show either id or n
 |---|---|
 | Mod + Enter | kitty attached to tmux session `main` (created if missing; every window shows that same session) |
 | Mod + T | plain kitty (no tmux) |
-| Mod + E | file manager (Thunar, same as Super+E in GNOME), floating 60% × 70% |
+| Mod + E | file manager (Thunar, same as Super+E in GNOME), a normal tiled window; its pop-ups (copy progress, Properties) float |
 | Mod + D | app launcher |
 | Mod + Space | input method: English ↔ Vietnamese (fcitx5 + Bamboo), same key as GNOME |
 | **Mod + B** | Firefox: jump to it (again = next window) or start it |
 | **Mod + P** | datasheet (Sioyek/zathura): jump to it or start Sioyek |
 | **Mod + `** | serial console scratchpad (show / hide) |
 
-**Noctalia panels**
+**Panels and tools** (Noctalia, or the apt tools in "Ubuntu (no Noctalia)")
 
 | Key | Action |
 |---|---|
@@ -104,8 +109,8 @@ name so the bar shows `1 Browser · 2 Dev …` (Noctalia can show either id or n
 | Mod + V | clipboard history |
 | Mod + Y | wallpaper picker |
 | Mod + X | power menu |
-| Mod + Alt + L | lock (closing the lid locks and suspends) |
-| Alt + Tab | window switcher |
+| Mod + Alt + L | lock (closing the lid locks; the laptop then suspends by itself) |
+| Alt + Tab | window switcher with previews (niri's own); Alt + \` = only windows of the same app |
 | Print | **Flameshot**: select an area, draw on it; `Enter` **copies** it, `Esc` cancels |
 | Insert / Mod + Shift + S | same as Print. Insert is what this keyboard's PrtSc key sends without Fn (GNOME uses Insert too) |
 | Mod + Insert / Mod + Print | **save**: niri's own screenshot tool, drag an area, `Space`/`Enter` saves to `~/Pictures/Screenshots` (and copies), `Esc` cancels |
@@ -202,7 +207,7 @@ is saved in `~/.local/state/niri/shell` (not in the repo), so each machine keeps
 
 | Key | Without Noctalia |
 |---|---|
-| bar | waybar (workspaces, clock, tray, sound, network, battery, power); click the network pill for Wi-Fi/VPN (GNOME Settings) |
+| bar | waybar: workspaces left; clock + notification bell (+ auto-shutdown when on) in the middle; tray, status pill (sound, network, RAM, battery) and power right. Click the network for Wi-Fi/VPN (GNOME Settings), RAM for htop, the bell for the notification panel (swaync; the number = unread) |
 | left screen edge | dock ([rudo](https://github.com/skorotkiewicz/rudo)), always shown; windows open to the right of it, never over it. Pinned apps (All apps, Files, Browser, Terminal, Settings), then other open apps, Power menu, and the grid button to pin an app. A pill under an icon = it is open (accent = focused). Click = go to it or start it; right click = its windows, **Pin to Dock** / **Unpin from Dock**; drag a pinned icon to reorder. Pins are saved in `rudo/pins.json` (in the repo), size and position in `rudo/settings.json` (`icon_size`, rudo reloads it live) |
 | Mod + D | fuzzel |
 | Mod + S | GNOME Settings (Wi-Fi, Bluetooth, sound) |
@@ -211,20 +216,20 @@ is saved in `~/.local/state/niri/shell` (not in the repo), so each machine keeps
 | Mod + Y | pick a wallpaper from `~/Pictures/wallpaper` (swaybg) |
 | Mod + X | power menu (fuzzel): lock, log out, suspend, reboot, power off, auto shutdown on/off |
 | Mod + Alt + L | swaylock; auto-lock after 5 min, screens off after 6 min (swayidle) |
-| Alt + Tab | window list (fuzzel) |
-| volume / brightness / media keys | wpctl / brightnessctl / playerctl, OSD from mako |
+| volume / brightness / media keys | wpctl / brightnessctl / playerctl, OSD with a bar from swaync (top middle, not kept in the panel) |
 
 Colors follow the `theme` profile (`theme <name>` recolors the bar, launcher,
 notifications, lock screen and niri's focus ring live): `scripts/shell` builds
-each tool's config from its repo file (`waybar/style.css`, `mako/config`, `fuzzel/fuzzel.ini`,
-`rudo/dock.css`) plus the palette, in `~/.cache/niri-shell/` (the dock's goes to
-`~/.config/rudo/style.css`, not tracked, as rudo reads only that); the focus
+each tool's config from its repo file (`waybar/style.css`, `fuzzel/fuzzel.ini`, `rudo/dock.css`,
+`swaync/notifications.css`) plus the palette, in `~/.cache/niri-shell/` (the dock's and
+swaync's go to `style.css` next to their repo file, not tracked, as they read only that); the focus
 ring comes from `colors.kdl` there, which `config.kdl` includes (niri reloads it by itself).
 Edit the repo files, never the generated ones.
 
 Look: the wallpaper (swaybg) stays still behind the workspaces in the overview; the
 launcher has a shadow and a blurred background.
-Notifications are hidden from screen shares and recordings (`block-out-from "screencast"`).
+Notifications and their panel are hidden from screen shares (`block-out-from "screencast"`:
+Teams, OBS through the desktop portal); a direct capture (grim, wf-recorder) still shows them.
 
 **Auto shutdown** (`~/.local/bin/auto-shutdown`, from `niri/.local/bin/`): powers the PC off
 when you have been away and nothing is busy. **Off by default, and off again after every
@@ -248,7 +253,15 @@ auto-shutdown busy make -j8   # the PC stays on until this command ends
 
 Ubuntu's waybar package turns `waybar.service` on for every graphical session. It
 crash-loops under GNOME/X11 and would give niri a second bar, so mask it for your user:
-`systemctl --user mask waybar.service` (`scripts/shell` starts waybar itself). The same
+`systemctl --user mask waybar.service mako.service` (`scripts/shell` starts waybar itself, as
+the unit `niri-waybar`; mako ignored its config when started that way and swaync replaces it).
+swaync is started through its own `swaync.service` (D-Bus starts the same unit), which reads
+`~/.config/swaync/` and restarts after a crash; the drop-in `swaync.service.d/niri-only.conf`
+keeps it out of GNOME sessions (GNOME Shell owns notifications there).
+**Never `apt remove mako-notifier`:** if it was picked as an optional package in
+`pacstall -I niri`, the niri package depends on it and apt removes niri too (happened
+2026-10-09: the next login had no niri). Leave mako installed; `mako.service` is masked. swayidle runs as `niri-swayidle`, also restarted after a crash,
+so the 5-min lock never silently stops: `journalctl --user -u niri-swayidle`. The same
 script also starts the polkit agent (`policykit-1-gnome`), since its autostart entry only
 runs under XFCE/Unity/Cinnamon.
 

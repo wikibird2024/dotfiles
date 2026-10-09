@@ -1,5 +1,42 @@
 -- Path: neovim/.config/nvim/lua/system/plugins/tools/claudecode.lua
 -- Claude Code in a right split, on the personal Pro account (claude-personal, no API key).
+
+-- <leader>ae: build/clean errors (quickfix) or else the last Overseer task output (flash),
+-- written to a file; Claude is asked to read it and fix the errors.
+local function send_errors()
+	local lines = {}
+	local hasError = false
+	for _, item in ipairs(vim.fn.getqflist()) do
+		local text = item.text
+		if item.valid == 1 then
+			hasError = true
+			text = string.format("%s:%d:%d: %s", vim.fn.bufname(item.bufnr), item.lnum, item.col, item.text)
+		elseif text:lower():find("error") then
+			hasError = true
+		end
+		table.insert(lines, text)
+	end
+	local source = "build (quickfix)"
+	if not hasError then
+		local ok, overseer = pcall(require, "overseer")
+		local tasks = ok and overseer.list_tasks({ sort = function(a, b) return a.id > b.id end }) or {}
+		local bufnr = tasks[1] and tasks[1]:get_bufnr()
+		if not (bufnr and vim.api.nvim_buf_is_valid(bufnr)) then
+			vim.notify("No build errors and no Overseer task output to send", vim.log.levels.WARN)
+			return
+		end
+		lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+		source = "task: " .. tasks[1].name .. " (" .. tasks[1].status .. ")"
+	end
+	local path = vim.fn.stdpath("cache") .. "/claude_errors.log"
+	table.insert(lines, 1, "# " .. source .. ", cwd " .. vim.fn.getcwd())
+	vim.fn.writefile(lines, path)
+	-- One typed message, not ClaudeCodeAdd + text: the @-mention arrives over the
+	-- websocket and could land after the text was already submitted.
+	vim.cmd("ClaudeCodeSendText Read " .. path .. " (" .. source .. " output) and fix these errors.")
+	vim.notify("Sent " .. source .. " to Claude")
+end
+
 return {
 	{
 		"coder/claudecode.nvim",
@@ -28,6 +65,7 @@ return {
 			{ "<leader>am", "<cmd>ClaudeCodeSelectModel<cr>",desc = "AI: Select Model" },
 			{ "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>",      desc = "AI: Add Current Buffer" },
 			{ "<leader>as", "<cmd>ClaudeCodeSend<cr>",       mode = "v", desc = "AI: Send Selection" },
+			{ "<leader>ae", function() send_errors() end,   desc = "AI: Send Errors"  },
 			{ "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "AI: Accept Diff" },
 			{ "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>",   desc = "AI: Deny Diff" },
 		},

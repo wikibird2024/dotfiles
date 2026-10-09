@@ -327,7 +327,6 @@ Opened with `<leader>lo` (see LSP). Inside tagbar: `Enter` jump to tag, `p` prev
 |---|---|
 | `<leader>th` | Horizontal terminal (12 rows, bottom) |
 | `<leader>tv` | Vertical terminal |
-| `<leader>tf` | Floating terminal (Vim popup / Neovim float) |
 | `Esc Esc` | Leave terminal insert mode (a single `Esc` still reaches the program) |
 | `Ctrl-h/j/k/l` | Move from the terminal to other splits |
 

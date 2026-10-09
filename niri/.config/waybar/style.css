@@ -17,19 +17,36 @@ window#waybar {
 
 /* each group is a rounded pill floating over the wallpaper */
 #custom-workspaces,
-#clock,
+#clock-alerts,
 #tray,
-#pulseaudio,
-#network,
-#battery,
-#custom-notifications,
-#custom-auto-shutdown,
+#status,
 #custom-power {
     background: alpha(@bg, 0.9);
     border: 1px solid alpha(@accent, 0.35);
     border-radius: 12px;
-    padding: 2px 12px;
     margin: 6px 3px 0 3px;
+}
+
+#custom-workspaces,
+#tray,
+#custom-power {
+    padding: 2px 12px;
+}
+
+/* items inside a group pill: only space between them */
+#clock-alerts,
+#status {
+    padding: 2px 6px;
+}
+
+#clock,
+#pulseaudio,
+#network,
+#memory,
+#battery,
+#custom-notifications,
+#custom-auto-shutdown {
+    padding: 0 6px;
 }
 
 #custom-workspaces {
@@ -50,15 +67,27 @@ window#waybar {
     color: @yellow;
 }
 
+/* bell: unread notifications stand out; do-not-disturb is dimmed */
+#custom-notifications.notification,
+#custom-notifications.inhibited-notification {
+    color: @accent;
+}
+
 #pulseaudio.muted,
-#network.disconnected {
+#network.disconnected,
+#custom-notifications.dnd-none,
+#custom-notifications.dnd-notification,
+#custom-notifications.dnd-inhibited-none,
+#custom-notifications.dnd-inhibited-notification {
     color: @muted;
 }
 
+#memory.warning,
 #battery.warning {
     color: @yellow;
 }
 
+#memory.critical,
 #battery.critical {
     color: @red;
 }

@@ -52,7 +52,7 @@ The full loop from opening the project to committing.
    <leader>lh          — toggle inlay hints
 
 6. DEBUG
-   <leader>tf          — float terminal → start openocd
+   <leader>tv          — vertical terminal → start openocd
    <leader>db          — set breakpoints
    <leader>dc / <F5>   — connect, auto-discovers .elf / .axf
    <F10>               — step over

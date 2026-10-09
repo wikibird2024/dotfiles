@@ -17,7 +17,20 @@ return {
 					rust   = { "rustfmt"      },
 					c      = { "clang_format" },
 					cpp    = { "clang_format" },
+					cs     = { "csharpier"    },
 					toml   = { "taplo"        },
+				},
+				formatters = {
+					-- Opt-in per project: only where a .csharpierrc exists. On other C#
+					-- code it would rewrite about half the lines on the first save.
+					csharpier = {
+						condition = function(_, ctx)
+							return vim.fs.find(
+								{ ".csharpierrc", ".csharpierrc.json", ".csharpierrc.yaml" },
+								{ upward = true, path = ctx.dirname }
+							)[1] ~= nil
+						end,
+					},
 				},
 			})
 		end,

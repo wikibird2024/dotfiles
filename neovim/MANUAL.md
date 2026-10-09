@@ -429,7 +429,7 @@ dih   — delete current hunk
 | `<leader>ds` or `<F10>` | Step over |
 | `<leader>di` or `<F11>` | Step into |
 | `<leader>do` or `<F12>` | Step out |
-| `<leader>drt` | Run to cursor |
+| `<leader>dC` | Run to cursor |
 
 ### Breakpoints
 
@@ -499,15 +499,15 @@ Runs arbitrary tasks (Makefile targets, shell scripts, `cargo run`, firmware fla
 
 | Key | Action |
 |-----|--------|
-| `<leader>or` | Pick and run a task |
-| `<leader>ot` | Toggle task list panel |
+| `<leader>Or` | Pick and run a task |
+| `<leader>Ot` | Toggle task list panel |
 
 Also available via commands:
 
 | Command | Action |
 |---------|--------|
-| `:OverseerRun` | Run a task (same as `<leader>or`) |
-| `:OverseerToggle` | Toggle panel (same as `<leader>ot`) |
+| `:OverseerRun` | Run a task (same as `<leader>Or`) |
+| `:OverseerToggle` | Toggle panel (same as `<leader>Ot`) |
 | `:OverseerBuild` | Run the default build task |
 
 Tasks are discovered automatically from `Makefile`, `tasks.json`, shell scripts, and `cargo`. The panel shows running / finished tasks with their output. You can re-run a previous task by pressing `r` on it in the panel.
@@ -524,11 +524,11 @@ Runs tests inline — results appear as signs in the gutter and in a summary pan
 
 | Key | Action |
 |-----|--------|
-| `<leader>tt` | Run the test nearest to the cursor |
-| `<leader>tf` | Run all tests in the current file |
-| `<leader>ts` | Toggle test summary panel |
-| `<leader>to` | Toggle test output panel |
-| `<leader>td` | Debug the nearest test (launches DAP) |
+| `<leader>Tt` | Run the test nearest to the cursor |
+| `<leader>Tf` | Run all tests in the current file |
+| `<leader>Ts` | Toggle test summary panel |
+| `<leader>To` | Toggle test output panel |
+| `<leader>Td` | Debug the nearest test (launches DAP) |
 
 ### Gutter signs
 
@@ -541,7 +541,7 @@ Runs tests inline — results appear as signs in the gutter and in a summary pan
 
 ### Summary panel
 
-`<leader>ts` opens a tree of all discovered tests. Navigate with `j`/`k`, press `Enter` to jump to the test, `r` to re-run it, `o` to open its output.
+`<leader>Ts` opens a tree of all discovered tests. Navigate with `j`/`k`, press `Enter` to jump to the test, `r` to re-run it, `o` to open its output.
 
 ### Python (pytest)
 
@@ -551,7 +551,7 @@ Tests are discovered following pytest conventions: files named `test_*.py` or `*
 
 Tests are discovered from `#[test]` annotations. Neotest calls `cargo test` for the selected test.
 
-> **Debug a test:** `<leader>td` runs the nearest test under DAP (requires `debugpy` for Python or `codelldb` for Rust to be installed).
+> **Debug a test:** `<leader>Td` runs the nearest test under DAP (requires `debugpy` for Python or `codelldb` for Rust to be installed).
 
 ---
 
@@ -562,7 +562,6 @@ Tests are discovered from `#[test]` annotations. Neotest calls `cargo test` for 
 | Key | Action |
 |-----|--------|
 | `<leader>t` | Toggle default terminal (horizontal) |
-| `<leader>tf` | Floating terminal |
 | `<leader>th` | Horizontal split terminal |
 | `<leader>tv` | Vertical split terminal |
 
@@ -571,7 +570,7 @@ Tests are discovered from `#[test]` annotations. Neotest calls `cargo test` for 
 | Key | Action |
 |-----|--------|
 | `<C-h/j/k/l>` | Navigate to adjacent window |
-| `<leader>t` | Toggle terminal closed |
+| `<C-t>` | Toggle terminal closed |
 
 Terminals persist across toggles. Multiple terminals are tracked by ID (shown in the winbar).
 
@@ -951,8 +950,8 @@ diq   — delete contents of any surrounding quote
 
 | Key | Action |
 |-----|--------|
-| `<leader>na` | Swap parameter with next |
-| `<leader>pa` | Swap parameter with previous |
+| `<leader>c]` | Swap parameter with next |
+| `<leader>c[` | Swap parameter with previous |
 
 ---
 
@@ -990,6 +989,11 @@ Navigate the outline with `j`/`k`, press `Enter` to jump to that symbol.
 ### Which-key
 
 Press `<Space>` and wait 300ms — a popup shows all available keymaps grouped by prefix.
+
+One letter per topic: `a` AI, `b` buffer, `c` code/CMake, `d` debug, `f` find, `g` git,
+`h` harpoon, `H` HTTP, `l` LSP, `L` LaTeX, `n` docs, `O` tasks (overseer), `q` session,
+`r` refactor, `s` search/replace, `t` terminal, `T` test, `u` UI/toggle, `w` window,
+`x` diagnostics/quickfix.
 
 ### Noice (UI)
 
@@ -1087,9 +1091,9 @@ Save the file, then run `:Lazy sync` to install the theme if it's new, then rest
 
 **Run and debug a test without leaving the file:**
 1. Place cursor on a test function
-2. `<leader>tt` — run it, see the gutter sign update
-3. `<leader>to` — open output panel to read the failure
-4. `<leader>td` — re-run it under DAP to step through
+2. `<leader>Tt` — run it, see the gutter sign update
+3. `<leader>To` — open output panel to read the failure
+4. `<leader>Td` — re-run it under DAP to step through
 
 **Rename a file without leaving Neovim:**
 1. `-` — open oil in the directory
@@ -1099,7 +1103,7 @@ Save the file, then run `:Lazy sync` to install the theme if it's new, then rest
 **Embedded C debug session quickstart:**
 1. `<leader>cv` → select Debug, `<leader>cg` → configure (generates `compile_commands.json`)
 2. `<leader>cb` → build
-3. Start OpenOCD in `<leader>tf` (float terminal)
+3. Start OpenOCD in `<leader>tv` (vertical terminal)
 4. `<leader>dc` → DAP picks up `.elf` automatically, connects to OpenOCD
 5. `<F10>`/`<F11>`/`<F12>` — step through
 

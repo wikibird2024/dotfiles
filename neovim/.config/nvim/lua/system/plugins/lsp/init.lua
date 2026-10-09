@@ -62,7 +62,7 @@ return {
 			end,
 		})
 
-		local servers = { "texlab", "pyright", "clangd", "lua_ls", "bashls", "ruff", "typos_lsp", "taplo" }
+		local servers = { "texlab", "pyright", "clangd", "lua_ls", "bashls", "ruff", "typos_lsp", "taplo", "roslyn_ls" }
 		for _, name in ipairs(servers) do
 			local ok, server_mod = pcall(require, "system.plugins.lsp.servers." .. name)
 			if ok and type(server_mod.setup) == "function" then

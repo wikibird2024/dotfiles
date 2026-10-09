@@ -9,7 +9,7 @@ app_re=$1
 shift
 
 wins=$(niri msg --json windows)
-ids=$(jq -r --arg re "$app_re" '[.[] | select(.app_id | test($re))] | sort_by(.id) | .[].id' <<<"$wins")
+ids=$(jq -r --arg re "$app_re" '[.[] | select(.app_id // "" | test($re))] | sort_by(.id) | .[].id' <<<"$wins")
 
 if [ -z "$ids" ]; then
     exec "$@"

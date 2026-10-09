@@ -10,11 +10,11 @@ return {
 			"rouge8/neotest-rust",
 		},
 		keys = {
-			{ "<leader>tt", function() require("neotest").run.run()                              end, desc = "Test: Run Nearest"   },
-			{ "<leader>tf", function() require("neotest").run.run(vim.fn.expand("%"))            end, desc = "Test: Run File"      },
-			{ "<leader>ts", function() require("neotest").summary.toggle()                       end, desc = "Test: Summary"       },
-			{ "<leader>to", function() require("neotest").output_panel.toggle()                  end, desc = "Test: Output Panel"  },
-			{ "<leader>td", function() require("neotest").run.run({ strategy = "dap" })          end, desc = "Test: Debug Nearest" },
+			{ "<leader>Tt", function() require("neotest").run.run()                              end, desc = "Test: Run Nearest"   },
+			{ "<leader>Tf", function() require("neotest").run.run(vim.fn.expand("%"))            end, desc = "Test: Run File"      },
+			{ "<leader>Ts", function() require("neotest").summary.toggle()                       end, desc = "Test: Summary"       },
+			{ "<leader>To", function() require("neotest").output_panel.toggle()                  end, desc = "Test: Output Panel"  },
+			{ "<leader>Td", function() require("neotest").run.run({ strategy = "dap" })          end, desc = "Test: Debug Nearest" },
 		},
 		config = function()
 			require("neotest").setup({

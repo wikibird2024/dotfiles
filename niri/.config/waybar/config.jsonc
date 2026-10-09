@@ -6,8 +6,19 @@
     "position": "top",
     "height": 30,
     "modules-left": ["custom/workspaces"],
-    "modules-center": ["clock"],
-    "modules-right": ["tray", "pulseaudio", "network", "battery", "custom/notifications", "custom/auto-shutdown", "custom/power"],
+    "modules-center": ["group/clock-alerts"],
+    "modules-right": ["tray", "group/status", "custom/power"],
+
+    // One pill each. Middle: time and things that need attention (like GNOME).
+    // Right: machine status to look at.
+    "group/clock-alerts": {
+        "orientation": "horizontal",
+        "modules": ["clock", "custom/notifications", "custom/auto-shutdown"]
+    },
+    "group/status": {
+        "orientation": "horizontal",
+        "modules": ["pulseaudio", "network", "memory", "battery"]
+    },
 
     "custom/workspaces": {
         "exec": "~/.config/niri/scripts/waybar-workspaces",
@@ -40,20 +51,40 @@
         // Wi-Fi, VPN and wired settings (GNOME Settings); no nm-applet tray icon
         "on-click": "~/.config/niri/scripts/shell control-center"
     },
+    // RAM in use; yellow from 80%, red from 90%. Click: htop.
+    "memory": {
+        "interval": 5,
+        "format": "RAM {percentage}%",
+        "tooltip-format": "RAM  {used:0.1f} / {total:0.1f} GiB\nSwap {swapUsed:0.1f} / {swapTotal:0.1f} GiB",
+        "states": { "warning": 80, "critical": 90 },
+        "on-click": "kitty -e htop"
+    },
     "battery": {
         "format": "{icon} {capacity}%",
         "format-charging": "󰂄 {capacity}%",
         "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"],
         "states": { "warning": 20, "critical": 10 }
     },
-    // Bell: click = show last notification again, right click = do-not-disturb,
-    // middle click = clear all. Refreshed by `pkill -RTMIN+8 waybar`.
+    // Bell (swaync): click = notification panel, right click = do-not-disturb,
+    // middle click = clear all. The number = unread (hidden at 0).
+    // restart-interval: reconnect if swaync restarts.
     "custom/notifications": {
-        "exec": "~/.config/niri/scripts/shell notifications-icon",
-        "signal": 8,
-        "interval": "once",
-        "tooltip-format": "Left: last again · Right: do not disturb · Middle: clear all",
-        "on-click": "~/.config/niri/scripts/shell notifications-restore",
+        "exec": "~/.config/niri/scripts/waybar-notifications",
+        "restart-interval": 5,
+        "return-type": "json",
+        "format": "{icon}{}",
+        "format-icons": {
+            "none": "󰂚",
+            "notification": "󱅫",
+            "dnd-none": "󰂛",
+            "dnd-notification": "󰂛",
+            "inhibited-none": "󰂚",
+            "inhibited-notification": "󱅫",
+            "dnd-inhibited-none": "󰂛",
+            "dnd-inhibited-notification": "󰂛"
+        },
+        "escape": true,
+        "on-click": "~/.config/niri/scripts/shell notifications-panel",
         "on-click-right": "~/.config/niri/scripts/shell notifications-dnd",
         "on-click-middle": "~/.config/niri/scripts/shell notifications-clear"
     },

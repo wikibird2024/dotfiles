@@ -1,7 +1,7 @@
 // This config is in the KDL format: https://kdl.dev
 // "/-" comments out the following node.
 // Check the wiki for a full description of the configuration:
-// https://github.com/YaLTeR/niri/wiki/Configuration:-Introduction
+// https://github.com/niri-wm/niri/wiki/Configuration:-Introduction
 
 // Push the mouse into the top-left corner: open/close the overview.
 gestures {
@@ -12,7 +12,7 @@ gestures {
 
 // Input device configuration.
 // Find the full list of options on the wiki:
-// https://github.com/YaLTeR/niri/wiki/Configuration:-Input
+// https://github.com/niri-wm/niri/wiki/Configuration:-Input
 input {
     keyboard {
         xkb {
@@ -38,17 +38,6 @@ input {
         dwt
     }
 
-    trackpoint {
-        // off
-        // natural-scroll
-        // accel-speed 0.2
-        // accel-profile "flat"
-        // scroll-method "on-button-down"
-        // scroll-button 273
-        // scroll-button-lock
-        // middle-emulation
-    }
-
     // Uncomment this to make the mouse warp to the center of newly focused windows.
     // warp-mouse-to-focus
 
@@ -61,8 +50,9 @@ input {
 // by running `niri msg outputs` while inside a niri instance.
 // The built-in laptop monitor is usually called "eDP-1".
 // Find more information on the wiki:
-// https://github.com/YaLTeR/niri/wiki/Configuration:-Outputs
+// https://github.com/niri-wm/niri/wiki/Configuration:-Outputs
 // Remember to uncomment the node by removing "/-"!
+// The laptop's own screen; this desktop PC uses DP-3 with its default settings.
 /-output "eDP-2" {
     mode "2560x1600@239.998993"
     position x=2560 y=0
@@ -70,7 +60,7 @@ input {
 }
 // Settings that influence how windows are positioned and sized.
 // Find more information on the wiki:
-// https://github.com/YaLTeR/niri/wiki/Configuration:-Layout
+// https://github.com/niri-wm/niri/wiki/Configuration:-Layout
 layout {
     // Set gaps around windows in logical pixels.
     gaps 6
@@ -106,9 +96,8 @@ layout {
     // behind windows. That is, they will show up through semitransparent windows.
     // This is because windows using client-side decorations can have an arbitrary shape.
     //
-    // If you don't like that, you should uncomment `prefer-no-csd` below.
-    // Niri will draw focus ring and border *around* windows that agree to omit their
-    // client-side decorations.
+    // `prefer-no-csd` (set below) makes niri draw the focus ring and border *around*
+    // windows that agree to omit their client-side decorations.
     //
     // Alternatively, you can override it with a window rule called
     // `draw-border-with-background`.
@@ -125,19 +114,13 @@ layout {
         offset x=0 y=5
         color "#0007"
     }
-    struts {
-    }
 }
 overview {
     workspace-shadow {
         off
     }
 }
-// Add lines like this to spawn processes at startup.
-// Note that running niri as a session supports xdg-desktop-autostart,
-// which may be more convenient to use.
-// See the binds section below for more spawn examples.
-// This line starts waybar, a commonly used bar for Wayland compositors.
+// Environment for every app niri starts. Startup programs: spawn-at-startup below.
 environment {
   XDG_CURRENT_DESKTOP "niri"
   QT_QPA_PLATFORM "wayland;xcb"
@@ -206,7 +189,13 @@ animations {
 }
 // Window rules let you adjust behavior for individual windows.
 // Find more information on the wiki:
-// https://github.com/YaLTeR/niri/wiki/Configuration:-Window-Rules
+// https://github.com/niri-wm/niri/wiki/Configuration:-Window-Rules
+// Later rules win, so this one for all windows comes first.
+window-rule {
+    geometry-corner-radius 20
+    clip-to-geometry true
+}
+
 window-rule {
     match app-id=r#"^org\.gnome\."#
     draw-border-with-background false
@@ -214,30 +203,36 @@ window-rule {
     clip-to-geometry true
 }
 window-rule {
-    match app-id=r#"^gnome-control-center$"#
+    match app-id=r#"^(org\.gnome\.Settings|gnome-control-center)$"#
     match app-id=r#"^pavucontrol$"#
     match app-id=r#"^nm-connection-editor$"#
     default-column-width { proportion 0.5; }
-    open-floating false
 }
 window-rule {
     match app-id=r#"^org\.gnome\.Calculator$"#
     match app-id=r#"^gnome-calculator$"#
     match app-id=r#"^galculator$"#
     match app-id=r#"^blueman-manager$"#
-    match app-id=r#"^xdg-desktop-portal$"#
+    match app-id=r#"^xdg-desktop-portal-(gnome|gtk)$"#
     open-floating true
 }
 
-// File manager (Super+E): floating, but big enough to work in (60% x 70% of the
-// screen, centered). Resize: Super+Minus/Equal (width), Super+Shift+Minus/Equal
-// (height), or Super + right-drag. Super+Shift+T tiles it.
+// Password prompts (admin rights, keyring): float over the app, never in screen shares
+window-rule {
+    match app-id=r#"^polkit-gnome-authentication-agent-1$"#
+    match app-id=r#"^gcr-prompter$"#
+    open-floating true
+    block-out-from "screencast"
+}
+
+// File manager (Super+E, the dock, the launcher): a normal tiled window like other
+// apps. Only its pop-ups float (copy progress, Properties, Rename...): their titles
+// don't end in " - Thunar" like the main window's ("Downloads - Thunar").
 window-rule {
     // Thunar's app id is "thunar" or "org.xfce.Thunar" depending on version
     match app-id=r#"(?i)^(thunar|org\.xfce\.thunar)$"#
+    exclude title=r#" - Thunar$"#
     open-floating true
-    default-column-width { proportion 0.6; }
-    default-window-height { proportion 0.7; }
 }
 window-rule {
     match app-id="Alacritty"
@@ -255,11 +250,12 @@ debug {
     honor-xdg-activation-with-invalid-serial
 }
 
-// niri's own switcher, only for windows of the same app. Mod+Tab is the
-// overview and Alt+Tab the shell's window switcher (binds below), so they
-// are left out here.
+// niri's own window switcher with previews: Alt+Tab = all windows,
+// Alt+grave = only windows of the same app. Mod+Tab is the overview.
 recent-windows {
     binds {
+        Alt+Tab         { next-window; }
+        Alt+Shift+Tab   { previous-window; }
         Alt+grave       { next-window filter="app-id"; }
         Alt+Shift+grave { previous-window filter="app-id"; }
     }
@@ -274,7 +270,8 @@ workspace "4 Work Apps"
 workspace "5 scratchpad"
 
 window-rule {
-    match app-id="^firefox$"
+    // the snap reports "firefox_firefox"
+    match app-id=r#"^firefox(_firefox)?$"#
     open-on-workspace "1 Browser"
     open-maximized true
 }
@@ -286,7 +283,6 @@ window-rule {
 
 window-rule {
     match app-id=r#"(?i)^code"#
-    match app-id="^teams-for-linux$"
     open-on-workspace "4 Work Apps"
 }
 
@@ -333,7 +329,7 @@ window-rule {
     open-fullscreen false
 }
 
-// ── Shell: Noctalia if installed, else waybar/fuzzel/mako (scripts/shell) ──
+// ── Shell: Noctalia if installed, else waybar/fuzzel/swaync (scripts/shell) ──
 // Noctalia rules: docs.noctalia.dev/noctalia/compositor-settings/niri
 spawn-sh-at-startup "~/.config/niri/scripts/shell start"
 // Vietnamese input (Bamboo); Mod+Space switches English <-> Vietnamese
@@ -341,11 +337,6 @@ spawn-at-startup "fcitx5" "-d" "--replace"
 // Keep what you copied after its app closes: on Wayland the copied data lives in
 // that app (copy a file in Thunar, close Thunar, and the paste was empty). Both shells.
 spawn-at-startup "wl-clip-persist" "--clipboard" "regular"
-
-window-rule {
-    geometry-corner-radius 20
-    clip-to-geometry true
-}
 
 window-rule {
     match app-id="dev.noctalia.Noctalia"
@@ -383,9 +374,10 @@ layer-rule {
     }
 }
 
-// Notifications (mako) stay off screen shares and recordings (Teams, OBS)
+// Notifications and their panel stay off screen shares (Teams, OBS via the
+// portal; not grim/wf-recorder, which capture the screen directly)
 layer-rule {
-    match namespace="^notifications$"
+    match namespace="^(notifications|swaync-notification-window|swaync-control-center)$"
     block-out-from "screencast"
 }
 
@@ -435,7 +427,8 @@ blur {
 }
 
 switch-events {
-    lid-close { spawn "sh" "-c" "~/.config/niri/scripts/shell lock-and-suspend"; }
+    // logind suspends on lid close by itself (and not when docked); only lock here
+    lid-close { spawn "sh" "-c" "~/.config/niri/scripts/shell lock"; }
 }
 
 binds {
@@ -449,19 +442,18 @@ binds {
     Mod+Y hotkey-overlay-title="Wallpapers" { spawn-sh "~/.config/niri/scripts/shell wallpaper"; }
     Mod+X hotkey-overlay-title="Power Menu" { spawn-sh "~/.config/niri/scripts/shell session"; }
     Mod+Alt+L hotkey-overlay-title="Lock Screen" { spawn-sh "~/.config/niri/scripts/shell lock"; }
-    Alt+Tab { spawn-sh "~/.config/niri/scripts/shell window-switcher"; }
 
     // === Audio / brightness / media ===
-    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell volume-up"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell volume-down"; }
-    XF86AudioMute allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell volume-mute"; }
-    XF86AudioMicMute allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell mic-mute"; }
-    XF86AudioPlay allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell media-toggle"; }
-    XF86AudioPause allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell media-toggle"; }
-    XF86AudioNext allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell media-next"; }
-    XF86AudioPrev allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell media-previous"; }
-    XF86MonBrightnessUp allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell brightness-up"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn-sh "~/.config/niri/scripts/shell brightness-down"; }
+    XF86AudioRaiseVolume allow-when-locked=true hotkey-overlay-title=null { spawn-sh "~/.config/niri/scripts/shell volume-up"; }
+    XF86AudioLowerVolume allow-when-locked=true hotkey-overlay-title=null { spawn-sh "~/.config/niri/scripts/shell volume-down"; }
+    XF86AudioMute allow-when-locked=true hotkey-overlay-title=null { spawn-sh "~/.config/niri/scripts/shell volume-mute"; }
+    XF86AudioMicMute allow-when-locked=true hotkey-overlay-title=null { spawn-sh "~/.config/niri/scripts/shell mic-mute"; }
+    XF86AudioPlay allow-when-locked=true hotkey-overlay-title=null { spawn-sh "~/.config/niri/scripts/shell media-toggle"; }
+    XF86AudioPause allow-when-locked=true hotkey-overlay-title=null { spawn-sh "~/.config/niri/scripts/shell media-toggle"; }
+    XF86AudioNext allow-when-locked=true hotkey-overlay-title=null { spawn-sh "~/.config/niri/scripts/shell media-next"; }
+    XF86AudioPrev allow-when-locked=true hotkey-overlay-title=null { spawn-sh "~/.config/niri/scripts/shell media-previous"; }
+    XF86MonBrightnessUp allow-when-locked=true hotkey-overlay-title=null { spawn-sh "~/.config/niri/scripts/shell brightness-up"; }
+    XF86MonBrightnessDown allow-when-locked=true hotkey-overlay-title=null { spawn-sh "~/.config/niri/scripts/shell brightness-down"; }
 
     // === Screenshots ===
     // Copy: scripts/screenshot runs Flameshot 13.3 (grim takes the picture, then its overlay
@@ -488,10 +480,10 @@ binds {
     Mod+O repeat=false { toggle-overview; }
     Mod+Tab repeat=false { toggle-overview; }
 
-    // Notifications: show the last closed one again, clear all, do-not-disturb
-    Mod+N hotkey-overlay-title="Notification: Show Last Again" { spawn-sh "~/.config/niri/scripts/shell notifications-restore"; }
-    Mod+Shift+N hotkey-overlay-title="Notification: Clear All" { spawn-sh "~/.config/niri/scripts/shell notifications-clear"; }
-    Mod+Ctrl+N hotkey-overlay-title="Notification: Do Not Disturb" { spawn-sh "~/.config/niri/scripts/shell notifications-dnd"; }
+    // Notifications (same as the bar's bell: click / middle click / right click)
+    Mod+N hotkey-overlay-title="Notifications: Open Panel" { spawn-sh "~/.config/niri/scripts/shell notifications-panel"; }
+    Mod+Shift+N hotkey-overlay-title="Notifications: Clear All" { spawn-sh "~/.config/niri/scripts/shell notifications-clear"; }
+    Mod+Ctrl+N hotkey-overlay-title="Notifications: Do Not Disturb" { spawn-sh "~/.config/niri/scripts/shell notifications-dnd"; }
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // === Application Launchers ===
@@ -502,7 +494,7 @@ binds {
     Mod+E hotkey-overlay-title="Open File Manager" { spawn "thunar"; }
     Mod+Grave hotkey-overlay-title="Serial Console (scratchpad)" { spawn-sh "~/.config/niri/scripts/scratchpad"; }
     // Focus-or-launch: jump to the app if open (again = next window), else start it
-    Mod+B hotkey-overlay-title="Browser (focus or launch)" { spawn-sh "~/.config/niri/scripts/focus-or-launch '^firefox$' firefox"; }
+    Mod+B hotkey-overlay-title="Browser (focus or launch)" { spawn-sh "~/.config/niri/scripts/focus-or-launch '^firefox(_firefox)?$' firefox"; }
     Mod+P hotkey-overlay-title="PDF / datasheet (focus or launch)" { spawn-sh "~/.config/niri/scripts/focus-or-launch '^(sioyek|org.pwmt.zathura)$' \"$(command -v sioyek || echo zathura)\""; }
 
     // === Security ===
@@ -625,18 +617,23 @@ binds {
     Mod+R { switch-preset-column-width; }
     Mod+Shift+R { switch-preset-window-height; }
     Mod+Ctrl+R { reset-window-height; }
-    Mod+Ctrl+F { expand-column-to-available-width; }
-    Mod+C { center-column; }
-    Mod+Ctrl+C { center-visible-columns; }
+    Mod+Ctrl+F hotkey-overlay-title="Column: Fill Free Space" { expand-column-to-available-width; }
+    Mod+C hotkey-overlay-title="Column: Center" { center-column; }
+    Mod+Ctrl+C hotkey-overlay-title="Columns: Center All Visible" { center-visible-columns; }
 
     // === Manual Sizing ===
-    Mod+Minus { set-column-width "-10%"; }
-    Mod+Equal { set-column-width "+10%"; }
-    Mod+Shift+Minus { set-window-height "-10%"; }
-    Mod+Shift+Equal { set-window-height "+10%"; }
+    Mod+Minus hotkey-overlay-title="Column Width -10%" { set-column-width "-10%"; }
+    Mod+Equal hotkey-overlay-title="Column Width +10%" { set-column-width "+10%"; }
+    Mod+Shift+Minus hotkey-overlay-title="Window Height -10%" { set-window-height "-10%"; }
+    Mod+Shift+Equal hotkey-overlay-title="Window Height +10%" { set-window-height "+10%"; }
 
     // === System Controls ===
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
-    Mod+Shift+P { power-off-monitors; }
+    // Screen share: share "niri Dynamic Cast Target" in Teams/Meet once, then pick here
+    // what it shows; switch any time without stopping the share
+    Mod+Ctrl+W hotkey-overlay-title="Screen Share: This Window" { set-dynamic-cast-window; }
+    Mod+Ctrl+M hotkey-overlay-title="Screen Share: This Monitor" { set-dynamic-cast-monitor; }
+    Mod+Ctrl+Shift+W hotkey-overlay-title="Screen Share: Stop Showing" { clear-dynamic-cast-target; }
+    Mod+Shift+P hotkey-overlay-title="Monitors Off" { power-off-monitors; }
     Alt+Print hotkey-overlay-title="Screenshot: Window" { screenshot-window; }
 }

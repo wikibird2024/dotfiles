@@ -3,6 +3,9 @@ local autocmd = vim.api.nvim_create_autocmd
 
 local general = augroup("GeneralSettings", { clear = true })
 
+-- Avalonia window files (C#) are XML; nvim doesn't know the extension
+vim.filetype.add({ extension = { axaml = "xml" } })
+
 -- Auto-save on leaving insert mode or losing focus (skips special/readonly buffers)
 autocmd({ "InsertLeave", "FocusLost" }, {
 	group    = general,
