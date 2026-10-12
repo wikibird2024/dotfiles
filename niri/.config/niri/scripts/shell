@@ -29,19 +29,19 @@ has() { command -v "$1" >/dev/null 2>&1; }
 choice_file=${XDG_STATE_HOME:-~/.local/state}/niri/shell
 backend=$(cat "$choice_file" 2>/dev/null)
 case $backend in
-    noctalia | waybar) ;;
-    *) has noctalia && backend=noctalia || backend=waybar ;;
+noctalia | waybar) ;;
+*) has noctalia && backend=noctalia || backend=waybar ;;
 esac
 [ "$backend" = noctalia ] && ! has noctalia && backend=waybar
 
 if [ "$command" = use ]; then
     new=${2:-}
     case $new in
-        noctalia | waybar) ;;
-        *)
-            echo "usage: shell use noctalia|waybar   (now: $backend)" >&2
-            exit 2
-            ;;
+    noctalia | waybar) ;;
+    *)
+        echo "usage: shell use noctalia|waybar   (now: $backend)" >&2
+        exit 2
+        ;;
     esac
     if [ "$new" = noctalia ] && ! has noctalia; then
         echo "shell: noctalia is not installed" >&2
@@ -64,14 +64,14 @@ fi
 
 if [ "$backend" = noctalia ]; then
     case $command in
-        start) exec noctalia ;;
-        colors) exit 0 ;; # Noctalia has its own color settings
-        notifications-*) exit 0 ;; # Noctalia has its own notification panel
-        launcher | control-center | clipboard | wallpaper | session) exec noctalia msg panel-toggle "$command" ;;
-        settings) exec noctalia msg settings-toggle ;;
-        lock | lock-and-suspend) exec noctalia msg session "$command" ;;
-        media-*) exec noctalia msg media "${command#media-}" ;;
-        *) exec noctalia msg "$command" ;;
+    start) exec noctalia ;;
+    colors) exit 0 ;;          # Noctalia has its own color settings
+    notifications-*) exit 0 ;; # Noctalia has its own notification panel
+    launcher | control-center | clipboard | wallpaper | session) exec noctalia msg panel-toggle "$command" ;;
+    settings) exec noctalia msg settings-toggle ;;
+    lock | lock-and-suspend) exec noctalia msg session "$command" ;;
+    media-*) exec noctalia msg media "${command#media-}" ;;
+    *) exec noctalia msg "$command" ;;
     esac
 fi
 
@@ -212,134 +212,137 @@ start_wallpaper() {
     old=$(pgrep -u "$USER" -x swaybg)
     setsid -f swaybg -m fill -i "$image" </dev/null >/dev/null 2>&1
     # shellcheck disable=SC2086 # one pid per word
-    [ -n "$old" ] && { sleep 0.3; kill $old 2>/dev/null; }
+    [ -n "$old" ] && {
+        sleep 0.3
+        kill $old 2>/dev/null
+    }
 }
 
 case $command in
-    start)
-        write_colors
-        start_wallpaper
-        start_service waybar
-        # notifications: the package's own unit (D-Bus starts the same one), which
-        # restarts after a crash and reads ~/.config/swaync/
-        has swaync && systemctl --user start swaync.service
-        # dock on the left edge, always shown (~/.config/rudo), for people who don't know the keys
-        start_once rudo
-        # password prompts for apps that need admin rights (Ubuntu path, then Arch)
-        for agent in /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 \
-            /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1; do
-            [ -x "$agent" ] || continue
-            pgrep -u "$USER" -f "$agent" >/dev/null || setsid -f "$agent" </dev/null >/dev/null 2>&1
-            break
-        done
-        has cliphist && has wl-paste && ! pgrep -u "$USER" -f 'wl-paste --watch cliphist' >/dev/null &&
-            setsid -f wl-paste --watch cliphist store </dev/null >/dev/null 2>&1
-        # lock after 5 min (company rule), screens off after 6 min: niri-swayidle.service
-        start_service swayidle
-        ;;
-    launcher)
-        if pgrep -u "$USER" -x fuzzel >/dev/null; then pkill -u "$USER" -x fuzzel; else run_fuzzel; fi
-        ;;
-    control-center)
-        # GNOME Settings only shows its panels under a GNOME desktop name
-        XDG_CURRENT_DESKTOP=GNOME exec gnome-control-center
-        ;;
-    settings)
-        exec kitty -e nvim ~/.config/niri/config.kdl
-        ;;
-    clipboard)
-        choice=$(cliphist list | menu --prompt 'clipboard> ') || exit 0
-        cliphist decode <<<"$choice" | wl-copy
-        ;;
-    wallpaper)
-        name=$(find "$wallpaper_dir" -maxdepth 1 -type f \
-            \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) -printf '%f\n' |
-            sort | menu --prompt 'wallpaper> ') || exit 0
-        mkdir -p "$(dirname "$wallpaper_link")"
-        ln -sfn "$wallpaper_dir/$name" "$wallpaper_link"
-        start_wallpaper
-        ;;
-    session)
-        items=(Lock 'Log out' Suspend Reboot 'Power off')
-        # auto shutdown (~/.local/bin/auto-shutdown) is switched only here
-        auto_shutdown=~/.local/bin/auto-shutdown
-        if [ -x "$auto_shutdown" ]; then
-            if "$auto_shutdown" is-on; then
-                items+=('Auto shutdown: turn off')
-            else
-                items+=('Auto shutdown: turn on (after 30 min idle)')
-            fi
+start)
+    write_colors
+    start_wallpaper
+    start_service waybar
+    # notifications: the package's own unit (D-Bus starts the same one), which
+    # restarts after a crash and reads ~/.config/swaync/
+    has swaync && systemctl --user start swaync.service
+    # dock on the left edge, always shown (~/.config/rudo), for people who don't know the keys
+    start_once rudo
+    # password prompts for apps that need admin rights (Ubuntu path, then Arch)
+    for agent in /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 \
+        /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1; do
+        [ -x "$agent" ] || continue
+        pgrep -u "$USER" -f "$agent" >/dev/null || setsid -f "$agent" </dev/null >/dev/null 2>&1
+        break
+    done
+    has cliphist && has wl-paste && ! pgrep -u "$USER" -f 'wl-paste --watch cliphist' >/dev/null &&
+        setsid -f wl-paste --watch cliphist store </dev/null >/dev/null 2>&1
+    # lock after 5 min (company rule), screens off after 6 min: niri-swayidle.service
+    start_service swayidle
+    ;;
+launcher)
+    if pgrep -u "$USER" -x fuzzel >/dev/null; then pkill -u "$USER" -x fuzzel; else run_fuzzel; fi
+    ;;
+control-center)
+    # GNOME Settings only shows its panels under a GNOME desktop name
+    XDG_CURRENT_DESKTOP=GNOME exec gnome-control-center
+    ;;
+settings)
+    exec kitty -e nvim ~/.config/niri/config.kdl
+    ;;
+clipboard)
+    choice=$(cliphist list | menu --prompt 'clipboard> ') || exit 0
+    cliphist decode <<<"$choice" | wl-copy
+    ;;
+wallpaper)
+    name=$(find "$wallpaper_dir" -maxdepth 1 -type f \
+        \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) -printf '%f\n' |
+        sort | menu --prompt 'wallpaper> ') || exit 0
+    mkdir -p "$(dirname "$wallpaper_link")"
+    ln -sfn "$wallpaper_dir/$name" "$wallpaper_link"
+    start_wallpaper
+    ;;
+session)
+    items=(Lock 'Log out' Suspend Reboot 'Power off')
+    # auto shutdown (~/.local/bin/auto-shutdown) is switched only here
+    auto_shutdown=~/.local/bin/auto-shutdown
+    if [ -x "$auto_shutdown" ]; then
+        if "$auto_shutdown" is-on; then
+            items+=('Auto shutdown: turn off')
+        else
+            items+=('Auto shutdown: turn on (after 30 min idle)')
         fi
-        choice=$(printf '%s\n' "${items[@]}" |
-            menu --prompt 'power> ' --lines "${#items[@]}") || exit 0
-        case $choice in
-            Lock) "$self" lock ;;
-            'Log out') niri msg action quit --skip-confirmation ;;
-            Suspend) systemctl suspend ;;
-            Reboot) systemctl reboot ;;
-            'Power off') systemctl poweroff ;;
-            'Auto shutdown: turn off') "$auto_shutdown" off ;;
-            'Auto shutdown: turn on'*) "$auto_shutdown" on 30 ;;
-        esac
-        ;;
-    lock)
-        pgrep -u "$USER" -x swaylock >/dev/null && exit 0
-        [ -f "$generated_dir/colors.sh" ] || write_colors
-        # shellcheck source=/dev/null
-        . "$generated_dir/colors.sh"
-        swaylock -f -c "${bg#\#}" -F \
-            --inside-color "${bg#\#}" --ring-color "${accent#\#}" --key-hl-color "${fg#\#}" \
-            --line-color 00000000 --separator-color 00000000 --text-color "${fg#\#}" \
-            --inside-ver-color "${bg#\#}" --ring-ver-color "${accent#\#}" --text-ver-color "${fg#\#}" \
-            --inside-wrong-color "${bg#\#}" --ring-wrong-color "${red#\#}" --text-wrong-color "${red#\#}" \
-            --inside-clear-color "${bg#\#}" --ring-clear-color "${muted#\#}" --text-clear-color "${fg#\#}"
-        ;;
-    lock-and-suspend)
-        "$self" lock
-        systemctl suspend
-        ;;
-    window-switcher)
-        windows=$(niri msg --json windows)
-        index=$(jq -r '.[] | "\(.app_id // "?")  —  \(.title // "")"' <<<"$windows" |
-            menu --prompt 'window> ' --index) || exit 0
-        niri msg action focus-window --id "$(jq -r --argjson i "$index" '.[$i].id' <<<"$windows")"
-        ;;
-    volume-up)
-        wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+
-        show_volume @DEFAULT_AUDIO_SINK@ Volume
-        ;;
-    volume-down)
-        wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
-        show_volume @DEFAULT_AUDIO_SINK@ Volume
-        ;;
-    volume-mute)
-        wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-        show_volume @DEFAULT_AUDIO_SINK@ Volume
-        ;;
-    mic-mute)
-        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
-        show_volume @DEFAULT_AUDIO_SOURCE@ Microphone
-        ;;
-    brightness-up | brightness-down)
-        [ "$command" = brightness-up ] && step=5%+ || step=5%-
-        brightnessctl -q set "$step"
-        osd Brightness "$(brightnessctl -m | cut -d, -f4 | tr -d %)"
-        ;;
-    colors)
-        write_colors
-        pkill -USR2 -u "$USER" -x waybar # waybar re-reads its style
-        swaync-client -rs -sw >/dev/null 2>&1 || true # rudo re-reads style.css by itself
-        ;;
-    # swaync: the panel under the bar's bell (also Mod+N), clear all, do-not-disturb.
-    # -sw: do nothing when swaync is not running, instead of waiting for it.
-    notifications-panel) swaync-client -t -sw ;;
-    notifications-clear) swaync-client -C -sw ;;
-    notifications-dnd) swaync-client -d -sw >/dev/null ;;
-    media-toggle) playerctl play-pause ;;
-    media-next) playerctl next ;;
-    media-previous) playerctl previous ;;
-    *)
-        echo "shell: unknown command '$command'" >&2
-        exit 2
-        ;;
+    fi
+    choice=$(printf '%s\n' "${items[@]}" |
+        menu --prompt 'power> ' --lines "${#items[@]}") || exit 0
+    case $choice in
+    Lock) "$self" lock ;;
+    'Log out') niri msg action quit --skip-confirmation ;;
+    Suspend) systemctl suspend ;;
+    Reboot) systemctl reboot ;;
+    'Power off') systemctl poweroff ;;
+    'Auto shutdown: turn off') "$auto_shutdown" off ;;
+    'Auto shutdown: turn on'*) "$auto_shutdown" on 30 ;;
+    esac
+    ;;
+lock)
+    pgrep -u "$USER" -x swaylock >/dev/null && exit 0
+    [ -f "$generated_dir/colors.sh" ] || write_colors
+    # shellcheck source=/dev/null
+    . "$generated_dir/colors.sh"
+    swaylock -f -c "${bg#\#}" -F \
+        --inside-color "${bg#\#}" --ring-color "${accent#\#}" --key-hl-color "${fg#\#}" \
+        --line-color 00000000 --separator-color 00000000 --text-color "${fg#\#}" \
+        --inside-ver-color "${bg#\#}" --ring-ver-color "${accent#\#}" --text-ver-color "${fg#\#}" \
+        --inside-wrong-color "${bg#\#}" --ring-wrong-color "${red#\#}" --text-wrong-color "${red#\#}" \
+        --inside-clear-color "${bg#\#}" --ring-clear-color "${muted#\#}" --text-clear-color "${fg#\#}"
+    ;;
+lock-and-suspend)
+    "$self" lock
+    systemctl suspend
+    ;;
+window-switcher)
+    windows=$(niri msg --json windows)
+    index=$(jq -r '.[] | "\(.app_id // "?")  —  \(.title // "")"' <<<"$windows" |
+        menu --prompt 'window> ' --index) || exit 0
+    niri msg action focus-window --id "$(jq -r --argjson i "$index" '.[$i].id' <<<"$windows")"
+    ;;
+volume-up)
+    wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+
+    show_volume @DEFAULT_AUDIO_SINK@ Volume
+    ;;
+volume-down)
+    wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+    show_volume @DEFAULT_AUDIO_SINK@ Volume
+    ;;
+volume-mute)
+    wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+    show_volume @DEFAULT_AUDIO_SINK@ Volume
+    ;;
+mic-mute)
+    wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+    show_volume @DEFAULT_AUDIO_SOURCE@ Microphone
+    ;;
+brightness-up | brightness-down)
+    [ "$command" = brightness-up ] && step=5%+ || step=5%-
+    brightnessctl -q set "$step"
+    osd Brightness "$(brightnessctl -m | cut -d, -f4 | tr -d %)"
+    ;;
+colors)
+    write_colors
+    pkill -USR2 -u "$USER" -x waybar              # waybar re-reads its style
+    swaync-client -rs -sw >/dev/null 2>&1 || true # rudo re-reads style.css by itself
+    ;;
+# swaync: the panel under the bar's bell (also Mod+N), clear all, do-not-disturb.
+# -sw: do nothing when swaync is not running, instead of waiting for it.
+notifications-panel) swaync-client -t -sw ;;
+notifications-clear) swaync-client -C -sw ;;
+notifications-dnd) swaync-client -d -sw >/dev/null ;;
+media-toggle) playerctl play-pause ;;
+media-next) playerctl next ;;
+media-previous) playerctl previous ;;
+*)
+    echo "shell: unknown command '$command'" >&2
+    exit 2
+    ;;
 esac

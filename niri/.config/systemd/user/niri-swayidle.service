@@ -3,6 +3,8 @@
 # silently stops; its messages: journalctl --user -u niri-swayidle
 #   1 min idle: auto-shutdown starts its countdown (only if turned on, power menu Mod+X)
 #   5 min: lock (company rule: max 5 min)   6 min: screens off   before sleep: lock
+# Any logind "idle" block lock (systemd-inhibit --what=idle) turns ALL these timers
+# off, the lock too: use "shutdown" locks to keep the PC on (auto-shutdown busy).
 [Unit]
 Description=swayidle for niri (scripts/shell)
 PartOf=graphical-session.target

@@ -29,9 +29,14 @@
         "on-scroll-up": "niri msg action focus-workspace-up",
         "on-scroll-down": "niri msg action focus-workspace-down"
     },
+    // Like GNOME: click = month calendar under the clock (gsimplecal, click again
+    // or Esc closes it; double-click a day = GNOME Calendar on that day),
+    // right click = GNOME Calendar (events).
     "clock": {
         "format": "{:%a %d %b  %H:%M}",
-        "tooltip-format": "<tt>{calendar}</tt>"
+        "tooltip-format": "{:%A %d %B %Y  ·  week %V}",
+        "on-click": "gsimplecal",
+        "on-click-right": "gnome-calendar"
     },
     "tray": {
         "spacing": 8

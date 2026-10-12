@@ -1,0 +1,16 @@
+# Calendar popup for the waybar clock (niri, Ubuntu without Noctalia), like GNOME's:
+# click the clock = open/close, Esc or clicking elsewhere closes it.
+# niri places it under the clock (window rule in ~/.config/niri/config.kdl).
+show_calendar = 1
+show_timezones = 0
+mark_today = 1
+show_week_numbers = 1
+close_on_unfocus = 1
+# double-click a day: open GNOME Calendar on that day (events, Google account).
+# %x, not %Y-%m-%d: GNOME Calendar reads --date in the locale's own format
+# (ISO dates are rejected as "invalid"); both programs share the locale.
+external_viewer = gnome-calendar --date "%x"
+mainwindow_decorated = 0
+mainwindow_keep_above = 1
+mainwindow_skip_taskbar = 1
+mainwindow_resizable = 0

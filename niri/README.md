@@ -207,7 +207,7 @@ is saved in `~/.local/state/niri/shell` (not in the repo), so each machine keeps
 
 | Key | Without Noctalia |
 |---|---|
-| bar | waybar: workspaces left; clock + notification bell (+ auto-shutdown when on) in the middle; tray, status pill (sound, network, RAM, battery) and power right. Click the network for Wi-Fi/VPN (GNOME Settings), RAM for htop, the bell for the notification panel (swaync; the number = unread) |
+| bar | waybar: workspaces left; clock + notification bell (+ auto-shutdown when on) in the middle; tray, status pill (sound, network, RAM, battery) and power right. Click the network for Wi-Fi/VPN (GNOME Settings), RAM for htop, the bell for the notification panel (swaync; the number = unread), the clock for a month calendar like GNOME's (gsimplecal; double-click a day or right-click the clock = GNOME Calendar with events) |
 | left screen edge | dock ([rudo](https://github.com/skorotkiewicz/rudo)), always shown; windows open to the right of it, never over it. Pinned apps (All apps, Files, Browser, Terminal, Settings), then other open apps, Power menu, and the grid button to pin an app. A pill under an icon = it is open (accent = focused). Click = go to it or start it; right click = its windows, **Pin to Dock** / **Unpin from Dock**; drag a pinned icon to reorder. Pins are saved in `rudo/pins.json` (in the repo), size and position in `rudo/settings.json` (`icon_size`, rudo reloads it live) |
 | Mod + D | fuzzel |
 | Mod + S | GNOME Settings (Wi-Fi, Bluetooth, sound) |
@@ -245,9 +245,10 @@ auto-shutdown busy make -j8   # the PC stays on until this command ends
 ```
 
 - Idle = no keyboard/mouse (swayidle calls it after 1 min). A playing video blocks idle.
-- Busy = any `systemd-inhibit` lock on idle: `auto-shutdown busy`, every Claude Code session
+- Busy = any `systemd-inhibit` block lock on shutdown: `auto-shutdown busy`, every Claude Code session
   that is working (hooks `UserPromptSubmit` / `Stop` / `SessionEnd` in `~/.claude/settings.json`,
   the lock also ends when that Claude exits), or a remote (ssh) login. Busy → check again every 5 min.
+  Not an idle lock: that turns off all swayidle timers, so the 5 min screen lock would stop too.
 - Then a notification "Shutting down in 2 min"; any key or mouse move cancels it.
 - Only under niri with the waybar set (swayidle runs from `scripts/shell start`).
 

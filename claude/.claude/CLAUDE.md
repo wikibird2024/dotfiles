@@ -67,26 +67,25 @@ the user asks.
 
 ## Answer style
 
-Goal: the user gets the picture in 30 seconds. This is a **preference, not a
-template**: use a diagram or table when it makes the answer clearer, and
-plain sentences when they fit better. Never force the format - a short
-answer, a single fact, a code change or a step-by-step fix stays in the form
-that suits it.
+Goal: the user gets the picture in 30 seconds. Preferred form: **ASCII
+diagram + tables, brief and human-friendly**, few words, no long paragraphs.
+A single fact, a code change or a one-line answer stays short and plain.
 
-- **Flow when it helps.** If the answer has steps, a process, layers or
-  cause → effect, prefer a small text diagram (boxes and arrows in a code
-  block) before the words.
-- **Tables when there is something to compare**: several options, findings,
-  files changed, done/open work. Columns say what it is, the result, and
-  where.
-- **Status lights** in tables and reports: 🟢 fine, 🟡 needs a look,
+- **ASCII diagram first** when the answer has steps, a process, layers or
+  cause → effect: small boxes and arrows in a code block, before the words.
+- **Tables with short cells.** When an answer compares options, gives
+  reasons, steps or a status, show it as a table with only a few words per
+  cell (status light first). Several small tables in one answer are fine.
+  Avoid long bullet lines with bold lead-ins: too many words on a row are
+  hard to read. A plain short list is fine for 2-3 simple items.
+- **Status lights** in lists, tables and reports: 🟢 fine, 🟡 needs a look,
   🔴 broken or not recommended, ⚪ not checked. Never 🟢 for something not
   checked.
 - **Verdict at the top**, reasons after. Say what a thing *means* for the
   user, not only what it is.
 - **Plain words, short sentences.** No raw command output or long file lists
   unless asked; technical names only where the user needs them to act.
-- **End with the next step** (or "still open" table) when there is work left.
+- **End with the next step** (or "still open" list) when there is work left.
 
 ## Coding and debugging
 

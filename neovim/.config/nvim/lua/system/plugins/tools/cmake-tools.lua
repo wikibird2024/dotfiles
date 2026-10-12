@@ -31,9 +31,12 @@ return {
 				map("<leader>cp", "<cmd>CMakeSelectConfigurePreset<CR>",  "CMake: Select Preset" )
 				map("<leader>cc", "<cmd>CMakeClean<CR>",                  "CMake: Clean"         )
 				map("<leader>cx", "<cmd>CMakeStop<CR>",                   "CMake: Stop"          )
-				-- Runs the project's .vscode/tasks.json task of this name (same task VS Code uses).
-				map("<leader>cf", function() require("overseer").run_task({ name = "Flash (OpenOCD)" }) end, "Flash firmware")
+				-- Builds the project's "flash" target (else its Flash task / just flash).
+				map("<leader>cf", function() require("system.utils.firmware_flash").flash() end, "Flash firmware")
 			end,
 		})
+
+		vim.api.nvim_create_user_command("Flash", function() require("system.utils.firmware_flash").flash() end,
+			{ desc = "Flash firmware: build the project's flash target" })
 	end,
 }

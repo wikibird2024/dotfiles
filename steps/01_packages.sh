@@ -73,13 +73,13 @@ esac
 DESKTOP_PKGS_APT=(i3-wm i3status i3blocks rofi feh dunst picom zathura flameshot kitty alacritty
     waybar fuzzel sway-notification-center swaylock swayidle swaybg brightnessctl playerctl cliphist wl-clipboard
     libnotify-bin foot picocom jq qtwayland5 libwayland-dev wayland-protocols
-    slurp grim sioyek libgtk-4-dev libadwaita-1-dev libepoxy-dev)
+    slurp grim sioyek libgtk-4-dev libadwaita-1-dev libepoxy-dev gsimplecal gnome-calendar)
 # Arch also gets the waybar set, for machines that pick it with `shell use waybar`
 # (rudo, the dock, is skipped when Noctalia is installed: see install_rudo in 02_tools.sh).
 # shellcheck disable=SC2034
 DESKTOP_PKGS_PACMAN=(i3-wm i3status i3status-rust i3blocks rofi feh dunst picom zathura flameshot kitty alacritty niri noctalia xwayland-satellite foot picocom jq sioyek
     waybar fuzzel swaync swaylock swayidle swaybg brightnessctl playerctl cliphist wl-clipboard
-    libnotify polkit-gnome gnome-control-center slurp grim)
+    libnotify polkit-gnome gnome-control-center slurp grim gsimplecal gnome-calendar)
 
 install_desktop_pkg() {
     local pkg="$1" pm="$2"

@@ -184,6 +184,9 @@ switch() {
 		else
 			tmux source-file "$HOME/.tmux.conf"
 		fi
+		# Pane backgrounds (window-style uses #{@thm_pane_dim}) are only
+		# re-read when the option itself is set, so set it again to repaint
+		tmux set -g window-style "$(tmux show -gv window-style)" 2>/dev/null || true
 		tmux refresh-client -S 2>/dev/null || true
 	fi
 

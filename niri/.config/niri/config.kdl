@@ -295,6 +295,14 @@ window-rule {
     default-floating-position x=0 y=40 relative-to="top"
 }
 
+// Calendar popup (click the bar clock): drops down under the clock, like GNOME's
+window-rule {
+    match app-id="^gsimplecal$"
+    open-floating true
+    // just under the bar's pills (y counts from the bar's bottom edge)
+    default-floating-position x=0 y=6 relative-to="top"
+}
+
 // satty (screenshot editor, Print fallback without Flameshot 13): floating over the tiles
 window-rule {
     match app-id="^org\\.satty\\.satty$"

@@ -21,10 +21,9 @@ configure:
 build:
     cmake --build --preset {{PRESET}}
 
-# Build + flash with probe-rs
-flash: build
-    probe-rs download --chip {{CHIP}} {{ELF}}
-    probe-rs reset --chip {{CHIP}}
+# Build + flash: the CMake `flash` target (cmake/flash.cmake), same as Neovim <leader>cf
+flash:
+    cmake --build --preset {{PRESET}} --target flash
 
 # Build + flash, then stream RTT/defmt logs
 run: build

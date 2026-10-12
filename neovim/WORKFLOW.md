@@ -40,6 +40,16 @@ The full loop from opening the project to committing.
    <leader>cg          — cmake configure → generates compile_commands.json
                          clangd re-indexes automatically
    <leader>cb          — build, output appears in bottom panel
+   <leader>cf          — flash the board (also :Flash): builds the project's
+                         CMake target "flash" (build first, then program +
+                         reset), output in the same panel as <leader>cb.
+                         The project owns the command, so terminal, VS Code
+                         and CI flash the same way:
+                           cmake --build --preset <preset> --target flash
+                         New project: 2 lines in CMakeLists.txt, see
+                         templates/README.md. Not CMake: a .vscode/tasks.json
+                         task "Flash" or a justfile recipe "flash" is used.
+   <leader>Ot          — show / hide task output
 
 5. WRITE CODE
    K                   — hover any function to see its signature
@@ -231,3 +241,4 @@ Quick reference for which tool answers which question.
 | Did I break anything? | diagnostics | virtual text + `<leader>xd` |
 | What did this look like before? | undotree | `<leader>uu` |
 | How do I build / run? | cmake-tools | `<leader>cb` / `<leader>cr` |
+| How do I flash the board? | firmware_flash | `<leader>cf` |
