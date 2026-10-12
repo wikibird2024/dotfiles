@@ -6,8 +6,8 @@
 .dock-surface {
   padding: 6px 4px;
   border-radius: 14px;
-  /* raised panel: 55% of the way from the background to the selection color */
-  background: alpha(mix(@bg, @selection, 0.55), 0.98);
+  /* raised panel surface, defined once in scripts/shell (@surface) */
+  background: alpha(@surface, 0.98);
   border: 1px solid alpha(@accent, 0.6);
   box-shadow: none;
 }

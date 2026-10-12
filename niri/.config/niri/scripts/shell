@@ -164,12 +164,17 @@ write_colors() {
             "${selection#\#}" "${fg#\#}" "${accent#\#}" "${accent#\#}"
     } >"$generated_dir/fuzzel.ini"
 
+    # Raised panel surface shared by the dock and the notifications: 55% of the
+    # way from the background to the selection color. Defined once here, used
+    # as @surface in dock.css and notifications.css.
+    local surface='mix(@bg, @selection, 0.55)'
+
     # rudo reads only ~/.config/rudo/style.css and re-reads it when it changes;
     # write a temp file and rename, so it never loads a half-written one
     if [ -f ~/.config/rudo/dock.css ]; then
         {
             printf '@define-color %s %s;\n' bg "$bg" fg "$fg" accent "$accent" muted "$muted" \
-                selection "$selection"
+                selection "$selection" surface "$surface"
             cat ~/.config/rudo/dock.css
         } >~/.config/rudo/.style.css.new && mv ~/.config/rudo/.style.css.new ~/.config/rudo/style.css
     fi
@@ -178,7 +183,7 @@ write_colors() {
     if [ -f ~/.config/swaync/notifications.css ]; then
         {
             printf '@define-color %s %s;\n' bg "$bg" fg "$fg" accent "$accent" muted "$muted" \
-                red "$red" selection "$selection"
+                red "$red" selection "$selection" surface "$surface"
             cat ~/.config/swaync/notifications.css
         } >~/.config/swaync/.style.css.new && mv ~/.config/swaync/.style.css.new ~/.config/swaync/style.css
     fi
