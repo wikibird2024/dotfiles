@@ -187,6 +187,9 @@ switch() {
 		# Pane backgrounds (window-style uses #{@thm_pane_dim}) are only
 		# re-read when the option itself is set, so set it again to repaint
 		tmux set -g window-style "$(tmux show -gv window-style)" 2>/dev/null || true
+		# Agent badges (tmux-agent-signal) cache their colors as plain
+		# options; re-derive them from the new roles (tmux package script)
+		[ -x "$HOME/.tmux/scripts/agent_signal_colors.sh" ] && "$HOME/.tmux/scripts/agent_signal_colors.sh" 2>/dev/null || true
 		tmux refresh-client -S 2>/dev/null || true
 	fi
 
