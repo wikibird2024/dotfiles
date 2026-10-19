@@ -11,6 +11,7 @@
     "telegram-desktop_telegram-desktop.desktop",
     "code_code.desktop",
     "org.qt-project.qtcreator.desktop",
-    "virtualbox.desktop"
+    "virtualbox.desktop",
+    "xfce4-terminal.desktop"
   ]
 }
