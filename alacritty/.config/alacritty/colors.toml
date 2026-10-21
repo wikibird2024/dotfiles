@@ -1,0 +1,33 @@
+# Alacritty's own colors, from xfce4-terminal (xfce4_terminal/terminalrc):
+# black background, red cursor, same palette; text is warm cream #ebdbb2
+# instead of xfce's gold (#ffd700, which matched ANSI yellow). Fixed on
+# purpose: the `theme` command does not change alacritty (kitty, tmux and
+# Neovim still follow it).
+
+[colors.primary]
+background = "#000000"
+foreground = "#ebdbb2"
+
+[colors.cursor]
+text = "#000000"
+cursor = "#ff0000"
+
+[colors.normal]
+black   = "#000000"
+red     = "#ff0000"
+green   = "#50fa7b"
+yellow  = "#ffd700"
+blue    = "#bd93f9"
+magenta = "#ff79c6"
+cyan    = "#8be9fd"
+white   = "#bbbbbb"
+
+[colors.bright]
+black   = "#555555"
+red     = "#ff5555"
+green   = "#50fa7b"
+yellow  = "#ffd700"
+blue    = "#bd93f9"
+magenta = "#ff79c6"
+cyan    = "#8be9fd"
+white   = "#ffffff"

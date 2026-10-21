@@ -1,7 +1,8 @@
 # theme
 
-One command to switch the colors of kitty, alacritty, tmux and Neovim together, live
-(no restarts). Starship follows by itself. GTK apps (Nautilus, file dialogs) switch to
+One command to switch the colors of kitty, tmux and Neovim together, live
+(no restarts). Starship follows by itself. Alacritty is left out on purpose: it keeps
+its own xfce4-terminal colors (`alacritty/colors.toml`). GTK apps (Nautilus, file dialogs) switch to
 dark or light to match the palette background (`gsettings` color-scheme, and the
 `-dark` GTK theme such as `Yaru-dark` when installed).
 
@@ -25,7 +26,7 @@ theme --help
 | Profile | Terminal | Neovim | Notes |
 |---|---|---|---|
 | `ubuntu` | aubergine `#300a24` | `onedark` | the original kitty colors — default |
-| `gruvbox-classic` | `#282828`, green cursor | `gruvbox:medium` | the original alacritty colors |
+| `gruvbox-classic` | `#282828`, green cursor | `gruvbox:medium` | the old alacritty colors |
 | `catppuccin` | `#1e1e2e` | `catppuccin` | |
 | `onedark` | `#1f2329` | `onedark` | |
 | `apple` | Xcode dark `#292a30` | `xcode` (xcodedark) | macOS dark-mode system colors |
@@ -41,13 +42,11 @@ theme --help
 
 ~/.local/state/theme/               ← runtime state, outside the repo (switching leaves no git diff)
     current        → symlink to the active profile folder
-    alacritty.toml   generated from current/palette.conf
 ```
 
 | Tool | Reads | How a switch reaches running windows |
 |---|---|---|
 | kitty | `current/palette.conf` (included after `kitty/theme.conf`) | `kitty @ set-colors` on every kitty socket |
-| alacritty | generated `alacritty.toml`, imported after `colors-fallback.toml` | touches its config → live reload |
 | tmux | `current/tmux.conf`; `.tmux.conf` styles use `#{@thm_*}` roles | `tmux source-file` |
 | Neovim | `current/nvim` → key in `neovim/.config/nvim/lua/system/plugins/colorscheme.lua` | `SIGUSR1` → reloads the theme |
 | lualine | the colorscheme's colors | rebuilds on the `ColorScheme` event |
@@ -60,7 +59,7 @@ still works when copied to another machine without this package:
 
 | Missing | Tool uses |
 |---|---|
-| `palette.conf` / no package | kitty: `kitty/theme.conf` · alacritty: `alacritty/colors-fallback.toml` |
+| `palette.conf` / no package | kitty: `kitty/theme.conf` |
 | `tmux.conf` / no package | the default `@thm_*` values inside `.tmux.conf` (the original bar colors) |
 | `nvim`, unknown name, bad variant | `onedark`; if its plugin isn't installed yet, Neovim's built-in `habamax`, then the real theme once lazy.nvim installs it |
 
@@ -71,7 +70,7 @@ still works when copied to another machine without this package:
 ```bash
 theme new mytheme gruvbox-classic  # copy gruvbox-classic as a start
 # edit ~/.config/theme/themes/mytheme/:
-#   palette.conf → terminal colors (alacritty's file is generated from it)
+#   palette.conf → terminal colors (kitty)
 #   tmux.conf    → bar colors; names are roles (what a color is for), not hues
 #   nvim         → any key of colorscheme.lua, e.g. "kanagawa" or "gruvbox:soft"
 theme check

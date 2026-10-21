@@ -4,13 +4,8 @@
 
 [general]
 live_config_reload = true
-# Colors: colors-fallback.toml, then the active profile of the `theme` package
-# (generated from its palette.conf) on top. Later imports win and missing ones
-# are skipped, so this works without the package. Switch with: theme <name>
-import = [
-    "~/.config/alacritty/colors-fallback.toml",
-    "~/.local/state/theme/alacritty.toml",
-]
+# Colors: fixed xfce4-terminal look (colors.toml); `theme <name>` leaves them alone
+import = ["~/.config/alacritty/colors.toml"]
 
 [window]
 decorations = "full"
