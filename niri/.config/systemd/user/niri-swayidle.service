@@ -1,5 +1,5 @@
 # Idle timer for niri without Noctalia. Started by ~/.config/niri/scripts/shell start
-# (not enabled: GNOME locks by itself). Restarts after a crash, so the lock never
+# (not enabled: GNOME locks by itself). Restarts whenever it quits, so the lock never
 # silently stops; its messages: journalctl --user -u niri-swayidle
 #   1 min idle: auto-shutdown starts its countdown (only if turned on, power menu Mod+X)
 #   2 min: black cover (scripts/screen-cover; any key/mouse closes it at once, no password)
@@ -18,7 +18,9 @@ ExecStart=/usr/bin/swayidle -w \
     timeout 300 "%h/.config/niri/scripts/shell lock" \
     timeout 360 "niri msg action power-off-monitors" \
     before-sleep "%h/.config/niri/scripts/shell lock"
-Restart=on-failure
+# also after a clean exit (code 0): on 2026-10-22 it quit that way at a lock and stayed
+# off, so the 5 min lock was gone until the next login
+Restart=always
 RestartSec=2
 # stop only swayidle, never the lock screen it started
 KillMode=process
