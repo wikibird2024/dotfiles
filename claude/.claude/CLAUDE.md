@@ -59,6 +59,13 @@ the user asks.
 - **Common short forms only.** `id`, `min`, `max`, `ms`, `usb`, `gpio`,
   `rx`/`tx` and similar are fine. Don't invent new ones (`op`, `req`, `tgt`,
   `spd`); write the word.
+- **No one- or two-letter names** for pointers, locals or parameters (a
+  mentor and senior found `a->motion`, `h->ch`, `p->...` hard to follow).
+  Name a pointer to an item after the item: `SprayAxis_t *axis = &s_axis[id];`
+  then `axis->motion`; `Conveyor_t *conveyor`, `Station_t *station`. A
+  parameter that picks an item uses its typed id (`SprayAxisId_t id`), not a
+  bare `uint32_t i`. Only plain loop counters keep `i` / `j` (BARR-C: names
+  of 3+ characters that say what they hold).
 - **Booleans read as yes/no**: `isHomed`, `hasTray`.
 - **Units in the name** when a number has one: `timeoutMs`, `speedSps`.
 - **One word per idea**, the same in firmware, PC tool, spec and UI.

@@ -15,6 +15,11 @@ map("n", "<leader>bd", function()
 	vim.cmd("bdelete #")
 end, { desc = "Delete Buffer" })
 
+-- Mouse back/forward buttons jump like VS Code (jumplist: <C-o> back, <C-i> forward).
+-- <C-i> runs the built-in jump (noremap), not the <Tab> = next buffer map above.
+map("n", "<X1Mouse>", "<C-o>", { desc = "Jump Back"    })
+map("n", "<X2Mouse>", "<C-i>", { desc = "Jump Forward" })
+
 -- ─────────────────────────────────────────────────────
 -- 2. WINDOW MANAGEMENT
 -- ─────────────────────────────────────────────────────
