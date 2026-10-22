@@ -2,6 +2,7 @@
 # (not enabled: GNOME locks by itself). Restarts after a crash, so the lock never
 # silently stops; its messages: journalctl --user -u niri-swayidle
 #   1 min idle: auto-shutdown starts its countdown (only if turned on, power menu Mod+X)
+#   2 min: black cover (scripts/screen-cover; any key/mouse closes it at once, no password)
 #   5 min: lock (company rule: max 5 min)   6 min: screens off   before sleep: lock
 # Any logind "idle" block lock (systemd-inhibit --what=idle) turns ALL these timers
 # off, the lock too: use "shutdown" locks to keep the PC on (auto-shutdown busy).
@@ -13,6 +14,7 @@ After=graphical-session.target
 [Service]
 ExecStart=/usr/bin/swayidle -w \
     timeout 60 "%h/.local/bin/auto-shutdown idle" resume "%h/.local/bin/auto-shutdown resume" \
+    timeout 120 "%h/.config/niri/scripts/screen-cover" resume "pkill -u %u -f niri/scripts/screen-cover" \
     timeout 300 "%h/.config/niri/scripts/shell lock" \
     timeout 360 "niri msg action power-off-monitors" \
     before-sleep "%h/.config/niri/scripts/shell lock"

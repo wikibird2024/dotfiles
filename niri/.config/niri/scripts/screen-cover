@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+# Black cover over every monitor while the PC is idle, so nobody reads the
+# screen. Not a lock: any key, click or mouse move closes it at once, no
+# password (the monitors stay on, so there is no slow wake).
+# niri-swayidle.service starts it at 2 min idle and stops it on any input;
+# it also closes by itself on input, in case swayidle restarted meanwhile.
+# Needs gtk-layer-shell for Python: gir1.2-gtklayershell-0.1 (apt),
+# gtk-layer-shell + python-gobject (pacman).
+import gi
+
+gi.require_version("Gdk", "3.0")
+gi.require_version("Gtk", "3.0")
+gi.require_version("GtkLayerShell", "0.1")
+from gi.repository import Gdk, Gtk, GtkLayerShell
+
+css = Gtk.CssProvider()
+css.load_from_data(b"window { background: #000000; }")
+Gtk.StyleContext.add_provider_for_screen(
+    Gdk.Screen.get_default(), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+)
+
+display = Gdk.Display.get_default()
+for index in range(display.get_n_monitors()):
+    window = Gtk.Window()
+    GtkLayerShell.init_for_window(window)
+    GtkLayerShell.set_namespace(window, "screen-cover")
+    GtkLayerShell.set_monitor(window, display.get_monitor(index))
+    GtkLayerShell.set_layer(window, GtkLayerShell.Layer.OVERLAY)
+    GtkLayerShell.set_exclusive_zone(window, -1)
+    # the key that wakes the screen goes here, not into the work window below
+    GtkLayerShell.set_keyboard_mode(window, GtkLayerShell.KeyboardMode.EXCLUSIVE)
+    for edge in (
+        GtkLayerShell.Edge.LEFT,
+        GtkLayerShell.Edge.RIGHT,
+        GtkLayerShell.Edge.TOP,
+        GtkLayerShell.Edge.BOTTOM,
+    ):
+        GtkLayerShell.set_anchor(window, edge, True)
+    window.add_events(
+        Gdk.EventMask.KEY_PRESS_MASK
+        | Gdk.EventMask.BUTTON_PRESS_MASK
+        | Gdk.EventMask.POINTER_MOTION_MASK
+        | Gdk.EventMask.SCROLL_MASK
+    )
+    for event in (
+        "key-press-event",
+        "button-press-event",
+        "motion-notify-event",
+        "scroll-event",
+    ):
+        window.connect(event, Gtk.main_quit)
+    window.show_all()
+
+Gtk.main()

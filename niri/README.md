@@ -215,7 +215,7 @@ is saved in `~/.local/state/niri/shell` (not in the repo), so each machine keeps
 | Mod + V | clipboard history (cliphist + fuzzel) |
 | Mod + Y | pick a wallpaper from `~/Pictures/wallpaper` (swaybg) |
 | Mod + X | power menu (fuzzel): lock, log out, suspend, reboot, power off, auto shutdown on/off |
-| Mod + Alt + L | swaylock; auto-lock after 5 min, screens off after 6 min (swayidle) |
+| Mod + Alt + L | swaylock; black cover after 2 min (any input closes it, no password), auto-lock after 5 min, screens off after 6 min (swayidle) |
 | volume / brightness / media keys | wpctl / brightnessctl / playerctl, OSD with a bar from swaync (top middle, not kept in the panel) |
 
 Colors follow the `theme` profile (`theme <name>` recolors the bar, launcher,

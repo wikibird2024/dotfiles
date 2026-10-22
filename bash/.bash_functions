@@ -1,17 +1,16 @@
-
 #!/bin/bash
 # ==========================================
 # ~/.bash_functions
-# Ginko Pro Shell Functions - Safe & Professional
-# Compatible Bash, tmux-safe
+# Loaded by .bashrc after .aliases, so a function here must not share a
+# name with an alias (the alias would always win).
 # ==========================================
 
-# ===========================================
-#   Jump to folder that yazi is open
-# ===========================================
-# Add this to ~/.bashrc
+# ==============================
+# Navigation
+# ==============================
+
+# Jump to the folder yazi was in when it closed
 function y() {
-    # Changed lowercase x to uppercase X, and separated the template from -t
     local tmp="$(mktemp -t yazi-cwd.XXXXXX)"
     yazi "$@" --cwd-file="$tmp"
     if [ -f "$tmp" ]; then
@@ -24,73 +23,16 @@ function y() {
     fi
 }
 
-# ===========================================
-#   Jump to folder that ranger is open (same idea as y() above, for ranger)
-# ===========================================
-function r() {
-    local tmp="$(mktemp -t ranger-cwd.XXXXXX)"
-    ranger --choosedir="$tmp" -- "${@:-$PWD}"
-    if [ -f "$tmp" ]; then
-        local cwd
-        cwd=$(<"$tmp")
-        if [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-            cd -- "$cwd"
-        fi
-        rm -f -- "$tmp"
-    fi
-}
 # ==============================
-# 0️⃣ Pyenv & ESP-IDF Management
+# Embedded
 # ==============================
 
-function e_pyenv {
-    export PYENV_ROOT="$HOME/.pyenv"
-    export PATH="$PYENV_ROOT/bin:$PATH"
-
-    if command -v pyenv >/dev/null 2>&1; then
-        eval "$(pyenv init --path)"
-        eval "$(pyenv init -)"
-        echo "✅ Pyenv enabled."
-    else
-        echo "⚠️ pyenv not found. Please install pyenv."
-    fi
-}
-
-function d_pyenv {
-    export PATH=$(echo "$PATH" | tr ':' '\n' | grep -v "$HOME/.pyenv/bin" | paste -sd ':' -)
-    unset PYENV_ROOT
-    echo "❌ Pyenv disabled."
-}
-
-function toggle_pyenv {
-    if [[ "$PATH" == *"$HOME/.pyenv/bin"* ]]; then
-        d_pyenv
-    else
-        e_pyenv
-    fi
-}
-
-function pyenv_status {
-    if [[ "$PATH" == *"$HOME/.pyenv/bin"* ]]; then
-        echo "✅ Pyenv ENABLED."
-        pyenv version
-    else
-        echo "❌ Pyenv DISABLED."
-    fi
-}
-
+# Load the ESP-IDF environment (current dir unchanged). Usage: idf [esp-idf dir]
 function idf {
-    local espidf_dir="${1:-$HOME/esp/esp-idf}"
-
-    if [ ! -d "$espidf_dir" ]; then
-        echo "❌ ESP-IDF directory not found: $espidf_dir"
-        return 1
-    fi
-
-    d_pyenv
+    local espidf_dir="${1:-$HOME/esp/esp-idf-v5.5.1}"
 
     if [ ! -f "$espidf_dir/export.sh" ]; then
-        echo "⚠️ export.sh not found in $espidf_dir"
+        echo "❌ export.sh not found in $espidf_dir"
         return 1
     fi
 
@@ -98,132 +40,24 @@ function idf {
     echo "🚀 ESP-IDF environment loaded (current dir unchanged)."
 }
 
-function idf_py {
-    local espidf_dir="$HOME/esp/esp-idf"
-
-    if [ -d "$1" ]; then
-        espidf_dir="$1"
-        shift
-    fi
-
-    if [ ! -d "$espidf_dir" ]; then
-        echo "❌ ESP-IDF directory not found: $espidf_dir"
+# STM32 boards: run the nearest flash.sh (this folder or above, inside the git
+# repo) and say which one, since the App and Boot scripts take different args.
+function flash {
+    local dir=$PWD
+    until [[ -x $dir/flash.sh || -d $dir/.git || $dir == / ]]; do
+        dir=$(dirname "$dir")
+    done
+    if [[ ! -x $dir/flash.sh ]]; then
+        echo "flash: no flash.sh in this folder or above" >&2
         return 1
     fi
-
-    d_pyenv
-    cd "$espidf_dir" || return 1
-
-    if [ ! -f export.sh ]; then
-        echo "⚠️ export.sh not found in $espidf_dir"
-        return 1
-    fi
-
-    source ./export.sh
-    idf.py "$@"
-}
-
-function goto_espidf {
-    local espidf_dir="${1:-$HOME/esp/esp-idf}"
-    if [ -d "$espidf_dir" ]; then
-        cd "$espidf_dir" || return 1
-        echo "📂 Changed directory to ESP-IDF: $espidf_dir"
-    else
-        echo "❌ ESP-IDF directory not found: $espidf_dir"
-        return 1
-    fi
+    echo "→ ${dir##*/}/flash.sh $*"
+    "$dir/flash.sh" "$@"
 }
 
 # ==============================
-# 1️⃣ Filesystem & Navigation
+# Files
 # ==============================
-
-function mk.cd { mkdir -p "$1" && cd "$1"; }
-function back { cd -; }
-
-function editf {
-    local file
-    file=$(find . -type f -name "$1" 2>/dev/null | head -n1)
-    if [ -n "$file" ]; then
-        nvim "$file"
-    else
-        echo "Không tìm thấy file: $1"
-    fi
-}
-
-function clean_tmp { find . -type f -name '*.tmp' -delete; }
-
-function extract {
-    local file="$1"
-    if [ ! -f "$file" ]; then
-        echo "'$file' không tồn tại."
-        return 1
-    fi
-
-    case "$file" in
-        *.tar.bz2) tar xjf "$file" ;;
-        *.tar.gz)  tar xzf "$file" ;;
-        *.bz2)     bunzip2 "$file" ;;
-        *.rar)     unrar x "$file" ;;
-        *.gz)      gunzip "$file" ;;
-        *.tar)     tar xf "$file" ;;
-        *.tbz2)    tar xjf "$file" ;;
-        *.tgz)     tar xzf "$file" ;;
-        *.zip)     unzip "$file" ;;
-        *.Z)       uncompress "$file" ;;
-        *.7z)      7z x "$file" ;;
-        *) echo "Không biết định dạng: '$file'" ;;
-    esac
-}
-
-# ==============================
-# 2️⃣ Git / VCS Helpers
-# ==============================
-
-function gcm { git add . && git commit -m "$1"; }
-function gpr { git pull --rebase; }
-function gco { git checkout -b "$1"; }
-function glg { git log --oneline --graph --decorate --all; }
-function gundo { git reset --soft HEAD~1; }
-
-# ==============================
-# 3️⃣ System / Dev Helpers
-# ==============================
-
-function topc { top -o %CPU; }
-function psgrep { ps aux | grep "$1" | grep -v grep; }
-function logs { tail -f "$1" | grep --color=auto "$2"; }
-function search { grep -rnw --exclude-dir=.git "$1" .; }
-function ports { sudo lsof -i -P -n | grep LISTEN; }
-function speed { speedtest-cli --simple; }
-
-# ==============================
-# 4️⃣ Python / Virtualenv / Build Helpers
-# ==============================
-
-function venv { python3 -m venv .venv && source .venv/bin/activate; }
-function run { source .venv/bin/activate && python3 "$1"; }
-function pipup { python3 -m pip install --upgrade pip; }
-function tpy { pytest -v --disable-warnings "$@"; }
-
-# ==============================
-# 5️⃣ Embedded / ESP-IDF Helpers
-# ==============================
-
-function ports_tty { ls /dev/ttyUSB*; }
-function cport { sudo chmod 666 "$1"; }
-function flash_all { idf.py build && idf.py flash monitor; }
-function flash_only { idf.py flash monitor; }
-
-# ==============================
-# 6️⃣ Productivity / Misc
-# ==============================
-
-function backup { rsync -avh --progress "$1" "$2"; }
-function reload { source ~/.bashrc; }
-function now { date +"%Y-%m-%d %H:%M:%S"; }
-function logtop { tar -xOzf "$1" | head -n "$2"; }
-function fetch_extract { curl -LO "$1" && extract "$(basename $1)"; }
 
 sync-dir() {
     if [ "$#" -ne 2 ]; then
@@ -231,18 +65,20 @@ sync-dir() {
         return 1
     fi
 
-    # Variables for paths
     local src="$1"
     local dest="$2"
 
     echo "🚀 Starting optimized rsync transfer from $src to $dest..."
 
-    # Executes rsync with hard links, attributes, sparse-handling, and progress bars
+    # Hard links, ACLs, xattrs, sparse files, one file system, progress bar;
+    # --delete removes files in dest that are not in src
     rsync -aHAXx --sparse --info=progress2 --delete "$src" "$dest"
 }
+
 # ==============================
-# internet and connection
+# Network
 # ==============================
+
 iplocal() {
     echo -e "\033[1;34m[Internal Interfaces]\033[0m"
     # Thay \e bằng \033 để awk không báo lỗi
@@ -264,6 +100,3 @@ myip() {
         curl -s https://ifconfig.me && echo -e "\033[0m"
     fi
 }
-# ==============================
-# END OF FILE
-# ==============================
