@@ -19,12 +19,13 @@
 #   - not attached anywhere: switch this client to it, as plain tmux
 
 # Focus the kitty tab whose title starts with the session name. Fails
-# quietly when kitty is unreachable.
+# quietly when kitty is unreachable. Kitty's --match splits on spaces and
+# parentheses even when escaped, so those (and quotes) go in as \xHH.
 focus_kitty_tab() {
 	listen=$(tmux show-environment -g KITTY_LISTEN_ON 2>/dev/null | cut -d= -f2-)
 	[ -n "$listen" ] || return 1
-	escaped=$(printf '%s' "$1" | sed 's/[^A-Za-z0-9_]/\\&/g')
-	kitty @ --to "$listen" focus-window --match "title:^$escaped " >/dev/null 2>&1
+	escaped=$(printf '%s' "$1" | sed 's/[^A-Za-z0-9_ ()"]/\\&/g; s/ /\\x20/g; s/(/\\x28/g; s/)/\\x29/g; s/"/\\x22/g')
+	kitty @ --to "$listen" focus-window --match "title:^$escaped\\x20" >/dev/null 2>&1
 }
 
 # goto <session> <window_id> <pane_id> [client]
