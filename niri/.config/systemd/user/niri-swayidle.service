@@ -6,6 +6,10 @@
 #   5 min: lock (company rule: max 5 min)   6 min: screens off   before sleep: lock
 # Any logind "idle" block lock (systemd-inhibit --what=idle) turns ALL these timers
 # off, the lock too: use "shutdown" locks to keep the PC on (auto-shutdown busy).
+# The cover runs with "&": -w makes swayidle wait for each command, and the cover
+# runs until input, so without it the 5 min lock never came (2026-10-23).
+# Its pkill pattern starts with ^python3: a plain "screen-cover" also matched
+# swayidle's own command line, so each return to the PC killed swayidle.
 [Unit]
 Description=swayidle for niri (scripts/shell)
 PartOf=graphical-session.target
@@ -14,7 +18,7 @@ After=graphical-session.target
 [Service]
 ExecStart=/usr/bin/swayidle -w \
     timeout 60 "%h/.local/bin/auto-shutdown idle" resume "%h/.local/bin/auto-shutdown resume" \
-    timeout 120 "%h/.config/niri/scripts/screen-cover" resume "pkill -u %u -f niri/scripts/screen-cover" \
+    timeout 120 "%h/.config/niri/scripts/screen-cover &" resume "pkill -u %u -f '^python3 .*/screen-cover$$'" \
     timeout 300 "%h/.config/niri/scripts/shell lock" \
     timeout 360 "niri msg action power-off-monitors" \
     before-sleep "%h/.config/niri/scripts/shell lock"

@@ -13,19 +13,25 @@
 # All end in goto, which handles three cases:
 #   - target is in the client's own session: just change window/pane
 #   - target's session is attached in another kitty tab: select the
-#     window/pane THERE and focus that kitty tab (the tab title starts with
-#     the session name, set by set-titles-string), instead of stealing the
+#     window/pane THERE and focus that kitty window, instead of stealing the
 #     session into this tab
 #   - not attached anywhere: switch this client to it, as plain tmux
 
-# Focus the kitty tab whose title starts with the session name. Fails
-# quietly when kitty is unreachable. Kitty's --match splits on spaces and
-# parentheses even when escaped, so those (and quotes) go in as \xHH.
+# Focus the kitty window that shows the session. Its kitty socket and window
+# id come from the environment of the tmux client attached there, so they
+# are right even after kitty restarts (tmux's global KITTY_LISTEN_ON keeps
+# the value from when the tmux server started). Fails quietly when kitty is
+# unreachable.
 focus_kitty_tab() {
-	listen=$(tmux show-environment -g KITTY_LISTEN_ON 2>/dev/null | cut -d= -f2-)
-	[ -n "$listen" ] || return 1
-	escaped=$(printf '%s' "$1" | sed 's/[^A-Za-z0-9_ ()"]/\\&/g; s/ /\\x20/g; s/(/\\x28/g; s/)/\\x29/g; s/"/\\x22/g')
-	kitty @ --to "$listen" focus-window --match "title:^$escaped\\x20" >/dev/null 2>&1
+	client_pids=$(tmux list-clients -F '#{client_pid}	#{client_session}' |
+		awk -F'	' -v session="$1" '$2 == session { print $1 }')
+	for pid in $client_pids; do
+		listen=$(tr '\0' '\n' <"/proc/$pid/environ" 2>/dev/null | sed -n 's/^KITTY_LISTEN_ON=//p')
+		kitty_window=$(tr '\0' '\n' <"/proc/$pid/environ" 2>/dev/null | sed -n 's/^KITTY_WINDOW_ID=//p')
+		if [ -z "$listen" ] || [ -z "$kitty_window" ]; then continue; fi
+		kitty @ --to "$listen" focus-window --match "id:$kitty_window" >/dev/null 2>&1 && return 0
+	done
+	return 1
 }
 
 # goto <session> <window_id> <pane_id> [client]

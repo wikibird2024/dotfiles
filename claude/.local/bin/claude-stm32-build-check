@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+# Claude Code Stop hook: before Claude ends a turn, build every STM32CubeMX
+# firmware folder (a folder with a .ioc and a CMakePresets.json) that has
+# uncommitted source changes, with `cmake --build --preset Debug`. A failed
+# build sends the errors back to Claude, so it fixes them before saying
+# "done".
+#
+# Each change is checked once per session: the same files with the same
+# times and sizes are not built again, so a turn that edits nothing (or a
+# failure Claude was already told about) never blocks twice. Anything
+# missing (jq, cmake, git repo, Debug preset) means "no check", never a
+# block. Build only: no flash, no copy (unlike a project's build.sh).
+#
+# Settings (both ~/.claude and ~/.claude-personal), see claude/README.md:
+#   "Stop": [{ "hooks": [{ "type": "command", "timeout": 300,
+#     "command": "[ -x ~/.local/bin/claude-stm32-build-check ] && ~/.local/bin/claude-stm32-build-check || true" }] }]
+
+set -u
+
+PRESET=Debug
+MAX_ERROR_LINES=40
+
+command -v jq >/dev/null 2>&1 && command -v cmake >/dev/null 2>&1 || exit 0
+
+hook_input=$(cat)
+cwd=$(jq -r '.cwd // empty' <<<"$hook_input")
+session_id=$(jq -r '.session_id // "none"' <<<"$hook_input")
+[ -n "$cwd" ] && cd "$cwd" 2>/dev/null || exit 0
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/claude-stm32-build-check"
+mkdir -p "$state_dir" || exit 0
+# Forget sessions older than a week
+find "$state_dir" -type f -mtime +7 -delete 2>/dev/null
+
+# Changed source files (staged, unstaged, untracked), relative to repo_root
+changed_files=$(
+	{
+		git -C "$repo_root" diff --name-only HEAD 2>/dev/null
+		git -C "$repo_root" ls-files --others --exclude-standard 2>/dev/null
+	} | grep -E '\.(c|h|cpp|hpp|cc|s|S|ld|cmake)$|(^|/)CMakeLists\.txt$' | sort -u
+)
+[ -n "$changed_files" ] || exit 0
+
+# Nearest folder above a file (inside the repo) holding a .ioc and a
+# CMakePresets.json; prints nothing when there is none
+firmware_dir_of() {
+	local dir
+	dir=$(dirname "$1")
+	while :; do
+		if [ -f "$repo_root/$dir/CMakePresets.json" ] &&
+			compgen -G "$repo_root/$dir/*.ioc" >/dev/null; then
+			printf '%s\n' "$dir"
+			return
+		fi
+		[ "$dir" = "." ] && return
+		dir=$(dirname "$dir")
+	done
+}
+
+firmware_dirs=$(
+	while IFS= read -r file; do firmware_dir_of "$file"; done <<<"$changed_files" | sort -u
+)
+[ -n "$firmware_dirs" ] || exit 0
+
+failure_report=""
+while IFS= read -r dir; do
+	full_dir="$repo_root/$dir"
+	[ "$dir" = "." ] && full_dir=$repo_root
+	jq -e --arg preset "$PRESET" '.buildPresets[]? | select(.name == $preset)' \
+		"$full_dir/CMakePresets.json" >/dev/null 2>&1 || continue
+
+	# Fingerprint: name, time and size of this folder's changed files
+	# (a deleted file shows as its name alone)
+	if [ "$dir" = "." ]; then
+		dir_files=$changed_files
+	else
+		dir_files=$(awk -v prefix="$dir/" 'index($0, prefix) == 1' <<<"$changed_files")
+	fi
+	fingerprint=$(
+		while IFS= read -r file; do
+			stat -c '%n %Y %s' "$repo_root/$file" 2>/dev/null || printf '%s deleted\n' "$file"
+		done <<<"$dir_files" | sha1sum | cut -d' ' -f1
+	)
+	state_file="$state_dir/$(printf '%s:%s' "$session_id" "$full_dir" | sha1sum | cut -c1-16)"
+	[ "$(cat "$state_file" 2>/dev/null)" = "$fingerprint" ] && continue
+
+	# One build per folder at a time (two sessions on one project share
+	# its build folder)
+	lock_file="$state_dir/$(printf '%s' "$full_dir" | sha1sum | cut -c1-16).lock"
+	build_output=$(
+		{
+			cd "$full_dir" && flock -w 280 9 &&
+				{ [ -d "build/$PRESET" ] || cmake --preset "$PRESET"; } &&
+				cmake --build --preset "$PRESET"
+		} 2>&1 9>"$lock_file"
+	)
+	build_status=$?
+	printf '%s\n' "$fingerprint" >"$state_file"
+	[ "$build_status" -eq 0 ] && continue
+
+	errors=$(grep -E 'error|undefined reference|FAILED:' <<<"$build_output" | head -n "$MAX_ERROR_LINES")
+	[ -n "$errors" ] || errors=$(tail -n "$MAX_ERROR_LINES" <<<"$build_output")
+	failure_report+="Build fails in $full_dir (cmake --build --preset $PRESET):"$'\n'"$errors"$'\n\n'
+done <<<"$firmware_dirs"
+
+[ -n "$failure_report" ] || exit 0
+
+reason="${failure_report}If you changed these files in this session, fix the errors and build again before you finish. If the errors are in code you did not touch, do not fix them: tell the user the build is broken and stop."
+jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'

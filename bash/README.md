@@ -9,7 +9,7 @@ Stowed by `steps/04_stow.sh` (`stow -R -t ~ bash`). `04_stow.sh` first moves a m
 |---|---|
 | `.bashrc` | interactive-only guard, history, PATH (deduplicated), `EDITOR=nvim`, Wayland env vars, completion, tools (starship, zoxide, fzf: `Ctrl+T`/`Alt+C` list with `fd`), lazy nvm |
 | `.aliases` | shortcuts (`ll`, config editors `bash.e` / `alias.e` / `func.e`), work aliases, aider models, `datasheet` / `schematic` folders |
-| `.bash_functions` | `y` (cd to the folder yazi was in), `idf` (load ESP-IDF v5.5.1), `flash` (run the nearest `flash.sh`), `sync-dir`, `iplocal` / `myip`. Loaded after `.aliases`: never reuse an alias name |
+| `.bash_functions` | `y` (cd to the folder yazi was in), `idf` (load ESP-IDF v5.5.1), `b` / `tests` / `flash` (run the nearest `build.sh` / `test.sh` / `flash.sh` from any subfolder, up to the git root; not `test`, a shell builtin), `sync-dir`, `iplocal` / `myip`. Loaded after `.aliases`: never reuse an alias name |
 
 Reload after editing: `source ~/.bashrc`.
 

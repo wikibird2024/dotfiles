@@ -39,8 +39,9 @@ STOW_PKGS=(
 # ~/.claude must be a real folder before stowing `claude`: if it is missing,
 # stow would link the whole folder into this repo and Claude Code would write
 # credentials, history and sessions into git. Same for skills/ (the app adds
-# its own synced skills there).
-mkdir -p "$HOME/.claude/skills" "$HOME/.claude-personal/skills"
+# its own synced skills there) and rules/ (personal rules stay out of git).
+mkdir -p "$HOME/.claude/skills" "$HOME/.claude-personal/skills" \
+    "$HOME/.claude/rules" "$HOME/.claude-personal/rules"
 
 # Same for ~/.config/systemd/user (kanata ships a unit there): systemd and
 # `systemctl --user enable` write into it, so it must not be a link into the repo.
@@ -181,6 +182,8 @@ CLAUDE_PERSONAL_DIR="$HOME/.claude-personal"
 if [ -d "$CLAUDE_PERSONAL_DIR" ]; then
     ln -sf "$DOTFILES_DIR/claude/.claude/CLAUDE.md" "$CLAUDE_PERSONAL_DIR/CLAUDE.md"
     ln -sfn "$DOTFILES_DIR/claude/.claude/skills/project-status" "$CLAUDE_PERSONAL_DIR/skills/project-status"
+    ln -sfn "$DOTFILES_DIR/claude/.claude/skills/flow-map" "$CLAUDE_PERSONAL_DIR/skills/flow-map"
+    ln -sf "$DOTFILES_DIR/claude/.claude/rules/stm32-cubemx.md" "$CLAUDE_PERSONAL_DIR/rules/stm32-cubemx.md"
     if [ ! -e "$CLAUDE_PERSONAL_DIR/settings.json" ]; then
         cp "$DOTFILES_DIR/templates/claude/settings.json" "$CLAUDE_PERSONAL_DIR/settings.json"
         log_ok "Claude personal settings copied from template."

@@ -40,20 +40,44 @@ function idf {
     echo "🚀 ESP-IDF environment loaded (current dir unchanged)."
 }
 
-# STM32 boards: run the nearest flash.sh (this folder or above, inside the git
-# repo) and say which one, since the App and Boot scripts take different args.
-function flash {
-    local dir=$PWD
-    until [[ -x $dir/flash.sh || -d $dir/.git || $dir == / ]]; do
+# Run the nearest <script> (this folder or above, up to the git repo root;
+# outside a repo, this folder only) and say which one, since a repo can hold
+# several (App, Boot) that take different args. The script runs as its own
+# process, so it cannot change this shell; the project scripts cd to their
+# own folder. With none found, list the ones in the folders below.
+function run_nearest_script {
+    local name=$1
+    shift
+    local here root dir found path
+    here=$(pwd -P) # physical path, to compare with git's root
+    root=$(git rev-parse --show-toplevel 2>/dev/null) || root=$here
+    dir=$here
+    until [[ -x $dir/$name || $dir == "$root" || $dir == / ]]; do
         dir=$(dirname "$dir")
     done
-    if [[ ! -x $dir/flash.sh ]]; then
-        echo "flash: no flash.sh in this folder or above" >&2
+    if [[ ! -x $dir/$name ]]; then
+        echo "$name: none in this folder or above (up to ${root##*/})" >&2
+        found=$(find "$here" -maxdepth 3 \( -name build -o -name .git -o -name node_modules \) -prune \
+            -o -name "$name" -type f -executable -print 2>/dev/null | sort)
+        if [[ -n $found ]]; then
+            echo "cd into one of these folders:" >&2
+            while IFS= read -r path; do
+                echo "  ${path#"$here"/}" >&2
+            done <<<"$found"
+        fi
         return 1
     fi
-    echo "→ ${dir##*/}/flash.sh $*"
-    "$dir/flash.sh" "$@"
+    echo "→ ${dir##*/}/$name $*"
+    "$dir/$name" "$@"
 }
+
+# Project scripts from any subfolder: b = build, tests, flash. Not `test`:
+# that is a shell builtin other code calls (nvm.sh). The unalias clears the
+# old `b` alias when this file is sourced into a running shell.
+unalias b 2>/dev/null
+function b { run_nearest_script build.sh "$@"; }
+function tests { run_nearest_script test.sh "$@"; }
+function flash { run_nearest_script flash.sh "$@"; }
 
 # ==============================
 # Files

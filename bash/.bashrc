@@ -150,3 +150,10 @@ export CMAKE_GENERATOR="Ninja"
 # 2. Always export compile_commands.json for clangd/LSP
 export CMAKE_EXPORT_COMPILE_COMMANDS="ON"
 
+
+# Flutter + Android SDK (kept on /mnt/storage, home disk is small)
+export FLUTTER_SDK_ROOT=/mnt/storage/HaoTran/sdk
+export ANDROID_HOME=$FLUTTER_SDK_ROOT/android
+export PUB_CACHE=$FLUTTER_SDK_ROOT/pub-cache
+export GRADLE_USER_HOME=$FLUTTER_SDK_ROOT/gradle
+export PATH="$FLUTTER_SDK_ROOT/flutter/bin:$PUB_CACHE/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"

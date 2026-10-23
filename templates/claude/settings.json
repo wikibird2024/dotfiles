@@ -30,7 +30,8 @@
     ],
     "Stop": [
       { "hooks": [{ "type": "command", "command": "[ -x ~/.local/bin/auto-shutdown ] && ~/.local/bin/auto-shutdown claude-stop || true" }] },
-      { "matcher": "", "hooks": [{ "type": "command", "command": "\"$HOME/.tmux/plugins/tmux-agent-signal/bin/agent-signal\" hook Stop", "async": true }] }
+      { "matcher": "", "hooks": [{ "type": "command", "command": "\"$HOME/.tmux/plugins/tmux-agent-signal/bin/agent-signal\" hook Stop", "async": true }] },
+      { "hooks": [{ "type": "command", "timeout": 300, "command": "[ -x ~/.local/bin/claude-stm32-build-check ] && ~/.local/bin/claude-stm32-build-check || true" }] }
     ],
     "StopFailure": [
       { "matcher": "", "hooks": [{ "type": "command", "command": "\"$HOME/.tmux/plugins/tmux-agent-signal/bin/agent-signal\" hook StopFailure", "async": true }] }
