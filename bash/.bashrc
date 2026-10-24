@@ -39,7 +39,7 @@ path_prepend() {
 path_prepend "$HOME/.cargo/bin"
 path_prepend "$HOME/.local/bin"
 path_prepend "$HOME/bin"
-path_prepend "/usr/local/texlive/2025/bin/x86_64-linux"
+path_prepend "/mnt/storage/texlive/2026/bin/x86_64-linux" # TeX Live on the data HDD (root disk is small)
 path_prepend "$HOME/.dotnet"       # .NET SDK installed by dotnet-install.sh
 path_prepend "$HOME/.dotnet/tools" # dotnet tools (dotnet tool install -g)
 export PATH

@@ -22,3 +22,4 @@ subagent per task → review → verify before "done". Installed as a plugin
 | Date | Stars | Version | Open issues |
 |---|---|---|---|
 | 2026-10-23 | 304k | v7.0.1 | 348 |
+| 2026-10-24 | 304k | v7.0.1 | 354 |
