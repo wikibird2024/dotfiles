@@ -284,6 +284,12 @@ window-rule {
 window-rule {
     match app-id=r#"(?i)^code"#
     open-on-workspace "4 Work Apps"
+    open-maximized true
+}
+
+window-rule {
+    match app-id=r#"(?i)^anydesk"#
+    open-maximized true
 }
 
 // Serial console scratchpad (Mod+grave): floating drop-down at the top

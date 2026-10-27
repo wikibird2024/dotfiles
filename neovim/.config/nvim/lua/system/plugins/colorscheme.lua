@@ -205,6 +205,26 @@ local themes = {
                 treesitter             = true,
                 palette                = "abyss-boreal",  -- abyss | abyss-boreal
             })
+            -- which-key text uses Identifier, nearly the float background in abyss.
+            -- Not via `overrides`: :colorscheme abyss re-runs setup() with defaults.
+            vim.api.nvim_create_autocmd("ColorScheme", {
+                pattern  = "abyss*",
+                once     = true,
+                callback = function()
+                    vim.api.nvim_set_hl(0, "WhichKeyDesc", { fg = "#6688cc" })
+                end,
+            })
+        end,
+    },
+
+    night_owl = {
+        plugin = "oxfist/night-owl.nvim",
+        name   = "night-owl",
+        setup  = function()
+            require("night-owl").setup({
+                italics                = true,
+                transparent_background = false,
+            })
         end,
     },
 
@@ -309,6 +329,12 @@ if start ~= active then
         end,
     })
 end
+
+-- night-owl paints over the old theme without `hi clear`, leaving most of it
+vim.api.nvim_create_autocmd("ColorSchemePre", {
+    pattern  = "night-owl",
+    callback = function() vim.cmd("hi clear") end,
+})
 
 vim.api.nvim_create_autocmd("Signal", {
     group    = vim.api.nvim_create_augroup("ThemeProfile", { clear = true }),
