@@ -29,8 +29,10 @@ theme --help
 | `gruvbox-classic` | `#282828`, green cursor | `gruvbox:medium` | the old alacritty colors |
 | `catppuccin` | `#1e1e2e` | `catppuccin` | |
 | `onedark` | `#1f2329` | `onedark` | |
-| `apple` | Xcode dark `#292a30` | `xcode` (xcodedark) | macOS dark-mode system colors |
 | `rose-pine` | `#191724` | `rose_pine:main` | dusty rose, gold, lavender; foam stands in for green |
+| `carbonfox` | near-black `#161616` | `nightfox` (carbonfox) | IBM Carbon hues, high contrast; no yellow (teal instead) |
+| `kanagawa-dragon` | warm ink `#181616` | `kanagawa:dragon` | muted, low saturation |
+| `moonfly` | charcoal `#080808` | `moonfly` | calm hues, still readable (code 6.6–12:1) |
 
 ## How it works
 

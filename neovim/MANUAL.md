@@ -1044,7 +1044,6 @@ local active = "gruvbox8"   -- change this
 | `nightfox` | Dark carbon (carbonfox variant) |
 | `onedark` | Classic dark (darker variant) |
 | `rose_pine` | Muted rose (moon variant) |
-| `xcode` | Xcode Default (Dark) |
 
 Save the file, then run `:Lazy sync` to install the theme if it's new, then restart Neovim.
 

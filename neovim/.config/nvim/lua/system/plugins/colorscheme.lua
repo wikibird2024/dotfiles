@@ -114,10 +114,13 @@ local themes = {
 
     kanagawa = {
         plugin = "rebelot/kanagawa.nvim",
-        setup  = function()
+        setup  = function(variant)
+            -- wave | dragon | lotus (the `kanagawa-dragon` profile uses dragon).
+            -- `:colorscheme kanagawa` picks by 'background', so dark gets the variant too.
+            variant = variant or "wave"
             require("kanagawa").setup({
-                theme      = "wave",   -- wave | dragon | lotus
-                background = { dark = "wave", light = "lotus" },
+                theme      = variant,
+                background = { dark = variant, light = "lotus" },
                 compile    = false,
                 undercurl  = true,
                 commentStyle = { italic = true },
@@ -247,15 +250,13 @@ local themes = {
         end,
     },
 
-    -- Xcode's "Default (Dark)" editor theme; the `apple` profile pairs it with
-    -- the macOS dark-mode system colors in the terminal
-    xcode = {
-        plugin = "lunacookies/vim-colors-xcode",
-        name   = "xcodedark",  -- xcodedark | xcodedarkhc | xcodelight | xcodewwdc
+    -- Moonfly: charcoal black, calm hues that stay readable
+    moonfly = {
+        plugin = "bluz71/vim-moonfly-colors",
         setup  = function()
-            vim.g.xcodedark_green_comments = 0  -- gray comments, as in Xcode
-            vim.g.xcodedark_emph_types     = 1
-            vim.g.xcodedark_emph_funcs     = 1
+            vim.g.moonflyItalics        = true
+            vim.g.moonflyTerminalColors = true
+            vim.g.moonflyTransparent    = false
         end,
     },
 
