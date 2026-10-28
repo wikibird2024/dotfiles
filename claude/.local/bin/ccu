@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Claude token use and cost from both config folders (ccu daily, ccu monthly, ccu session, ...)
+# Version pinned: @latest would run new, unchecked code from npm on every call.
+export CLAUDE_CONFIG_DIR="$HOME/.claude,$HOME/.claude-personal"
+exec npx -y ccusage@20.0.45 claude "$@"

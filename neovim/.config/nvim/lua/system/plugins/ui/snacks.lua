@@ -31,6 +31,7 @@ return {
 		{ "<leader>uz", function() Snacks.zen() end, desc = "Zen Mode" },
 		{ "<leader>un", function() Snacks.notifier.hide() end,         desc = "Dismiss Notifications" },
 		{ "<leader>uN", function() Snacks.notifier.show_history() end, desc = "Notification History" },
+		{ "<leader>bo", function() Snacks.bufdelete.other() end,       desc = "Close Other Buffers" },
 	},
 	opts = {
 		-- Owns vim.notify (replaces nvim-notify, see ui/notify.lua).

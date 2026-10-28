@@ -26,3 +26,4 @@ Release checks include an STM32 demo board.
 | Date | Stars | Version | Open issues |
 |---|---|---|---|
 | 2026-10-23 | 207 | v0.3.0 | 3 |
+| 2026-10-28 | 211 | v0.3.0 | 3 |
