@@ -75,7 +75,9 @@ Run these in parallel; keep it to about 10 calls.
 ## 3. Filter and judge
 
 Drop noise without listing it (count it in one line): consumer apps, trading,
-social media, marketing, games, video, crypto, anything off our work.
+social media, marketing, games, video, crypto. Developer tools that are off
+our topics but big (trending, many stars) are not noise: keep them for the
+"Popular elsewhere" table.
 
 For each repo left, get the facts in one call:
 `gh api repos/<repo> --jq '"\(.full_name) \(.stargazers_count) \(.created_at[:10]) \(.pushed_at[:10]) \(.license.spdx_id // "none") \(.language) archived=\(.archived)"'`
@@ -108,6 +110,9 @@ Follow the global answer style: verdict first, then tables, few words.
 
 - Level 1: one table, the top 10 at most: light, repo, what (≤ 8 words),
   stars, why for us (≤ 8 words), flags. Then one line on what was dropped.
+- Levels 1 and 2: then a "Popular elsewhere" table, 5 rows at most: light,
+  repo, what (≤ 8 words), stars, one idea worth borrowing or "none". Judge
+  by what the repo does, not by its stars.
 - Level 2: the level 1 table, then each 🟢 (top 3 at most) explained in
   3 short rows: what it does, what it means for us, what it overlaps.
 - Sources list at the end (URLs used).

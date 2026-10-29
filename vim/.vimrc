@@ -189,7 +189,7 @@ elseif executable('fd')
     let $FZF_DEFAULT_COMMAND = 'fd --type f --hidden --follow --exclude .git'
 endif
 
-" :grep uses ripgrep (for <leader>f*, which sends matches to the quickfix list)
+" :grep uses ripgrep (for <leader>sw, which sends matches to the quickfix list)
 if executable('rg')
     set grepprg=rg\ --vimgrep\ --smart-case
     set grepformat=%f:%l:%c:%m
@@ -604,7 +604,6 @@ let g:which_key_map.f = {
     \ 'g': 'live grep',
     \ 'b': 'buffers',
     \ 'h': 'file history',
-    \ '*': 'grep word → quickfix',
     \ 'l': 'buffer lines',
     \ 'L': 'all lines',
     \ 'm': 'mappings',
@@ -638,6 +637,7 @@ let g:which_key_map.g = {
 
 let g:which_key_map.s = {
     \ 'name': '+search/settings',
+    \ 'w': 'search word → quickfix',
     \ 'r': 'replace word in project',
     \ 'R': 'search & replace in project',
     \ 'e': 'edit vimrc',
@@ -739,7 +739,7 @@ nnoremap <leader>ff :Files<CR>
 nnoremap <leader>fg :Rg<CR>
 nnoremap <leader>fb :Buffers<CR>
 nnoremap <leader>fh :History<CR>
-nnoremap <leader>f* :grep! "\b<C-r><C-w>\b"<CR>
+nnoremap <leader>sw :grep! "\b<C-r><C-w>\b"<CR>
 nnoremap <leader>fl :BLines<CR>
 nnoremap <leader>fL :Lines<CR>
 nnoremap <leader>fm :Maps<CR>
@@ -931,7 +931,7 @@ augroup vimrc
     " Close NERDTree if it's the last window
     autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 
-    " Open the quickfix list after :grep (used by <leader>f*)
+    " Open the quickfix list after :grep (used by <leader>sw)
     autocmd QuickFixCmdPost [^l]* cwindow
 
     " Highlight symbol under cursor (coc.nvim)

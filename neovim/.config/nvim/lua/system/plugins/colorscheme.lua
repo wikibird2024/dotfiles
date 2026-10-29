@@ -19,6 +19,28 @@ local function profile_theme()
     return key, variant ~= "" and variant or nil
 end
 
+-- Neovim sits one step lighter than the terminal, so an editor pane never looks
+-- like a shell or Claude pane (theme/README.md). Themes with a lighter variant
+-- get it from their profile ("gruvbox:soft"); for the others this moves every
+-- highlight group drawn on the theme's own background to `bg` after it loads.
+local function raise_background(pattern, bg)
+    vim.api.nvim_create_autocmd("ColorScheme", {
+        group    = vim.api.nvim_create_augroup("RaiseBackground_" .. pattern, { clear = true }),
+        pattern  = pattern,
+        callback = function()
+            local base = vim.api.nvim_get_hl(0, { name = "Normal" }).bg
+            if not base then return end
+            local raised = tonumber(bg:sub(2), 16)
+            for name, hl in pairs(vim.api.nvim_get_hl(0, {})) do
+                if hl.bg == base and not hl.link then
+                    hl.bg = raised
+                    vim.api.nvim_set_hl(0, name, hl)
+                end
+            end
+        end,
+    })
+end
+
 -- =============================================================================
 -- THEME REGISTRY
 -- Each entry:
@@ -73,10 +95,11 @@ local themes = {
 
     catppuccin = {
         plugin = "catppuccin/nvim",
-        setup  = function()
+        setup  = function(variant)
+            variant = variant or "mocha"  -- frappe | macchiato | mocha (the `catppuccin` profile uses macchiato)
             require("catppuccin").setup({
-                flavour               = "mocha",  -- latte | frappe | macchiato | mocha
-                background            = { light = "latte", dark = "mocha" },
+                flavour               = variant,
+                background            = { light = "latte", dark = variant },
                 transparent_background = false,
                 term_colors           = true,  -- lualine.lua reads the mode colors from these
                 integrations = {
@@ -165,6 +188,7 @@ local themes = {
         plugin = "EdenEast/nightfox.nvim",
         name   = "carbonfox",   -- carbonfox | duskfox | nordfox | terafox | nightfox
         setup  = function()
+            raise_background("carbonfox", "#222222") -- terminal #161616
             require("nightfox").setup({
                 options = {
                     transparent = false,
@@ -180,9 +204,10 @@ local themes = {
 
     onedark = {
         plugin = "navarasu/onedark.nvim",
-        setup  = function()
+        setup  = function(variant)
             require("onedark").setup({
-                style         = "darker",  -- dark | darker | cool | deep | warm | warmer
+                -- dark | darker | cool | deep | warm | warmer (`onedark` profile: dark; `ubuntu`: darker)
+                style         = variant or "darker",
                 transparent   = false,
                 term_colors   = true,
                 ending_tildes = false,
@@ -200,6 +225,7 @@ local themes = {
     abyss = {
         plugin = "barrientosvctor/abyss.nvim",
         setup  = function()
+            raise_background("abyss*", "#0b1b2f") -- terminal #000c18
             require("abyss").setup({
                 italic_comments        = true,
                 italic                 = false,
@@ -254,9 +280,22 @@ local themes = {
     moonfly = {
         plugin = "bluz71/vim-moonfly-colors",
         setup  = function()
+            raise_background("moonfly", "#262626") -- terminal #080808; unfocused tmux panes #000000
             vim.g.moonflyItalics        = true
             vim.g.moonflyTerminalColors = true
             vim.g.moonflyTransparent    = false
+        end,
+    },
+
+    -- Dracula with cream text (the xfce4-terminal text). Keeps Dracula's own
+    -- grey-purple background on purpose: the xfce terminal is pure black, so
+    -- an editor pane never looks like a shell or Claude pane
+    dracula = {
+        plugin = "Mofiqul/dracula.nvim",
+        setup  = function()
+            require("dracula").setup({
+                colors = { fg = "#ebdbb2" },
+            })
         end,
     },
 

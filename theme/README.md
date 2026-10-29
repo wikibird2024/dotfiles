@@ -23,16 +23,23 @@ theme --help
 
 ## Profiles
 
+Neovim always sits one step **lighter** than the terminal, in the same color
+family, so an editor pane never looks like a shell or Claude pane. Themes with
+a lighter variant use it (`gruvbox:soft`); the others get a lighter background
+from `raise_background()` in `colorscheme.lua`.
+
 | Profile | Terminal | Neovim | Notes |
 |---|---|---|---|
-| `ubuntu` | aubergine `#300a24` | `onedark` | the original kitty colors — default |
-| `gruvbox-classic` | `#282828`, green cursor | `gruvbox:medium` | the old alacritty colors |
-| `catppuccin` | `#1e1e2e` | `catppuccin` | |
-| `onedark` | `#1f2329` | `onedark` | |
-| `rose-pine` | `#191724` | `rose_pine:main` | dusty rose, gold, lavender; foam stands in for green |
-| `carbonfox` | near-black `#161616` | `nightfox` (carbonfox) | IBM Carbon hues, high contrast; no yellow (teal instead) |
-| `kanagawa-dragon` | warm ink `#181616` | `kanagawa:dragon` | muted, low saturation |
-| `moonfly` | charcoal `#080808` | `moonfly` | calm hues, still readable (code 6.6–12:1) |
+| `ubuntu` | aubergine `#300a24` | `onedark` (darker, `#1f2329`) | the original kitty colors — default |
+| `gruvbox-classic` | `#282828`, green cursor | `gruvbox:soft` (`#32302f`) | the old alacritty colors |
+| `catppuccin` | mocha `#1e1e2e` | `catppuccin:macchiato` (`#24273a`) | |
+| `onedark` | darker `#1f2329` | `onedark:dark` (`#282c34`) | |
+| `rose-pine` | main `#191724` | `rose_pine:moon` (`#232136`) | dusty rose, gold, lavender; foam stands in for green |
+| `carbonfox` | near-black `#161616` | `nightfox` (carbonfox, raised to `#222222`) | IBM Carbon hues, high contrast; no yellow (teal instead) |
+| `kanagawa-dragon` | warm ink `#181616` | `kanagawa:wave` (`#1f1f28`) | muted, low saturation; Neovim uses the bluer wave |
+| `moonfly` | charcoal `#080808` | `moonfly` (raised to `#262626`) | calm hues, still readable (code 6.6–12:1) |
+| `abyss` | navy black `#000c18` | `abyss` (boreal, raised to `#0b1b2f`) | deep navy, blue text |
+| `xfce` | pure black `#000000`, red cursor | `dracula` (its own `#282a36`, cream text) | the xfce4-terminal look alacritty keeps: cream text, Dracula accents |
 
 ## How it works
 

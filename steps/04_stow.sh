@@ -43,6 +43,16 @@ STOW_PKGS=(
 mkdir -p "$HOME/.claude/skills" "$HOME/.claude-personal/skills" \
     "$HOME/.claude/rules" "$HOME/.claude-personal/rules"
 
+# settings.json is linked from claude/ (both accounts share it). A real one,
+# from Claude Code or an older bootstrap, makes stow refuse: keep it as a backup.
+for dir in "$HOME/.claude" "$HOME/.claude-personal"; do
+    if [ -f "$dir/settings.json" ] && [ ! -L "$dir/settings.json" ]; then
+        mkdir -p "$dir/backups"
+        mv "$dir/settings.json" "$dir/backups/settings.json.bak.$(date +%s)"
+        log_warn "Existing $dir/settings.json moved to $dir/backups/"
+    fi
+done
+
 # Same for ~/.config/systemd/user (kanata ships a unit there): systemd and
 # `systemctl --user enable` write into it, so it must not be a link into the repo.
 # Drop-in folders (*.service.d) must be real folders too: systemd skips a
@@ -166,28 +176,21 @@ if [ -d "$DOTFILES_DIR/Xresources" ]; then
     stow -R -t "$HOME" Xresources && log_ok "Xresources stowed."
 fi
 
-# ── Claude Code settings (copied once, not linked) ───────────
-# Claude Code writes approved permissions into settings.json, so it stays a
-# local file. The template only seeds a new machine.
-CLAUDE_SETTINGS="$HOME/.claude/settings.json"
-if [ ! -e "$CLAUDE_SETTINGS" ]; then
-    cp "$DOTFILES_DIR/templates/claude/settings.json" "$CLAUDE_SETTINGS"
-    log_ok "Claude settings copied from template."
-else
-    log_info "Claude settings already present, not overwritten."
-fi
-
-# ── Claude Personal profile (linked instructions, copied settings) ─
+# ── Claude Personal profile (same files as ~/.claude) ────────
+# The same claude/.claude tree is stowed into the second config folder, so
+# both accounts get the same settings, rules, skills and output styles.
+# Links made by hand or by an older bootstrap block stow: remove them first.
 CLAUDE_PERSONAL_DIR="$HOME/.claude-personal"
-if [ -d "$CLAUDE_PERSONAL_DIR" ]; then
-    ln -sf "$DOTFILES_DIR/claude/.claude/CLAUDE.md" "$CLAUDE_PERSONAL_DIR/CLAUDE.md"
-    ln -sfn "$DOTFILES_DIR/claude/.claude/skills/project-status" "$CLAUDE_PERSONAL_DIR/skills/project-status"
-    ln -sfn "$DOTFILES_DIR/claude/.claude/skills/flow-map" "$CLAUDE_PERSONAL_DIR/skills/flow-map"
-    ln -sf "$DOTFILES_DIR/claude/.claude/rules/stm32-cubemx.md" "$CLAUDE_PERSONAL_DIR/rules/stm32-cubemx.md"
-    if [ ! -e "$CLAUDE_PERSONAL_DIR/settings.json" ]; then
-        cp "$DOTFILES_DIR/templates/claude/settings.json" "$CLAUDE_PERSONAL_DIR/settings.json"
-        log_ok "Claude personal settings copied from template."
-    fi
+find "$CLAUDE_PERSONAL_DIR" -maxdepth 2 -type l -lname "$DOTFILES_DIR/*" -delete
+stow -R -d "$DOTFILES_DIR/claude" -t "$CLAUDE_PERSONAL_DIR" .claude &&
+    log_ok "claude stowed into ~/.claude-personal." || log_warn "claude (personal) had conflicts — check manually."
+
+# Skills cloned by 02_tools.sh (not plugins), linked into both accounts.
+ARCHIFY_SKILL="$HOME/.local/share/claude-skills/archify/archify"
+if [ -d "$ARCHIFY_SKILL" ]; then
+    for dir in "$HOME/.claude" "$CLAUDE_PERSONAL_DIR"; do
+        ln -sfn "$ARCHIFY_SKILL" "$dir/skills/archify"
+    done
 fi
 
 # ── Vim plugins ──────────────────────────────────────────────

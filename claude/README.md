@@ -2,19 +2,42 @@
 
 Global instructions and skills for [Claude Code](https://claude.com/claude-code).
 
-Stowed by `steps/04_stow.sh` (`stow -R -t ~ claude`). `04_stow.sh` creates `~/.claude/skills/` as a real folder first, so only
-these files are linked and Claude Code's own data (credentials, history) never ends up in git.
+Stowed by `steps/04_stow.sh` twice: `stow -R -t ~ claude` for the work
+account (`~/.claude`) and `stow -d claude -t ~/.claude-personal .claude` for
+the personal one, so both accounts use the **same files**. `04_stow.sh`
+creates `skills/` and `rules/` as real folders first, so only these files are
+linked and Claude Code's own data (credentials, history, sessions) never ends
+up in git.
 
 | File | Purpose |
 |---|---|
 | `.claude/CLAUDE.md` | rules for every project (naming, wording, ...) |
+| `.claude/settings.json` | hooks, plugins, status line, theme, effort; shared by both accounts (see below) |
 | `.claude/rules/stm32-cubemx.md` | CubeMX rules; load only when Claude reads or edits a `.ioc`, C, assembly, linker or CMake file (`paths:` in its header) |
+| `.claude/rules/firmware-checks.md` | firmware review list (ISR data, blocking calls, safety limits); loads on C/C++ files |
 | `.claude/skills/project-status/SKILL.md` | `/project-status`: read-only report on the current repo (git, build, tests, open work) |
-| `.claude/skills/flow-map/SKILL.md` | `/flow-map`: explain how a program runs (contexts, nesting, one example traced with `file:line`) |
+| `.claude/skills/flow-map/SKILL.md` | `/flow-map`: explain how a program runs (contexts, nesting, one example traced with `file:line`); `quick` for one screen |
+| `.claude/skills/scout/SKILL.md` | `/scout`: find and judge new open-source repos, notes in `community/` |
 | `.local/bin/claude-personal` | wrapper script isolating personal credentials to `~/.claude-personal` |
 | `.local/bin/claude-stm32-build-check` | Stop hook: builds changed STM32 firmware before Claude may finish (see below) |
 
-`~/.claude/settings.json` and `~/.claude-personal/settings.json` are **not** linked: Claude Code writes to them. A new machine gets a copy of `templates/claude/settings.json` once.
+## Settings, plugins and memory
+
+- **`settings.json` is a link into this repo.** Claude Code writes through it
+  (`/model`, `/config`, `claude plugin install`), so check `git diff` before a
+  commit. It saves via `settings.json.tmp.*` next to the file (gitignored).
+- **Keep work details out** (public repo): `autoMode` text from
+  `/auto-mode-setup` names company hosts and one repo path, so delete it from
+  this file if a session adds it. Approvals ("don't ask again") go to each
+  project's own `.claude/settings.local.json`, not here.
+- **Plugins** come from `enabledPlugins` + `extraKnownMarketplaces` (ponytail).
+  On a new machine: `claude plugin install <name>@<marketplace>` for each one
+  enabled, once per account (`CLAUDE_CONFIG_DIR=~/.claude-personal claude …`).
+- **archify** has no plugin: `02_tools.sh` clones tag v3.2.0 into
+  `~/.local/share/claude-skills/archify`, `04_stow.sh` links it into both accounts.
+- **Memory** for this repo lives in `../.claude/memory/` (repo root
+  `.claude/settings.json` sets `autoMemoryDirectory`). Memories of work repos
+  stay local on purpose.
 
 ## Build check for STM32 firmware
 
@@ -33,22 +56,21 @@ instead of saying "done".
 - State: `~/.local/state/claude-stm32-build-check/` (one file per session and
   folder, cleared after 7 days).
 
-The hook entry is in the template's `Stop` list; like the other hooks it must
-be merged by hand into both live settings files.
+The hook entry is in the `Stop` list of `.claude/settings.json`.
 
 ## Agent state in the tmux bar
 
 The [tmux-agent-signal](https://github.com/jward7/tmux-agent-signal) plugin
 (installed by tpm, pinned in `tmux/.tmux.conf`) shows every Claude session's
-state on its tmux window tab: 󰔟 working, 󰂚 blocked on a permission, 󰋗 asking
+state on its tmux window tab: 󰪡 working, 󰂚 blocked on a permission, 󰋗 asking
 a question, 󰄬 finished while you were elsewhere. The right side of the bar
 lists **every** Claude agent of every session, grouped by session:
-`Dekit_grader_v1 ·  STM32F7_USB_spra… ·  dotfiles 󰔟`. The session name is
+`Dekit_grader_v1 󰄰  STM32F7_USB_spra… 󰄰  dotfiles 󰪡`. The session name is
 colored by its most urgent agent (yellow needs you, orange asks, green
 finished unseen, cyan working, purple - the block's own color - all idle),
 fenced by `│` and led by a solid purple `󰚩 AI` label pill whose arrow
 points at the sessions, followed by one icon per
-window that has agents (`·` = idle; several Claudes in one window share one
+window that has agents (`󰄰` = idle; several Claudes in one window share one
 icon, showing the most urgent). The list is a native tmux loop
 (`#{S:#{W:#{P:…}}}`) over the plugin's pane options, so it updates the
 moment a hook fires. The plugin's own per-agent
@@ -67,10 +89,7 @@ client attached there, so it keeps working after kitty restarts) instead of
 the session being pulled into the current tab. `prefix + A` still opens the
 plugin's own fzf switcher; note it does pull sessions into the current tab.
 
-The states come from Claude Code hooks. `templates/claude/settings.json`
-carries the full `hooks` block (agent-signal + auto-shutdown); because the
-live settings files are untracked, a new machine (or a hook change) needs it
-merged **by hand into both** `~/.claude/settings.json` and
-`~/.claude-personal/settings.json` — without it, sessions started by
-`claude-personal` stay invisible in the bar. Running sessions pick the hooks
-up after `/hooks` is opened once, new sessions immediately.
+The states come from Claude Code hooks: the `hooks` block (agent-signal +
+auto-shutdown) in `.claude/settings.json`, which both accounts share, so
+sessions started by `claude-personal` show in the bar too. Settings edits
+reach running sessions on save.

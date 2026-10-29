@@ -41,6 +41,7 @@ and remove the row here.
 | 2 | [ternima](embedded-nimaltd-ternima.md) | RTT over ST-Link + Modbus tester, no vendor tools | 15 min | ⚪ |
 | 3 | [security-audit-skill](workflow-cloudflare-security-audit-skill.md) | One full security pass on a PC tool or protocol parser | 1 run, many tokens | ⚪ |
 | 4 | [BeautifulRust](workflow-morganlinton-beautifulrust.md) | Next time we write Rust | with Rust work | ⚪ |
+| 5 | [wdcjx/Embedded-programming](https://github.com/wdcjx/Embedded-programming) | 48 tested STM32 pitfalls: take what fits into our `stm32-cubemx.md` rules. `/scout check` first | 20 min | ⚪ |
 
 ## Index
 
@@ -68,6 +69,7 @@ and remove the row here.
 | Fit | Repo | What it is | Last checked |
 |---|---|---|---|
 | 🟡 | [pbakaus/impeccable](design-pbakaus-impeccable.md) | Design taste skill, 24 commands, 62 "AI look" rules; first pick for web UI | 2026-10-24 |
+| 🟡 | [jakubkrehel/skills](design-jakubkrehel-skills.md) | 14 UI skills; `better-colors` contrast check fits our themes | 2026-10-29 |
 | 🟡 | [nextlevelbuilder/ui-ux-pro-max-skill](design-nextlevelbuilder-ui-ux-pro-max-skill.md) | Generates a design system from a brief; landing pages | 2026-10-24 |
 
 ### agent-ops-
@@ -97,6 +99,8 @@ and remove the row here.
 | 🟡 | [okhsunrog/flashprobe-mcp](embedded-okhsunrog-flashprobe-mcp.md) | Flash + bounded log capture MCP; very new, watch | 2026-10-23 |
 | 🟡 | [Klievan/jlink-mcp](embedded-klievan-jlink-mcp.md) | J-Link/OpenOCD MCP, one-call crash report | 2026-10-28 |
 | 🟡 | [nimaltd/ternima](embedded-nimaltd-ternima.md) | Serial/RTT/SWO terminal + Modbus tester (Rust); human tool | 2026-10-28 |
+| 🟡 | [wdcjx/Embedded-programming](https://github.com/wdcjx/Embedded-programming) | STM32 HAL/FreeRTOS agent skill + 48 pitfalls; no note yet (`/scout check` first) | 2026-10-29 |
+| 🟡 | [Kyin-code/KDock](https://github.com/Kyin-code/KDock) | Embedded agent toolbox, serial etc. (Rust); overlaps McuBuddy/ternima; no note yet | 2026-10-29 |
 
 ### lists-
 
@@ -105,6 +109,7 @@ and remove the row here.
 | 🟢 | [hesreallyhim/awesome-claude-code](lists-hesreallyhim-awesome-claude-code.md) | Biggest curated Claude Code list; first stop | 2026-10-23 |
 | 🟢 | [shanraisshan/claude-code-best-practice](lists-shanraisshan-claude-code-best-practice.md) | Collected Claude Code tips | 2026-10-23 |
 | 🟡 | [ComposioHQ/awesome-claude-skills](lists-composiohq-awesome-claude-skills.md) | 1000+ skills list, part advert for Composio | 2026-10-24 |
+| 🟡 | [VoltAgent/official-mcp-servers](https://github.com/VoltAgent/official-mcp-servers) | 390+ official vendor MCP servers; lookup list; no note yet | 2026-10-29 |
 
 ## Note format
 
@@ -128,3 +133,4 @@ next scan of a topic is its last date here.
 |---|---|---|---|---|
 | 2026-10-28 | embedded | 2 | ~35 repos, 6 kept | McuBuddy, ternima, jlink-mcp |
 | 2026-10-28 | agent | 1 | ~45 repos, 9 kept | security-audit-skill, andrej-karpathy-skills, BeautifulRust, openqodex, ai-memory, graphify, orca |
+| 2026-10-29 | all | 1 | ~50 repos, 10 kept | jakubkrehel/skills; index rows (no note) for Embedded-programming, KDock, official-mcp-servers |

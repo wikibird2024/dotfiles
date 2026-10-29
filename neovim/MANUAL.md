@@ -143,7 +143,7 @@ cw         — change the filename on that line
 | `<leader>fb` | Open buffers |
 | `<leader>fg` | Live grep (search text in project) |
 | `<leader>p` | Command palette |
-| `<leader>f*` | Grep word under cursor → send all results to quickfix |
+| `<leader>sw` | Grep word under cursor → send all results to quickfix |
 
 **Inside the fzf window:**
 
@@ -1054,7 +1054,7 @@ Save the file, then run `:Lazy sync` to install the theme if it's new, then rest
 ### Workflow combos
 
 **Find all usages → fix them all:**
-1. `<leader>f*` — grep word under cursor, all results → quickfix
+1. `<leader>sw` — grep word under cursor, all results → quickfix
 2. `<leader>xq` — open quickfix
 3. `:cdo s/old/new/g` — substitute across every entry
 

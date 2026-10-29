@@ -1,0 +1,20 @@
+- [Desktop is GNOME or niri, not i3](env_desktop_gnome_not_i3.md) — GNOME/X11 and niri/Wayland side by side; check XDG_CURRENT_DESKTOP and process env first
+- [Dotfiles stow quirks](project_dotfiles_stow_quirks.md) — harmless Stow BUG warnings, nvim2 vs neovim package switching, gitignored copilot auth path
+- [Nvim toolchain overhaul](project_nvim_toolchain_overhaul.md) — 2026-08-20: blink.cmp/pairs, mason, ruff/typos-lsp/taplo now current; don't re-add old tools
+- [Prefers Rust tools](feedback_prefers_rust_tools.md) — default to Rust-written plugins/CLIs when proposing new tooling; verify before claiming a plugin is Rust
+- [Prefers bash login shell](feedback_prefers_bash_login_shell.md) — zsh fully removed from dotfiles and $HOME 2026-10-06; never propose or restore zsh; fzf lives in ~/.fzf/bin
+- [Tmux powerline style](feedback_tmux_powerline_style.md) — pills only for session + Agents; active window tab is plain text (2026-10-21); Nerd Font icons over emoji; validate with `tmux -f`
+- [Vim mirrors neovim](project_vim_mirrors_neovim.md) — vim/.vimrc follows the live neovim/ package (keys, mason tools); vim_light has no plugins
+- [Research before screen tests](feedback_research_before_screen_tests.md) — look up community fixes before looping tests that pop windows on the live desktop
+- [Waybar reload](project_waybar_reload.md) — waybar is unit niri-waybar: restart it after config.jsonc edits (USR2 = CSS only)
+- [Waybar helper scripts](project_waybar_helper_scripts.md) — waybar ignores SIGPIPE: bar helpers must exit on failed write or they pile up
+- [History rewrite 2026-10-05](project_history_rewrite_2026_10_05.md) — dotfiles force-pushed twice (keys removed, 433→252 squashed); other clones must reset --hard origin/main
+- [niri screenshots use Flameshot](project_niri_screenshots_flameshot.md) — Flameshot 13.3 via --raw | wl-copy; Print = copy, Mod+Insert = niri screenshot to save; its own Ctrl+C never works on niri
+- [systemd drop-ins vs stow](project_systemd_dropin_stow.md) — symlinked *.service.d folder is ignored; niri.service has oomd avoid (2026-10-08 logouts)
+- [niri pacstall depends on mako](project_niri_pacstall_mako_dep.md) — never apt-remove mako-notifier (removes niri); simulate apt remove first
+- [Fewer lines, more contrast](feedback_fewer_lines_more_contrast.md) — line-heavy screens are hard to read; dimmed unfocused panes helped (2026-10-10); prefer shading over borders
+- [Community-first research](feedback_community_first_research.md) — survey existing OSS before proposing custom tooling; custom build is the fallback
+- [Community repo notes](project_community_repo_notes.md) — dotfiles/community/ = one note per watched OSS repo + index; add/update on "check repo"; `/scout` skill does scans
+- [Dark themes only](feedback_dark_themes_only.md) — no light themes (everforest/github light tried and dropped 2026-10-28); propose dark, high-contrast profiles
+- [Judge by effect, not usage](feedback_judge_by_effect_not_usage.md) — rate skills/tools by outcomes after each run (acted on, complaints), not by how often used
+- [Tell panes apart](feedback_tell_panes_apart.md) — Neovim bg must differ from terminal bg + app icons in pane headers; same theme everywhere makes panes mix up (xfce, 2026-10-29)

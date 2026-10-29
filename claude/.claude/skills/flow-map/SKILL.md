@@ -1,7 +1,7 @@
 ---
 name: flow-map
 description: Explain how a program or system runs as a picture the user can keep in their head - who runs (interrupts, threads, tasks, event loops, processes, services), the nested layers and state machines inside, how the parts talk, and one real example traced end to end with file:line. Use for "how does it run", "explain the flow", "mental model", "threads / tasks / processes", "nested flow", "who calls what", "trace X from A to B", "draw the architecture" - in any repo and language: firmware, desktop app, web tool, server, script, or a monorepo with several programs.
-argument-hint: "[what to trace: a command, button, request, event] [scope: a program, folder or module]"
+argument-hint: "[quick] [what to trace: a command, button, request, event] [scope: a program, folder or module]"
 ---
 
 # Flow map
@@ -10,6 +10,7 @@ A way to present how software runs: the same pictures, in the same order, for
 any kind of program. The user should be able to draw it from memory afterwards.
 
 Arguments: `$ARGUMENTS`
+- `quick` → the short overview (see "Size"); combines with a scope.
 - Something to trace (a command code, a button, a URL, a CLI command, an
   event) → it is the example in part 6, and the answer uses **trace mode**
   (see "Size").
@@ -124,6 +125,11 @@ naming the context and `file:line` at every hop.
 
 ## Size
 
+- **Quick** (`quick`): one screen, about 25 lines. Part 1, picture 1 with
+  one line per floor, the 3 to 5 most important hops of the example (no
+  `file:line` except the entry point), part 9. Steps 1 to 3 only; no time
+  picture, nest, talk picture, analogy or watch-out list. End with one line:
+  "`/flow-map` for the full map".
 - **Full map** (no argument, or a scope): all nine parts, about two screens
   (picture 0 included). Few contexts (3 or fewer) → merge pictures 1 and 4.
 - **Trace mode** (an argument names one thing to trace): parts 1, 4 (the
