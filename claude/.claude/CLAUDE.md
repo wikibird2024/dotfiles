@@ -136,3 +136,8 @@ A single fact, a code change or a one-line answer stays short and plain.
 
 The CubeMX rules live in `rules/stm32-cubemx.md` next to this file. They load when
 Claude reads or edits a `.ioc`, C, assembly, linker or CMake file.
+
+The C code style (snake_case, `Module_Verb()`, comments) lives in
+`rules/c-code-style.md` and loads for any `.c` / `.h` file. It is the
+default for C firmware; a project's own `CODE_STYLE.md` or `CLAUDE.md` wins.
+`templates/new-firmware.sh` copies it into a new project as `CODE_STYLE.md`.

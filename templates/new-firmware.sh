@@ -10,6 +10,8 @@
 set -euo pipefail
 
 TEMPLATE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/embedded-firmware"
+# Master copy of the C style; the project gets it as CODE_STYLE.md for the team
+STYLE="$(dirname "$TEMPLATE")/../claude/.claude/rules/c-code-style.md"
 
 dest="${1:?usage: new-firmware.sh <project-dir> [chip]}"
 chip="${2:-STM32F746NG}"
@@ -37,6 +39,8 @@ fi
 
 mkdir -p "$dest"
 cp -r --update=none "$TEMPLATE"/. "$dest"/
+# Drop the Claude rule's front matter (paths:) and the blank line after it
+[ -e "$dest/CODE_STYLE.md" ] || awk 'n >= 2 && (seen || NF) { seen = 1; print } /^---$/ { n++ }' "$STYLE" >"$dest/CODE_STYLE.md"
 
 sed -i -E "s/^(CHIP +:= )\".*\"/\1\"$chip\"/; s#target/[a-z0-9_-]+\.cfg#$ocd_target#" "$dest/justfile"
 sed -i -E "s/(\"chip\": )\".*\"/\1\"$chip\"/; s#target/[a-z0-9_-]+\.cfg#$ocd_target#" "$dest/.vscode/launch.json"
