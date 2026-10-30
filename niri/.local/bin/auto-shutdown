@@ -11,7 +11,7 @@
 # remote login (ssh) also counts. Idle = no keyboard/mouse (swayidle, niri only);
 # a playing video blocks idle by itself. Any input cancels the countdown.
 # Never use an "idle" lock for busy: swayidle then turns off all its timers, so
-# the 5 min screen lock stops too.
+# the 1 min screen lock stops too.
 # Internal (swayidle, Claude hooks, waybar): idle resume watch claude-start claude-stop bar
 set -uo pipefail
 

@@ -242,7 +242,7 @@ start)
     done
     has cliphist && has wl-paste && ! pgrep -u "$USER" -f 'wl-paste --watch cliphist' >/dev/null &&
         setsid -f wl-paste --watch cliphist store </dev/null >/dev/null 2>&1
-    # black cover after 2 min, lock after 5 min (company rule), screens off after 6 min:
+    # lock after 1 min (company rule), black cover after 2 min, screens off after 6 min:
     # niri-swayidle.service
     start_service swayidle
     ;;

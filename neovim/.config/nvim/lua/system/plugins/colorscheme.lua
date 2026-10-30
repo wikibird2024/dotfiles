@@ -241,6 +241,9 @@ local themes = {
                 once     = true,
                 callback = function()
                     vim.api.nvim_set_hl(0, "WhichKeyDesc", { fg = "#6688cc" })
+                    -- abyss's color4 is near-black #082050: lualine's NORMAL pill was unreadable.
+                    -- #2277ff = color4 in the kitty palette.
+                    vim.g.terminal_color_4 = "#2277ff"
                 end,
             })
         end,
