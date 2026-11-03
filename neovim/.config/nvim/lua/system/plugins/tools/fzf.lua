@@ -10,7 +10,7 @@ return {
 		{ "<leader>fg", "<cmd>FzfLua live_grep<CR>", desc = "Live Grep"       },
 		{ "<leader>p",  "<cmd>FzfLua commands<CR>",  desc = "Command Palette" },
 		{
-			"<leader>f*",
+			"<leader>sw",
 			function()
 				-- Grep the word under cursor, select all, and send to quickfix.
 				-- vim.schedule defers quicker.toggle() so fzf-lua finishes writing
@@ -29,7 +29,7 @@ return {
 					},
 				})
 			end,
-			desc = "Grep Word → Quickfix",
+			desc = "Search Word → Quickfix",
 		},
 	},
 	opts = {

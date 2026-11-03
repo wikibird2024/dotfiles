@@ -1,0 +1,6 @@
+# CubeMX-generated folders keep ST's names; don't flag them.
+If:
+  PathMatch: (Core|USB_DEVICE|Drivers|Middlewares)/.*
+Diagnostics:
+  ClangTidy:
+    Remove: readability-identifier-naming

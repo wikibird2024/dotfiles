@@ -114,6 +114,20 @@ install_tpm() {
     log_ok "TPM installed. Plugins will auto-install on first tmux launch."
 }
 
+# ── archify Claude skill (not a plugin, so cloned; pinned tag) ─
+# 04_stow.sh links it into ~/.claude and ~/.claude-personal. Update: change the
+# tag here, then delete the folder and re-run (read the diff first).
+install_archify() {
+    local archify_dir="$HOME/.local/share/claude-skills/archify"
+    if [ -d "$archify_dir" ]; then
+        log_ok "archify skill already present."
+        return
+    fi
+    log_info "Installing archify skill (v3.2.0)..."
+    git clone --depth 1 --branch v3.2.0 https://github.com/tt-a1i/archify "$archify_dir"
+    log_ok "archify skill installed."
+}
+
 # ── Rust toolchain (needed for stylua, and for any Rust work) ──
 install_rust() {
     if has cargo; then
@@ -315,6 +329,7 @@ install_fd
 install_starship
 install_zoxide
 install_tpm
+install_archify
 install_rust
 install_stylua
 install_satty

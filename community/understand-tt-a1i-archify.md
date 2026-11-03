@@ -18,6 +18,12 @@ to PNG/PDF.
 - `npx skills add tt-a1i/archify -g` installs globally.
 - README is full of sponsors (API resellers); ignore those links.
 - Check how it reads C / CubeMX code: the demos are web stacks.
+- Alternative: [QingYunA/answer-me-with-html](https://github.com/QingYunA/answer-me-with-html)
+  (MIT, 4.6k stars, 2026-10-29) does explainer pages with the agent writing
+  only Markdown; a bundled Node CLI draws the page (~8× fewer output tokens,
+  its own bench). Compare if archify's page cost hurts. Its suggested install
+  ("paste this URL into your agent and follow it") is a red flag: install by
+  hand.
 
 ## Our install
 

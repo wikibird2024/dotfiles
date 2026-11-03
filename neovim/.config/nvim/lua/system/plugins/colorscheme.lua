@@ -2,7 +2,7 @@
 -- ACTIVE THEME — picked by the `theme` command (dotfiles `theme` package), so
 -- Neovim matches kitty/alacritty/tmux: it writes a key of the table below to
 -- ~/.local/state/theme/current/nvim, optionally with a variant for that
--- theme's setup() ("gruvbox:medium"). `fallback` is used until a profile is
+-- theme's setup() ("onedark:warm"). `fallback` is used until a profile is
 -- picked. `theme <name>` also sends SIGUSR1, and running Neovims switch live.
 -- =============================================================================
 local fallback     = "onedark"
@@ -19,170 +19,44 @@ local function profile_theme()
     return key, variant ~= "" and variant or nil
 end
 
+-- Neovim sits one step lighter than the terminal, so an editor pane never looks
+-- like a shell or Claude pane (theme/README.md). Themes with a lighter variant
+-- get it from their profile ("onedark:dark"); for the others this moves every
+-- highlight group drawn on the theme's own background to `bg` after it loads.
+local function raise_background(pattern, bg)
+    vim.api.nvim_create_autocmd("ColorScheme", {
+        group    = vim.api.nvim_create_augroup("RaiseBackground_" .. pattern, { clear = true }),
+        pattern  = pattern,
+        callback = function()
+            local base = vim.api.nvim_get_hl(0, { name = "Normal" }).bg
+            if not base then return end
+            local raised = tonumber(bg:sub(2), 16)
+            for name, hl in pairs(vim.api.nvim_get_hl(0, {})) do
+                if hl.bg == base and not hl.link then
+                    hl.bg = raised
+                    vim.api.nvim_set_hl(0, name, hl)
+                end
+            end
+        end,
+    })
+end
+
 -- =============================================================================
 -- THEME REGISTRY
 -- Each entry:
 --   plugin  : lazy.nvim plugin spec string
 --   setup(variant) : called before vim.cmd.colorscheme() — configure the theme
 --                    here; variant is the profile's ":variant" part, or nil
---   name    : optional override for vim.cmd.colorscheme() (nightfox variants)
+--   name    : optional override for vim.cmd.colorscheme()
 -- =============================================================================
 local themes = {
 
-    github_dark = {
-        plugin = "projekt0n/github-nvim-theme",
-        name   = "github_dark_default", -- github_dark_default | github_dark | github_dark_dimmed | github_dark_high_contrast
-        setup  = function()
-            require("github-theme").setup({
-                options = {
-                    transparent = false,
-                    terminal_colors = true,
-                    styles = {
-                        comments = "italic",
-                        keywords = "bold",
-                    },
-                },
-            })
-        end,
-    },
-
-    gruvbox8 = {
-        plugin = "lifepillar/vim-gruvbox8",
-        setup  = function()
-            vim.g.gruvbox_contrast_dark  = "hard"  -- soft | medium | hard
-            vim.g.gruvbox_italics        = 1
-            vim.g.gruvbox_italicize_strings = 0
-            vim.g.gruvbox_filetype_hi_groups = 1
-            vim.g.gruvbox_plugin_hi_groups   = 1
-        end,
-    },
-
-    gruvbox = {
-        plugin = "ellisonleao/gruvbox.nvim",
-        setup  = function(variant)
-            require("gruvbox").setup({
-                -- soft | medium | hard; gruvbox.nvim spells medium as ""
-                contrast      = variant == "medium" and "" or variant or "hard",
-                bold          = true,
-                italic        = { strings = false, comments = true, operators = false },
-                undercurl     = true,
-                strikethrough = true,
-            })
-        end,
-    },
-
-    catppuccin = {
-        plugin = "catppuccin/nvim",
-        setup  = function()
-            require("catppuccin").setup({
-                flavour               = "mocha",  -- latte | frappe | macchiato | mocha
-                background            = { light = "latte", dark = "mocha" },
-                transparent_background = false,
-                term_colors           = true,  -- lualine.lua reads the mode colors from these
-                integrations = {
-                    blink_cmp  = true,
-                    gitsigns   = true,
-                    neotree    = true,
-                    treesitter = true,
-                    notify     = false,
-                    which_key  = true,
-                    aerial     = true,
-                    trouble    = { enabled = true, mode = "lsp" },
-                    illuminate = { enabled = true },
-                    mini       = { enabled = true },
-                },
-            })
-        end,
-    },
-
-    tokyonight = {
-        plugin = "folke/tokyonight.nvim",
-        setup  = function()
-            require("tokyonight").setup({
-                style         = "night",  -- storm | night | moon | day
-                transparent   = false,
-                terminal_colors = true,
-                styles = {
-                    comments  = { italic = true },
-                    keywords  = { italic = false },
-                    sidebars  = "dark",
-                    floats    = "dark",
-                },
-            })
-        end,
-    },
-
-    kanagawa = {
-        plugin = "rebelot/kanagawa.nvim",
-        setup  = function(variant)
-            -- wave | dragon | lotus (the `kanagawa-dragon` profile uses dragon).
-            -- `:colorscheme kanagawa` picks by 'background', so dark gets the variant too.
-            variant = variant or "wave"
-            require("kanagawa").setup({
-                theme      = variant,
-                background = { dark = variant, light = "lotus" },
-                compile    = false,
-                undercurl  = true,
-                commentStyle = { italic = true },
-                keywordStyle = { italic = false, bold = false },
-                statementStyle = { bold = true },
-            })
-        end,
-    },
-
-    nord = {
-        plugin = "gbprod/nord.nvim",
-        setup  = function()
-            require("nord").setup({
-                transparent      = false,
-                terminal_colors  = true,
-                diff             = { mode = "fg" },   -- fg | bg
-                borders          = true,
-                errors           = { mode = "fg" },
-                styles = {
-                    comments = { italic = true },
-                    keywords = { italic = false },
-                },
-            })
-        end,
-    },
-
-    everforest = {
-        plugin = "neanias/everforest-nvim",
-        setup  = function()
-            require("everforest").setup({
-                background              = "hard",  -- soft | medium | hard
-                ui_contrast             = "high",  -- low | high
-                transparent_background_level = 0,
-                diagnostic_text_highlight = true,
-                diagnostic_virtual_text   = "coloured",
-                italics                   = true,
-            })
-        end,
-    },
-
-    nightfox = {
-        plugin = "EdenEast/nightfox.nvim",
-        name   = "carbonfox",   -- carbonfox | duskfox | nordfox | terafox | nightfox
-        setup  = function()
-            require("nightfox").setup({
-                options = {
-                    transparent = false,
-                    terminal_colors = true,
-                    styles = {
-                        comments = "italic",
-                        keywords = "bold",
-                    },
-                },
-            })
-        end,
-    },
-
     onedark = {
         plugin = "navarasu/onedark.nvim",
-        setup  = function()
+        setup  = function(variant)
             require("onedark").setup({
-                style         = "darker",  -- dark | darker | cool | deep | warm | warmer
+                -- dark | darker | cool | deep | warm | warmer (`ubuntu` profile: darker)
+                style         = variant or "darker",
                 transparent   = false,
                 term_colors   = true,
                 ending_tildes = false,
@@ -200,6 +74,7 @@ local themes = {
     abyss = {
         plugin = "barrientosvctor/abyss.nvim",
         setup  = function()
+            raise_background("abyss*", "#0b1b2f") -- terminal #000c18
             require("abyss").setup({
                 italic_comments        = true,
                 italic                 = false,
@@ -215,37 +90,10 @@ local themes = {
                 once     = true,
                 callback = function()
                     vim.api.nvim_set_hl(0, "WhichKeyDesc", { fg = "#6688cc" })
+                    -- abyss's color4 is near-black #082050: lualine's NORMAL pill was unreadable.
+                    -- #2277ff = color4 in the kitty palette.
+                    vim.g.terminal_color_4 = "#2277ff"
                 end,
-            })
-        end,
-    },
-
-    night_owl = {
-        plugin = "oxfist/night-owl.nvim",
-        name   = "night-owl",
-        setup  = function()
-            require("night-owl").setup({
-                italics                = true,
-                transparent_background = false,
-            })
-        end,
-    },
-
-    rose_pine = {
-        plugin = "rose-pine/neovim",
-        name   = "rose-pine",  -- draws the variant set in setup()
-        setup  = function(variant)
-            variant = variant or "moon"  -- main | moon | dawn (the `rose-pine` profile uses main)
-            require("rose-pine").setup({
-                variant        = variant,
-                dark_variant   = variant,
-                dim_inactive_windows = false,
-                extend_background_behind_borders = true,
-                styles = {
-                    bold      = true,
-                    italic    = true,
-                    transparency = false,
-                },
             })
         end,
     },
@@ -254,9 +102,22 @@ local themes = {
     moonfly = {
         plugin = "bluz71/vim-moonfly-colors",
         setup  = function()
+            raise_background("moonfly", "#262626") -- terminal #080808; unfocused tmux panes #000000
             vim.g.moonflyItalics        = true
             vim.g.moonflyTerminalColors = true
             vim.g.moonflyTransparent    = false
+        end,
+    },
+
+    -- Dracula with cream text (the xfce4-terminal text). Keeps Dracula's own
+    -- grey-purple background on purpose: the xfce terminal is pure black, so
+    -- an editor pane never looks like a shell or Claude pane
+    dracula = {
+        plugin = "Mofiqul/dracula.nvim",
+        setup  = function()
+            require("dracula").setup({
+                colors = { fg = "#ebdbb2" },
+            })
         end,
     },
 
@@ -330,12 +191,6 @@ if start ~= active then
         end,
     })
 end
-
--- night-owl paints over the old theme without `hi clear`, leaving most of it
-vim.api.nvim_create_autocmd("ColorSchemePre", {
-    pattern  = "night-owl",
-    callback = function() vim.cmd("hi clear") end,
-})
 
 vim.api.nvim_create_autocmd("Signal", {
     group    = vim.api.nvim_create_augroup("ThemeProfile", { clear = true }),

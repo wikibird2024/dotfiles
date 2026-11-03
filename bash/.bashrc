@@ -59,6 +59,9 @@ if [[ "$XDG_SESSION_TYPE" == "wayland" ]]; then
     export MOZ_ENABLE_WAYLAND=1
     export QT_QPA_PLATFORM=wayland
     export SDL_VIDEODRIVER=wayland
+    # Claude Code pastes images with xclip first; on niri the xwayland-satellite
+    # bridge hands it an empty PNG (exit 0), so wl-paste never runs. No DISPLAY = xclip fails.
+    alias claude='env -u DISPLAY claude'
 fi
 
 # 5. COMPLETION

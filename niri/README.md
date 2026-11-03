@@ -215,7 +215,7 @@ is saved in `~/.local/state/niri/shell` (not in the repo), so each machine keeps
 | Mod + V | clipboard history (cliphist + fuzzel) |
 | Mod + Y | pick a wallpaper from `~/Pictures/wallpaper` (swaybg) |
 | Mod + X | power menu (fuzzel): lock, log out, suspend, reboot, power off, auto shutdown on/off |
-| Mod + Alt + L | swaylock; black cover after 2 min (any input closes it, no password), auto-lock after 5 min, screens off after 6 min (swayidle) |
+| Mod + Alt + L | swaylock; black cover after 2 min (any input closes it, no password), auto-lock after 1 min (company rule), screens off after 6 min (swayidle) |
 | volume / brightness / media keys | wpctl / brightnessctl / playerctl, OSD with a bar from swaync (top middle, not kept in the panel) |
 
 Colors follow the `theme` profile (`theme <name>` recolors the bar, launcher,
@@ -248,7 +248,7 @@ auto-shutdown busy make -j8   # the PC stays on until this command ends
 - Busy = any `systemd-inhibit` block lock on shutdown: `auto-shutdown busy`, every Claude Code session
   that is working (hooks `UserPromptSubmit` / `Stop` / `SessionEnd` in `~/.claude/settings.json`,
   the lock also ends when that Claude exits), or a remote (ssh) login. Busy → check again every 5 min.
-  Not an idle lock: that turns off all swayidle timers, so the 5 min screen lock would stop too.
+  Not an idle lock: that turns off all swayidle timers, so the 1 min screen lock would stop too.
 - Then a notification "Shutting down in 2 min"; any key or mouse move cancels it.
 - Only under niri with the waybar set (swayidle runs from `scripts/shell start`).
 

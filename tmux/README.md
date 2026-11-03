@@ -92,8 +92,12 @@ the nvim/Claude screen in a plain shell. Programs to restart: `@resurrect-proces
 
 ## 🎨 Visual Aesthetics & Status Interface
 
-Features an elegant, minimalist theme styled after the **Catppuccin** palette framework pinned cleanly to the bottom workspace margin (`bg=#1e1e2e`, `fg=#cdd6f4`).
+Bar at the bottom. Its colors are roles (`#{@thm_bg}`, `#{@thm_session}`, ...) set by the active `theme` profile (xfce, abyss, ubuntu, moonfly; `theme pick` or `prefix + T`); the defaults in `.tmux.conf` apply without one.
 
-- **Left Accent**: Bright, bold yellow block highlighting the target terminal active session container (` #S`).
-- **Center Array**: Explicitly locked tracking indexes (`#I:#W`). Dynamic process workspace window name hijacking (`allow-rename off`) is strictly disabled to prevent unstable tab reshuffling during long executions.
-- **Right Accent**: Clean, real-time clock tracking indicators (`󱑒 %H:%M`) next to the active server session root user profile identity (`󰭹 #{user}`).
+| Part | Shows |
+|---|---|
+| Left: Agents | Only while a Claude agent runs: orange "Agents" pill, then each session with one icon per agent window (needs you / asks / done / working / idle). Click to jump |
+| Left: session | Session name pill (soft green; yellow while the prefix is pressed), then badges only when on: PREFIX, COPY, SYNC, ZOOM |
+| Middle | Other windows as `#I:#W`; red = new output, zoom icon, agent badge. Auto-rename is off |
+| Right | Active window (`#I:` + running command), ssh target (orange, only in ssh), `user@ip` (green), clock |
+| Pane headers | App icon + folder + git branch; hidden at a shell prompt (the prompt shows it). Unfocused panes are darker |

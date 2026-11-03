@@ -58,3 +58,6 @@ opt.writebackup = false
 -- Off: CubeMX's "ex: printf(...)" example comment parses as a modeline (E518),
 -- re-triggered on every n/N by satellite.nvim's search autocmds.
 opt.modeline    = false
+-- Also 0 lines: fzf-lua preview buffers force 'modeline' back on locally, and
+-- vim.lsp.enable()'s :doautoall then ran the CubeMX comment there (E518).
+opt.modelines   = 0

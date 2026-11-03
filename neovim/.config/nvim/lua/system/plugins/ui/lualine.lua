@@ -221,7 +221,8 @@ return {
 		-- `theme <name>` switches the colorscheme live (colorscheme.lua)
 		vim.api.nvim_create_autocmd("ColorScheme", {
 			group    = vim.api.nvim_create_augroup("LualineThemeSync", { clear = true }),
-			callback = function() require("lualine").setup(build()) end,
+			-- scheduled: run after per-theme ColorScheme fixes (colorscheme.lua)
+			callback = function() vim.schedule(function() require("lualine").setup(build()) end) end,
 		})
 	end,
 }

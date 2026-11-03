@@ -17,6 +17,8 @@ Session.vim
 # ── History, logs ────────────────────────────────────────────
 *.history
 *.log
+# Claude Code saves settings.json through a temp file next to the linked one
+settings.json.tmp.*
 
 # ── Downloads and archives (fonts, installers: fetched by bootstrap) ──
 *.zip

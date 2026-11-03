@@ -1,0 +1,17 @@
+# Naming check from ~/.claude/rules/c-code-style.md; clangd shows it live.
+# Case only: clang-tidy counts a file-scope static as a global, so it can't check s_ vs g_.
+Checks: '-*,readability-identifier-naming'
+CheckOptions:
+  readability-identifier-naming.GlobalFunctionCase: aNy_CasE
+  readability-identifier-naming.FunctionCase: lower_case
+  readability-identifier-naming.StaticVariableCase: lower_case
+  readability-identifier-naming.GlobalVariableCase: lower_case
+  readability-identifier-naming.LocalVariableCase: lower_case
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.TypedefCase: lower_case
+  readability-identifier-naming.TypedefSuffix: _t
+  readability-identifier-naming.EnumConstantCase: UPPER_CASE
+  readability-identifier-naming.MacroDefinitionCase: UPPER_CASE
+  readability-identifier-naming.GlobalVariableIgnoredRegexp: '.*Handle$'   # CubeMX task handles
+  readability-identifier-naming.ParameterIgnoredRegexp: '^GPIO_Pin$'      # HAL callback signature

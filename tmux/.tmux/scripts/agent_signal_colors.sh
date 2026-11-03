@@ -11,9 +11,9 @@ thm() {
 	[ -n "$value" ] && printf '%s' "$value" || printf '%s' "$2"
 }
 
-# Window tab badges: working = timer, blocked on a permission = bell,
+# Window tab badges: working = half circle, blocked on a permission = bell,
 # asking a question = help circle, done = check, wait/park = manual holds
-tmux set -g @agent_signal_working "󰔟 $(thm cyan '#7dcfff') default"
+tmux set -g @agent_signal_working "󰪡 $(thm cyan '#7dcfff') default"
 tmux set -g @agent_signal_blocked "󰂚 $(thm yellow '#e0af68') default"
 tmux set -g @agent_signal_ask "󰋗 $(thm orange '#ff9e64') default"
 tmux set -g @agent_signal_done "󰄬 $(thm done '#73daca') default"
