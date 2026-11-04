@@ -31,7 +31,7 @@ from `raise_background()` in `colorscheme.lua`.
 | Profile | Terminal | Neovim | Notes |
 |---|---|---|---|
 | `ubuntu` | aubergine `#300a24` | `onedark` (darker, `#1f2329`) | the original kitty colors — default |
-| `moonfly` | charcoal `#080808` | `moonfly` (raised to `#262626`) | calm hues, still readable (code 6.6–12:1) |
+| `moonfly` | charcoal `#080808` | `modus` (Vivendi, raised to `#1a1a1a`) | high contrast: text 17:1, code 7–11:1, comments 6:1 |
 | `abyss` | navy black `#000c18` | `abyss` (boreal, raised to `#0b1b2f`) | deep navy, blue text |
 | `xfce` | pure black `#000000`, red cursor | `dracula` (its own `#282a36`, cream text) | the xfce4-terminal look alacritty keeps: cream text, Dracula accents |
 

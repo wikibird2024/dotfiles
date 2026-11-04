@@ -13,7 +13,6 @@
     "org.qt-project.qtcreator.desktop",
     "virtualbox.desktop",
     "xfce4-terminal.desktop",
-    "snap-store_snap-store.desktop",
     "org.remmina.Remmina.desktop"
   ]
 }

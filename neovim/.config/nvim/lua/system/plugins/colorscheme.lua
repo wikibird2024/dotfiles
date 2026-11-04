@@ -109,6 +109,21 @@ local themes = {
         end,
     },
 
+    -- Modus Vivendi: built for high contrast (7:1 minimum on its own black).
+    -- Its g:colors_name is "modus", so the hook matches "modus*"
+    modus = {
+        plugin = "miikanissi/modus-themes.nvim",
+        name   = "modus_vivendi",
+        setup  = function()
+            raise_background("modus*", "#1a1a1a") -- terminal #080808; unfocused tmux panes #000000
+            require("modus-themes").setup({
+                line_nr_column_background = false,
+                sign_column_background    = false,
+                styles = { keywords = {} }, -- comments stay italic, code stays upright
+            })
+        end,
+    },
+
     -- Dracula with cream text (the xfce4-terminal text). Keeps Dracula's own
     -- grey-purple background on purpose: the xfce terminal is pure black, so
     -- an editor pane never looks like a shell or Claude pane
