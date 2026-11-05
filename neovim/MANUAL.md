@@ -106,6 +106,8 @@ Extends the `[x` / `]x` jump family with more targets:
 | `v` | Open in vertical split |
 | `s` | Open in horizontal split |
 | `P` | Toggle floating preview |
+| `/` | Normal Vim search (`n`/`N` to jump); visible lines only |
+| `f` | Filter the whole tree on Enter, including closed folders (`<C-x>` clears) |
 
 ### oil.nvim (edit filesystem as a buffer)
 
