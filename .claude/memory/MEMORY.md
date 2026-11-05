@@ -1,4 +1,5 @@
 - [Short replies by default](feedback_short_replies.md) — result first, 5–10 lines, one table max; details only when asked (2026-11-03)
+- [Stable widths](feedback_stable_widths.md) — tabs and bar items keep their size and position; jumping sizes are hard to follow (2026-11-05)
 - [Desktop is GNOME or niri, not i3](env_desktop_gnome_not_i3.md) — GNOME/X11 and niri/Wayland side by side; check XDG_CURRENT_DESKTOP and process env first
 - [Dotfiles stow quirks](project_dotfiles_stow_quirks.md) — harmless Stow BUG warnings, nvim2 vs neovim package switching, gitignored copilot auth path
 - [Nvim toolchain overhaul](project_nvim_toolchain_overhaul.md) — 2026-08-20: blink.cmp/pairs, mason, ruff/typos-lsp/taplo now current; don't re-add old tools
