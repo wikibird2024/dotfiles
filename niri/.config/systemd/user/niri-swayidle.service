@@ -16,6 +16,8 @@ PartOf=graphical-session.target
 After=graphical-session.target
 
 [Service]
+# part of the desktop: outside the memory limits of app.slice, so the lock is never slowed
+Slice=session.slice
 ExecStart=/usr/bin/swayidle -w \
     timeout 60 "%h/.local/bin/auto-shutdown idle" resume "%h/.local/bin/auto-shutdown resume" \
     timeout 120 "%h/.config/niri/scripts/screen-cover &" resume "pkill -u %u -f '^python3 .*/screen-cover$$'" \

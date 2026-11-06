@@ -9,6 +9,11 @@ Zephyr log filter, live plotter (FFT, XY, scope trigger), session record
 and replay, **Modbus RTU/ASCII tester** (master or slave, frame table with
 timing).
 
+## Ready to use (installed 2026-11-06)
+
+Run `ternima` (v1.4.0 AppImage in `~/.local/bin`). To update, replace that file
+with the new AppImage from the releases page.
+
 ## When we would use it
 
 - Reading RTT logs from an STM32 over ST-Link without J-Link tools or
@@ -21,10 +26,12 @@ timing).
 - Brand new (created 2026-10-24, 9 stars), one author.
 - Releases are not signed.
 - Serial ports need the `dialout` group.
-- ⚪ Not run yet.
+- Checksum matched the release; its libraries all resolve on this PC.
+- ⚪ Window not opened yet, and not tried on a real board.
 
 ## Snapshot
 
 | Date | Stars | Version | Open issues |
 |---|---|---|---|
 | 2026-10-28 | 9 | v1.0.0 | 0 |
+| 2026-11-06 | 11 | v1.4.0 | 0 |

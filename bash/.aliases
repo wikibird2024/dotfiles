@@ -78,6 +78,10 @@ alias qute='qutebrowser'
 alias pdf='zathura'
 alias slide='pdfpc'
 alias pic='feh'
+# Claude with board access (McuBuddy), bench boards only. Why and what is blocked:
+# community/embedded-cunjun-mcubuddy.md. --settings stays last: --mcp-config takes
+# many values and would swallow a prompt typed after it.
+alias claude-board='claude --mcp-config "$HOME/.claude/board-mcp.json" --settings "$HOME/.claude/board-settings.json"'
 
 
 # ============================ 📦 Compression & Extraction ============================
