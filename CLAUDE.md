@@ -1,133 +1,46 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Personal dotfiles managed with **GNU Stow**: each top-level directory is a
+package that mirrors `$HOME`. The packages that get stowed are listed in
+`STOW_PKGS` in `steps/04_stow.sh`; everything else (`neovim_light`, `nvim2`,
+`vim_light`, ...) is not stowed.
 
-## Repository Overview
-
-Personal dotfiles managed with **GNU Stow**. Each top-level directory is a stow package whose internal structure mirrors `$HOME`. Running `stow <package>` from the repo root creates symlinks in `$HOME`.
-
-The primary working directory when Claude Code is invoked is `neovim/.config/` — the active Neovim configuration.
-
-## Bootstrap & Setup
+## Commands
 
 ```bash
-./bootstrap.sh                  # Full setup on a new machine (bash stays the login shell)
-./bootstrap.sh --only-stow      # Re-deploy configs after a pull (idempotent)
-./bootstrap.sh --skip-fonts     # Skip font download step
+./bootstrap.sh               # new machine: steps/01..04, all idempotent
+./bootstrap.sh --only-stow   # re-link configs after a pull
+stow -R -t "$HOME" <pkg>     # re-link one package after editing it
 ```
 
-Bootstrap runs four ordered steps in `steps/`:
-1. `01_packages.sh` — apt/pacman core packages, neovim formatter/linter deps (shellcheck, shfmt, clang-format, bear, luarocks, cpplint, debugpy), and desktop apps for the i3/picom/zathura/flameshot/kitty/alacritty stow packages
-2. `02_tools.sh` — nvim, fzf, fd, starship, zoxide, TPM, rustup, stylua, satty, Flameshot 13.3 (deb, held by apt; niri screenshots need its grim mode), luacheck, lazygit, and cargo tools (just, probe-rs, tms, yazi, delta, ripsecrets, wl-clip-persist, ripdrag, rudo, kanata)
-3. `03_fonts.sh` — Nerd Fonts
-4. `04_stow.sh` — symlink all packages
+## Rules
 
-All steps are idempotent.
+- **Public repo.** Never commit keys: they go in `~/.secrets`. The
+  `.githooks/pre-commit` hook runs `ripsecrets`. Name, email and work-only git
+  settings live in the untracked `~/.gitconfig.local`.
+- **Every tool works without the `theme` command.** Profile files are
+  optional, and each tool keeps its own fallback (kitty `theme.conf`, `@thm_*`
+  defaults in `.tmux.conf`, `fallback` in `colorscheme.lua`). After adding a
+  theme to the `colorscheme.lua` registry, run `:Lazy sync`.
+- `vim/.vimrc` follows `neovim/` (same keys and tools); update both.
 
-## Stow Packages (active)
+## On purpose (don't "fix" these)
 
-`neovim`, `bash`, `tmux`, `alacritty`, `kitty`, `starship`, `i3_wm_endervour`, `picom`, `zathura`, `flameshot`, `thunar`, `fontconfig`, `mods`, `clang`, `claude`, `vim`, `niri`, `noctalia`, `theme`, `git`, `kanata`
+- Alacritty keeps its fixed xfce4-terminal colors; the `theme` command skips it.
+- No C/C++ linter in nvim-lint: clang-format owns the style, and clang-tidy
+  runs inside clangd (checks are set per project in `.clangd`).
+- CSharpier formats only in projects with a `.csharpierrc`.
+- `rust-analyzer` comes from rustaceanvim, not Mason.
 
-`git/` is the shared `.gitconfig`; name, email and work-only settings live in the untracked `~/.gitconfig.local` (it includes that last). This repo's `.githooks/pre-commit` runs `ripsecrets` on staged files to block API keys (the repo is public); `04_stow.sh` enables it with `core.hooksPath`. Never commit keys: they go in `~/.secrets`.
+## Gotchas
 
-`niri/` is the niri config: one `config.kdl` that starts the desktop shell and binds its panels through `scripts/shell`, which runs Noctalia when installed and otherwise waybar/fuzzel/swaync/swaylock (per machine, `scripts/shell use waybar|noctalia` overrides that; saved in `~/.local/state/niri/shell`) (Ubuntu 24.04 has no Noctalia package; their configs are in `niri/.config/waybar` and `niri/.config/swaync`). Keys, workspaces, scripts and workflow: `niri/README.md`.
+- Thunar rewrites `uca.xml` from its GUI, which replaces the stow link.
+- Noctalia GUI changes go to `~/.local/state/noctalia/settings.toml` and
+  override `noctalia/` files.
+- kanata needs one-time root setup (uinput group, udev rule) done by
+  `04_stow.sh`; re-login once. Emergency stop: `LCtrl+Space+Esc`.
 
-`theme/` holds the shared color profiles (`.config/theme/themes/<name>/`: `palette.conf` for kitty, `tmux.conf` with `@thm_*` roles for `.tmux.conf`, `nvim` naming a `colorscheme.lua` theme) and the `theme` command (`.local/bin/theme`: `theme <name>`, `theme pick` (fzf, also tmux `prefix + T`), `theme new <name> [from]`, `theme check`) that switches all of them live (plus GTK dark/light mode from the palette background, and, under niri without Noctalia, the bar/launcher/notifications/lock/focus ring via `niri/.config/niri/scripts/shell colors`), plus `hexcolor` (paints `#rrggbb` codes in their color in the terminal, like nvim-colorizer; kitty `Ctrl+Shift+I` shows the screen through it). The active profile is a symlink in `~/.local/state/theme/current` (outside the repo). Every profile file is optional, and every tool keeps its own fallback so its package works without `theme`: kitty `theme.conf`, the `@thm_*` defaults in `.tmux.conf`, and `fallback` (then built-in `habamax`) in `colorscheme.lua`, which also never errors when a theme plugin is not installed. Starship uses ANSI color names, so it follows the terminal palette. Alacritty is left out on purpose: its fixed colors (`alacritty/.config/alacritty/colors.toml`) copy the xfce4-terminal look (black background, red cursor; text warm cream `#ebdbb2` instead of its gold).
+## Docs
 
-`thunar/` holds Thunar's right-click actions (`uca.xml`: Open Terminal Here, Copy Path) and `copy-path` (`.local/bin`), which copies paths shell-quoted for pasting into a terminal. Thunar rewrites `uca.xml` from its GUI, which replaces the stow link.
-
-`kanata/` makes Caps Lock **tap = Esc, hold = Ctrl** in X11, Wayland and the TTY: `kanata.kbd` plus a user systemd unit. `04_stow.sh` does the one-time root setup it needs (system group `uinput`, `/etc/udev/rules.d/99-uinput.rules`, `/etc/modules-load.d/uinput.conf`, user in `input`+`uinput`; re-login once) and enables the unit. The XKB `caps:escape` in `xorg/` and GNOME stays as the fallback when kanata is stopped. Emergency stop: `LCtrl+Space+Esc`.
-
-`noctalia/` holds hand-written Noctalia config (`bar.toml`). Settings changed in the Noctalia GUI go to `~/.local/state/noctalia/settings.toml` (not tracked) and override these files.
-
-> `neovim/` is the active Neovim config. `neovim_light/` (a lighter variant) is not stowed.
-
-To re-stow a single package after editing:
-```bash
-stow -R -t "$HOME" neovim
-```
-
-## Neovim Config Architecture (`neovim/.config/nvim/`)
-
-Entry point: `init.lua` loads three namespaces in order:
-
-```
-system.kernel   — options, keymaps, autocommands (no plugins)
-system.plugins  — lazy.nvim plugin specs (one file/dir per concern)
-system.runtime  — LSP on_attach logic shared across servers
-```
-
-Plugin specs live under `lua/system/plugins/` and are organised by concern:
-
-| Directory/File | Contents |
-|---|---|
-| `lsp/` | mason-lspconfig setup; per-server configs in `lsp/servers/` |
-| `lsp/rust.lua` | rustaceanvim (replaces plain lspconfig for Rust) |
-| `cmp/` | nvim-cmp completion + source priority |
-| `ui/` | neo-tree, bufferline, lualine, aerial, trouble, whichkey |
-| `tools/` | fzf-lua, nvim-dap, toggleterm, gitsigns, grug-far, surround, etc. |
-| `constitution/` | Shared LSP capabilities and UI helpers imported by lsp/ |
-| `format.lua` | conform.nvim (auto-format on save) |
-| `lint.lua` | nvim-lint (runs on save / InsertLeave) |
-| `treesitter.lua` | Treesitter parsers + text objects + selection expansion |
-| `colorscheme.lua` | Theme registry; the active one comes from the `theme` profile (`fallback` if none) |
-
-**Plugin manager:** lazy.nvim (auto-bootstrapped; all plugins default `lazy = true`).
-
-## LSP Servers
-
-Active for: **C/C++** (clangd), **Rust** (rust-analyzer via rustaceanvim), **Python** (pyright + ruff), **LaTeX** (texlab), **Lua** (lua_ls, paired with lazydev.nvim for Neovim API/plugin awareness), **Shell** (bashls), **TOML** (taplo), **C#** (roslyn_ls, nvim-lspconfig's config for the Roslyn server), plus **typos_lsp** (spell-checking) across all filetypes.
-
-`clangd`, `pyright`, `texlab`, `lua_ls` (`lua-language-server`), `bashls` (`bash-language-server`), `ruff`, `typos_lsp` (`typos-lsp`), `taplo`, `roslyn_ls` (`roslyn-language-server`), `csharpier`, and the `codelldb` and `netcoredbg` DAP adapters are installed automatically via `mason-tool-installer` on first launch — no manual install needed for these. `rust-analyzer` is managed by rustaceanvim itself, not mason.
-
-`ruff`, `typos-lsp`, and `taplo` are all written in Rust.
-
-C# needs `dotnet` on PATH (`~/.dotnet`, set in `bash/.bashrc` with `DOTNET_ROOT`): the Roslyn server and CSharpier are .NET tools, and Mason installs them with `dotnet tool`. Roslyn opens the `.sln` it finds above the file. `.axaml` (Avalonia window files) is set to the `xml` filetype in `kernel/autocommands.lua`.
-
-C/C++ requires `compile_commands.json` in the project root for clangd to index correctly. Generate with cmake (`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`) or `bear`.
-
-## Formatters & Linters
-
-Formatters run on save via conform.nvim:
-
-| Language | Tool |
-|---|---|
-| C/C++ | clang-format (config: `clang/.clang-format`) |
-| Rust | rustfmt |
-| Python | ruff (organize-imports + format) |
-| Lua | stylua |
-| Shell | shfmt |
-| TOML | taplo |
-| C# | csharpier, **only in projects with a `.csharpierrc`** (on other code it would rewrite about half the lines) |
-
-Linters (nvim-lint, on save): luacheck (Lua), shellcheck (Shell). No C/C++ linter: cpplint only checks Google style, which clashes with project `.clang-format` files; clang-format owns C/C++ style. C/C++ bug checks come from clang-tidy run inside clangd (`--clang-tidy` in `lsp/servers/clangd.lua`); which checks run is set per project in its `.clangd` (`Diagnostics: ClangTidy:`) — see MANUAL.md "C/C++ bug checks". Python linting comes from the `ruff` LSP server instead (see LSP Servers above), not nvim-lint.
-
-## Key Bindings Reference
-
-Leader key: `Space`. Full manual in `neovim/MANUAL.md`.
-
-Essential groups:
-- `<leader>f*` — fzf-lua (files, grep, history, buffers)
-- `<leader>l*` — LSP (rename, actions, format, hover, info)
-- `<leader>g*` — Git (gitsigns hunks + lazygit `<leader>gg`)
-- `<leader>d*` — DAP debugger
-- `<leader>t*` — toggleterm terminals
-- `<leader>w*` — window splits
-
-## Colorscheme
-
-Colors are picked per profile with `theme <name>` (the `theme` package), which switches kitty, tmux and Neovim together, live (not alacritty, which keeps its xfce4-terminal colors). A profile's `nvim` file names a key of the registry in `neovim/.config/nvim/lua/system/plugins/colorscheme.lua`, optionally with a variant passed to that theme's `setup(variant)` (e.g. `gruvbox:medium`). Without a profile Neovim uses `fallback` (`onedark`). Every registered theme is installed; after adding one to the registry run `:Lazy sync`.
-
-## External Tool Dependencies
-
-`./bootstrap.sh` installs all of these (`01_packages.sh` + `02_tools.sh`) — this list is for a manual install or when a step is skipped:
-```bash
-# Linters/formatters (black/flake8 no longer needed -- replaced by mason-managed ruff)
-pip install --user --break-system-packages cpplint debugpy
-cargo install stylua
-luarocks install luacheck
-apt install shellcheck shfmt clang-format bear
-```
-`lazygit` isn't reliably in apt across distros, so bootstrap fetches the binary release directly instead.
-
-DAP adapters: `codelldb` and `netcoredbg` (C#: `dap.configurations.cs` picks the project's `bin/Debug/<framework>/<Name>.dll`; build first) are auto-installed by `mason-tool-installer` (see LSP Servers above); `arm-none-eabi-gdb` via apt for embedded C. Tests: neotest adapters for Python, Rust and .NET (`neotest-dotnet`).
+Keys and workflow: `neovim/MANUAL.md`, `niri/README.md`, `theme/README.md`,
+`tmux/README.md`.

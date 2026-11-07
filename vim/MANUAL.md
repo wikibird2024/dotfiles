@@ -26,8 +26,7 @@ open Neovim once first to install them. Copilot shares Neovim's GitHub login.
 
 | Plugin | Role |
 |---|---|
-| onedark.vim | Colorscheme (default, matches Neovim) |
-| gruvbox | Colorscheme (alternative) — switch with `s:active_theme` in `.vimrc` |
+| onedark.vim | Colorscheme (matches Neovim's fallback) |
 | vim-airline | Statusline + tabline |
 | NERDTree | File explorer |
 | nerdtree-git-plugin | Git status icons in NERDTree |

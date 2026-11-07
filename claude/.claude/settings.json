@@ -178,5 +178,6 @@
     }
   },
   "tui": "fullscreen",
-  "theme": "auto"
+  "theme": "auto",
+  "model": "opus"
 }

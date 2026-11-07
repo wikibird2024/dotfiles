@@ -106,6 +106,8 @@ Extends the `[x` / `]x` jump family with more targets:
 | `v` | Open in vertical split |
 | `s` | Open in horizontal split |
 | `P` | Toggle floating preview |
+| `/` | Normal Vim search (`n`/`N` to jump); visible lines only |
+| `f` | Filter the whole tree on Enter, including closed folders (`<C-x>` clears) |
 
 ### oil.nvim (edit filesystem as a buffer)
 
@@ -1024,28 +1026,18 @@ and crashes on a buffer with no parser (terminal, quickfix).
 
 ## 27. Changing the Colorscheme
 
-Edit [colorscheme.lua](lua/system/plugins/colorscheme.lua) and change the `active` variable on line 4:
+Colors come from the `theme` command (dotfiles `theme` package), which switches
+kitty, tmux and Neovim together, live: `theme <name>` or `theme pick` (tmux `prefix + T`).
 
-```lua
-local active = "gruvbox8"   -- change this
-```
-
-**Available themes:**
-
-| Name | Style |
+| Profile | Neovim theme (key in [colorscheme.lua](lua/system/plugins/colorscheme.lua)) |
 |------|-------|
-| `gruvbox8` | Warm retro (active default) |
-| `gruvbox` | Alternative gruvbox (ellisonleao variant) |
-| `nord` | Arctic blue |
-| `catppuccin` | Soft pastel (mocha) |
-| `everforest` | Green forest |
-| `tokyonight` | Dark purple (night) |
-| `kanagawa` | Japanese ink (wave) |
-| `nightfox` | Dark carbon (carbonfox variant) |
-| `onedark` | Classic dark (darker variant) |
-| `rose_pine` | Muted rose (moon variant) |
+| `xfce` | `dracula` with cream text |
+| `abyss` | `abyss` (boreal) |
+| `ubuntu` | `onedark` (darker) — also the fallback with no profile |
+| `moonfly` | `moonfly` |
 
-Save the file, then run `:Lazy sync` to install the theme if it's new, then restart Neovim.
+To add a theme: add it to the `themes` table in `colorscheme.lua`, run `:Lazy sync`,
+and point a profile's `nvim` file at its key (see `theme/README.md`).
 
 ---
 

@@ -62,34 +62,11 @@ Before answering, start the reply with a short block:
 - Then answer the question as usual. The fixed wording never changes what
   the user asked for; if the meaning is unclear, ask.
 
-## Naming and wording
+## Naming
 
-Goal: a name should be clear to a new reader without asking. "Good enough and
-clear" beats "clever and short". Applies to code names, UI text, log messages,
-comments and docs. New code follows it; existing code is renamed only when
-the user asks.
-
-- **Plain words, little jargon.** Prefer the everyday word (`stop`, `start`,
-  `end`, `find`) over a fancy one (`terminate`, `initiate`, `utilize`,
-  `locate`). Use a technical term only when it is the normal name in the
-  field (`encoder`, `checksum`, `debounce`, `payload`) - don't stack them.
-- **Say what it is or does.** Avoid empty names: `data`, `info`, `value`,
-  `handle`, `process`, `manage`, `flag`, `tmp`, `misc`.
-- **Common short forms only.** `id`, `min`, `max`, `ms`, `usb`, `gpio`,
-  `rx`/`tx` and similar are fine. Don't invent new ones (`op`, `req`, `tgt`,
-  `spd`); write the word.
-- **No one- or two-letter names** for pointers, locals or parameters (a
-  mentor and senior found `a->motion`, `h->ch`, `p->...` hard to follow).
-  Name a pointer to an item after the item: `SprayAxis_t *axis = &s_axis[id];`
-  then `axis->motion`; `Conveyor_t *conveyor`, `Station_t *station`. A
-  parameter that picks an item uses its typed id (`SprayAxisId_t id`), not a
-  bare `uint32_t i`. Only plain loop counters keep `i` / `j` (BARR-C: names
-  of 3+ characters that say what they hold).
-- **Booleans read as yes/no**: `isHomed`, `hasTray`.
-- **Units in the name** when a number has one: `timeoutMs`, `speedSps`.
-- **One word per idea**, the same in firmware, PC tool, spec and UI.
-- Names from outside the code (HAL, datasheets, registers) keep their own
-  spelling.
+Plain everyday words, names that say what a thing is, units in the name
+(`timeoutMs`), no one- or two-letter names. Full rules: `rules/naming.md`
+(loads with code files).
 
 ## Answer style
 
@@ -131,13 +108,3 @@ A single fact, a code change or a one-line answer stays short and plain.
   not checked (for example: needs a bench test on hardware).
 - **Keep changes small and on topic.** No unrequested refactors, renames or
   "improvements" mixed into a fix; list them as suggestions instead.
-
-## STM32CubeMX projects
-
-The CubeMX rules live in `rules/stm32-cubemx.md` next to this file. They load when
-Claude reads or edits a `.ioc`, C, assembly, linker or CMake file.
-
-The C code style (snake_case, `Module_Verb()`, comments) lives in
-`rules/c-code-style.md` and loads for any `.c` / `.h` file. It is the
-default for C firmware; a project's own `CODE_STYLE.md` or `CLAUDE.md` wins.
-`templates/new-firmware.sh` copies it into a new project as `CODE_STYLE.md`.

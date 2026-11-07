@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "mcubuddy": {
+      "command": "McuBuddy",
+      "env": {
+        "MCUBUDDY_TOOLSETS": "probe,diagnose,rtos,logs",
+        "MCUBUDDY_ALLOW_FLASH_PROGRAM": "false",
+        "MCUBUDDY_ALLOW_FLASH_ERASE": "false",
+        "MCUBUDDY_ALLOW_MEMORY_WRITE": "false"
+      }
+    }
+  }
+}

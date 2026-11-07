@@ -58,7 +58,25 @@ done
 # Drop-in folders (*.service.d) must be real folders too: systemd skips a
 # drop-in folder that is a symlink, so stow must link the files inside instead.
 mkdir -p "$HOME/.config/systemd/user" "$HOME/.config/systemd/user/niri.service.d" \
-    "$HOME/.config/systemd/user/swaync.service.d"
+    "$HOME/.config/systemd/user/swaync.service.d" \
+    "$HOME/.config/systemd/user/app.slice.d" \
+    "$HOME/.config/systemd/user/tmux-spawn-.scope.d"
+
+# ── Memory: no mass kills by systemd-oomd ────────────────────
+# Ubuntu makes oomd watch memory pressure on the whole login. Past its limit it
+# killed nearly every app and service, dbus too, which ended the session
+# (2026-11-05, three times). Memory limits replace it: niri/ sets them on each
+# tmux pane and on app.slice, so the kernel kills one process and the desktop
+# stays. This runs before stow: if sudo fails, niri keeps its current settings.
+OOMD_DEFAULTS=/usr/lib/systemd/system/user@.service.d/10-oomd-user-service-defaults.conf
+OOMD_OVERRIDE_FILE=/etc/systemd/system/user@.service.d/90-no-oomd-pressure.conf
+OOMD_OVERRIDE=$'[Service]\nManagedOOMMemoryPressure=auto'
+if [ -f "$OOMD_DEFAULTS" ] && [ "$(cat "$OOMD_OVERRIDE_FILE" 2>/dev/null)" != "$OOMD_OVERRIDE" ]; then
+    sudo mkdir -p "$(dirname "$OOMD_OVERRIDE_FILE")"
+    echo "$OOMD_OVERRIDE" | sudo tee "$OOMD_OVERRIDE_FILE" >/dev/null
+    sudo systemctl daemon-reload
+    log_ok "systemd-oomd no longer watches memory pressure on the login."
+fi
 
 # A real (non-symlink) ~/.vimrc makes stow refuse the vim package; keep it
 # as a backup instead.

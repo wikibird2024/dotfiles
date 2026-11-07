@@ -13,7 +13,7 @@ A new machine starts on the `ubuntu` profile; after that your choice is kept.
 
 ```bash
 theme                       # list profiles, * = active
-theme gruvbox-classic       # switch everything to that profile
+theme abyss                 # switch everything to that profile
 theme pick                  # choose with fzf + color preview   (in tmux: prefix + T)
 theme new mytheme [from]    # new profile as a copy of [from] (default: the active one)
 theme check                 # find mistakes in every profile
@@ -25,19 +25,13 @@ theme --help
 
 Neovim always sits one step **lighter** than the terminal, in the same color
 family, so an editor pane never looks like a shell or Claude pane. Themes with
-a lighter variant use it (`gruvbox:soft`); the others get a lighter background
+a lighter variant can use it (`onedark:dark`); the others get a lighter background
 from `raise_background()` in `colorscheme.lua`.
 
 | Profile | Terminal | Neovim | Notes |
 |---|---|---|---|
 | `ubuntu` | aubergine `#300a24` | `onedark` (darker, `#1f2329`) | the original kitty colors — default |
-| `gruvbox-classic` | `#282828`, green cursor | `gruvbox:soft` (`#32302f`) | the old alacritty colors |
-| `catppuccin` | mocha `#1e1e2e` | `catppuccin:macchiato` (`#24273a`) | |
-| `onedark` | darker `#1f2329` | `onedark:dark` (`#282c34`) | |
-| `rose-pine` | main `#191724` | `rose_pine:moon` (`#232136`) | dusty rose, gold, lavender; foam stands in for green |
-| `carbonfox` | near-black `#161616` | `nightfox` (carbonfox, raised to `#222222`) | IBM Carbon hues, high contrast; no yellow (teal instead) |
-| `kanagawa-dragon` | warm ink `#181616` | `kanagawa:wave` (`#1f1f28`) | muted, low saturation; Neovim uses the bluer wave |
-| `moonfly` | charcoal `#080808` | `moonfly` (raised to `#262626`) | calm hues, still readable (code 6.6–12:1) |
+| `moonfly` | charcoal `#080808` | `modus` (Vivendi, raised to `#1a1a1a`) | high contrast: text 17:1, code 7–11:1, comments 6:1 |
 | `abyss` | navy black `#000c18` | `abyss` (boreal, raised to `#0b1b2f`) | deep navy, blue text |
 | `xfce` | pure black `#000000`, red cursor | `dracula` (its own `#282a36`, cream text) | the xfce4-terminal look alacritty keeps: cream text, Dracula accents |
 
@@ -47,7 +41,7 @@ from `raise_background()` in `colorscheme.lua`.
 ~/.config/theme/themes/<name>/      ← profiles (in this repo)
     palette.conf   terminal colors, kitty syntax
     tmux.conf      @thm_* color roles for the tmux bar
-    nvim           theme name from colorscheme.lua, optional variant ("gruvbox:medium")
+    nvim           theme name from colorscheme.lua, optional variant ("onedark:warm")
 
 ~/.local/state/theme/               ← runtime state, outside the repo (switching leaves no git diff)
     current        → symlink to the active profile folder
@@ -77,19 +71,19 @@ still works when copied to another machine without this package:
 ## Add or change a profile
 
 ```bash
-theme new mytheme gruvbox-classic  # copy gruvbox-classic as a start
+theme new mytheme moonfly  # copy moonfly as a start
 # edit ~/.config/theme/themes/mytheme/:
 #   palette.conf → terminal colors (kitty)
 #   tmux.conf    → bar colors; names are roles (what a color is for), not hues
-#   nvim         → any key of colorscheme.lua, e.g. "kanagawa" or "gruvbox:soft"
+#   nvim         → any key of colorscheme.lua, e.g. "moonfly" or "onedark:warm"
 theme check
 theme mytheme
 ```
 
 `~/.config/theme` links into this repo, so new profiles land in git. To recolor one tool only,
 edit just that file (e.g. `@thm_session` in `tmux.conf` for the tmux session pill).
-Neovim variants: the part after `:` is passed to that theme's `setup(variant)` — gruvbox (`soft`,
-`medium`, `hard`) and rose_pine (`main`, `moon`, `dawn`) use it. A new Neovim theme is added to the registry in `colorscheme.lua`,
+Neovim variants: the part after `:` is passed to that theme's `setup(variant)` — onedark uses it (`dark`,
+`darker`, `cool`, `deep`, `warm`, `warmer`). A new Neovim theme is added to the registry in `colorscheme.lua`,
 then `:Lazy sync`.
 
 ## Not themed (still hard-coded)

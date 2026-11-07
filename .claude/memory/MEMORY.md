@@ -1,3 +1,6 @@
+- [Short replies by default](feedback_short_replies.md) — result first, 5–10 lines, one table max; details only when asked (2026-11-03)
+- [Stable widths](feedback_stable_widths.md) — tabs and bar items keep their size and position; jumping sizes are hard to follow (2026-11-05)
+- [HDD home offload](project_home_offload.md) — big home folders live in /mnt/storage/home_offload, symlinked back; SSD is only 87 GB (2026-11-05)
 - [Desktop is GNOME or niri, not i3](env_desktop_gnome_not_i3.md) — GNOME/X11 and niri/Wayland side by side; check XDG_CURRENT_DESKTOP and process env first
 - [Dotfiles stow quirks](project_dotfiles_stow_quirks.md) — harmless Stow BUG warnings, nvim2 vs neovim package switching, gitignored copilot auth path
 - [Nvim toolchain overhaul](project_nvim_toolchain_overhaul.md) — 2026-08-20: blink.cmp/pairs, mason, ruff/typos-lsp/taplo now current; don't re-add old tools
@@ -15,7 +18,7 @@
 - [Fewer lines, more contrast](feedback_fewer_lines_more_contrast.md) — line-heavy screens are hard to read; dimmed unfocused panes helped (2026-10-10); prefer shading over borders
 - [Community-first research](feedback_community_first_research.md) — survey existing OSS before proposing custom tooling; custom build is the fallback
 - [Community repo notes](project_community_repo_notes.md) — dotfiles/community/ = one note per watched OSS repo + index; add/update on "check repo"; `/scout` skill does scans
-- [Dark themes only](feedback_dark_themes_only.md) — no light themes (everforest/github light tried and dropped 2026-10-28); propose dark, high-contrast profiles
+- [Dark themes only](feedback_dark_themes_only.md) — no light themes; kept profiles = xfce, abyss, ubuntu, moonfly (2026-11-03); don't re-add dropped ones
 - [Judge by effect, not usage](feedback_judge_by_effect_not_usage.md) — rate skills/tools by outcomes after each run (acted on, complaints), not by how often used
 - [Tell panes apart](feedback_tell_panes_apart.md) — Neovim bg must differ from terminal bg + app icons in pane headers; same theme everywhere makes panes mix up (xfce, 2026-10-29)
 - [Clean up clipboard tests](feedback_clipboard_tests_cleanup.md) — never leave `xclip -i`/wl-copy owners running; a leftover xclip hijacked Claude pastes on niri (2026-10-29)

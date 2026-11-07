@@ -12,6 +12,7 @@
     "code_code.desktop",
     "org.qt-project.qtcreator.desktop",
     "virtualbox.desktop",
-    "xfce4-terminal.desktop"
+    "xfce4-terminal.desktop",
+    "org.remmina.Remmina.desktop"
   ]
 }

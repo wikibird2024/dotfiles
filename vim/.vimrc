@@ -16,7 +16,6 @@ call plug#begin('~/.vim/plugged')
 
 " Colorscheme
 Plug 'joshdick/onedark.vim'
-Plug 'morhetz/gruvbox'
 
 " UI
 Plug 'vim-airline/vim-airline'
@@ -152,14 +151,11 @@ endif
 " ============================================================================
 " COLORSCHEME
 " ============================================================================
-" Change active_theme to switch (same idea as neovim's colorscheme.lua).
-" Installed: onedark (matches neovim), gruvbox
+" Installed: onedark (matches neovim's fallback theme)
 let s:active_theme = 'onedark'
 
 set background=dark
 let g:onedark_terminal_italics = 1
-let g:gruvbox_contrast_dark = 'medium'
-let g:gruvbox_italic = 1
 execute 'silent! colorscheme ' . s:active_theme
 
 " ============================================================================

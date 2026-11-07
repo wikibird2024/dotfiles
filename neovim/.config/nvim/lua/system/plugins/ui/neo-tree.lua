@@ -28,6 +28,7 @@ return {
 					["s"] = "open_split",
 					["P"] = { "toggle_preview", config = { use_float = true } },
 					["<space>"] = "none",  -- prevent conflict with leader
+					["/"] = "none",  -- use normal Vim search in the tree
 				},
 			},
 			default_component_configs = {
