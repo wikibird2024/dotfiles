@@ -27,13 +27,14 @@ $$\mathbf{Prefix = C\text{-}a \quad (Ctrl + a)}$$
 
 | Input Sequence | Target Runtime Action |
 | :--- | :--- |
-| `Prefix` $\rightarrow$ `\|` | Split pane **Vertically** (side-by-side) preserving current working directory (`$PWD`). |
+| `Prefix` $\rightarrow$ `\|` or `\` | Split pane **Vertically** (side-by-side) preserving current working directory (`$PWD`). `\` is the same key without Shift. |
 | `Prefix` $\rightarrow$ `-` | Split pane **Horizontally** (top-and-bottom) preserving current working directory (`$PWD`). |
 | `Prefix` $\rightarrow$ `S` | Execute emergency manual backup of all active workspace structures, layouts, and targets. |
 | `Prefix` $\rightarrow$ `Ctrl + r` | Manually restore the last successfully cached hardware session configuration. |
 | `Prefix` $\rightarrow$ `r` | Soft-reload the hardware `~/.tmux.conf` configurations directly into live sessions. |
-| `Prefix` $\rightarrow$ `F` | Project picker ([tms](https://github.com/jrmoulton/tmux-sessionizer)): fuzzy-pick a git repo under `~`, switch to its session (created if missing). |
-| `Prefix` $\rightarrow$ `f` | Session picker: switch between open sessions. |
+| `Prefix` $\rightarrow$ `f` | Project picker ([tms](https://github.com/jrmoulton/tmux-sessionizer)): fuzzy-pick a git repo under `~`, switch to its session (created if missing). |
+| `Prefix` $\rightarrow$ `F` | Session picker: the `tmux ls` list in fzf (type to filter), `Enter` switches, `Esc` closes. |
+| `Prefix` $\rightarrow$ `s` | Session picker: switch between open sessions. |
 | `Prefix` $\rightarrow$ `g` | Lazygit in a popup, opened in the current pane's directory (`q` closes it). |
 | `Prefix` $\rightarrow$ `t` | Quick shell in a popup, opened in the current pane's directory (`exit` or `Ctrl+D` closes it). Replaces the default big clock. |
 | `Prefix` $\rightarrow$ `e` | File manager ([yazi](https://github.com/sxyazi/yazi)) in a popup, opened in the current pane's directory (`q` closes it). |
@@ -97,7 +98,7 @@ Bar at the bottom. Its colors are roles (`#{@thm_bg}`, `#{@thm_session}`, ...) s
 | Part | Shows |
 |---|---|
 | Left: Agents | Only while a Claude agent runs: orange "Agents" pill, then each session with one icon per agent window (needs you / asks / done / working / idle). Click to jump |
-| Left: session | Session name pill (soft green; yellow while the prefix is pressed), then badges only when on: PREFIX, COPY, SYNC, ZOOM |
+| Left: session | Session name pill (soft green; orange while the prefix is pressed), then badges only when on, all orange: PREFIX, COPY, SYNC, ZOOM |
 | Middle | Other windows as `#I:#W`; red = new output, zoom icon, agent badge. Auto-rename is off |
-| Right | Active window (`#I:` + running command), ssh target (orange, only in ssh), `user@ip` (green), clock |
+| Right | Active window (`#I:` + running command), ssh target (orange, only in ssh), `user@ip` (green). No clock |
 | Pane headers | App icon + folder + git branch; hidden at a shell prompt (the prompt shows it). Unfocused panes are darker |

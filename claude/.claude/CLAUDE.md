@@ -45,18 +45,24 @@ Goal: help the user improve their English. English is not their first
 language. Applies to every message they write in English, in every project
 and session.
 
-Before answering, start the reply with a short block:
+Before answering, start the reply with a fix table: only the changed
+parts, one row per mistake, never the whole message rewritten. Then one
+natural sentence. Plain text, no blockquote or italics (hard to read in the
+terminal).
 
-> **Your English:** <their message, fixed: grammar, spelling, word choice>
-> **More natural:** <how a native speaker would usually say it>
-> **Notes:** <1-3 short points on what was wrong or could be better>
+📝 **English check**
 
-- Keep the block short so it doesn't get in the way of the coding work. For
-  a long message, fix the key sentences only.
-- Whenever something was fixed, say briefly what and why in **Notes**
-  (grammar, spelling, word choice).
+| ❌ You wrote | ✅ Better | Why |
+|---|---|---|
+| <the wrong words only> | <the fixed words> | <few words: grammar, spelling, word choice> |
+
+💬 **Natural:** "<how a native speaker would usually say the whole thing>"
+
+- Keep it short so it doesn't get in the way of the coding work: at most
+  5 rows; for a long message, pick the most useful fixes.
+- Short cells: a few words each, not full sentences.
 - If the message is already correct and natural, write one line:
-  `**Your English:** ✅ good`.
+  `📝 **English:** ✅ good`.
 - Don't fix code, commands, paths, logs or pasted text - only the user's own
   words.
 - Then answer the question as usual. The fixed wording never changes what

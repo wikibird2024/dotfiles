@@ -37,11 +37,14 @@ and remove the row here.
 
 | # | Repo | Why now | Effort | Tried |
 |---|---|---|---|---|
-| 1 | [McuBuddy](embedded-cunjun-mcubuddy.md) vs [embedded-debugger-mcp](embedded-adancurusul-embedded-debugger-mcp.md) | Agent gets hands on the board: SVD registers, RTT, HardFault. McuBuddy checked 🟢 (settings in note); next: bench try | ~1 h | ⚪ |
-| 2 | [ternima](embedded-nimaltd-ternima.md) | RTT over ST-Link + Modbus tester, no vendor tools | 15 min | ⚪ |
-| 3 | [security-audit-skill](workflow-cloudflare-security-audit-skill.md) | One full security pass on a PC tool or protocol parser | 1 run, many tokens | ⚪ |
-| 4 | [BeautifulRust](workflow-morganlinton-beautifulrust.md) | Next time we write Rust | with Rust work | ⚪ |
-| 5 | [wdcjx/Embedded-programming](https://github.com/wdcjx/Embedded-programming) | 48 tested STM32 pitfalls: take what fits into our `stm32-cubemx.md` rules. `/scout check` first | 20 min | ⚪ |
+| 1 | [McuBuddy](embedded-cunjun-mcubuddy.md) vs [embedded-debugger-mcp](embedded-adancurusul-embedded-debugger-mcp.md) | Agent gets hands on the board: SVD registers, RTT, HardFault. Installed: run `claude-board`, bench board only | ~1 h | ⚪ |
+| 2 | [ternima](embedded-nimaltd-ternima.md) | RTT over ST-Link + Modbus tester, no vendor tools. Installed: run `ternima` | 15 min | ⚪ |
+| 3 | [worktrunk](agent-ops-max-sixty-worktrunk.md) | Parallel Claude sessions on one repo. Installed: run `wt`; after the memory fix | 20 min | ⚪ |
+| 4 | [security-audit-skill](workflow-cloudflare-security-audit-skill.md) | One full security pass on a PC tool or protocol parser | 1 run, many tokens | ⚪ |
+| 5 | [BeautifulRust](workflow-morganlinton-beautifulrust.md) | Next time we write Rust | with Rust work | ⚪ |
+| 3b | [claude-howto](lists-luongnv89-claude-howto.md) → Worktrees + Background Tasks | Read before trying worktrunk: the built-in feature may be enough | 30 min | ⚪ |
+| 4b | [claude-howto](lists-luongnv89-claude-howto.md) → Subagents + Sandboxing | No agents of our own yet; Bash runs unsandboxed | 2 h | ⚪ |
+| 6 | [Embedded-programming](https://github.com/wdcjx/Embedded-programming) + [embedded-hil-loop](https://github.com/Hcnuooun/embedded-hil-loop) | Take the pitfalls and the HIL method into our STM32 rules. `/scout check` both first | 30 min | ⚪ |
 
 ## Index
 
@@ -77,6 +80,7 @@ and remove the row here.
 | Fit | Repo | What it is | Last checked |
 |---|---|---|---|
 | 🟢 | [ccusage/ccusage](agent-ops-ccusage-ccusage.md) | Token and cost report from local logs: `ccu monthly` (tried) | 2026-10-28 |
+| 🟡 | [max-sixty/worktrunk](agent-ops-max-sixty-worktrunk.md) | Worktree CLI for parallel agents (Rust); installed, not tried on real work | 2026-11-06 |
 | 🟡 | [raine/workmux](agent-ops-raine-workmux.md) | Worktree + tmux window per agent task (Rust); if `claude --worktree` is not enough | 2026-10-23 |
 | 🟡 | [agent-of-empires/agent-of-empires](agent-ops-agent-of-empires-agent-of-empires.md) | Agent manager: tmux sessions, worktrees, web view; overlaps our tmux bar | 2026-10-23 |
 | 🟡 | [stablyai/orca](agent-ops-stablyai-orca.md) | Desktop app: agents side by side in worktrees, phone app | 2026-10-28 |
@@ -89,18 +93,23 @@ and remove the row here.
 | 🟡 | [lexmount/moli](agent-tools-lexmount-moli.md) | Headless browser for agents; only if Claude Code can't read JS-heavy pages | 2026-10-21 |
 | 🟡 | [openqodex/openqodex](agent-tools-openqodex-openqodex.md) | Scanners + separate reviewer agent before `git push` | 2026-10-28 |
 | 🟡 | [akitaonrails/ai-memory](agent-tools-akitaonrails-ai-memory.md) | Shared memory + handoff between agent CLIs (Rust) | 2026-10-28 |
+| 🟡 | [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | Captures and reinjects session memory; overlaps ours; no note yet | 2026-11-06 |
+| 🟡 | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) | Browser CLI for agents (Rust); could replace moli; no note yet | 2026-11-10 |
 
 ### embedded-
 
 | Fit | Repo | What it is | Last checked |
 |---|---|---|---|
-| 🟢 | [cunjun/McuBuddy](embedded-cunjun-mcubuddy.md) | Debug MCP: SVD registers, FreeRTOS tasks, RTT, HardFault; Keil-first | 2026-11-03 |
+| 🟢 | [cunjun/McuBuddy](embedded-cunjun-mcubuddy.md) | Debug MCP: SVD registers, FreeRTOS tasks, RTT, HardFault; installed (`claude-board`), not tried on a board | 2026-11-06 |
+| 🟢 | [Hcnuooun/embedded-hil-loop](https://github.com/Hcnuooun/embedded-hil-loop) | HIL skill: probe live symbols, inject touch, capture LTDC screen (STM32H7 + LVGL); no note yet | 2026-11-10 |
 | 🟡 | [Adancurusul/embedded-debugger-mcp](embedded-adancurusul-embedded-debugger-mcp.md) | Probe-rs/OpenOCD debugger MCP: flash, RTT, HardFault triage | 2026-10-28 |
 | 🟡 | [okhsunrog/flashprobe-mcp](embedded-okhsunrog-flashprobe-mcp.md) | Flash + bounded log capture MCP; very new, watch | 2026-10-23 |
 | 🟡 | [Klievan/jlink-mcp](embedded-klievan-jlink-mcp.md) | J-Link/OpenOCD MCP, one-call crash report | 2026-10-28 |
-| 🟡 | [nimaltd/ternima](embedded-nimaltd-ternima.md) | Serial/RTT/SWO terminal + Modbus tester (Rust); human tool | 2026-10-28 |
+| 🟡 | [nimaltd/ternima](embedded-nimaltd-ternima.md) | Serial/RTT/SWO terminal + Modbus tester (Rust); human tool; installed (`ternima`) | 2026-11-06 |
+| 🟡 | [sinkinrin/serial-workbench](https://github.com/sinkinrin/serial-workbench) | Serial workbench shared by human and AI (Rust); days old, 0 stars; no note yet | 2026-11-06 |
 | 🟡 | [wdcjx/Embedded-programming](https://github.com/wdcjx/Embedded-programming) | STM32 HAL/FreeRTOS agent skill + 48 pitfalls; no note yet (`/scout check` first) | 2026-10-29 |
 | 🟡 | [Kyin-code/KDock](https://github.com/Kyin-code/KDock) | Embedded agent toolbox, serial etc. (Rust); overlaps McuBuddy/ternima; no note yet | 2026-10-29 |
+| 🟡 | [umi-eng/stmob](https://github.com/umi-eng/stmob) | STM32 option bytes tool on probe-rs (Rust); days old, 0 stars; no note yet | 2026-11-10 |
 
 ### lists-
 
@@ -108,6 +117,7 @@ and remove the row here.
 |---|---|---|---|
 | 🟢 | [hesreallyhim/awesome-claude-code](lists-hesreallyhim-awesome-claude-code.md) | Biggest curated Claude Code list; first stop | 2026-10-23 |
 | 🟢 | [shanraisshan/claude-code-best-practice](lists-shanraisshan-claude-code-best-practice.md) | Collected Claude Code tips | 2026-10-23 |
+| 🟡 | [luongnv89/claude-howto](lists-luongnv89-claude-howto.md) | Claude Code course, 10 modules; learn subagents, sandbox, worktrees | 2026-11-14 |
 | 🟡 | [ComposioHQ/awesome-claude-skills](lists-composiohq-awesome-claude-skills.md) | 1000+ skills list, part advert for Composio | 2026-10-24 |
 | 🟡 | [VoltAgent/official-mcp-servers](https://github.com/VoltAgent/official-mcp-servers) | 390+ official vendor MCP servers; lookup list; no note yet | 2026-10-29 |
 
@@ -135,3 +145,7 @@ next scan of a topic is its last date here.
 | 2026-10-28 | agent | 1 | ~45 repos, 9 kept | security-audit-skill, andrej-karpathy-skills, BeautifulRust, openqodex, ai-memory, graphify, orca |
 | 2026-10-29 | all | 1 | ~50 repos, 10 kept | jakubkrehel/skills; index rows (no note) for Embedded-programming, KDock, official-mcp-servers |
 | 2026-11-03 | check McuBuddy | 3 | 1 repo | note updated (code read) |
+| 2026-11-06 | all | 1 | ~70 repos, 15 kept | worktrunk; index rows (no note) for serial-workbench, claude-mem |
+| 2026-11-06 | check worktrunk | 3 | 1 repo | note added; worktrunk, McuBuddy, ternima installed on request |
+| 2026-11-10 | all | 1 | ~30 repos, 14 kept | index rows: embedded-hil-loop, stmob, agent-browser |
+| 2026-11-14 | check claude-howto | 3 | 1 repo | note added; 2 Try next rows (learn subagents, sandbox, worktrees) |

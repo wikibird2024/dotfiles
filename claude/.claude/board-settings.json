@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "deny": [
+      "mcp__mcubuddy__probe_write_memory",
+      "mcp__mcubuddy__write_symbol_value",
+      "mcp__mcubuddy__svd_write_register",
+      "mcp__mcubuddy__svd_write_field",
+      "mcp__mcubuddy__set_local",
+      "mcp__mcubuddy__uart_send",
+      "mcp__mcubuddy__uart_send_with_cleanup",
+      "mcp__mcubuddy__uart_exchange"
+    ]
+  }
+}

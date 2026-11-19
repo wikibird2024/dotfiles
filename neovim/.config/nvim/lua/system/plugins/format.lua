@@ -4,10 +4,14 @@ return {
 		event = { "BufWritePre" },
 		config = function()
 			require("conform").setup({
-				format_on_save = {
-					timeout_ms   = 500,
-					lsp_format = "never",
-				},
+				format_on_save = function(bufnr)
+					-- Dart: manual only (<leader>lf). Most of Protocol Lab's Dart is not
+					-- `dart format`ted yet, so a save would rewrite the whole file.
+					if vim.bo[bufnr].filetype == "dart" then
+						return nil
+					end
+					return { timeout_ms = 500, lsp_format = "never" }
+				end,
 				formatters_by_ft = {
 					lua    = { "stylua"       },
 					-- ruff (Rust, Astral) replaces black: sorts imports, then formats
@@ -18,6 +22,7 @@ return {
 					c      = { "clang_format" },
 					cpp    = { "clang_format" },
 					cs     = { "csharpier"    },
+					dart   = { "dart_format"  },
 					toml   = { "taplo"        },
 				},
 				formatters = {

@@ -28,6 +28,7 @@ return {
 	{ import = "system.plugins.tools.inc-rename-lsp-preview" },
 	{ import = "system.plugins.tools.neotest" },
 	{ import = "system.plugins.tools.overseer-task-runner" },
+	{ import = "system.plugins.tools.flutter-tools" },
 	{ import = "system.plugins.tools.refactoring" },
 	{ import = "system.plugins.tools.rainbow-csv" },
 	{ import = "system.plugins.tools.visual-multi-multicursor" },

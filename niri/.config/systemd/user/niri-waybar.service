@@ -7,6 +7,8 @@ PartOf=graphical-session.target
 After=graphical-session.target
 
 [Service]
+# part of the desktop: outside the memory limits of app.slice
+Slice=session.slice
 ExecStart=/usr/bin/waybar -s %h/.cache/niri-shell/waybar.css
 Restart=on-failure
 RestartSec=2

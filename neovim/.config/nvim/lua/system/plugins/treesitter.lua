@@ -16,6 +16,10 @@ return {
 				"vimdoc",
 				"query",
 				"cmake",
+				"dart",
+				"kotlin", -- also *.gradle.kts
+				"java",
+				"yaml",
 				"c_sharp",
 				"xml", -- .csproj, .props, .axaml
 				"markdown",

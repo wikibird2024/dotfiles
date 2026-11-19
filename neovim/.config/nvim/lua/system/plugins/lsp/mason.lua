@@ -43,6 +43,10 @@ return {
 				"ruff",
 				"typos-lsp",
 				"taplo",
+				-- Android: Kotlin (JetBrains kotlin-lsp, alpha), YAML (pubspec, CI), XML (manifest, .csproj, .axaml)
+				"kotlin-lsp",
+				"yaml-language-server",
+				"lemminx",
 			},
 			auto_update  = false,
 			run_on_start = true,

@@ -124,3 +124,26 @@ myip() {
         curl -s https://ifconfig.me && echo -e "\033[0m"
     fi
 }
+
+# ==============================
+# Tmux
+# ==============================
+
+# Attach to a tmux session. Usage: tma [name]
+# No name: pick from the `tmux ls` list in fzf (type to filter, Enter
+# attaches, Esc cancels). Inside tmux it switches instead of nesting.
+function tma {
+    local session_name="$1"
+    if [ -z "$session_name" ]; then
+        local session_list
+        session_list=$(tmux ls 2>/dev/null) || { echo "No tmux sessions."; return 1; }
+        # tmux forbids ':' in session names: the name is before the first ':'
+        session_name=$(fzf --reverse --height 40% <<<"$session_list" | cut -d: -f1)
+        [ -z "$session_name" ] && return 0
+    fi
+    if [ -n "$TMUX" ]; then
+        tmux switch-client -t "$session_name"
+    else
+        tmux attach -t "$session_name"
+    fi
+}

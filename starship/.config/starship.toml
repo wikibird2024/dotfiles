@@ -18,7 +18,7 @@ $fill \
 $status$jobs$memory_usage$cmd_duration$time
 [╰╴](dimmed bright-black)$character"""
 
-command_timeout = 800
+command_timeout = 2000
 scan_timeout = 500    # Increases file scanning limit to 500ms to prevent timeouts in massive repositories (Yocto)
 
 # 2. COMMAND PROMPT (CHARACTER)

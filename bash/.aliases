@@ -68,16 +68,20 @@ alias listfonts="fc-list : family style | awk -F: '{print \$2}' | sed 's/^[[:spa
 # ============================ Yocto_ ============================
 
 # ============================ 🖥️ Apps & Scripts ============================
-alias ztm='zathura main.pdf'
+alias ztm='zathura HaoTran-CV-EN.pdf'
 alias zth='zathura'
-alias xe='latexmk -xelatex main.tex'
-alias pvc='latexmk -pvc main.tex'
+alias xe='latexmk'
+alias pvc='latexmk -pvc'
 alias cl='./clean.sh'
 alias deploy='"$(git rev-parse --show-toplevel)"/scripts/deploy.sh'
 alias qute='qutebrowser'
 alias pdf='zathura'
 alias slide='pdfpc'
 alias pic='feh'
+# Claude with board access (McuBuddy), bench boards only. Why and what is blocked:
+# community/embedded-cunjun-mcubuddy.md. --settings stays last: --mcp-config takes
+# many values and would swallow a prompt typed after it.
+alias claude-board='claude --mcp-config "$HOME/.claude/board-mcp.json" --settings "$HOME/.claude/board-settings.json"'
 
 
 # ============================ 📦 Compression & Extraction ============================
@@ -124,7 +128,7 @@ alias rmp='python3 main.py'
 # ============================ 💻 TMUX ============================
 alias tmls='tmux ls'
 alias tm='tmux'
-alias tma='tmux attach -t '
+# tma: function in .bash_functions (fzf picker)
 alias tmn='tmux new -s '
 alias tmk-s='tmux kill-session -t '
 alias tmd='tmux detach'

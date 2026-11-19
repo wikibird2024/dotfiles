@@ -34,6 +34,7 @@
 26. [Toggles & Misc](#26-toggles--misc)
 27. [Changing the Colorscheme](#27-changing-the-colorscheme)
 28. [Tips & Power Moves](#28-tips--power-moves)
+29. [Android — Flutter, Kotlin, C#](#29-android--flutter-kotlin-c)
 
 ---
 
@@ -106,6 +107,8 @@ Extends the `[x` / `]x` jump family with more targets:
 | `v` | Open in vertical split |
 | `s` | Open in horizontal split |
 | `P` | Toggle floating preview |
+| `/` | Normal Vim search (`n`/`N` to jump); visible lines only |
+| `f` | Filter the whole tree on Enter, including closed folders (`<C-x>` clears) |
 
 ### oil.nvim (edit filesystem as a buffer)
 
@@ -308,6 +311,7 @@ Formatting runs automatically when you save. Formatters by language:
 | JSON | `jq` |
 | Rust | `rustfmt` |
 | C / C++ | `clang-format` |
+| Dart | `dart format`: **manual only** (`<leader>lf`), never on save |
 
 Manual format: `<leader>lf`
 
@@ -1108,6 +1112,58 @@ gf    — go to file under cursor
 <C-i> — jump forward
 `.    — jump to last change position
 ```
+
+---
+
+## 29. Android — Flutter, Kotlin, C#
+
+```
+ Flutter app (Dart)          Kotlin / Gradle         C# app (Avalonia)
+ flutter-tools.nvim          kotlin_lsp (alpha)      roslyn_ls + netcoredbg
+  dartls, run, hot reload,    MainActivity.kt,        desktop head: run + debug on this PC
+  device log, nvim-dap        *.gradle.kts            Android head: overseer task + logcat
+                 \                 |                   /
+                  YAML (yamlls): pubspec.yaml, CI    XML (lemminx): manifest, .csproj, .axaml
+```
+
+### Flutter (`<leader>F…`, loads on a `.dart` file)
+
+| Key | Action |
+|-----|--------|
+| `<leader>Fr` | Run the app (under nvim-dap, so breakpoints work) |
+| `<leader>Fd` / `<leader>Fe` | Pick a device / start an emulator |
+| `<leader>Fh` / `<leader>FR` | Hot reload / hot restart |
+| `<leader>Fq` | Quit the running app |
+| `<leader>Fl` | Toggle the device log |
+| `<leader>Fo` | Widget outline |
+| `<leader>Fp` | `flutter pub get` |
+| `<leader>Fc` | Pick any Flutter command |
+
+`flutter` must be on PATH (`bash/.bashrc` adds `$FLUTTER_SDK_ROOT/flutter/bin`).
+Start nvim from a shell, not from a desktop launcher, or dartls will not start.
+
+### Kotlin
+
+`kotlin_lsp` is JetBrains' kotlin-lsp (alpha, Mason, about 1.2 GB with its own
+JRE). Its root is the Gradle project (`settings.gradle.kts`), so in a Flutter
+app it is `app/android`. The first open is slow because it imports Gradle.
+
+### C# for Android (Avalonia)
+
+Why Avalonia: the same app runs as a **Linux desktop app**, so you edit, run
+and debug on this PC with no phone. netcoredbg cannot debug C# running on
+Android, so debug on the desktop head and read the phone with logcat.
+
+| Step | How |
+|------|-----|
+| New app | `dotnet new avalonia.xplat -n MyApp` (Desktop + Android + shared project) |
+| Run on PC | `<leader>Or` → `dotnet: run desktop` |
+| Debug on PC | `dotnet build`, then `<leader>dc` → `Launch .NET (netcoredbg)` |
+| Run on the phone | `<leader>Or` → `dotnet: run on Android` (build, install, start) |
+| Phone log | `<leader>Or` → `adb: logcat` (give the app id to see only that app) |
+
+One-time setup (done on this machine): `dotnet workload install android`,
+`dotnet new install Avalonia.Templates`.
 
 ---
 

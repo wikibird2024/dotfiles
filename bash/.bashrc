@@ -73,6 +73,8 @@ fi
 
 # 6. TOOLING
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init bash)"
+# worktrunk: lets `wt switch` change this shell's folder
+command -v wt >/dev/null 2>&1 && eval "$(wt config shell init bash)"
 
 # 7. NVM (SAFE LAZY)
 export NVM_DIR="$HOME/.nvm"

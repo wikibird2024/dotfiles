@@ -23,8 +23,12 @@ niri/.config/swaync/        # notifications, their panel and the volume/brightne
 niri/.config/rudo/          # dock on the left edge when Noctalia is missing: settings, pins, dock.css
 niri/.local/share/          # dock launchers (All apps, Settings) + its fallback app icon
 niri/.config/satty/         # screenshot editor settings (Print without Flameshot 13)
-niri/.config/systemd/user/niri.service.d/oomd.conf
-                            # out of memory: systemd-oomd kills the heavy app, not niri (no logout)
+niri/.config/systemd/user/{app.slice.d,tmux-spawn-.scope.d}/memory-limit.conf
+                            # out of memory: the kernel kills one process, the desktop stays
+                            # (see who: journalctl -k -g oom-kill); oomd's pressure watch on the
+                            # login is off, set by steps/04_stow.sh
+niri/.config/systemd/user/niri.service.d/needs-dbus.conf
+                            # niri stops with the session bus, so it can't block the next login
 niri/.config/systemd/user/niri-{waybar,swayidle}.service
                             # bar and idle timer (5-min lock) when Noctalia is missing; started by
                             # scripts/shell, restarted after a crash

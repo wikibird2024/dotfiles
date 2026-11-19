@@ -36,6 +36,7 @@ return {
 			{ "<leader>H", group = "HTTP",           icon = "󰖟 " },
 			{ "<leader>T", group = "Test",           icon = "󰙨 " },
 			{ "<leader>O", group = "Tasks",          icon = " "  },
+			{ "<leader>F", group = "Flutter",        icon = "󱗆 " },
 			{ "<leader>r", group = "Refactor",       icon = "󰑕 " },
 			{ "<leader>t", desc  = "Terminal",       icon = "󱂇 " },
 			{ "<leader>y", hidden = true },
